@@ -166,11 +166,13 @@ export default {
       localStorage.setItem('vcms-menu', JSON.stringify(state.menu))
     },
     LOAD_USER_MENU: ({commit, dispatch}, userMenuType) => {
+      if (userMenuType) {
+        commit('SET_USER_MENU', menuStructure[userMenuType])
+      }
       console.log('userMenuType=', userMenuType)
-      commit('SET_USER_MENU', menuStructure[userMenuType])
-      commit('ITEM_STATE', 'root.subItems.home')
       dispatch('LOAD_MENU_STATE')
       dispatch('SAVE_MENU_STATE')
+      commit('ITEM_STATE', 'root.subItems.home')
     }
   },
   mutations: {

@@ -31,11 +31,13 @@ export default {
       } catch (err) {
         commit('AUTH_ERROR', err)
         localStorage.removeItem('vcms-token') // if the request fails, remove any possible user token if possible
+        localStorage.removeItem('vcms-user')
       }
     },
     async LOGOUT({commit}) {
       localStorage.removeItem('vcms-token')
       localStorage.removeItem('vcms-menu')
+      localStorage.removeItem('vcms-user')
       //Api.delHeaderAuth()
       commit('AUTH_LOGOUT', null)
     }

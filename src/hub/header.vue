@@ -62,7 +62,7 @@ export default {
   computed: {
     ...mapGetters(['user', 'user_role', 'windowsRect']),
     user_name() {
-      return this.user.name
+      return this.user.id
     }
   }
 }

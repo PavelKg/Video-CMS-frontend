@@ -9,6 +9,17 @@ export default {
       try {
         //const result = await Api.user_info()
         //commit('SET_USER', result.data.user_info)
+        if (localStorage.getItem('vcms-user')) {
+          try {
+            const user = JSON.parse(localStorage.getItem('vcms-user'))
+            if (user !== {}) {
+              commit('SET_USER', user)
+            }
+          } catch (e) {
+            localStorage.removeItem('vcms-user')
+          }
+        }
+
       } catch (e) {
         dispatch('LOGOUT', null, { root: true })
       }
@@ -17,6 +28,7 @@ export default {
   mutations: {
     SET_USER: (state, info) => {
       state.user = {...info}
+      localStorage.setItem('vcms-user', JSON.stringify(state.user))
     }
   },
   getters: {

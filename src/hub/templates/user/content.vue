@@ -1,5 +1,5 @@
 <template>
-  <div class='content'>
+  <div class='vcsm-content'>
     <component v-bind:is="activePage" v-on:contentElementClick="contentElementClick"></component>
   </div>  
 </template>
@@ -37,7 +37,7 @@
 </script> 
 
 <style lang="scss">
-  .content {
+  .vcsm-content {
     padding: 20px 20px;
     width: 100%;
   }

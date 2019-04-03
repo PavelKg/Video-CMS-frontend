@@ -3,9 +3,8 @@
     <div class='header-zone'><headerArea/></div>      
     <div class='menu-zone' v-if="!isSmallScreen || isMenuVisible"><menuArea/></div>
     <div class='body'>
-      <div class='content-zone' v-if="!isLoadCompany">
+      <div class='content-zone'>
         <component :is="component" v-if="component" />
-        <!--superContent/-->
         </div>
     </div>  
   </div>
@@ -15,13 +14,12 @@
   import {mapGetters} from 'vuex'
   import headerArea from './header'
   import menuArea from './menu/'
-  //import superContent from './content'91
+  //import content from './content'
 
   export default {
     name: "super-page",
     data() {
       return {
-        isLoadCompany: true,
         component: null,
       }
     },
@@ -42,13 +40,14 @@
           this.component = () => this.loader()
         })
         .catch(() => {
-          this.component = () => import('./templates/super/content')
+          this.component = () => import('./templates/user/content')
         })
     },  
     computed: {
-      ...mapGetters(['windowsRect']),
+      ...mapGetters(['windowsRect', 'user_role']),
       loader() {
-        return () => import(`./templates/super/content`)
+
+        return () => import(`./templates/${this.user_role}/content`)
       },
       isMenuVisible() {
         return this.$store.getters.userMenuVisible
