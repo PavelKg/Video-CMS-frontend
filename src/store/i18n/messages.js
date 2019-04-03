@@ -2,17 +2,13 @@ const messages = {
   en: {
     menu: {
       home: 'HOME',
-      company: 'Co mgmt',
-      comp_add: 'Add Co',
-      comp_videos: 'Videos',
-      comp_resumes: 'Resumes',
-      email: 'Mail BOX',
-      email_make: 'template Make',
-      email_check: 'template Ckeck',
-      email_notification: 'Notif',
-      settings: 'Settings',
-      admin_list: 'Administrator list',
-      admin_add: 'Administrator add'
+      company: 'Company',
+      video: 'Video',
+      messages: 'Messages',
+      role: 'Role settings',
+      users: 'Users',
+      groups: 'Groups',
+      screen: 'Screen custom.'
     },
     company: {
       cid: 'ID',
@@ -70,7 +66,7 @@ const messages = {
       contact: 'Applicant contact'
     },
     message: {
-      appHeader: 'Online Interview',
+      appHeader: 'Video Contents Management',
       app_name: 'Video Content Management System',
       company_id: 'Company ID',
       personal_id: 'ID',

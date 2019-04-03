@@ -11,11 +11,12 @@ const ifNotAuthenticated = (to, from, next) => {
     next()
     return
   }
+  console.log('ifNotAuthenticated')
   const isAuth = store.getters.authStatus === 'success'
   if (isAuth) {
     next(`/hub/${store.getters.user_role}`)
   } else {
-    store.commit('SET_HEADER_AUTH')
+    //store.commit('SET_HEADER_AUTH')
     store.dispatch('GET_USER_INFO').then(
       () => {
         next(`/hub/${store.getters.user_role}`)
@@ -28,10 +29,11 @@ const ifNotAuthenticated = (to, from, next) => {
 }
 
 const ifAuthenticated = (to, from, next) => {
+  console.log('ifAuthenticated=', store.getters.isAuthenticated)
   if (store.getters.isAuthenticated) {
     const isAuth = store.getters.authStatus === 'success'
     if (!isAuth) {
-      store.commit('SET_HEADER_AUTH')
+      //store.commit('SET_HEADER_AUTH')
       store.dispatch('GET_USER_INFO').then(() => {
         next()
       })
