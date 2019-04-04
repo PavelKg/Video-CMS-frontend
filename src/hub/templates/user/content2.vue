@@ -1,5 +1,5 @@
 <template>
-  <div class='content'>
+  <div class='vcsm-content'>Content-user
     <component v-bind:is="activePage" v-on:contentElementClick="contentElementClick"></component>
   </div>  
 </template>
@@ -33,13 +33,13 @@
     components: {
       root_home,
       root_messages,
-      root_videos_video_player
+      root_home_videos_video_player
     }
   }
 </script> 
 
 <style lang="scss">
-  .content {
+  .vcsm-content {
     padding: 20px 20px;
     width: 100%;
   }

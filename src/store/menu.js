@@ -148,6 +148,8 @@ const menuStructure = {
           visible: true
         },
         videos: {
+          caption: 'menu.videos',
+          type: 'videos.list',                    
           subItems: {
             caption: 'videos.messages',
             type: 'videos.list',

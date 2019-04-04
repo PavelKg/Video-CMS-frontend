@@ -46,7 +46,7 @@
     computed: {
       ...mapGetters(['windowsRect', 'user_role']),
       loader() {
-
+        console.log('load-${this.user_role=', `./templates/${this.user_role}/content`)
         return () => import(`./templates/${this.user_role}/content`)
       },
       isMenuVisible() {

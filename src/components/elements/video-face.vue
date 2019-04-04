@@ -31,7 +31,7 @@ export default {
       return `chack-tag-${this.videoitem.tag}`
     },    
     img_puth() {
-      const num = Math.round(Math.random()*6)+1
+      const num = Math.round(Math.random()*5)+1
       var images = require.context('@/assets/images/fake-face', false, /\.png$/)
       return images('./' + num + ".png")
     }
