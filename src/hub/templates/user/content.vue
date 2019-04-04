@@ -8,6 +8,7 @@
   import { mapGetters } from 'vuex'
   import root_home from '../video-catalog'
   import root_messages from '../messages'
+  import root_videos_video_player from '../video-player'
   
   export default {
     name: "content-area",
@@ -31,7 +32,8 @@
     },
     components: {
       root_home,
-      root_messages
+      root_messages,
+      root_home_videos_video_player
     }
   }
 </script> 

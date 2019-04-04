@@ -31,67 +31,15 @@
       </select>
     </div>
     <div class="video-box">
-      <div class="video-box-item">
-        <div class="video-box-item-content"/>
-        <div class="mng-panel">
-          <b-form-checkbox :id="`check-1`" :name="'check1'"></b-form-checkbox>
-          <span>Description</span>
-        </div>
-      </div>
-      <div class="video-box-item">
-        <div class="video-box-item-content"/>
-        <div class="mng-panel">
-          <b-form-checkbox :id="`check-2`" :name="'check2'"></b-form-checkbox>
-          <span>Description</span>
-        </div>
-      </div>
-      <div class="video-box-item">
-        <div class="video-box-item-content"/>
-        <div class="mng-panel">
-          <b-form-checkbox :id="`check-3`" :name="'check3'"></b-form-checkbox>
-          <span>Description</span>
-        </div>
-      </div>
-      <div class="video-box-item">
-        <div class="video-box-item-content"/>
-        <div class="mng-panel">
-          <b-form-checkbox :id="`check-4`" :name="'check4'"></b-form-checkbox>
-          <span>Description</span>
-        </div>
-      </div>
-      <div class="video-box-item">
-        <div class="video-box-item-content"/>
-        <div class="mng-panel">
-          <b-form-checkbox :id="`check-5`" :name="'check5'"></b-form-checkbox>
-          <span>Description</span>
-        </div>
-      </div>
-      <div class="video-box-item">
-        <div class="video-box-item-content"/>
-        <div class="mng-panel">
-          <b-form-checkbox :id="`check-6`" :name="'check6'"></b-form-checkbox>
-          <span>Description</span>
-        </div>
-      </div>
-      <div class="video-box-item">
-        <div class="video-box-item-content"/>
-        <div class="mng-panel">
-          <b-form-checkbox :id="`check-7`" :name="'check7'"></b-form-checkbox>
-          <span>Description</span>
-        </div>
-      </div>
-      <div class="video-box-item">
-        <div class="video-box-item-content"/>
-        <div class="mng-panel">
-          <b-form-checkbox :id="`check-8`" :name="'check8'"></b-form-checkbox>
-          <span>Description</span>
-        </div>
-      </div>
+      <videoPrev v-for="vItem in video_list" :key="vItem.tag" :videoitem="vItem" v-on:activateContent="activateContent"></videoPrev>
     </div>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+import videoPrev from '@/components/elements/video-face'
+
 export default {
   name: 'video-catalog',
   data() {
@@ -101,7 +49,16 @@ export default {
     }
   },
   methods: {
-    placeholder: () => $t('message.key_search')
+    placeholder: () => $t('message.key_search'),
+    activateContent(key) {
+      this.$emit('contentElementClick', key)
+    },
+  },
+  components: {
+    videoPrev
+  },
+  computed: {
+    ...mapGetters(['video_list'])
   }
 }
 </script>
@@ -141,21 +98,6 @@ export default {
   flex-wrap: wrap;
   height: 400px;
   align-content: flex-start;
-  .video-box-item {
-    width: 200px;
-    height: 150px;
-    .video-box-item-content {
-      height: 100px;
-      width: 180px;
-      background: #dcdcdc;
-    }
-    .mng-panel {
-      display: flex;
-      span {
-        align-self: flex-start;
-      }
-    }
-  }
 }
 </style>
 

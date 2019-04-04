@@ -43,16 +43,18 @@ const menuStructure = {
               type: 'company.videos',
               caption: 'menu.comp_videos'
             },
-            player: {
-              type: 'company.player',
-              caption: 'menu.comp_player'
-            }
           }
         },
         videos: {
           caption: 'menu.video',
           type: 'videos.list',
-          visible: true
+          visible: true,
+          subItems: {
+            player: {
+              type: 'videos.video_player',
+              caption: 'menu.video_player'
+            }
+          }
         },
         messages: {
           caption: 'menu.messages',
@@ -76,7 +78,7 @@ const menuStructure = {
       subItems: {
         home: {
           caption: 'menu.home',
-          visible: true
+          visible: true,
         },
         users: {
           caption: 'menu.users',
@@ -93,6 +95,16 @@ const menuStructure = {
             info: {
               type: 'user.info',
               caption: 'menu.comp_info'
+            }
+          }
+        },
+        videos:{
+          caption: 'menu.videos',
+          type: 'videos.list',          
+          subItems: {
+            player: {
+              type: 'videos.video_player',
+              caption: 'menu.video_player'
             }
           }
         },
@@ -128,12 +140,22 @@ const menuStructure = {
       subItems: {
         home: {
           caption: 'menu.home',
-          visible: true
+          visible: true,
         },
         messages: {
           caption: 'menu.messages',
           type: 'messages.list',
           visible: true
+        },
+        videos: {
+          subItems: {
+            caption: 'videos.messages',
+            type: 'videos.list',
+            player: {
+              type: 'videos.video_player',
+              caption: 'menu.video_player'
+            }
+          }
         }
       }
     }
@@ -170,9 +192,10 @@ export default {
         commit('SET_USER_MENU', menuStructure[userMenuType])
       }
       console.log('userMenuType=', userMenuType)
+      commit('ITEM_STATE', 'root.subItems.home')
       dispatch('LOAD_MENU_STATE')
       dispatch('SAVE_MENU_STATE')
-      commit('ITEM_STATE', 'root.subItems.home')
+      
     }
   },
   mutations: {
