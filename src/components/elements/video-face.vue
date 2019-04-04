@@ -4,7 +4,7 @@
       <img :src="img_puth">  
     </div>
     <div class="mng-panel">
-      <b-form-checkbox :id="`check-1`" :name="'check1'"></b-form-checkbox>
+      <b-form-checkbox :id="tag" :name="tag"></b-form-checkbox>
       <span>{{description}}</span>
     </div>
   </div>
@@ -27,6 +27,9 @@ export default {
     description() {
       return this.videoitem['description']
     },
+    tag() {
+      return `chack-tag-${this.videoitem.tag}`
+    },    
     img_puth() {
       const num = Math.round(Math.random()*6)+1
       var images = require.context('@/assets/images/fake-face', false, /\.png$/)
