@@ -28,7 +28,7 @@ export default {
       return this.videoitem['description']
     },
     tag() {
-      return `chack-tag-${this.videoitem.tag}`
+      return `check-tag-${this.videoitem.tag}`
     },    
     img_puth() {
       const num = Math.round(Math.random()*5)+1

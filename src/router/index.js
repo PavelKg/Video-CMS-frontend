@@ -14,6 +14,7 @@ const ifNotAuthenticated = (to, from, next) => {
   console.log('ifNotAuthenticated')
   const isAuth = store.getters.authStatus === 'success'
   if (isAuth) {
+    store.commit('CREATE_VIDEO_LIST')
     next(`/hub/${store.getters.user_role}`)
   } else {
     //store.commit('SET_HEADER_AUTH')

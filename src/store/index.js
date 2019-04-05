@@ -7,6 +7,7 @@ import MainWindow from './mainWindow'
 import Menu from './menu'
 import Videos from './videos'
 import Comments from './comments'
+import Messages from './messages'
 
 Vue.use(Vuex)
 
@@ -14,6 +15,6 @@ export default new Vuex.Store({
   state: {},
   mutations: {},
   actions: {},
-  modules: {i18nStore, Login, User, MainWindow, Menu, Videos, Comments}
+  modules: {i18nStore, Login, User, MainWindow, Menu, Videos, Comments, Messages}
 })
 
