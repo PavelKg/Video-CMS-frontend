@@ -32,8 +32,8 @@ export default {
       } else if (!node.isSection) {
         console.log('menu_key=', key)
         switch (key) {
-          case root.subItems.roles:
-            this.$store.commit('LOAD_ROLES')            
+          case 'root.subItems.roles':
+            this.$store.dispatch('LOAD_ROLES')            
             break;
           default:
             break;

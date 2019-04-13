@@ -11,9 +11,9 @@ export default {
     }
   },
   actions: {
-    async LOAD_ROLES(_company) {
+    async LOAD_ROLES(cid) {
       try {
-        const result = await Api.roles(_company)
+        const result = await Api.roles(cid)
       } catch (err) {}
     }
   },
