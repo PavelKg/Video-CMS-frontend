@@ -59,7 +59,6 @@ export default {
   name: 'app',
   data() {
     return {
-      companyId: 'company Id',
       personalId: 'personal Id',
       password: '',
       errMessage: ''
@@ -79,15 +78,13 @@ export default {
         .dispatch('LOGIN', {personalId, password})
         .then(() => {
           if (this.authStatus === 'success') {
-            //this.$store.dispatch('GET_USER_INFO').then(() => {
-              console.log('${this.user_role}=', this.user_role)
-              this.$router.push(`/hub/${this.user_role}`)
-            //})
+            this.$store.dispatch('GET_MY_PROFILE').then(() => {
+              this.$router.push(`/hub/${this.me_irole}`)
+            })
           } else if (this.authStatus === 'error') {
             this.errMessage = 'message.authError'
           }
           this.password = ''
-          //this.$router.push('/')
         })
     },
     switchLocale(code) {
@@ -101,7 +98,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['locales', 'authStatus', 'user', 'user_role']),
+    ...mapGetters(['locales', 'authStatus', 'me', 'me_irole']),
     activeLocale() {
       return this.$i18n.locale
     }

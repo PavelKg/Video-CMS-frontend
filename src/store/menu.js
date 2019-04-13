@@ -61,7 +61,7 @@ const menuStructure = {
           type: 'messages.list',
           visible: true
         },
-        role: {
+        roles: {
           caption: 'menu.role',
           type: 'role.settings',
           visible: true
@@ -123,9 +123,9 @@ const menuStructure = {
           type: 'screen.settings',
           visible: true
         },
-        role: {
-          caption: 'menu.role',
-          type: 'role.settings',
+        roles: {
+          caption: 'menu.roles',
+          type: 'roles.list',
           visible: true
         }
       }
@@ -193,7 +193,7 @@ export default {
       if (userMenuType) {
         commit('SET_USER_MENU', menuStructure[userMenuType])
       }
-      console.log('userMenuType=', userMenuType)
+
       commit('ITEM_STATE', 'root.subItems.home')
       dispatch('LOAD_MENU_STATE')
       dispatch('SAVE_MENU_STATE')

@@ -30,6 +30,14 @@ export default {
       if (node.isSection) {
         this.$store.commit('SECTION_STATE', key)
       } else if (!node.isSection) {
+        console.log('menu_key=', key)
+        switch (key) {
+          case root.subItems.roles:
+            this.$store.commit('LOAD_ROLES')            
+            break;
+          default:
+            break;
+        }
         this.$store.commit('ITEM_STATE', key)
       }
       this.$store.dispatch('SAVE_MENU_STATE')
@@ -42,7 +50,7 @@ export default {
 <style lang='scss'>
   .menu-table {
     display: flex;
-    padding: 10px 0;
+    padding: 10px 8px;
     flex-direction: column;
     flex: 1 1 0;
     font-size: 24px;

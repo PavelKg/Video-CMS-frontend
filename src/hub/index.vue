@@ -14,7 +14,6 @@
   import {mapGetters} from 'vuex'
   import headerArea from './header'
   import menuArea from './menu/'
-  //import content from './content'
 
   export default {
     name: "super-page",
@@ -44,10 +43,9 @@
         })
     },  
     computed: {
-      ...mapGetters(['windowsRect', 'user_role']),
+      ...mapGetters(['windowsRect', 'me_irole']),
       loader() {
-        console.log('load-${this.user_role=', `./templates/${this.user_role}/content`)
-        return () => import(`./templates/${this.user_role}/content`)
+        return () => import(`./templates/${this.me_irole}/content`)
       },
       isMenuVisible() {
         return this.$store.getters.userMenuVisible

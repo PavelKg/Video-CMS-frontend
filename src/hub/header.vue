@@ -10,7 +10,7 @@
         src="../assets/images/acc-circle-white-24dp.png"
         class="user-logo"
       >
-      <span>{{user_name}}</span>
+      <span>{{me_login}}</span>
     </div>
     <div
       v-if="user_info_block_open"
@@ -30,8 +30,7 @@ export default {
   props: {},
   name: 'headerArea',
   mounted() {
-    console.log('this.user_role=', this.user)
-    this.$store.dispatch('LOAD_USER_MENU', this.user_role)
+    this.$store.dispatch('LOAD_USER_MENU', this.me_irole)
     // this.$store.dispatch('LOAD_ACTIVE_COMPANY_ID')
     // this.$store.dispatch('LOAD_ACTIVE_ADMIN_ID')
   },
@@ -60,9 +59,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'user_role', 'windowsRect']),
-    user_name() {
-      return this.user.id
+    ...mapGetters(['me', 'me_irole', 'windowsRect']),
+    me_login() {
+      return this.me.profile.uid
     }
   }
 }

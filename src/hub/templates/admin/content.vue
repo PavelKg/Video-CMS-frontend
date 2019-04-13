@@ -8,6 +8,9 @@
   import { mapGetters } from 'vuex'
   import root_home from '../video-catalog'
   import root_messages from '../messages'
+  import root_users from '../users-mng'
+  import root_groups from '../groups-mng'
+  import root_roles from '../roles-mng'
   import root_videos_video_player from '../video-player'
   
   export default {
@@ -32,7 +35,10 @@
     },
     components: {
       root_home,
+      root_users,
       root_messages,
+      root_groups,
+      root_roles,
       root_videos_video_player
     }
   }

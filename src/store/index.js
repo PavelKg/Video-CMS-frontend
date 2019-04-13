@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import i18nStore from './i18n'
 import Login from './login'
-import User from './user'
+import Users from './users'
 import MainWindow from './mainWindow'
 import Menu from './menu'
 import Videos from './videos'
@@ -16,6 +16,6 @@ export default new Vuex.Store({
   state: {},
   mutations: {},
   actions: {},
-  modules: {i18nStore, Login, User, MainWindow, Menu, Videos, Comments, Messages, Companies}
+  modules: {i18nStore, Login, Users, MainWindow, Menu, Videos, Comments, Messages, Companies}
 })
 

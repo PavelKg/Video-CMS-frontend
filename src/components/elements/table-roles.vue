@@ -1,74 +1,63 @@
 <template>
-  <div class="table-messages">
-    <table class="tb-messages">
+  <div class="table-roles">
+    <table class="tb-roles">
       <thead>
         <tr>
-          <th v-for="(column, index) in columns_box" :key="index">
-            {{ column }}
+          <th>
+            {{ $t('roles.tbl_header_ID') }}
+          </th>
+          <th>
+            {{ $t('roles.tbl_header_name') }}
+          </th>
+          <th>
+            {{ $t('roles.tbl_header_auth') }}
+          </th>
+          <th colspan="2">
+            {{ $t('roles.tbl_header_mng') }}
           </th>
         </tr>
       </thead>
       <tbody class="scrollContent">
-        <tr v-for="message in message_list" :key="message.id">
-          <td align="center">
-            <b-form-checkbox
-              :id="String(message.id)"
-              :name="`ch-${message.id}`"
-            ></b-form-checkbox>
-          </td>
+        <tr v-for="role in roles" :key="role.rid">
           <td>
-            <a href="#" @click="showMessageModal(message.id)">{{
-              message.subject
-            }}</a>
+            {{ role.rid }}
           </td>
-          <td>{{ message.user }}</td>
-          <td align="right">{{ message.date.toLocaleDateString() }}</td>
+          <td>{{ role.name }}</td>
+          <td align="right">{{ role.isAdmin }}</td>
+          <td align="center" class="cell-icon" title="Edit">
+            <img src="@/assets/images/edit_black.png" />
+          </td>
+          <td align="center" class="cell-icon" title="Delete">
+            <img src="@/assets/images/delete_black.png" />
+          </td>
         </tr>
       </tbody>
     </table>
-    <ModalMessage
-      v-if="onShowModalMessageInfo"
-      @close="onShowModalMessageInfo = false"
-    />
   </div>
 </template>
 
 <script>
 import {mapGetters} from 'vuex'
-import ModalMessage from './modal-message-info'
 
 export default {
-  name: 'table-messages',
+  name: 'table-roles',
   data() {
-    return {
-      onShowModalMessageInfo: false
-    }
+    return {}
   },
   props: {
     Type: String
   },
-  methods: {
-    showMessageModal(id) {
-      this.$store.commit('SET_ACTIVE_MESSAGE', id)
-      this.onShowModalMessageInfo = true
-    },
-    messageItem() {}
-  },
+  methods: {},
   computed: {
-    ...mapGetters(['message_list', 'message_box_column']),
-    columns_box() {
-      return this.message_box_column(this.Type)
-    }
+    ...mapGetters(['roles'])
   },
-  components: {
-    ModalMessage
-  }
+  components: {}
 }
 </script>
 
 <style lang="scss">
-.table-messages {
-  .tb-messages {
+.table-roles {
+  .tb-roles {
     width: 100%;
     max-width: 100%;
     margin-bottom: 16px;

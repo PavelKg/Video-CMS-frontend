@@ -11,17 +11,16 @@ const ifNotAuthenticated = (to, from, next) => {
     next()
     return
   }
-  console.log('ifNotAuthenticated')
   const isAuth = store.getters.authStatus === 'success'
   if (isAuth) {
     store.commit('CREATE_VIDEO_LIST')
-    next(`/hub/${store.getters.user_role}`)
+    next(`/hub/${store.getters.me_irole}`)
   } else {
-    //store.commit('SET_HEADER_AUTH')
+    store.commit('SET_HEADER_AUTH')
     store.commit('CREATE_VIDEO_LIST')
-    store.dispatch('GET_USER_INFO').then(
+    store.dispatch('GET_MY_PROFILE').then(
       () => {
-        next(`/hub/${store.getters.user_role}`)
+        next(`/hub/${store.getters.me_irole}`)
       },
       () => {
         next(`/error`)
@@ -31,13 +30,12 @@ const ifNotAuthenticated = (to, from, next) => {
 }
 
 const ifAuthenticated = (to, from, next) => {
-  console.log('ifAuthenticated=', store.getters.isAuthenticated)
   if (store.getters.isAuthenticated) {
     const isAuth = store.getters.authStatus === 'success'
     if (!isAuth) {
-      //store.commit('SET_HEADER_AUTH')
+      store.commit('SET_HEADER_AUTH')
       store.commit('CREATE_VIDEO_LIST')
-      store.dispatch('GET_USER_INFO').then(() => {
+      store.dispatch('GET_MY_PROFILE').then(() => {
         next()
       })
     } else {
@@ -56,7 +54,6 @@ export default new Router({
       path: '/',
       name: 'Home',
       redirect: '/login'
-      // component: Home
     },
     {
       path: '/hub/:role',

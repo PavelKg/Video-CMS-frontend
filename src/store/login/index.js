@@ -1,9 +1,10 @@
-//import Api from '@/api'
+import Api from '@/api'
 
 export default {
   state: {
     token: localStorage.getItem('vcms-token') || '',
     authStatus: '',
+    roles: ['super', 'admin', 'user']
   },
   actions: {
     async LOGIN({commit}, formData) {
@@ -11,20 +12,13 @@ export default {
       const {personalId, password} = formData
 
       try {
-        //const resp = await Api.login({personalId, companyId, password})
-        const resp = {data: {code:200, token: 238478242342346782346578634785678346576347856378246578023}}
-
-        const {code, token} = resp.data
-        if (code === 200) {
+        const resp = await Api.login({personalId, password})
+        const code = resp.status
+        const {token} = resp.data
+        if (code === 200 && token) {
           localStorage.setItem('vcms-token', token)
           commit('AUTH_SUCCESS', token)
-          const roles = ['super', 'admin', 'user']
-          const user_details = {id:personalId, company_id:1, role_name:personalId}
-          if (roles.indexOf(personalId) === -1) {
-            user_details.role_name='user'
-          }
-          commit('SET_USER', user_details)
-          //commit('SET_HEADER_AUTH')
+          commit('SET_HEADER_AUTH')
         } else {
           throw Error('Authorization error')
         }
@@ -38,7 +32,7 @@ export default {
       localStorage.removeItem('vcms-token')
       localStorage.removeItem('vcms-menu')
       localStorage.removeItem('vcms-user')
-      //Api.delHeaderAuth()
+      Api.delHeaderAuth()
       commit('AUTH_LOGOUT', null)
     }
   },
@@ -60,7 +54,7 @@ export default {
       state.token = ''
     },
     SET_HEADER_AUTH: state => {
-      //Api.setHeaderAuth(state.token)
+      Api.setHeaderAuth(state.token)
     }
   },
   getters: {
