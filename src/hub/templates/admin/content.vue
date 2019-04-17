@@ -12,6 +12,8 @@
   import root_groups from '../groups-mng'
   import root_roles from '../roles-mng'
   import root_videos_video_player from '../video-player'
+  import root_videos_video_upload from '../video-upload'
+  import root_videos_video_subtitles from '../video-subtitles'
   
   export default {
     name: "content-area",
@@ -33,13 +35,18 @@
         this.$store.dispatch('SAVE_MENU_STATE') 
       }
     },
+    mounted() {
+      this.$store.dispatch('LOAD_VIDEO_LIST')            
+    },
     components: {
       root_home,
       root_users,
       root_messages,
       root_groups,
       root_roles,
-      root_videos_video_player
+      root_videos_video_player,
+      root_videos_video_upload,
+      root_videos_video_subtitles
     }
   }
 </script> 

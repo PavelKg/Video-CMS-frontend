@@ -1,37 +1,45 @@
 <template>
   <div class="video-catalog">
     <div class="video-catalog-title">
-      <span>Video</span>
+      <span>{{ company_name }}</span>
+      <div @click="add_new_video" class="button btn-blue">
+        {{ $t('label.add_new') }}
+      </div>
     </div>
     <div class="search-row">
       <input
         id="keywword_search"
         placeholder="Keyword search"
-        @input="handleInput('search',$event.target.value)"
-      >
-      <img src="@/assets/images/search_black.png">
+        @input="handleInput('search', $event.target.value)"
+      />
+      <img src="@/assets/images/search_black.png" />
     </div>
     <div class="video-data-filter">
       <select class="data-select">
         <option disabled value>Year</option>
-        <option v-for="(item) in years" :key="item">{{ item }}</option>
+        <option v-for="item in years" :key="item">{{ item }}</option>
       </select>
       <select class="data-select">
         <option disabled value>Month</option>
-        <option v-for="(item) in months" :key="item">{{ item }}</option>
+        <option v-for="item in months" :key="item">{{ item }}</option>
       </select>
       <div class="data-dev">~</div>
       <select class="data-select">
         <option disabled value>Year</option>
-        <option v-for="(item) in years" :key="item">{{ item }}</option>
+        <option v-for="item in years" :key="item">{{ item }}</option>
       </select>
       <select class="data-select">
         <option disabled value>Month</option>
-        <option v-for="(item) in months" :key="item">{{ item }}</option>
+        <option v-for="item in months" :key="item">{{ item }}</option>
       </select>
     </div>
     <div class="video-box">
-      <videoPrev v-for="vItem in video_list" :key="vItem.tag" :videoitem="vItem" v-on:activateContent="activateContent"></videoPrev>
+      <videoPrev
+        v-for="vItem in video_list"
+        :key="vItem.tag"
+        :videoitem="vItem"
+        v-on:activateContent="activateContent"
+      ></videoPrev>
     </div>
   </div>
 </template>
@@ -53,19 +61,32 @@ export default {
     activateContent(key) {
       this.$emit('contentElementClick', key)
     },
+    add_new_video() {
+      this.$emit('contentElementClick', 'root.subItems.videos.subItems.video_upload')
+    }
   },
   components: {
     videoPrev
   },
   computed: {
-    ...mapGetters(['video_list'])
+    ...mapGetters(['video_list', 'me']),
+    company_name() {
+      return this.me.profile.company_name
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/styles';
 .video-catalog-title {
-  font-size: 24px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 5px;
+  span {
+    font-size: 26px;
+    font-weight: 700;
+  }
 }
 .search-row {
   padding: 10px 0;
@@ -73,7 +94,7 @@ export default {
   flex-direction: row;
   input {
     padding: 0 10px;
-    margin: 0 10px;
+    margin: 0 5px;
   }
   img {
     width: 24px;
@@ -92,12 +113,13 @@ export default {
   margin: 0 5px;
 }
 .video-box {
+  margin-top: 20px;
   padding: 20px 5px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   height: 400px;
+  overflow: auto;
   align-content: flex-start;
 }
 </style>
-

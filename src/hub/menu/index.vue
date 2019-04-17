@@ -20,7 +20,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['userMenu', 'userMenuActiveItem']),
+    ...mapGetters(['userMenu', 'userMenuActiveItem', 'me']),
     menuItems() {
       return this.userMenu.root
     }
@@ -33,8 +33,11 @@ export default {
         console.log('menu_key=', key)
         switch (key) {
           case 'root.subItems.roles':
-            this.$store.dispatch('LOAD_ROLES')            
+            this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)            
             break;
+          case 'root.subItems.home':
+
+            break;            
           default:
             break;
         }

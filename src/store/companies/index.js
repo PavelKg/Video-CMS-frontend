@@ -1,4 +1,4 @@
-// import Api from '@/api'
+import Api from '@/api'
 const count = 10
 
 export default {
@@ -11,10 +11,13 @@ export default {
     }
   },
   actions: {
-    async LOAD_ROLES(cid) {
+    async LOAD_ROLES({commit}, _cid) {
       try {
-        const result = await Api.roles(cid)
-      } catch (err) {}
+        const result = await Api.roles(_cid)
+        console.log('result=', result)        
+      } catch (err) {
+        console.log('role-err', err)
+      }
     }
   },
   mutations: {

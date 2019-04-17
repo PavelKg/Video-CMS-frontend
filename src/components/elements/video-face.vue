@@ -1,11 +1,16 @@
 <template>
   <div class="video-box-item">
     <div class="video-box-item-content" @click="playVideo">
-      <img :src="img_puth">  
+      <img :src="img_puth" />
     </div>
-    <div class="mng-panel">
+    <div class="video-box-mng-panel">
       <b-form-checkbox :id="tag" :name="tag"></b-form-checkbox>
-      <span>{{description}}</span>
+      <span :title="`${description}`">{{ description }}</span>
+      <img
+        @click="onSubtitles()"
+        class="subtitles-svg"
+        src="@/assets/images/subtitles.svg"
+      />
     </div>
   </div>
 </template>
@@ -20,7 +25,17 @@ export default {
     playVideo() {
       this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem)
       this.$store.commit('GET_COMMENTS')
-      this.$emit('activateContent', 'root.subItems.videos.subItems.video_player')
+      this.$emit(
+        'activateContent',
+        'root.subItems.videos.subItems.video_player'
+      )
+    },
+    onSubtitles() {
+      this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem)
+      this.$emit(
+        'activateContent',
+        'root.subItems.videos.subItems.video_subtitles'
+      )
     }
   },
   computed: {
@@ -29,37 +44,45 @@ export default {
     },
     tag() {
       return `check-tag-${this.videoitem.tag}`
-    },    
+    },
     img_puth() {
-      const num = Math.round(Math.random()*5)+1
+      const num = Math.round(Math.random() * 5) + 1
       var images = require.context('@/assets/images/fake-face', false, /\.png$/)
-      return images('./' + num + ".png")
+      return images('./' + num + '.png')
     }
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .video-box-item {
-    width: 200px;
-    height: 150px;
-    .video-box-item-content {
-      display: flex;
-      // height: 100px;
-      // width: 180px;
-      //background: #dcdcdc;
-      img {
-        height: 100px;
-        width: 180px;
-        cursor: pointer;
-      }
-    }
-    .mng-panel {
-      display: flex;
-      span {
-        align-self: flex-start;
-      }
+.video-box-item {
+  margin: 10px;
+  width: 200px;
+  height: 150px;
+  .video-box-item-content {
+    display: flex;
+    flex-direction: column;
+    img {
+      width: 100%;
+      cursor: pointer;
     }
   }
+  .video-box-mng-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30px;
+    background: #ddd;
+    padding: 0 5px;
+    span {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .subtitles-svg {
+      margin-left: auto;
+      cursor: pointer;
+    }
+  }
+}
 </style>

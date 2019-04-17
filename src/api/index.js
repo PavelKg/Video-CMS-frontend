@@ -7,11 +7,11 @@ const Api = axios.create({
   withCredentials: false,
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json',
+
     Authorization: `Bearer`
   }
 })
-
+//'Content-Type': 'application/json',
 export default {
   setHeaderAuth(token) {
     Api.defaults.headers['Authorization'] = `Bearer ${token}`
@@ -28,19 +28,41 @@ export default {
       password
     })
   },
-  
+
   my_profile() {
-    return Api.get(`/users/me`)
+    return Api.get(`/users/me`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
   },
 
   roles(cid) {
-    return Api.get(`/company/${cid}/roles`)
+    console.log('api-roles')
+    return Api.get(`/companies/${cid}/roles`, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
   },
 
-  role_upd( target, data ) {
+  role_upd(target, data) {
     const {cid, rid} = target
-    return Api.put(`/company/${cid}/role/${rid}`, data)
+    return Api.put(`/companies/${cid}/roles/${rid}`, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
   },
+
+  upload_files(target, formData) {
+    const {cid, uid} = target
+    return Api.post(`/company/${cid}/users/${uid}/videos`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+  }
 
   // companies() {
   //   return Api.get(`/companies`)

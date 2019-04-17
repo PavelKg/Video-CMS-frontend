@@ -105,6 +105,14 @@ const menuStructure = {
             player: {
               type: 'videos.video_player',
               caption: 'menu.video_player'
+            },
+            upload: {
+              type: 'videos.video_upload',
+              caption: 'menu.video_upload'
+            },
+            edit: {
+              type: 'videos.video_subtitles',
+              caption: 'menu.video_subtitles'
             }
           }
         },

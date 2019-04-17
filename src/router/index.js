@@ -13,11 +13,9 @@ const ifNotAuthenticated = (to, from, next) => {
   }
   const isAuth = store.getters.authStatus === 'success'
   if (isAuth) {
-    store.commit('CREATE_VIDEO_LIST')
     next(`/hub/${store.getters.me_irole}`)
   } else {
     store.commit('SET_HEADER_AUTH')
-    store.commit('CREATE_VIDEO_LIST')
     store.dispatch('GET_MY_PROFILE').then(
       () => {
         next(`/hub/${store.getters.me_irole}`)
@@ -34,7 +32,6 @@ const ifAuthenticated = (to, from, next) => {
     const isAuth = store.getters.authStatus === 'success'
     if (!isAuth) {
       store.commit('SET_HEADER_AUTH')
-      store.commit('CREATE_VIDEO_LIST')
       store.dispatch('GET_MY_PROFILE').then(() => {
         next()
       })

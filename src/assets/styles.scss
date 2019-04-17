@@ -1,0 +1,42 @@
+@import './partials/variables';
+@import './partials/fonts';
+@import './partials/general';
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 150px;
+  height: 40px;
+  font-size: 22px;
+
+}
+.btn-blue {
+  background: $blue;
+  color: $white;
+  border-radius: 3px;
+  outline: none;
+  &:hover,
+  &:active,
+  &:focus {
+    background: $blue-active;
+  }
+}
+.btn-grey {
+  border-radius: 3px;
+  background: $white;
+  border: 1px solid #e1e1e1;
+  color: #9b9b9b;
+  outline: none;
+  &:hover,
+  &:active,
+  &:focus {
+    background: #fafafa;
+    outline: none;
+  }
+}
+.btn-disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}

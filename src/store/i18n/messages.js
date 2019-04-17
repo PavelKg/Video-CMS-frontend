@@ -38,10 +38,18 @@ const messages = {
       register: 'Register',
       change: 'Change',
       send: 'Send',
+      add_new: 'Add new',
       storageVideoCapacity: 'Storage video capacity',
       forgot_pass: 'Forgot ID/password',
-      mail_address: 'Mail Address'
-    }
+      mail_address: 'Mail Address',
+      video_upload: 'Video upload',
+      select_file: 'Select File',
+      upload: 'Upload',
+      cancel: 'Cancel',
+      drop_file_here: 'Drop file here',
+      or: 'or',
+      remove: 'Remove'
+    },
   },
   ru: {
     menu: {

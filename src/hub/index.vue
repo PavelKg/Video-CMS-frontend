@@ -1,64 +1,62 @@
 <template>
   <div>
-    <div class='header-zone'><headerArea/></div>      
-    <div class='menu-zone' v-if="!isSmallScreen || isMenuVisible"><menuArea/></div>
-    <div class='body'>
-      <div class='content-zone'>
+    <div class="header-zone"><headerArea /></div>
+    <div class="menu-zone" v-if="!isSmallScreen || isMenuVisible">
+      <menuArea />
+    </div>
+    <div class="body">
+      <div class="content-zone">
         <component :is="component" v-if="component" />
-        </div>
-    </div>  
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
-  import headerArea from './header'
-  import menuArea from './menu/'
+import {mapGetters} from 'vuex'
+import headerArea from './header'
+import menuArea from './menu/'
 
-  export default {
-    name: "super-page",
-    data() {
-      return {
-        component: null,
-      }
+export default {
+  name: 'super-page',
+  data() {
+    return {
+      component: null
+    }
+  },
+  components: {
+    headerArea,
+    menuArea
+  },
+  created() {},
+  mounted() {
+    this.loader()
+      .then(() => {
+        this.component = () => this.loader()
+      })
+      .catch(() => {
+        this.component = () => import('./templates/user/content')
+      })
+  },
+  computed: {
+    ...mapGetters(['windowsRect', 'me_irole']),
+    loader() {
+      return () => import(`./templates/${this.me_irole}/content`)
     },
-    components: {
-      headerArea,
-      menuArea,
-      //superContent
+    isMenuVisible() {
+      return this.$store.getters.userMenuVisible
     },
-    created() {
-      // this.$store.dispatch('GET_COMPANY_LIST').then( res => {
-      //   this.isLoadCompany = false
-      // })
-      
-    },
-    mounted() {
-      this.loader()
-        .then(() => {
-          this.component = () => this.loader()
-        })
-        .catch(() => {
-          this.component = () => import('./templates/user/content')
-        })
-    },  
-    computed: {
-      ...mapGetters(['windowsRect', 'me_irole']),
-      loader() {
-        return () => import(`./templates/${this.me_irole}/content`)
-      },
-      isMenuVisible() {
-        return this.$store.getters.userMenuVisible
-      },
-      isSmallScreen() {
-        return this.windowsRect.width < this.windowsRect.tabletMaxWidth
-      }
+    isSmallScreen() {
+      return this.windowsRect.width < this.windowsRect.tabletMaxWidth
     }
   }
-// :style="[isMenuVisible ? {'width':'150px'} : {'width':'0px'}]"  
+}
+// :style="[isMenuVisible ? {'width':'150px'} : {'width':'0px'}]"
 </script>
 
 <style lang="scss">
+@import '../assets/styles';
+
 .header-zone {
   position: fixed; /* Stay in place */
   width: 100%;
@@ -70,7 +68,7 @@
 .menu-zone {
   position: fixed; /* Stay in place */
   height: 100%;
-  background-color: #464a4f;
+  background-color: $gray-dark;
   width: 150px; /* 0 width - change this with JavaScript */
   z-index: 1; /* Stay on top */
   left: 0;
@@ -86,14 +84,18 @@
   flex-direction: column;
   .content-zone {
     display: flex;
-    flex-grow: 20;
+    //flex-grow: 10;
     overflow: auto;
-    background-color: #ffffff;
+    background-color: $gray-lightest;
   }
 }
 
 @media screen and (max-width: 768px) {
-  .menu-zone {opacity: 0.95;}
-  .body {margin-left: 0px;}
+  .menu-zone {
+    opacity: 0.95;
+  }
+  .body {
+    margin-left: 0px;
+  }
 }
 </style>
