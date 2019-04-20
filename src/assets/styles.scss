@@ -9,31 +9,49 @@
   cursor: pointer;
   width: 150px;
   height: 40px;
-  font-size: 22px;
-
+  font-size: 16px;
+  border-radius: 3px;
+  outline: none;
+  text-transform: uppercase;
 }
+
 .btn-blue {
   background: $blue;
   color: $white;
-  border-radius: 3px;
-  outline: none;
   &:hover,
   &:active,
   &:focus {
     background: $blue-active;
   }
 }
+.btn-orange {
+  background: $orange;
+  color: $white;
+  &:hover,
+  &:active,
+  &:focus {
+    background: $orange-active;
+  }
+}
+
+.btn-braun {
+  background: $braun;
+  color: $white;
+  &:hover,
+  &:active,
+  &:focus {
+    background: $braun-active;
+  }
+}
+
 .btn-grey {
-  border-radius: 3px;
   background: $white;
   border: 1px solid #e1e1e1;
   color: #9b9b9b;
-  outline: none;
   &:hover,
   &:active,
   &:focus {
     background: #fafafa;
-    outline: none;
   }
 }
 .btn-disabled {

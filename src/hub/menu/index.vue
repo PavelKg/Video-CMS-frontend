@@ -1,11 +1,15 @@
 <template>
   <div class="menu-table">
-    <menu-tree :node="menuItems" :myKey="'root'" :handle-click="handleClick"></menu-tree>
+    <menu-tree
+      :node="menuItems"
+      :myKey="'root'"
+      :handle-click="handleClick"
+    ></menu-tree>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 import MenuTree from './MenuTree'
 
 export default {
@@ -17,7 +21,7 @@ export default {
   data() {
     return {
       menuTree: {}
-    };
+    }
   },
   computed: {
     ...mapGetters(['userMenu', 'userMenuActiveItem', 'me']),
@@ -33,29 +37,27 @@ export default {
         console.log('menu_key=', key)
         switch (key) {
           case 'root.subItems.roles':
-            this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)            
-            break;
+            this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)
+            break
           case 'root.subItems.home':
-
-            break;            
+            break
           default:
-            break;
+            break
         }
         this.$store.commit('ITEM_STATE', key)
       }
       this.$store.dispatch('SAVE_MENU_STATE')
     }
-    
   }
-};
-</script>  
+}
+</script>
 
-<style lang='scss'>
-  .menu-table {
-    display: flex;
-    padding: 10px 8px;
-    flex-direction: column;
-    flex: 1 1 0;
-    font-size: 24px;
-  }
+<style lang="scss">
+.menu-table {
+  display: flex;
+  padding: 10px 8px;
+  flex-direction: column;
+  flex: 1 1 0;
+  font-size: 24px;
+}
 </style>

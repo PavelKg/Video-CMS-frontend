@@ -36,6 +36,7 @@ const messages = {
       edit: 'Edit',
       required: 'Required',
       register: 'Register',
+      registration: 'Registration',
       change: 'Change',
       send: 'Send',
       add_new: 'Add new',
@@ -48,7 +49,10 @@ const messages = {
       cancel: 'Cancel',
       drop_file_here: 'Drop file here',
       or: 'or',
-      remove: 'Remove'
+      remove: 'Remove',
+      edit_video: 'Edit Video Information',
+      thumb_image_upload: 'Thumbnail image upload'
+
     },
   },
   ru: {
@@ -81,11 +85,14 @@ const messages = {
       edit: 'Edit',
       required: 'Required',
       register: 'Register',
+      registration: 'Сохранить',
       change: 'Change',
       send: 'Send',
       storageVideoCapacity: 'Storage video capacity',
       forgot_pass: 'Forgot ID/password',
-      mail_address: 'Mail Address'
+      mail_address: 'Mail Address',
+      edit_video: 'Редактировать информацию о ролике',
+      thumb_image_upload: 'Загрузить миниатюру'
     }
   },
   jp: {

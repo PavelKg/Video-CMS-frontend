@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <div class="header-zone"><headerArea /></div>
     <div class="menu-zone" v-if="!isSmallScreen || isMenuVisible">
       <menuArea />
