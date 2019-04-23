@@ -30,6 +30,15 @@ const messages = {
       tbl_header_auth: 'Administrator authority',
       tbl_header_mng: 'Management'      
     },
+    users:{
+      btn_add: 'Add new User',
+      tbl_header_ID: 'ID',
+      tbl_header_name: 'Name',
+      tbl_header_group: 'Group',
+      tbl_header_last_login: 'Last Login',
+      tbl_header_mgn: 'Mng',
+      in_page: "In-Page"
+    },
     label: {
       delete: 'Delete',
       back: 'Back',
@@ -51,7 +60,9 @@ const messages = {
       or: 'or',
       remove: 'Remove',
       edit_video: 'Edit Video Information',
-      thumb_image_upload: 'Thumbnail image upload'
+      thumb_image_upload: 'Thumbnail image upload',
+      select_all: "Select All",
+      deselect_all: "Deselect All"
 
     },
   },

@@ -2,9 +2,9 @@
   <div class="video-catalog">
     <div class="video-catalog-title">
       <span>{{ company_name }}</span>
-      <div @click="add_new_video" class="button btn-blue">
+      <button @click="add_new_video" class="button btn-blue">
         {{ $t('label.add_new') }}
-      </div>
+      </button>
     </div>
     <div class="search-row">
       <input
