@@ -28,7 +28,7 @@ const messages = {
       tbl_header_ID: 'ID',
       tbl_header_name: 'Role Name',
       tbl_header_auth: 'Administrator authority',
-      tbl_header_mng: 'Management'      
+      tbl_header_mng: 'Mng'      
     },
     users:{
       btn_add: 'Add new User',
@@ -58,6 +58,8 @@ const messages = {
       cancel: 'Cancel',
       drop_file_here: 'Drop file here',
       or: 'or',
+      yes: 'Yes',
+      no: 'No',
       remove: 'Remove',
       edit_video: 'Edit Video Information',
       thumb_image_upload: 'Thumbnail image upload',

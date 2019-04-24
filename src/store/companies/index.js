@@ -6,19 +6,41 @@ export default {
     companies: [],
     active_company_id: null,
     roles: {
-      list: [],
-      isLoading: false
+      list: null,
+      isLoading: false,
+      selected: null
     }
   },
   actions: {
     async LOAD_ROLES({commit}, _cid) {
       try {
         const result = await Api.roles(_cid)
-        console.log('result=', result)        
+        if (Array.isArray(result.data) && result.status===200) {
+          console.log('result=', result.data)        
+          commit('SET_ROLES', result.data)
+        } else {
+          throw Error("Error load roles list")
+        }
+
       } catch (err) {
         console.log('role-err', err)
       }
-    }
+    },
+    async LOAD_ROLE_DATA({commit}, payload) {
+      try {
+        const result = await Api.role_data(payload)
+        if (result.data && result.status===200) {
+          console.log('result=', result.data)        
+          commit('SET_ACTIVE_ROLE', result.data)
+        } else {
+          throw Error("Error load role data")
+        }
+
+      } catch (err) {
+        console.log('load role-data', err)
+      }
+    }    
+
   },
   mutations: {
     CREATE_COMPANY_LIST(state) {
@@ -41,7 +63,10 @@ export default {
     },
     SET_ROLES: (state, roles) => {
       state.roles.list = [...roles]
-    }
+    },
+    SET_ACTIVE_ROLE(state, role) {
+      state.roles.selected = role
+    },    
   },
   getters: {
     companies_list: state => state.company,
@@ -50,6 +75,7 @@ export default {
         item.id === state.active_company_id ? true : false
       ),
     active_company_id: state => state.active_company_id,
-    roles: state => state.roles.list
+    roles: state => state.roles.list,
+    role_selected: state => state.roles.selected
   }
 }

@@ -42,7 +42,7 @@ const menuStructure = {
             videos: {
               type: 'company.videos',
               caption: 'menu.comp_videos'
-            },
+            }
           }
         },
         videos: {
@@ -78,7 +78,7 @@ const menuStructure = {
       subItems: {
         home: {
           caption: 'menu.home',
-          visible: true,
+          visible: true
         },
         users: {
           caption: 'menu.users',
@@ -98,9 +98,9 @@ const menuStructure = {
             }
           }
         },
-        videos:{
+        videos: {
           caption: 'menu.videos',
-          type: 'videos.list',          
+          type: 'videos.list',
           subItems: {
             player: {
               type: 'videos.video_player',
@@ -134,7 +134,17 @@ const menuStructure = {
         roles: {
           caption: 'menu.roles',
           type: 'roles.list',
-          visible: true
+          visible: true,
+          subItems: {
+            edit: {
+              type: 'roles.role_edit',
+              caption: 'menu.role_edit'
+            },            
+            add: {
+              type: 'roles.role_add',
+              caption: 'menu.role_add'
+            }                        
+          }
         }
       }
     }
@@ -148,7 +158,7 @@ const menuStructure = {
       subItems: {
         home: {
           caption: 'menu.home',
-          visible: true,
+          visible: true
         },
         messages: {
           caption: 'menu.messages',
@@ -157,7 +167,7 @@ const menuStructure = {
         },
         videos: {
           caption: 'menu.videos',
-          type: 'videos.list',                    
+          type: 'videos.list',
           subItems: {
             caption: 'videos.messages',
             type: 'videos.list',
@@ -183,29 +193,29 @@ export default {
   },
   actions: {
     LOAD_MENU_STATE: ({commit}) => {
-      if (localStorage.getItem('vcms-menu')) {
+      if (localStorage.getItem('vcms-activ-menu')) {
         try {
-          const menu = JSON.parse(localStorage.getItem('vcms-menu'))
-          if (menu !== {}) {
-            commit('SET_USER_MENU', menu)
-          }
+          const act_item = JSON.parse(localStorage.getItem('vcms-activ-menu'))
+          const _item = act_item ? act_item : 'root.subItems.home'
+
+          commit('ITEM_STATE', _item)
         } catch (e) {
-          localStorage.removeItem('vcms-menu')
+          localStorage.removeItem('vcms-activ-menu')
         }
       }
     },
+    CLEAR_MENU_STATE: () => localStorage.removeItem('vcms-activ-menu'),
     SAVE_MENU_STATE: ({state}) => {
-      localStorage.setItem('vcms-menu', JSON.stringify(state.menu))
+      localStorage.setItem(
+        'vcms-activ-menu',
+        JSON.stringify(state.menu.root.activeItem)
+      )
     },
     LOAD_USER_MENU: ({commit, dispatch}, userMenuType) => {
       if (userMenuType) {
         commit('SET_USER_MENU', menuStructure[userMenuType])
       }
-
-      commit('ITEM_STATE', 'root.subItems.home')
       dispatch('LOAD_MENU_STATE')
-      dispatch('SAVE_MENU_STATE')
-      
     }
   },
   mutations: {

@@ -8,9 +8,11 @@
   import { mapGetters } from 'vuex'
   import root_home from '../video-catalog'
   import root_messages from '../messages'
-  import root_users from '../users-mng'
-  import root_groups from '../groups-mng'
-  import root_roles from '../roles-mng'
+  import root_users from '../users-list'
+  import root_groups from '../groups-list'
+  import root_roles from '../roles/'
+  import root_roles_role_add from '../roles/mng'  
+  import root_roles_role_edit from '../roles/mng'    
   import root_videos_video_player from '../video-player'
   import root_videos_video_upload from '../video-upload'
   import root_videos_video_subtitles from '../video-subtitles'
@@ -44,6 +46,8 @@
       root_messages,
       root_groups,
       root_roles,
+      root_roles_role_add,
+      root_roles_role_edit,
       root_videos_video_player,
       root_videos_video_upload,
       root_videos_video_subtitles

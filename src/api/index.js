@@ -11,7 +11,9 @@ const Api = axios.create({
     Authorization: `Bearer`
   }
 })
-//'Content-Type': 'application/json',
+
+const type_json = {'Content-Type': 'application/json'}
+
 export default {
   setHeaderAuth(token) {
     Api.defaults.headers['Authorization'] = `Bearer ${token}`
@@ -32,25 +34,32 @@ export default {
   my_profile() {
     return Api.get(`/users/me`, {
       headers: {
-        'Content-Type': 'application/json'
+        ...type_json
       }
     })
   },
 
   roles(cid) {
-    console.log('api-roles')
     return Api.get(`/companies/${cid}/roles`, {
       headers: {
-        'Content-Type': 'application/json'
+        ...type_json
       }
     })
   },
 
+  role_data(target) {
+    const {cid, rid} = target
+    return Api.get(`/companies/${cid}/roles/${rid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
   role_upd(target, data) {
     const {cid, rid} = target
     return Api.put(`/companies/${cid}/roles/${rid}`, data, {
       headers: {
-        'Content-Type': 'application/json'
+        ...type_json
       }
     })
   },

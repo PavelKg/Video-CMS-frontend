@@ -7,40 +7,41 @@ import Login from './login'
 Vue.use(Router)
 
 const ifNotAuthenticated = (to, from, next) => {
-  if (!store.getters.isAuthenticated) {
+  if (!store.getters.hasToken) {
+
     next()
-    return
+    //return
   }
   const isAuth = store.getters.authStatus === 'success'
   if (isAuth) {
     next(`/hub/${store.getters.me_irole}`)
   } else {
     store.commit('SET_HEADER_AUTH')
-    store.dispatch('GET_MY_PROFILE').then(
-      () => {
+    store
+      .dispatch('GET_MY_PROFILE')
+      .then(() => {
         next(`/hub/${store.getters.me_irole}`)
-      },
-      () => {
-        next(`/error`)
-      }
-    )
+      })
+      .catch(err => next('/login'))
   }
 }
 
 const ifAuthenticated = (to, from, next) => {
-  if (store.getters.isAuthenticated) {
-    const isAuth = store.getters.authStatus === 'success'
-    if (!isAuth) {
-      store.commit('SET_HEADER_AUTH')
-      store.dispatch('GET_MY_PROFILE').then(() => {
+  if (store.getters.hasToken) {
+    store.commit('SET_HEADER_AUTH')
+    store
+      .dispatch('GET_MY_PROFILE')
+      .then(() => {
+        console.log('ifAuthenticated - ok')
         next()
       })
-    } else {
-      next()
-    }
-    return
+      .catch(err => {
+        console.log('ifAuthenticated - err')
+        next('/login')
+      })
+  } else {
+    next('/login')
   }
-  next('/login')
 }
 
 export default new Router({
@@ -62,7 +63,7 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login,
-      beforeEnter: ifNotAuthenticated
+      //beforeEnter: ifNotAuthenticated
     },
     {
       path: '*',

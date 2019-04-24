@@ -27,7 +27,7 @@ export default {
   },
   getters: {
     comment_list: state => state.comments,
-    active_comment: state => state.comments[active_comment],
+    active_comment: state => state.comments[state.active_comment],
     active_comment_id: state => state.active_comment
   }
 }

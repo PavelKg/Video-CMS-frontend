@@ -28,12 +28,12 @@ export default {
         localStorage.removeItem('vcms-user')
       }
     },
-    async LOGOUT({commit}) {
+    async LOGOUT({commit, dispatch}) {
       localStorage.removeItem('vcms-token')
-      localStorage.removeItem('vcms-menu')
       localStorage.removeItem('vcms-user')
       Api.delHeaderAuth()
-      commit('AUTH_LOGOUT', null)
+      dispatch('CLEAR_MENU_STATE')
+      commit('AUTH_LOGOUT')
     }
   },
   mutations: {
@@ -59,7 +59,7 @@ export default {
   },
   getters: {
     token: state => state.token,
-    isAuthenticated: state => Boolean(state.token),
+    hasToken: state => Boolean(state.token),
     authStatus: state => state.authStatus
   }
 }

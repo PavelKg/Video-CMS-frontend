@@ -1,9 +1,9 @@
 <template>
   <div class="roles-mng">
     <div class="roles-mng-buttons">
-      <div class="create-new blue">
+      <button class="create-new blue" @click="addNewRole">
         {{ $t('roles.btn_add') }}
-      </div>
+      </button>
     </div>
     <div class="roles-mng-table">
       <TableRoles/>
@@ -12,12 +12,25 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import TableRoles from '@/components/elements/table-roles'
 
 export default {
-  name: "roles-mng",
+  name: 'roles-mng',
   components: {
     TableRoles
+  },
+  created() {
+    this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)
+  },
+  computed: {
+    ...mapGetters(['me'])
+  },
+  methods: {
+    addNewRole() {
+      this.$store.commit('SET_ACTIVE_ROLE', {company_id: this.me.profile.company_id, rid: null})
+      this.$emit('contentElementClick', 'root.subItems.roles.subItems.role_add')
+    }
   }
 }
 </script>

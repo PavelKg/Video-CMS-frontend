@@ -43,13 +43,14 @@
             <button class="button btn-orange">
         {{ $t('label.delete') }}
       </button>
+      <div class="users-mng-pag">
       <b-pagination
         v-model="currentPage"
         :total-rows="rows"
         :per-page="perPage"
         align="left"
       ></b-pagination>
-
+      </div>
     </div>
   </div>
 </template>
@@ -92,8 +93,12 @@ export default {
   display: flex;
   align-items: center;
 
-  .b-pagination {
+  .users-mng-pag {
+    display: flex;
     margin-left: auto;
+    > * {
+        margin-bottom:0;    
+    }
   }
   a {
     padding: 0 10px;
