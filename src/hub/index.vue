@@ -1,7 +1,14 @@
 <template>
-  <div >
+  <div>
     <div class="header-zone"><headerArea /></div>
-    <div class="menu-zone" v-if="!isSmallScreen || isMenuVisible">
+    <div
+      class="menu-zone"
+      v-if="!isSmallScreen || isMenuVisible"
+      v-closable="{
+        exclude: ['menu-btn'],
+        handler: 'onHideMenu'
+      }"
+    >
       <menuArea />
     </div>
     <div class="body">
@@ -49,6 +56,11 @@ export default {
     isSmallScreen() {
       return this.windowsRect.width < this.windowsRect.tabletMaxWidth
     }
+  },
+  methods: {
+    onHideMenu() {
+      this.$store.commit('MENU_HIDE')
+    }
   }
 }
 // :style="[isMenuVisible ? {'width':'150px'} : {'width':'0px'}]"
@@ -82,6 +94,7 @@ export default {
   margin-left: 150px;
   margin-top: 50px;
   flex-direction: column;
+  max-width: 930px;
   .content-zone {
     display: flex;
     //flex-grow: 10;

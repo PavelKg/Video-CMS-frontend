@@ -24,21 +24,27 @@ const messages = {
       We will send you an email with the URL for the change to the email address you have entered.`
     },
     roles:{
-      btn_add: 'Add role',
+      btn_add: 'Add Role',
       tbl_header_ID: 'ID',
       tbl_header_name: 'Role Name',
       tbl_header_auth: 'Administrator authority',
-      tbl_header_mng: 'Mng'      
+      tbl_header_mng: 'Mng',
+      oper_title_edit: 'Role Information',
+      oper_title_add: 'Add New Role'      
     },
     users:{
-      btn_add: 'Add new User',
+      btn_add: 'Add New User',
       tbl_header_ID: 'ID',
       tbl_header_name: 'Name',
       tbl_header_group: 'Group',
       tbl_header_last_login: 'Last Login',
       tbl_header_mgn: 'Mng',
-      in_page: "In-Page"
     },
+    groups:{
+      btn_add: 'Add New Group',
+      tbl_header_name: 'Group',
+      tbl_header_mgn: 'Mng',
+    },    
     label: {
       delete: 'Delete',
       back: 'Back',
@@ -64,8 +70,10 @@ const messages = {
       edit_video: 'Edit Video Information',
       thumb_image_upload: 'Thumbnail image upload',
       select_all: "Select All",
-      deselect_all: "Deselect All"
-
+      deselect_all: "Deselect All",
+      comment_box: "Comment Box",
+      logo_registration: "Logo Registration",
+      in_page: "In-Page"
     },
   },
   ru: {

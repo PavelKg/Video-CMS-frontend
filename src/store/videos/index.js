@@ -1,5 +1,5 @@
 import Api from '@/api'
-const count = 30
+const count = 8
 
 export default {
   state: {

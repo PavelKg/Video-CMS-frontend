@@ -9,7 +9,7 @@
         >
         <img src="@/assets/images/search_black.png">
       </div>
-      <div class="create-new blue" @click="showMessageModal">Create New</div>
+      <button class="button btn-blue" @click="showMessageModal">Create New</button>
     </div>
     <div class="messages-tabs">
       <button
@@ -69,6 +69,7 @@ export default {
   .messages-mgm {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     align-items: center;
     .search-row {
       padding: 10px 0;
@@ -82,19 +83,6 @@ export default {
         width: 24px;
         height: 24px;
       }
-    }
-    .create-new {
-      display: flex;
-      margin-left: auto;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      width: 150px;
-      height: 30px;
-      color: #ffffff;
-    }
-    .blue {
-      background: #4472c4;
     }
   }
   .messages-tabs {

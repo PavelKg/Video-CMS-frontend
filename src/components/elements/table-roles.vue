@@ -52,11 +52,12 @@ export default {
     },
     editRole(role) {
       this.$store.commit('SET_ACTIVE_ROLE', role)
-      this.$store.commit('ITEM_STATE', 'root.subItems.roles.subItems.role_edit')
+      this.$emit('contentElementClick', 'root.subItems.roles.subItems.role_edit')
+      //this.$store.commit('ITEM_STATE', 'root.subItems.roles.subItems.role_edit')
     }
   },
   computed: {
-    ...mapGetters(['roles'])
+    ...mapGetters(['roles', 'roles_is_list_loading'])
   },
   components: {}
 }

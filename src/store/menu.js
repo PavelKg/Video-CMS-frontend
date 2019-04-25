@@ -238,6 +238,7 @@ export default {
       state.visible = true
     },
     MENU_TOGGLE: state => {
+      console.log('state.visible=', state.visible)
       state.visible = Boolean(!state.visible)
     }
   },

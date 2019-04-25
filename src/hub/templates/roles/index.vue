@@ -1,12 +1,12 @@
 <template>
   <div class="roles-mng">
     <div class="roles-mng-buttons">
-      <button class="create-new blue" @click="addNewRole">
+      <button class="button btn-blue" @click="addNewRole">
         {{ $t('roles.btn_add') }}
       </button>
     </div>
     <div class="roles-mng-table">
-      <TableRoles/>
+      <TableRoles @contentElementClick="contentElementClick"/>
     </div>
   </div>
 </template>
@@ -17,6 +17,10 @@ import TableRoles from '@/components/elements/table-roles'
 
 export default {
   name: 'roles-mng',
+  data() {
+    return {
+    }
+  },
   components: {
     TableRoles
   },
@@ -30,7 +34,11 @@ export default {
     addNewRole() {
       this.$store.commit('SET_ACTIVE_ROLE', {company_id: this.me.profile.company_id, rid: null})
       this.$emit('contentElementClick', 'root.subItems.roles.subItems.role_add')
+    },
+    contentElementClick(key) {
+      this.$emit('contentElementClick', key)
     }
+
   }
 }
 </script>

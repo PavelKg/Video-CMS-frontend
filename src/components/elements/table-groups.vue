@@ -1,38 +1,30 @@
 <template>
-  <div class="users-table">
+  <div class="groups-table">
     <table class="p-table">
       <thead>
         <th></th>
-        <th>{{ $t('users.tbl_header_ID') }}</th>
-        <th>{{ $t('users.tbl_header_name') }}</th>
-        <th>{{ $t('users.tbl_header_group') }}</th>
-        <th>{{ $t('users.tbl_header_last_login') }}</th>
-        <th>{{ $t('users.tbl_header_mgn') }}</th>
+        <th>{{ $t('groups.tbl_header_name') }}</th>
+        <th>{{ $t('groups.tbl_header_mgn') }}</th>
       </thead>
       <tbody>
-        <tr v-for="user in users_list" :key="user.cid">
+        <tr v-for="group in groups_list" :key="group.cid">
           <td align="center">
             <b-form-checkbox
-              :id="user.cid"
-              :name="`ch-${user.cid}`"
-              :value="user['cid']"
-              v-model="users_selected"
+              :id="group.cid"
+              :name="`ch-${group.cid}`"
+              :value="group['cid']"
+              v-model="groups_selected"
             ></b-form-checkbox>
           </td>
-          <td align="right">
-            <a href="#">{{ user.cid }}</a>
-          </td>
-          <td align="right">{{ user.name }}</td>
-          <td align="right">{{ user.group }}</td>
-          <td align="right">{{ user.last_login }}</td>
+          <td align="right">{{ group.name }}</td>
           <td align="center">
             <a href="#"><img src="@/assets/images/delete_black.png"/></a>
           </td>
         </tr>
       </tbody>
     </table>
-    <div class="users-mng-panel">
-      <span>{{ $t('label.in_page') }}:</span>
+    <div class="groups-mng-panel">
+      <span>{{ $t('groups.in_page') }}:</span>
       <a href="#" id="selectAll" @click="toggleAll">{{
         $t('label.select_all')
       }}</a>
@@ -43,7 +35,7 @@
             <button class="button btn-orange">
         {{ $t('label.delete') }}
       </button>
-      <div class="users-mng-pag">
+      <div class="groups-mng-pag">
       <b-pagination
         v-model="currentPage"
         :total-rows="rows"
@@ -59,41 +51,41 @@
 import {mapGetters} from 'vuex'
 
 export default {
-  name: 'table-users',
+  name: 'table-groups',
   data() {
     return {
       perPage: 3,
       currentPage: 1,
       rows: 8,
-      users_selected: []
+      groups_selected: []
     }
   },
   methods: {
     toggleAll(env) {
       const action = env.target['id']
-      this.users_selected =
+      this.groups_selected =
         action === 'selectAll'
-          ? this.users_list.map(user => String(user.cid))
+          ? this.groups_list.map(group => String(group.cid))
           : []
-      console.log('this.users_selected=', this.users_selected)
+      console.log('this.groups_selected=', this.groups_selected)
     }
   },
   computed: {
-    ...mapGetters(['users_list'])
+    ...mapGetters(['groups_list'])
   }
 }
 </script>
 
 <style lang="scss" scoped>
 
-.users-table {
+.groups-table {
   padding: 10px 0;
 }
-.users-mng-panel {
+.groups-mng-panel {
   display: flex;
   align-items: center;
 
-  .users-mng-pag {
+  .groups-mng-pag {
     display: flex;
     margin-left: auto;
     > * {

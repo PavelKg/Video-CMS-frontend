@@ -1,24 +1,32 @@
 <template>
   <div class="header">
     <div class="app-menu">
-      <img @click="toggle_menu" src="../assets/images/menu_white.png">
+      <img
+        @click="toggle_menu"
+        id="menu-btn"
+        src="../assets/images/menu_white.png"
+      />
     </div>
     <div class="app-title">{{ $t('message.appHeader') }}</div>
     <div class="user-info">
       <img
         @click="open_user_info"
+        id="user-info-btn"
         src="../assets/images/acc-circle-white-24dp.png"
         class="user-logo"
-      >
-      <span>{{me_login}}</span>
+      />
+      <span>{{ me_login }}</span>
     </div>
     <div
       v-if="user_info_block_open"
       @click="user_logout"
       class="user_info_block"
-      v-click-outside="handleClickOutside"
+      v-closable="{
+        exclude: ['user-info-btn'],
+        handler: 'handleClickOutside'
+      }"
     >
-      <span class="btn-logout">{{$t("message.logOut")}}</span>
+      <span class="btn-logout">{{ $t('message.logOut') }}</span>
     </div>
   </div>
 </template>
@@ -55,7 +63,7 @@ export default {
       })
     },
     handleClickOutside() {
-      //this.user_info_block_open = false
+      this.user_info_block_open = false
     }
   },
   computed: {
@@ -86,9 +94,10 @@ export default {
   display: flex;
   flex-grow: 20;
   align-items: center;
-  font-size: 28px;
+  font-size: 1.5rem;
   color: white;
-  padding-left: 1px;
+  //padding-left: 1px;
+  justify-content: center;
   transition: 0.5s;
 }
 .user-info {
@@ -133,7 +142,9 @@ export default {
   }
 }
 
-@media screen and (max-width: 450px) {
-  .app-title {font-size: 20px;}
+@media screen and (max-width: 550px) {
+  .app-title {
+    font-size: 15px;
+  }
 }
 </style>

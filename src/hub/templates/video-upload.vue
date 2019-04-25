@@ -29,16 +29,15 @@
       </div>
     </div>
     <div class="video-upload-buttons">
-      <div
+      <button class="button btn-blue"
         @click="submitFiles()"
-        class="button btn-blue"
         :class="{'btn-disabled': files.length === 0}"
       >
         {{ $t('label.upload') }}
-      </div>
-      <div @click="backToCatalog" class="button btn-blue">
+      </button>
+      <button @click="backToCatalog" class="button btn-blue">
         {{ $t('label.cancel') }}
-      </div>
+      </button>
     </div>
   </div>
 </template>

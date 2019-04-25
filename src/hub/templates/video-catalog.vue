@@ -15,23 +15,22 @@
       <img src="@/assets/images/search_black.png" />
     </div>
     <div class="video-data-filter">
-      <select class="data-select">
-        <option disabled value>Year</option>
-        <option v-for="item in years" :key="item">{{ item }}</option>
-      </select>
-      <select class="data-select">
-        <option disabled value>Month</option>
-        <option v-for="item in months" :key="item">{{ item }}</option>
-      </select>
+      <b-form-select size="sm" v-model="selected" :options="years"></b-form-select>
+      <b-form-select size="sm" v-model="selected" :options="months"></b-form-select>
       <div class="data-dev">~</div>
-      <select class="data-select">
-        <option disabled value>Year</option>
-        <option v-for="item in years" :key="item">{{ item }}</option>
-      </select>
-      <select class="data-select">
-        <option disabled value>Month</option>
-        <option v-for="item in months" :key="item">{{ item }}</option>
-      </select>
+      <b-form-select size="sm" v-model="selected" :options="years"></b-form-select>
+      <b-form-select size="sm" v-model="selected" :options="months"></b-form-select>
+      <div class="video-data-filter-acc">
+        <b-form-radio-group
+          id="btn-filer-acc"
+          v-model="acc_selected"
+          :options="acc_options"
+          buttons
+          button-variant="outline-primary"
+          size="sm"
+          name="btn-filer-acc"
+        ></b-form-radio-group>
+      </div>
     </div>
     <div class="video-box">
       <videoPrev
@@ -40,6 +39,28 @@
         :videoitem="vItem"
         v-on:activateContent="activateContent"
       ></videoPrev>
+    </div>
+    <div class="videos-mng-panel">
+      <span>{{ $t('label.in_page') }}:</span>
+      <a href="#" id="selectAll" @click="toggleAll">{{
+        $t('label.select_all')
+      }}</a>
+      <span>|</span>
+      <a href="#" id="deselectAll" @click="toggleAll">{{
+        $t('label.deselect_all')
+      }}</a>
+      <button class="button btn-orange">
+        {{ $t('label.delete') }}
+      </button>
+      <div class="videos-mng-page">
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          align="left"
+          size="sm"
+        ></b-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -53,7 +74,17 @@ export default {
   data() {
     return {
       years: [2019, 2018, 2017, 2016],
-      months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12]
+      months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12],
+      acc_options: [
+        {text: 'All', value: 'all'},
+        {text: 'Public', value: 'public'},
+        {text: 'Private', value: 'private'}
+      ],
+      acc_selected: 'all',
+      perPage: 3,
+      currentPage: 1,
+      rows: 8,
+      selected: []
     }
   },
   methods: {
@@ -62,8 +93,12 @@ export default {
       this.$emit('contentElementClick', key)
     },
     add_new_video() {
-      this.$emit('contentElementClick', 'root.subItems.videos.subItems.video_upload')
-    }
+      this.$emit(
+        'contentElementClick',
+        'root.subItems.videos.subItems.video_upload'
+      )
+    },
+    toggleAll() {}
   },
   components: {
     videoPrev
@@ -102,9 +137,17 @@ export default {
   }
 }
 .video-data-filter {
+  margin-top: 15px;
   height: 20px;
   display: flex;
   flex-direction: row;
+  align-items: center;
+  select{
+    margin-right:10px;
+  }
+  .video-data-filter-acc {
+    margin-left: auto;
+  }
 }
 .data-dev {
   margin: 0 10px;
@@ -118,8 +161,23 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  height: 400px;
+  //height: 400px;
   overflow: auto;
   align-content: flex-start;
+}
+.videos-mng-panel {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  .videos-mng-page {
+    display: flex;
+    margin-left: auto;
+    > * {
+      margin-bottom: 0;
+    }
+  }
+  a {
+    padding: 0 10px;
+  }
 }
 </style>

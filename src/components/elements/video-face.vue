@@ -58,7 +58,7 @@ export default {
 .video-box-item {
   margin: 10px;
   width: 200px;
-  height: 150px;
+  height: 100%;
   .video-box-item-content {
     display: flex;
     flex-direction: column;
@@ -83,6 +83,12 @@ export default {
       margin-left: auto;
       cursor: pointer;
     }
+  }
+}
+
+@media screen and (max-width: 508px) {
+  .video-box-item {
+    width: 400px
   }
 }
 </style>

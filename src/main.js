@@ -5,6 +5,7 @@ import store from './store/'
 import VueI18n from 'vue-i18n'
 import messages from './store/i18n/messages'
 import dirClickOutside from './directive/click-outside.js'
+import closable from './directive/closable.js'
 import BootstrapVue from 'bootstrap-vue'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -18,7 +19,8 @@ const i18n = new VueI18n({
   silentTranslationWarn: true
 })
 
-Vue.directive('click-outside', dirClickOutside)
+//Vue.directive('click-outside', dirClickOutside)
+Vue.directive('closable', closable)
 Vue.use(BootstrapVue)
 
 require('es6-promise').polyfill()
