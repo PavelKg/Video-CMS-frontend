@@ -15,7 +15,7 @@
         src="../assets/images/acc-circle-white-24dp.png"
         class="user-logo"
       />
-      <span>{{ me_login }}</span>
+      <span v-if="!isSmallScreen">{{ me_login }}</span>
     </div>
     <div
       v-if="user_info_block_open"
@@ -39,8 +39,6 @@ export default {
   name: 'headerArea',
   mounted() {
     this.$store.dispatch('LOAD_USER_MENU', this.me_irole)
-    // this.$store.dispatch('LOAD_ACTIVE_COMPANY_ID')
-    // this.$store.dispatch('LOAD_ACTIVE_ADMIN_ID')
   },
   data() {
     return {
@@ -64,13 +62,17 @@ export default {
     },
     handleClickOutside() {
       this.user_info_block_open = false
-    }
+    },
   },
   computed: {
     ...mapGetters(['me', 'me_irole', 'windowsRect']),
     me_login() {
       return this.me.profile.uid
-    }
+    },
+    isSmallScreen() {
+      return this.windowsRect.width < this.windowsRect.tabletMaxWidth
+    }    
+
   }
 }
 </script>

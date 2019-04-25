@@ -15,11 +15,15 @@
       <img src="@/assets/images/search_black.png" />
     </div>
     <div class="video-data-filter">
+      <div>
       <b-form-select size="sm" v-model="selected" :options="years"></b-form-select>
       <b-form-select size="sm" v-model="selected" :options="months"></b-form-select>
+      </div>
       <div class="data-dev">~</div>
+      <div>
       <b-form-select size="sm" v-model="selected" :options="years"></b-form-select>
       <b-form-select size="sm" v-model="selected" :options="months"></b-form-select>
+      </div>
       <div class="video-data-filter-acc">
         <b-form-radio-group
           id="btn-filer-acc"
@@ -118,6 +122,7 @@ export default {
   display: flex;
   justify-content: space-between;
   margin: 0 5px;
+  flex-wrap: wrap;
   span {
     font-size: 26px;
     font-weight: 700;
@@ -138,15 +143,19 @@ export default {
 }
 .video-data-filter {
   margin-top: 15px;
-  height: 20px;
+  //height: 20px;
   display: flex;
   flex-direction: row;
   align-items: center;
+  align-content: space-between;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   select{
-    margin-right:10px;
+    width: 100px;
+    margin:5px;
   }
   .video-data-filter-acc {
-    margin-left: auto;
+    margin: 5px;
   }
 }
 .data-dev {
@@ -161,9 +170,9 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  //height: 400px;
   overflow: auto;
   align-content: flex-start;
+  justify-content: center;
 }
 .videos-mng-panel {
   display: flex;

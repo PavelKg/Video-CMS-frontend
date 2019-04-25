@@ -86,9 +86,15 @@ export default {
   }
 }
 
-@media screen and (max-width: 508px) {
+@media screen and (max-width: 610px) {
   .video-box-item {
     width: 400px
+  }
+}
+
+@media screen and (max-width: 875px) and (min-width: 610px) {
+  .video-box-item {
+    width: 250px
   }
 }
 </style>
