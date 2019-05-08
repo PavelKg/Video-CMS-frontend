@@ -62,7 +62,7 @@ export default {
     },
     handleClickOutside() {
       this.user_info_block_open = false
-    },
+    }
   },
   computed: {
     ...mapGetters(['me', 'me_irole', 'windowsRect']),
@@ -71,8 +71,7 @@ export default {
     },
     isSmallScreen() {
       return this.windowsRect.width < this.windowsRect.tabletMaxWidth
-    }    
-
+    }
   }
 }
 </script>

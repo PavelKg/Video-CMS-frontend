@@ -172,7 +172,7 @@ export default {
   flex-wrap: wrap;
   overflow: auto;
   align-content: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .videos-mng-panel {
   display: flex;

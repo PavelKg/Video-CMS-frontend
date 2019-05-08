@@ -1,45 +1,15 @@
-import Api from '@/api'
+
+import Groups from './groups'
+import Roles from './roles'
 const count = 10
 
 export default {
+  modules: {Groups, Roles},
   state: {
     companies: [],
-    active_company_id: null,
-    roles: {
-      list: null,
-      isListLoading: false,
-      selected: null
-    }
+    active_company_id: null
   },
   actions: {
-    async LOAD_ROLES({commit}, _cid) {
-      try {
-        commit('SET_ROLES_IS_LOADING', true)
-        const result = await Api.roles(_cid)
-        if (Array.isArray(result.data) && result.status === 200) {
-          commit('SET_ROLES', result.data)
-        } else {
-          throw Error('Error load roles list')
-        }
-      } catch (err) {
-        throw Error('Error request roles from server')
-      } finally {
-        commit('SET_ROLES_IS_LOADING', false)
-      }
-
-    },
-    async LOAD_ROLE_DATA({commit}, payload) {
-      try {
-        const result = await Api.role_data(payload)
-        if (result.data && result.status === 200) {
-          commit('SET_ACTIVE_ROLE', result.data)
-        } else {
-          throw Error('Error load role data')
-        }
-      } catch (err) {
-        console.log('load role-data', err)
-      }
-    }
   },
   mutations: {
     CREATE_COMPANY_LIST(state) {
@@ -59,17 +29,7 @@ export default {
     },
     SET_ACTIVE_COMPANY(state, id) {
       state.active_company_id = id
-    },
-    SET_ROLES: (state, roles) => {
-      state.roles.list = [...roles]
-    },
-    SET_ACTIVE_ROLE(state, role) {
-      state.roles.selected = role
-    },
-    SET_ROLES_IS_LOADING(state, isload) {
-      state.roles.isListLoading = isload
     }
-
   },
   getters: {
     companies_list: state => state.company,
@@ -77,9 +37,6 @@ export default {
       state.companies.find(item =>
         item.id === state.active_company_id ? true : false
       ),
-    active_company_id: state => state.active_company_id,
-    roles: state => state.roles.list,
-    role_selected: state => state.roles.selected,
-    roles_is_list_loading: state => state.roles.isListLoading
+    active_company_id: state => state.active_company_id
   }
 }

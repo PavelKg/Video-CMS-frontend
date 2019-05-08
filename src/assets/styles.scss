@@ -8,11 +8,16 @@
   align-items: center; 
   justify-content: center;
   text-transform: uppercase;
-  cursor: pointer;
   font-size: 16px;
+  cursor: pointer;
   border-radius: 3px;
   outline: none;
   line-height: 0.7;
+  &:disabled {
+    cursor: default; 
+    opacity: 0.2;
+    pointer-events: none;
+  }  
 }
 
 .btn-blue {
@@ -65,6 +70,7 @@
   background-color: transparent;
   border-collapse: collapse;
   overflow: hidden;
+  table-layout: fixed;
   thead {
     th {
       background: $gray-dark;

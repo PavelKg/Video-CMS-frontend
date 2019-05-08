@@ -12,7 +12,9 @@ import {mapGetters} from 'vuex'
 import root_home from '../video-catalog'
 import root_messages from '../messages'
 import root_users from '../users-list'
-import root_groups from '../groups-list'
+import root_groups from '../groups'
+import root_groups_group_add from '../groups/mng'
+import root_groups_group_edit from '../groups/mng'
 import root_roles from '../roles/'
 import root_roles_role_add from '../roles/mng'
 import root_roles_role_edit from '../roles/mng'
@@ -49,6 +51,8 @@ export default {
     root_users,
     root_messages,
     root_groups,
+    root_groups_group_add,
+    root_groups_group_edit,    
     root_roles,
     root_roles_role_add,
     root_roles_role_edit,

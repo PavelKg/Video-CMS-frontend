@@ -152,6 +152,7 @@ export default {
     color: #4272c4;
     border: 1px solid #4272c4;
     border-radius: 4px;
+    text-align: center;
   }
 }
 

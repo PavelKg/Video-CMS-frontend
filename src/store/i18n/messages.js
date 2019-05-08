@@ -29,8 +29,10 @@ const messages = {
       tbl_header_name: 'Role Name',
       tbl_header_auth: 'Administrator authority',
       tbl_header_mng: 'Mng',
+      tbl_deleted: 'Deleted',
       oper_title_edit: 'Role Information',
-      oper_title_add: 'Add New Role'      
+      oper_title_add: 'Add New Role',
+      role_id: 'ID'      
     },
     users:{
       btn_add: 'Add New User',
@@ -44,6 +46,11 @@ const messages = {
       btn_add: 'Add New Group',
       tbl_header_name: 'Group',
       tbl_header_mgn: 'Mng',
+      tbl_deleted: 'Deleted',
+      group_name: 'Name',
+      oper_title_edit: 'Group Information',
+      oper_title_add: 'Add New Group',      
+      in_page: 'In page'
     },    
     label: {
       delete: 'Delete',

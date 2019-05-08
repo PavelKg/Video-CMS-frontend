@@ -18,20 +18,41 @@
         </tr>
       </thead>
       <tbody class="scrollContent">
-        <tr v-for="role in roles" :key="role.rid">
-          <td>
+        <tr
+          v-for="role in roles"
+          :key="role.rid"
+          :class="{deleted_item: role.deleted_at !== ''}"
+        >
+          <td >
             {{ role.rid }}
           </td>
           <td align="right">{{ role.name }}</td>
           <td align="center">
             {{ role.isAdmin ? $t('label.yes') : $t('label.no') }}
           </td>
-          <td align="center" class="cell-icon" title="Edit" @click="editRole(role)">
-            <img src="@/assets/images/edit_black.png" />
-          </td>
-          <td align="center" class="cell-icon" title="Delete">
-            <img src="@/assets/images/delete_black.png" />
-          </td>
+          <template v-if="role.deleted_at === ''">
+            <td
+              align="center"
+              class="cell-icon"
+              :title="`${$t('label.edit')}`"
+              @click="editRole(role)"
+            >
+              <img src="@/assets/images/edit_black.png" />
+            </td>
+            <td
+              align="center"
+              class="cell-icon"
+              :title="`${$t('label.delete')}`"
+              @click="delRole(role)"
+            >
+              <img src="@/assets/images/delete_black.png" />
+            </td>
+          </template>
+          <template v-else>
+            <td colspan="2">
+              {{ $t('roles.tbl_deleted') }}
+            </td>
+          </template>
         </tr>
       </tbody>
     </table>
@@ -52,19 +73,37 @@ export default {
     },
     editRole(role) {
       this.$store.commit('SET_ACTIVE_ROLE', role)
-      this.$emit('contentElementClick', 'root.subItems.roles.subItems.role_edit')
-      //this.$store.commit('ITEM_STATE', 'root.subItems.roles.subItems.role_edit')
+      this.$emit(
+        'contentElementClick',
+        'root.subItems.roles.subItems.role_edit'
+      )
+    },
+    delRole(role) {
+      this.$store.commit('SET_ACTIVE_ROLE', role)
+      this.$store.dispatch('ROLE_DEL').then(
+        res => {
+          this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)
+        },
+        err => {
+          console.log('err=', err)
+        }
+      )
     }
   },
   computed: {
-    ...mapGetters(['roles', 'roles_is_list_loading'])
+    ...mapGetters(['roles', 'roles_is_list_loading', 'me'])
   },
   components: {}
 }
 </script>
 
 <style lang="scss">
+@import '../../assets/styles';
+
 .table-roles {
+}
+.deleted_item {
+  color: $link;
 }
 .cell-icon {
   width: 40px;

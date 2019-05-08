@@ -1,18 +1,11 @@
 import Api from '@/api'
 
-const temp_users = [
-  {cid: 'admin', name: 'admin', group: 'number1', last_login: '2019/03/31'},
-  {cid: '001', name: 'User1', group: 'number1', last_login: '2019/03/31'},
-  {cid: '002', name: 'User2', group: 'number1', last_login: '2019/03/31'},
-  {cid: '003', name: 'User3', group: 'number1', last_login: '2019/03/31'}
-]
-
 export default {
   state: {
     me: {
       profile: {}
     },
-    users: [...temp_users]
+    users: []
   },
   actions: {
     async GET_MY_PROFILE({commit, dispatch}) {

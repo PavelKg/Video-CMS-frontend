@@ -2,24 +2,24 @@
   <div class="role-operation">
     <span>{{ $t(role_title) }}</span>
     <template v-if="oper === 'edit'">
-      <div class="role-oper-id"><span>{{ `ID: ${role_id}` }}</span></div>
+      <div class="role-oper-id">
+        <span>{{ `${$t('roles.role_id')}: ${mnRole.rid}` }}</span>
+      </div>
     </template>
     <template v-else-if="oper === 'add'">
-      <b-form-input v-model="role_id" placeholder="ID"></b-form-input>
+      <b-form-input v-model="mnRole.rid" placeholder="ID"></b-form-input>
     </template>
-    <b-form-input v-model="role_name" placeholder="Role Name"></b-form-input>
+    <b-form-input v-model="mnRole.name" placeholder="Role Name"></b-form-input>
     <div class="check-admin">
       <span>Administrator:</span>
       <b-form-checkbox
         id="check_isAdmin"
-        v-model="is_admin_stat"
+        v-model="mnRole.is_admin"
         name="check_isAdmin"
-        value="Yes"
-        unchecked-value="No"
       >
       </b-form-checkbox>
       <div>
-        <strong>{{ is_admin_stat }}</strong>
+        <strong>{{ is_admin_state }}</strong>
       </div>
     </div>
     <div class="role-operation-button-zone">
@@ -38,9 +38,11 @@ export default {
   name: 'role-mng-form',
   data() {
     return {
-      is_admin_stat: 'No',
-      role_name: '',
-      role_id: 'Administartor'
+      mnRole: {
+        is_admin: false,
+        name: '',
+        rid: ''
+      }
     }
   },
   methods: {
@@ -48,11 +50,24 @@ export default {
       this.$emit('contentElementClick', 'root.subItems.roles')
     },
     save_click() {
-      this.$emit('contentElementClick', 'root.subItems.roles')
-    }    
+      const oper_type = this.oper === 'edit' ? 'ROLE_UPD' : 'ROLE_ADD'
+      this.$store.dispatch(oper_type, this.mnRole).then(
+        res => {
+          this.$emit('contentElementClick', 'root.subItems.roles')
+        },
+        err => {
+          console.log('err=', err)
+        }
+      )
+    }
   },
 
-  created() {},
+  created() {
+    if (this.oper === 'edit') {
+      this.mnRole = {...this.role_selected}
+    }
+    
+  },
   computed: {
     ...mapGetters(['userMenuActiveItem', 'role_selected']),
     oper() {
@@ -60,6 +75,9 @@ export default {
     },
     role_title() {
       return `roles.oper_title_${this.oper}`
+    },
+    is_admin_state() {
+      return this.mnRole.is_admin ? 'Yes' : 'No'
     }
   }
 }
@@ -71,12 +89,12 @@ export default {
   flex-direction: column;
   > span {
     font-size: 1.8em;
-    font-weight: 600
+    font-weight: 600;
   }
   > * {
     margin-bottom: 20px;
   }
-  .role-oper-id{
+  .role-oper-id {
     font-size: 1.2em;
   }
   input {

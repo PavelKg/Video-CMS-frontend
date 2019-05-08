@@ -119,7 +119,17 @@ const menuStructure = {
         groups: {
           caption: 'menu.groups',
           type: 'group.list',
-          visible: true
+          visible: true,
+          subItems: {
+            edit: {
+              type: 'groups.group_edit',
+              caption: 'menu.group_edit'
+            },            
+            add: {
+              type: 'groups.group_add',
+              caption: 'menu.group_add'
+            }                        
+          }          
         },
         messages: {
           caption: 'menu.messages',
