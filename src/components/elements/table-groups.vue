@@ -17,11 +17,27 @@
           >{{ row.item.name }}
         </b-form-checkbox>
       </template>
-      <template slot="mng" slot-scope="row">
-        <img src="@/assets/images/edit_black.png" />
-        <img src="@/assets/images/delete_black.png" />
-        </template
-    ></b-table>
+      <template slot="mng" slot-scope="item">
+        <div class="mng-column">
+          <template v-if="item.item.deleted_at === ''">
+            <div class="icon-button">
+              <img
+                src="@/assets/images/edit_black.png"
+                @click="editGroup(item.item)"
+              />
+            </div>
+            <div class="icon-button">
+              <img
+                src="@/assets/images/delete_black.png"
+                @click="delGroup(item.item)"
+              /></div
+          ></template>
+          <template v-else>
+            {{ $t('roles.tbl_deleted') }}
+          </template>
+        </div>
+      </template>
+    </b-table>
     <div class="groups-mng-panel">
       <span>{{ $t('groups.in_page') }}:</span>
       <a href="#" id="selectAll" @click="toggleAll">{{
@@ -56,8 +72,16 @@ export default {
   name: 'table-groups',
   data() {
     return {
-      fields: [{key: 'name', label: 'Name'}, 'mng'],
-      perPage: 2,
+      fields: [
+        {key: 'name', label: 'Name'},
+        {
+          key: 'mng',
+          label: 'Mng',
+          thStyle: {width: '120px !important', 'text-align': 'center'},
+          tdClass: 'table-column'
+        }
+      ],
+      perPage: 4,
       currentPage: 1,
       groups_selected: []
     }
@@ -85,6 +109,7 @@ export default {
       this.$store.dispatch('GROUP_DEL').then(
         res => {
           this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
+          console.log(this.groups)
         },
         err => {
           console.log('err=', err)
@@ -116,6 +141,12 @@ export default {
 .deleted_item {
   color: $link;
 }
+
+.mng-column {
+  display: flex;
+  justify-content: space-around;
+}
+
 .groups-mng-panel {
   display: flex;
   align-items: center;

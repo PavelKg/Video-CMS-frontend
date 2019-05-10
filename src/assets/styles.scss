@@ -63,6 +63,22 @@
   pointer-events: none;
   opacity: 0.4;
 }
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  outline: none;
+  border: 1px solid transparent;
+  opacity: 0.6;
+  &:hover,
+  &:active,
+  &:focus {
+    opacity: 1;
+      box-shadow: rgba(0, 0, 0, 0.12);
+  }
+}
+
 .p-table {
   width: 100%;
   margin-bottom: 16px;
