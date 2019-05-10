@@ -8,7 +8,8 @@
         placeholder="Group Name"
       ></b-form-input>
     </div>
-    <template v-if="oper === 'edit'"> </template>
+    <template v-if="oper === 'edit'">
+      <TableUsersLite /> </template>
     <template v-else-if="oper === 'add'"> </template>
     <div class="group-operation-button-zone">
       <button @click="save_click" class="button btn-blue">Save</button>
@@ -19,11 +20,15 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import TableUsersLite from '@/components/elements/table-users-lite'
 
 const re = /\.(\w+)$/i
 
 export default {
   name: 'group-mng-form',
+  components: {
+    TableUsersLite
+  },
   data() {
     return {
       mnGroup: {
@@ -38,7 +43,6 @@ export default {
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'GROUP_UPD' : 'GROUP_ADD'
-      console.log('this.mnGroup=', this.mnGroup)
       this.$store.dispatch(oper_type, this.mnGroup).then(
         res => {
           this.$emit('contentElementClick', 'root.subItems.groups')

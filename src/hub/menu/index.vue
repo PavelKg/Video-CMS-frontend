@@ -35,6 +35,7 @@ export default {
         this.$store.commit('SECTION_STATE', key)
       } else if (!node.isSection) {
         console.log('menu_key=', key)
+        this.$store.commit('MENU_HIDE')
         switch (key) {
           case 'root.subItems.roles':
             break

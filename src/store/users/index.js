@@ -2,33 +2,40 @@ import Api from '@/api'
 
 export default {
   state: {
-    me: {
-      profile: {}
-    },
-    users: []
+    users: {
+      list: [],
+      isListLoading: false,
+      selected: null
+    }
   },
   actions: {
-    async GET_MY_PROFILE({commit, dispatch}) {
+    async LOAD_USERS({commit}, payload) {
+      const {cid, filter} = payload
+      console.log('_filter=', filter)
       try {
-        const result = await Api.my_profile()
-        const {irole = 'user'} = result.data
-        commit('SET_USER', result.data)
-        dispatch('LOAD_USER_MENU', irole)
-      } catch (e) {
-        dispatch('LOGOUT')
-        throw Error('Getting profile error')
+        commit('SET_USERS_IS_LOADING', true)
+        const result = await Api.users(cid, filter)
+        if (Array.isArray(result.data) && result.status === 200) {
+          commit('SET_USERS', result.data)
+        } else {
+          throw Error('Error load users list')
+        }
+      } catch (err) {
+        throw Error('Error request users from server')
+      } finally {
+        commit('SET_USERS_IS_LOADING', false)
       }
     }
   },
   mutations: {
-    SET_USER: (state, _profile) => {
-      state.me.profile = {..._profile}
-      //localStorage.setItem('vcms-user', JSON.stringify(state.user))
-    }
+    SET_USERS(state, user_list){
+      state.users.list = [...user_list]
+    },
+    SET_USERS_IS_LOADING(state, isload) {
+      state.users.isListLoading = isload
+    }    
   },
   getters: {
-    me: state => state.me,
-    me_irole: state => state.me.profile.irole,
-    users_list: state => state.users
+    users_list: state => state.users.list
   }
 }

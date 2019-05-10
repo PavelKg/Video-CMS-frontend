@@ -105,9 +105,9 @@ export default {
 
   /* ---------  GROUPS MANAGEMENT  ---------------------*/
   /** List of groups
- * @param {*} cid 
- * @returns {Promise<*>} - 200 List of groups
- * [{
+   * @param {*} cid 
+   * @returns {Promise<*>} - 200 List of groups
+   * [{
     "gid": "string",
     "name": "string",
     "deleted_at": "string"
@@ -159,6 +159,27 @@ export default {
   group_del(target) {
     const {cid, gid} = target
     return Api.delete(`/companies/${cid}/groups/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ---------  USERS MANAGEMENT  ---------------------*/
+  /** List of groups
+   * @param {string} cid
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of groups
+   * [{
+    "gid": "string",
+    "name": "string",
+    "deleted_at": "string"
+  }]
+ */
+  users(cid, filter) {
+    console.log('filter=', filter)
+    const setFilter = filter === '' ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/users/${setFilter}`, {
       headers: {
         ...type_json
       }

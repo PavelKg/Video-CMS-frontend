@@ -4,7 +4,10 @@ export default {
   state: {
     token: localStorage.getItem('vcms-token') || '',
     authStatus: '',
-    roles: ['super', 'admin', 'user']
+    roles: ['super', 'admin', 'user'],
+    me: {
+      profile: {}
+    }
   },
   actions: {
     async LOGIN({commit}, formData) {
@@ -34,6 +37,17 @@ export default {
       Api.delHeaderAuth()
       dispatch('CLEAR_MENU_STATE')
       commit('AUTH_LOGOUT')
+    },
+    async GET_MY_PROFILE({commit, dispatch}) {
+      try {
+        const result = await Api.my_profile()
+        const {irole = 'user'} = result.data
+        commit('SET_USER', result.data)
+        dispatch('LOAD_USER_MENU', irole)
+      } catch (e) {
+        dispatch('LOGOUT')
+        throw Error('Getting profile error')
+      }
     }
   },
   mutations: {
@@ -55,11 +69,17 @@ export default {
     },
     SET_HEADER_AUTH: state => {
       Api.setHeaderAuth(state.token)
-    }
+    },
+    SET_USER: (state, _profile) => {
+      state.me.profile = {..._profile}
+      //localStorage.setItem('vcms-user', JSON.stringify(state.user))
+    }    
   },
   getters: {
     token: state => state.token,
     hasToken: state => Boolean(state.token),
-    authStatus: state => state.authStatus
+    authStatus: state => state.authStatus,
+    me: state => state.me,
+    me_irole: state => state.me.profile.irole,
   }
 }

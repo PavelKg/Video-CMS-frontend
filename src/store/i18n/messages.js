@@ -21,7 +21,8 @@ const messages = {
       authError: 'Authorization error',
       logOut: 'Log out',
       forgot_pass_descr: `Please enter your registered email address and press the [Send] button.
-      We will send you an email with the URL for the change to the email address you have entered.`
+      We will send you an email with the URL for the change to the email address you have entered.`,
+      number_of_registered_users: 'Number of registered users'
     },
     roles:{
       btn_add: 'Add Role',
@@ -50,7 +51,8 @@ const messages = {
       group_name: 'Name',
       oper_title_edit: 'Group Information',
       oper_title_add: 'Add New Group',      
-      in_page: 'In page'
+      in_page: 'In page',
+      
     },    
     label: {
       delete: 'Delete',
@@ -80,7 +82,8 @@ const messages = {
       deselect_all: "Deselect All",
       comment_box: "Comment Box",
       logo_registration: "Logo Registration",
-      in_page: "In-Page"
+      in_page: "In-Page",
+      people: "people"
     },
   },
   ru: {

@@ -6,9 +6,9 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import root_home from '../video-catalog'
-  import root_messages from '../messages'
-  import root_videos_video_player from '../video-player'
+  import root_home from '@/hub/templates/video-catalog'
+  import root_messages from '@/hub/templates/messages'
+  import root_videos_video_player from '@/hub/templates/video-player'
   
   export default {
     name: "content-area",

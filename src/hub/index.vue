@@ -42,13 +42,13 @@ export default {
         this.component = () => this.loader()
       })
       .catch(() => {
-        this.component = () => import('./templates/user/content')
+        this.component = () => import('./templates/iface/user/content')
       })
   },
   computed: {
     ...mapGetters(['windowsRect', 'me_irole']),
     loader() {
-      return () => import(`./templates/${this.me_irole}/content`)
+      return () => import(`./templates/iface/${this.me_irole}/content`)
     },
     isMenuVisible() {
       return this.$store.getters.userMenuVisible
@@ -82,7 +82,7 @@ export default {
   height: 100%;
   background-color: $gray-dark;
   width: 150px; /* 0 width - change this with JavaScript */
-  z-index: 1; /* Stay on top */
+  z-index: 10; /* Stay on top */
   left: 0;
   top: 50px;
   overflow-x: hidden; /* Disable horizontal scroll */

@@ -9,19 +9,19 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import root_home from '../video-catalog'
-import root_messages from '../messages'
-import root_users from '../users-list'
-import root_groups from '../groups'
-import root_groups_group_add from '../groups/mng'
-import root_groups_group_edit from '../groups/mng'
-import root_roles from '../roles/'
-import root_roles_role_add from '../roles/mng'
-import root_roles_role_edit from '../roles/mng'
-import root_screen from '../screen'
-import root_videos_video_player from '../video-player'
-import root_videos_video_upload from '../video-upload'
-import root_videos_video_subtitles from '../video-subtitles'
+import root_home from '@/hub/templates/video-catalog'
+import root_messages from '@/hub/templates/messages'
+import root_users from '@/hub/templates/users-list'
+import root_groups from '@/hub/templates/groups'
+import root_groups_group_add from '@/hub/templates/groups/mng'
+import root_groups_group_edit from '@/hub/templates/groups/mng'
+import root_roles from '@/hub/templates/roles/'
+import root_roles_role_add from '@/hub/templates/roles/mng'
+import root_roles_role_edit from '@/hub/templates/roles/mng'
+import root_screen from '@/hub/templates/screen'
+import root_videos_video_player from '@/hub/templates/video-player'
+import root_videos_video_upload from '@/hub/templates/video-upload'
+import root_videos_video_subtitles from '@/hub/templates/video-subtitles'
 
 export default {
   name: 'content-area',
