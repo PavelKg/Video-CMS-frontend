@@ -24,7 +24,7 @@ const messages = {
       We will send you an email with the URL for the change to the email address you have entered.`,
       number_of_registered_users: 'Number of registered users'
     },
-    roles:{
+    roles: {
       btn_add: 'Add Role',
       tbl_header_ID: 'ID',
       tbl_header_name: 'Role Name',
@@ -33,27 +33,34 @@ const messages = {
       tbl_deleted: 'Deleted',
       oper_title_edit: 'Role Information',
       oper_title_add: 'Add New Role',
-      role_id: 'ID'      
+      role_id: 'ID'
     },
-    users:{
+    users: {
       btn_add: 'Add New User',
       tbl_header_ID: 'ID',
       tbl_header_name: 'Name',
       tbl_header_group: 'Group',
       tbl_header_last_login: 'Last Login',
       tbl_header_mgn: 'Mng',
+      tbl_deleted: 'Deleted',
+      oper_title_edit: 'User Information',
+      oper_title_add: 'Add New User',
+      user_id: 'ID',
+      user_fullname: 'Full Name',
+      user_email: 'E-Mail',
+      password: 'Password',
+      conf_password: 'Confirm Password'
     },
-    groups:{
+    groups: {
       btn_add: 'Add New Group',
       tbl_header_name: 'Group',
       tbl_header_mgn: 'Mng',
       tbl_deleted: 'Deleted',
       group_name: 'Name',
       oper_title_edit: 'Group Information',
-      oper_title_add: 'Add New Group',      
-      in_page: 'In page',
-      
-    },    
+      oper_title_add: 'Add New Group',
+      in_page: 'In page'
+    },
     label: {
       delete: 'Delete',
       back: 'Back',
@@ -78,13 +85,14 @@ const messages = {
       remove: 'Remove',
       edit_video: 'Edit Video Information',
       thumb_image_upload: 'Thumbnail image upload',
-      select_all: "Select All",
-      deselect_all: "Deselect All",
-      comment_box: "Comment Box",
-      logo_registration: "Logo Registration",
-      in_page: "In-Page",
-      people: "people"
-    },
+      select_all: 'Select All',
+      deselect_all: 'Deselect All',
+      comment_box: 'Comment Box',
+      logo_registration: 'Logo Registration',
+      in_page: 'In-Page',
+      people: 'people',
+      auto: 'Auto'
+    }
   },
   ru: {
     menu: {

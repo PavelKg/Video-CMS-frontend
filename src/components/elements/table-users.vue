@@ -1,36 +1,53 @@
 <template>
   <div class="users-table">
-    <table class="p-table">
-      <thead>
-        <th></th>
-        <th>{{ $t('users.tbl_header_ID') }}</th>
-        <th>{{ $t('users.tbl_header_name') }}</th>
-        <th>{{ $t('users.tbl_header_group') }}</th>
-        <th>{{ $t('users.tbl_header_last_login') }}</th>
-        <th>{{ $t('users.tbl_header_mgn') }}</th>
-      </thead>
-      <tbody>
-        <tr v-for="user in users_list" :key="user.cid">
-          <td align="center">
-            <b-form-checkbox
-              :id="user.cid"
-              :name="`ch-${user.cid}`"
-              :value="user['cid']"
-              v-model="users_selected"
-            ></b-form-checkbox>
-          </td>
-          <td align="right">
-            <a href="#">{{ user.cid }}</a>
-          </td>
-          <td align="right">{{ user.name }}</td>
-          <td align="right">{{ user.group }}</td>
-          <td align="right">{{ user.last_login }}</td>
-          <td align="center">
-            <a href="#"><img src="@/assets/images/delete_black.png"/></a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <b-table
+      :items="users_on_page"
+      :fields="fields"
+      responsive="sm"
+      striped
+      fixed
+      hover
+      head-variant="dark"
+    >
+      <template slot="uid" slot-scope="row">
+        <b-form-checkbox
+          :id="row.item.uid"
+          :name="`ch-${row.item.uid}`"
+          :value="row.item.uid"
+          v-model="users_selected"
+          :disabled="row.item.deleted_at !== ''"
+          >{{ row.item.uid }}
+        </b-form-checkbox>
+      </template>
+      <template slot="last_login" slot-scope="item">
+        <div class="last-login-column">
+          {{ last_login_format(item.item.last_login) }}
+        </div>
+      </template>
+      <template slot="fullname" slot-scope="item"
+        ><div class="name-column">{{ item.item.fullname }}</div>
+      </template>
+      <template slot="mng" slot-scope="item">
+        <div class="mng-column">
+          <template v-if="item.item.deleted_at === ''">
+            <div class="icon-button">
+              <img
+                src="@/assets/images/edit_black.png"
+                @click="editUser(item.item)"
+              />
+            </div>
+            <div class="icon-button">
+              <img
+                src="@/assets/images/delete_black.png"
+                @click="delUser(item.item)"
+              /></div
+          ></template>
+          <template v-else>
+            {{ $t('users.tbl_deleted') }}
+          </template>
+        </div>
+      </template>
+    </b-table>
     <div class="users-mng-panel">
       <span>{{ $t('label.in_page') }}:</span>
       <a href="#" id="selectAll" @click="toggleAll">{{
@@ -40,16 +57,16 @@
       <a href="#" id="deselectAll" @click="toggleAll">{{
         $t('label.deselect_all')
       }}</a>
-            <button class="button btn-orange">
+      <button class="button btn-orange" :disabled="users_selected.length === 0">
         {{ $t('label.delete') }}
       </button>
       <div class="users-mng-pag">
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="rows"
-        :per-page="perPage"
-        align="left"
-      ></b-pagination>
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="users_count"
+          :per-page="perPage"
+          align="left"
+        ></b-pagination>
       </div>
     </div>
   </div>
@@ -64,7 +81,6 @@ export default {
     return {
       perPage: 3,
       currentPage: 1,
-      rows: 8,
       users_selected: []
     }
   },
@@ -75,33 +91,129 @@ export default {
         action === 'selectAll'
           ? this.users_list.map(user => String(user.cid))
           : []
-      console.log('this.users_selected=', this.users_selected)
+    },
+    last_login_format(item) {
+      return item
+        ? new Date(item)
+            .toISOString()
+            .slice(0, 10)
+            .replace(/\-/gi, '/')
+        : ''
+    },
+    editUser(item) {
+      this.$store.commit('SET_ACTIVE_USER', {
+        company_id: this.me.profile.company_id,
+        ...item
+      })
+      this.$emit(
+        'contentElementClick',
+        'root.subItems.users.subItems.user_edit'
+      )
+    },
+    delUser(item) {
+      this.$store.commit('SET_ACTIVE_USER', {
+        company_id: this.me.profile.company_id,
+        uid: item.uid
+      })
+      this.$emit('contentElementClick', 'root.subItems.users.subItems.user_del')
     }
   },
   computed: {
-    ...mapGetters(['users_list'])
+    ...mapGetters(['users_list', 'me', 'is_mobile_width']),
+    users_count() {
+      return this.users_list ? this.users_list.length : 0
+    },
+    users_on_page() {
+      const begin = (this.currentPage - 1) * this.perPage
+      const end = begin + this.perPage
+
+      return this.users_list.slice(begin, end)
+    },
+    fields() {
+      return [
+        {
+          key: 'uid',
+          label: this.$t('users.tbl_header_ID'),
+          thStyle: {'text-align': 'center'}
+        },
+        {
+          key: 'fullname',
+          label: this.$t('users.tbl_header_name'),
+          thStyle: {'max-width': '500px !important', 'text-align': 'center'},
+          thClass: this.showColumn,
+          tdClass: this.showColumn
+        },
+        {
+          key: 'group_name',
+          label: this.$t('users.tbl_header_group'),
+          thStyle: {'text-align': 'center'},
+          thClass: this.showColumn,
+          tdClass: this.showColumn
+        },
+        {
+          key: 'last_login',
+          label: this.$t('users.tbl_header_last_login'),
+          thStyle: {'text-align': 'center'},
+          thClass: this.showColumn,
+          tdClass: this.showColumn
+        },
+        {
+          key: 'mng',
+          label: this.$t('users.tbl_header_mgn'),
+          thStyle: {width: '120px !important', 'text-align': 'center'}
+        }
+      ]
+    },
+    showColumn() {
+      return this.is_mobile_width ? 'd-none' : ''
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/styles';
 
 .users-table {
   padding: 10px 0;
 }
+.deleted_item {
+  color: $link;
+}
+
+.mng-column {
+  display: flex;
+  justify-content: space-around;
+}
+.last-login-column {
+  text-align: center;
+}
+
 .users-mng-panel {
   display: flex;
   align-items: center;
-
+  justify-content: space-between;
+  flex-wrap: wrap;
   .users-mng-pag {
     display: flex;
-    margin-left: auto;
     > * {
-        margin-bottom:0;    
+      margin-bottom: 0;
     }
   }
   a {
     padding: 0 10px;
+  }
+}
+
+@media screen and (max-width: 875px) {
+  .users-mng-panel {
+    button {
+      margin-top: 15px;
+    }
+    .users-mng-pag {
+      margin-top: 15px;
+      justify-content: flex-end;
+    }
   }
 }
 </style>

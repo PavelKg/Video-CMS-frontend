@@ -11,7 +11,9 @@
 import {mapGetters} from 'vuex'
 import root_home from '@/hub/templates/video-catalog'
 import root_messages from '@/hub/templates/messages'
-import root_users from '@/hub/templates/users-list'
+import root_users from '@/hub/templates/users'
+import root_users_user_add from '@/hub/templates/users/mng'
+import root_users_user_edit from '@/hub/templates/users/mng'
 import root_groups from '@/hub/templates/groups'
 import root_groups_group_add from '@/hub/templates/groups/mng'
 import root_groups_group_edit from '@/hub/templates/groups/mng'
@@ -49,6 +51,8 @@ export default {
   components: {
     root_home,
     root_users,
+    root_users_user_add,
+    root_users_user_edit,
     root_messages,
     root_groups,
     root_groups_group_add,

@@ -17,6 +17,8 @@ export default {
   getters: {
     windowsRect(state) {
       return state.mainWindowRect
-    }
+    },
+    is_mobile_width: state =>
+      state.mainWindowRect.width <= state.mainWindowRect.mobileMaxWidth
   }
 }

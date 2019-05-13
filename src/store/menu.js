@@ -85,16 +85,16 @@ const menuStructure = {
           visible: true,
           subItems: {
             add: {
-              type: 'user.add',
-              caption: 'menu.comp_add'
+              type: 'users.user_add',
+              caption: 'menu.user_add'
             },
             edit: {
-              type: 'user.edit',
-              caption: 'menu.comp_edit'
+              type: 'users.user_add',
+              caption: 'menu.user_edit'
             },
             info: {
-              type: 'user.info',
-              caption: 'menu.comp_info'
+              type: 'users.user_info',
+              caption: 'menu.user_info'
             }
           }
         },

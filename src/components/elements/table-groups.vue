@@ -100,7 +100,6 @@ export default {
     },
     editGroup(group) {
       this.$store.commit('SET_ACTIVE_GROUP', group)
-      console.log('group=', group.gid)
       const params = {cid: this.me.profile.company_id, filter: `group_gid[eq]:'${group.gid}'`}
       this.$store.dispatch('LOAD_USERS', params )
       this.$emit(

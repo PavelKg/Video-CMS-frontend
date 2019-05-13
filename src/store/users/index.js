@@ -11,7 +11,6 @@ export default {
   actions: {
     async LOAD_USERS({commit}, payload) {
       const {cid, filter} = payload
-      console.log('_filter=', filter)
       try {
         commit('SET_USERS_IS_LOADING', true)
         const result = await Api.users(cid, filter)
@@ -28,14 +27,19 @@ export default {
     }
   },
   mutations: {
-    SET_USERS(state, user_list){
+    SET_USERS(state, user_list) {
       state.users.list = [...user_list]
     },
     SET_USERS_IS_LOADING(state, isload) {
       state.users.isListLoading = isload
-    }    
+    },
+    SET_ACTIVE_USER(state, user) {
+      state.users.selected = user
+    },    
   },
   getters: {
-    users_list: state => state.users.list
+    users_list: state => state.users.list,
+    users_is_loading: state => state.users.isListLoading,
+    user_selected: state => state.users.selected
   }
 }

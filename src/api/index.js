@@ -177,8 +177,7 @@ export default {
   }]
  */
   users(cid, filter) {
-    console.log('filter=', filter)
-    const setFilter = filter === '' ? '' : `?filter=${filter}`
+    const setFilter = !filter ? '' : `?filter=${filter}`
     return Api.get(`/companies/${cid}/users/${setFilter}`, {
       headers: {
         ...type_json

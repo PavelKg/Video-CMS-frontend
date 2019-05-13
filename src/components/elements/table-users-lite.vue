@@ -50,7 +50,7 @@ export default {
           tdClass: 'table-column'
         }
       ],
-      perPage: 4,
+      perPage: 5,
       currentPage: 1
     }
   },

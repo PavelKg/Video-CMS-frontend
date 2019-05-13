@@ -41,6 +41,8 @@ export default {
             break
           case 'root.subItems.home':
             break
+          case  'root.subItems.users':
+            break
           default:
             break
         }
