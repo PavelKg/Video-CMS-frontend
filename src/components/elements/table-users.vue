@@ -111,11 +111,21 @@ export default {
       )
     },
     delUser(item) {
-      this.$store.commit('SET_ACTIVE_USER', {
-        company_id: this.me.profile.company_id,
-        uid: item.uid
-      })
-      this.$emit('contentElementClick', 'root.subItems.users.subItems.user_del')
+      this.$store.commit('SET_ACTIVE_USER', item)
+      console.log('item=', item)
+      this.$store.dispatch('USER_DEL').then(
+        res => {
+          this.$store.dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
+          this.$store.commit('SET_ACTIVE_USER', null)
+          // this.$emit(
+          //   'contentElementClick',
+          //   'root.subItems.users'
+          // )
+        },
+        err => {
+          console.log('err=', err)
+        }
+      )
     }
   },
   computed: {

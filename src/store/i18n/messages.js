@@ -22,7 +22,8 @@ const messages = {
       logOut: 'Log out',
       forgot_pass_descr: `Please enter your registered email address and press the [Send] button.
       We will send you an email with the URL for the change to the email address you have entered.`,
-      number_of_registered_users: 'Number of registered users'
+      number_of_registered_users: 'Number of registered users',
+      btn_add: 'Create New',
     },
     roles: {
       btn_add: 'Add Role',

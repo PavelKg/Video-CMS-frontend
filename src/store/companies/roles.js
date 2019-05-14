@@ -3,7 +3,7 @@ import Api from '@/api'
 export default {
   state: {
     roles: {
-      list: null,
+      list: [],
       isListLoading: false,
       selected: null
     }

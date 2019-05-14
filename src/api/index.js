@@ -136,7 +136,7 @@ export default {
     })
   },
 
-  /** Upd role
+  /** Upd group
    * @param {string} target - {cid, gid}
    * @param {object} data - {"name": "string" }
    * @return {Promise<*>} - 201	Default Response
@@ -179,6 +179,50 @@ export default {
   users(cid, filter) {
     const setFilter = !filter ? '' : `?filter=${filter}`
     return Api.get(`/companies/${cid}/users/${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Add new user
+   * @param {string} cid - Company ID
+   * @param {object} data - {"uid": "string", "name": "string" }
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  user_add(cid, data) {
+    return Api.post(`/companies/${cid}/users/`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },  
+
+/** Upd user
+   * @param {string} target - {cid, uid}
+   * @param {object} data - {"name": "string" }
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  user_upd(target, data) {
+    const {cid, uid} = target
+    return Api.put(`/companies/${cid}/users/${uid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+    /** Del user
+   * @param {string} target - {cid, uid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  user_del(target) {
+    const {cid, uid} = target
+    
+    return Api.delete(`/companies/${cid}/users/${uid}`, {
       headers: {
         ...type_json
       }

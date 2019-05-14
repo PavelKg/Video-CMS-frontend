@@ -35,7 +35,7 @@
               /></div
           ></template>
           <template v-else>
-            {{ $t('roles.tbl_deleted') }}
+            {{ $t('groups.tbl_deleted') }}
           </template>
         </div>
       </template>

@@ -24,6 +24,50 @@ export default {
       } finally {
         commit('SET_USERS_IS_LOADING', false)
       }
+    },
+    async USER_ADD({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      try {
+        const result = await Api.user_add(cid, payload)
+        if (result.status === 201) {
+          return Promise.resolve('User added success')
+        } else {
+          throw Error(`Error add user, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(`Error add new user: ${err.response.data.message}`)
+      }
+    },
+    async USER_UPD({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {uid, fullname, gid, rid, email, password} = payload
+      try {
+        const result = await Api.user_upd(
+          {cid, uid},
+          {fullname, gid, rid, email, password}
+        )
+        if (result.status === 200) {
+          return Promise.resolve('User updated success')
+        } else {
+          throw Error(`Error update user, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(`Error update user: ${err.response.data.message}`)
+      }
+    },
+    async USER_DEL({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {uid} = getters.user_selected
+      try {
+        const result = await Api.user_del({cid, uid})
+        if (result.status === 204) {
+          return Promise.resolve('User deleted success')
+        } else {
+          throw Error(`Error delete user, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(`Error delete user: ${err}`)
+      }
     }
   },
   mutations: {
@@ -35,7 +79,7 @@ export default {
     },
     SET_ACTIVE_USER(state, user) {
       state.users.selected = user
-    },    
+    }
   },
   getters: {
     users_list: state => state.users.list,

@@ -1,26 +1,37 @@
 <template>
   <div class="messages-zone">
     <div class="messages-mgm">
+      <button class="button btn-blue" @click="addNewMessage">
+        {{ $t('message.btn_add') }}
+      </button>
       <div class="search-row">
-        <input
+        <b-form-input
           id="keywword_search"
           placeholder="Keyword search"
-          @input="handleInput('search',$event.target.value)"
-        >
-        <img src="@/assets/images/search_black.png">
+          @input="handleInput('search', $event.target.value)"
+        />
+        <div class="icon-button" @click="onFilter">
+          <img src="@/assets/images/search_black.png" />
+        </div>
       </div>
-      <button class="button btn-blue" @click="showMessageModal">Create New</button>
     </div>
     <div class="messages-tabs">
-      <button
-        v-for="tab in tabs"
-        v-bind:key="tab.name"
-        v-bind:class="['tab-button', { active: currentTab.name === tab.name }]"
-        v-on:click="select_tab(tab)"
-      >{{ tab.name }}</button>
+      <b-tabs active-tab-class="activ-tab" v-model="tabIndex">
+        <b-tab
+          v-for="(tab, ind) in tabs"
+          :key="`dyn-tab-${tab}`"
+          :title="`${tab}`"
+          :title-link-class="linkClass(ind)"
+          @click="changeTab"
+          >
+        </b-tab>
+      </b-tabs>
     </div>
-    <tableMessages :Type="selectedTabName"/>
-    <MessageModalNew v-if="onShowModalMessageNew" @close="onShowModalMessageNew = false"/>
+    <tableMessages :Type="selectedTabName" />
+    <MessageModalNew
+      v-if="onShowModalMessageNew"
+      @close="onShowModalMessageNew = false"
+    />
   </div>
 </template>
 
@@ -32,26 +43,40 @@ export default {
   name: 'message-list',
   data() {
     return {
-      tabs: [{name: 'Outbox'}, {name: 'Inbox'}],
-      currentTab: {name: 'Outbox'},
-      onShowModalMessageNew: false
+      tabs: ['Outbox', 'Inbox'],
+      onShowModalMessageNew: false,
+      tabIndex: 0
     }
   },
   mounted() {
-    this.$store.commit('GET_MESSAGES', this.currentTab.name)
+    this.$store.commit('LOAD_MESSAGES', this.currentTab)
   },
   methods: {
-    select_tab(tab) {
-      this.currentTab = tab
-      this.$store.commit('GET_MESSAGES', this.currentTab.name)
+    changeTab(evt) {
+      //console.log('evt.target=', evt.target.text)
+      //this.currentTab = tab
+      this.$store.commit('LOAD_MESSAGES', this.currentTab)
     },
+    addNewMessage() {},
+    onFilter() {},
     showMessageModal() {
       this.onShowModalMessageNew = true
     },
+    linkClass(idx) {
+      if (this.tabIndex === idx) {
+        return ['bg-dark', 'text-light', 'border-dark', 'w-300']
+      } else {
+        return ['bg-light', 'text-info']
+      }
+    },
+
   },
   computed: {
     selectedTabName() {
-      return this.currentTab.name.toLowerCase()
+      return this.currentTab.toLowerCase()
+    },
+    currentTab() {
+      return this.tabs[this.tabIndex]
     }
   },
   components: {
@@ -62,55 +87,33 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.messages-zone {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  .messages-mgm {
+.messages-mgm {
+  .search-row {
+    padding-top: 10px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-    .search-row {
-      padding: 10px 0;
-      display: flex;
-      flex-direction: row;
-      input {
-        padding: 0 10px;
-        margin: 0 10px;
-      }
-      img {
-        width: 24px;
-        height: 24px;
-      }
+    input {
+      max-width: 300px;
+      padding: 0 5px;
+      margin-right: 10px;
     }
-  }
-  .messages-tabs {
-    padding-top: 20px;
-    display: flex;
-    flex-direction: row;
-    .tab-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 300px;
-      height: 40px;
-      border-top-left-radius: 3px;
-      border-top-right-radius: 3px;
-      border-right: 2px solid #ccc;
-      border-bottom: 1px solid #ccc;
-      cursor: pointer;
-      background: #999;
-      margin-bottom: -1px;
-      margin-right: -1px;
+    select {
+      max-width: 200px;
+      margin-right: 10px;
     }
-    .tab-button:hover {
-      background: #464a4f;
-    }
-    .tab-button.active {
-      background: #464a4f;
+    img {
+      width: 24px;
+      height: 24px;
+      margin: 0 5px;
     }
   }
 }
-</style>
+.messages-tabs {
+  padding-top: 15px;
+}
 
+.nav-item {
+  width: 300px;
+}
+</style>

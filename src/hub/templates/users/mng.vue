@@ -2,7 +2,7 @@
   <div class="user-operation">
     <span>{{ $t(user_title) }}</span>
     <b-form @submit="onSubmit">
-      <b-form-group id="input-group-email">
+      <b-form-group id="input-group-id">
         <div class="user-oper-id">
           <template v-if="oper === 'edit'">
             <span>{{ `${$t('users.user_id')}` }} : {{ mnUser.uid }} </span>
@@ -12,7 +12,9 @@
               v-model="mnUser.uid"
               :placeholder="`${$t('users.user_id')}`"
             ></b-form-input>
-            <button class="button btn-grey" @click="genUserId">{{ `${$t('label.auto')}` }}</button>
+            <button class="button btn-grey" @click="genUserId">
+              {{ `${$t('label.auto')}` }}
+            </button>
           </template>
         </div>
       </b-form-group>
@@ -57,7 +59,7 @@
       <template v-if="oper === 'edit'"> </template>
       <template v-else-if="oper === 'add'"> </template>
       <div class="user-operation-button-zone">
-        <button @click="save_click" class="button btn-blue">Save</button>
+        <button type="submit" class="button btn-blue">Save</button>
         <button @click="cancel_click" class="button btn-blue">Cancel</button>
       </div>
     </b-form>
@@ -89,7 +91,15 @@ export default {
     cancel_click() {
       this.$emit('contentElementClick', 'root.subItems.users')
     },
-    save_click() {
+    save_click() {},
+    genUserId(evt) {
+      evt.preventDefault()
+      console.log('gen user ID')
+    },
+    onSubmit(evt) {
+      evt.preventDefault()
+      //alert(JSON.stringify(this.mnUser))
+
       const oper_type = this.oper === 'edit' ? 'USER_UPD' : 'USER_ADD'
       this.$store.dispatch(oper_type, this.mnUser).then(
         res => {
@@ -99,11 +109,6 @@ export default {
           console.log('err=', err)
         }
       )
-    },
-    genUserId() {},
-    onSubmit(evt) {
-      evt.preventDefault()
-      alert(JSON.stringify(this.mnUser))
     }
   },
 

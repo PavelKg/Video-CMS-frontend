@@ -12,7 +12,7 @@ export default {
   },
   actions: {},
   mutations: {
-    GET_MESSAGES(state, type) {
+    LOAD_MESSAGES(state, type) {
       state.messages = []
       const user_type = type.toLowerCase() === 'inbox' ? 'Sender' : 'admin'
       for (let i = 0; i < count; i += 1) {

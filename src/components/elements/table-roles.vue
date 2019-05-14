@@ -1,61 +1,40 @@
 <template>
   <div class="table-roles">
-    <table class="p-table">
-      <thead>
-        <tr>
-          <th>
-            {{ $t('roles.tbl_header_ID') }}
-          </th>
-          <th>
-            {{ $t('roles.tbl_header_name') }}
-          </th>
-          <th>
-            {{ $t('roles.tbl_header_auth') }}
-          </th>
-          <th colspan="2">
-            {{ $t('roles.tbl_header_mng') }}
-          </th>
-        </tr>
-      </thead>
-      <tbody class="scrollContent">
-        <tr
-          v-for="role in roles"
-          :key="role.rid"
-          :class="{deleted_item: role.deleted_at !== ''}"
-        >
-          <td >
-            {{ role.rid }}
-          </td>
-          <td align="right">{{ role.name }}</td>
-          <td align="center">
-            {{ role.isAdmin ? $t('label.yes') : $t('label.no') }}
-          </td>
-          <template v-if="role.deleted_at === ''">
-            <td
-              align="center"
-              class="cell-icon"
-              :title="`${$t('label.edit')}`"
-              @click="editRole(role)"
-            >
-              <img src="@/assets/images/edit_black.png" />
-            </td>
-            <td
-              align="center"
-              class="cell-icon"
-              :title="`${$t('label.delete')}`"
-              @click="delRole(role)"
-            >
-              <img src="@/assets/images/delete_black.png" />
-            </td>
-          </template>
+    <b-table
+      :items="roles_on_page"
+      :fields="fields"
+      responsive="sm"
+      striped
+      fixed
+      hover
+      head-variant="dark"
+    >
+      <template slot="is_admin" slot-scope="item">
+        <div style="text-align: center">
+          {{ item.item.is_admin ? $t('label.yes') : $t('label.no') }}
+        </div>
+      </template>
+      <template slot="mng" slot-scope="item">
+        <div class="mng-column">
+          <template v-if="item.item.deleted_at === ''">
+            <div class="icon-button">
+              <img
+                src="@/assets/images/edit_black.png"
+                @click="editRole(item.item)"
+              />
+            </div>
+            <div class="icon-button">
+              <img
+                src="@/assets/images/delete_black.png"
+                @click="delRole(item.item)"
+              /></div
+          ></template>
           <template v-else>
-            <td colspan="2">
-              {{ $t('roles.tbl_deleted') }}
-            </td>
+            {{ $t('roles.tbl_deleted') }}
           </template>
-        </tr>
-      </tbody>
-    </table>
+        </div>
+      </template>
+    </b-table>
   </div>
 </template>
 
@@ -65,12 +44,13 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'table-roles',
   data() {
-    return {}
+    return {
+      perPage: 4,
+      currentPage: 1,
+      roles_selected: []
+    }
   },
   methods: {
-    isAdminAuth(isAdminRole) {
-      return isAdminRole ? $t('label.yes') : $t('label.no')
-    },
     editRole(role) {
       this.$store.commit('SET_ACTIVE_ROLE', role)
       this.$emit(
@@ -91,7 +71,45 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['roles', 'roles_is_list_loading', 'me'])
+    ...mapGetters(['roles', 'roles_is_list_loading', 'me', 'is_mobile_width']),
+    roles_count() {
+      return this.roles ? this.roles.length : 0
+    },
+    roles_on_page() {
+      const begin = (this.currentPage - 1) * this.perPage
+      const end = begin + this.perPage
+
+      return this.roles.slice(begin, end)
+    },
+    fields() {
+      return [
+        {
+          key: 'rid',
+          label: this.$t('roles.tbl_header_ID'),
+          thStyle: {'text-align': 'center'}
+        },
+        {
+          key: 'name',
+          label: this.$t('roles.tbl_header_name'),
+          thStyle: {'text-align': 'center'},
+          thClass: this.showColumn,
+          tdClass: this.showColumn
+        },
+        {
+          key: 'is_admin',
+          label: !this.showColumn ? this.$t('roles.tbl_header_auth'): 'Is Admin',
+          thStyle: {'text-align': 'center'},
+        },
+        {
+          key: 'mng',
+          label: 'Mng',
+          thStyle: {width: '120px !important', 'text-align': 'center'}
+        }
+      ]
+    },
+    showColumn() {
+      return this.is_mobile_width ? 'd-none' : ''
+    }
   },
   components: {}
 }
@@ -105,8 +123,37 @@ export default {
 .deleted_item {
   color: $link;
 }
-.cell-icon {
-  width: 40px;
-  cursor: pointer;
+
+.mng-column {
+  display: flex;
+  justify-content: space-around;
+}
+
+.roles-mng-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  .roles-mng-pag {
+    display: flex;
+    > * {
+      margin-bottom: 0;
+    }
+  }
+  a {
+    padding: 0 10px;
+  }
+}
+
+@media screen and (max-width: 875px) {
+  .roles-mng-panel {
+    button {
+      margin-top: 15px;
+    }
+    .roles-mng-pag {
+      margin-top: 15px;
+      justify-content: flex-end;
+    }
+  }
 }
 </style>
