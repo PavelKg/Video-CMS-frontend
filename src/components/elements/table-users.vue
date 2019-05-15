@@ -201,7 +201,7 @@ export default {
 
 .users-mng-panel {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
   .users-mng-pag {

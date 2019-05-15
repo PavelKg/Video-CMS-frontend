@@ -38,6 +38,5 @@ export default {
 </script>
 
 <style lang="scss">
-.groups-mng {
-}
+
 </style>

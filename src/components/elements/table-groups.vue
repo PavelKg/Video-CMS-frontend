@@ -10,6 +10,7 @@
       head-variant = 'dark'
     >
       <template slot="name" slot-scope="row">
+
         <b-form-checkbox
           :id="row.item.gid"
           :name="`ch-${row.item.gid}`"
@@ -152,7 +153,7 @@ export default {
 
 .groups-mng-panel {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
   .groups-mng-pag {

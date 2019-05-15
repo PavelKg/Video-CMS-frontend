@@ -118,8 +118,7 @@ export default {
 <style lang="scss">
 @import '../../assets/styles';
 
-.table-roles {
-}
+
 .deleted_item {
   color: $link;
 }
@@ -131,7 +130,7 @@ export default {
 
 .roles-mng-panel {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
   .roles-mng-pag {

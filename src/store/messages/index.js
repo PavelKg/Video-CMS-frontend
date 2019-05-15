@@ -3,21 +3,23 @@ const count = 20
 
 export default {
   state: {
-    messages: [],
-    columns_name: {
-      outbox: ['Chech', 'Subject', 'To', 'Send'],
-      inbox: ['Chech', 'Subject', 'From', 'Recived']
+    messages: {
+      list: [],
+      isListLoading: false,
+      selected: null
     },
-    active_message_id: null
+    columns_name: {
+      outbox: ['check', 'subject', 'to', 'sent'],
+      inbox: ['check', 'subject', 'from', 'received']
+    }
   },
-  actions: {},
-  mutations: {
-    LOAD_MESSAGES(state, type) {
-      state.messages = []
+  actions: {
+    LOAD_MESSAGES({state}, type) {
+      state.messages.list = []
       const user_type = type.toLowerCase() === 'inbox' ? 'Sender' : 'admin'
       for (let i = 0; i < count; i += 1) {
         const message_item = {
-          id: i,
+          mid: i,
           date: new Date(2019, Math.random() * 12, Math.random() * 30),
           user: user_type,
           subject: `Please check new video`,
@@ -28,20 +30,19 @@ export default {
           Otherwise undefined will be returned.`,
           isSystem: false
         }
-        state.messages.push(message_item)
+        state.messages.list.push(message_item)
       }
-    },
-    SET_ACTIVE_MESSAGE(state, id) {
-      state.active_message_id = id
+    }
+  },
+  mutations: {
+    SET_ACTIVE_MESSAGE(state, item) {
+      state.messages.selected = item
     }
   },
   getters: {
-    message_list: state => state.messages,
-    active_message: state =>
-      state.messages.find(item =>
-        item.id === state.active_message_id ? true : false
-      ),
-    active_message_id: state => state.active_message_id,
-    message_box_column: state => tab => state.columns_name[tab]
+    message_list: state => state.messages.list,
+    active_message: state => state.messages.selected,
+    message_box_column: state => tab => state.columns_name[tab],
+    isShowModalMessageInfo: state => state.messages.isShowModalMessageInfo
   }
 }

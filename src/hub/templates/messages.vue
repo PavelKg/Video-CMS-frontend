@@ -16,60 +16,66 @@
       </div>
     </div>
     <div class="messages-tabs">
-      <b-tabs active-tab-class="activ-tab" v-model="tabIndex">
+      <b-tabs
+        v-model="tabIndex"
+        class="mytabs"
+        active-tab-class="font-weight-bold text-success"
+      >
         <b-tab
           v-for="(tab, ind) in tabs"
-          :key="`dyn-tab-${tab}`"
+          :key="`tab-${tab}`"
           :title="`${tab}`"
+          title-item-class="w-50"
           :title-link-class="linkClass(ind)"
           @click="changeTab"
-          >
+        >
         </b-tab>
       </b-tabs>
     </div>
     <tableMessages :Type="selectedTabName" />
-    <MessageModalNew
-      v-if="onShowModalMessageNew"
-      @close="onShowModalMessageNew = false"
-    />
+    <modalAddMessage :isShowModal="isShowModalMessageAdd" />
   </div>
 </template>
 
 <script>
 import tableMessages from '@/components/elements/table-messages'
-import MessageModalNew from '@/components/elements/modal-message-new'
+import modalAddMessage from '@/components/elements/modal-message-new.vue'
 
 export default {
   name: 'message-list',
   data() {
     return {
       tabs: ['Outbox', 'Inbox'],
-      onShowModalMessageNew: false,
+      isShowModalMessageAdd: false,
       tabIndex: 0
     }
   },
   mounted() {
-    this.$store.commit('LOAD_MESSAGES', this.currentTab)
+    this.$store.dispatch('LOAD_MESSAGES', this.currentTab)
   },
   methods: {
     changeTab(evt) {
       //console.log('evt.target=', evt.target.text)
       //this.currentTab = tab
-      this.$store.commit('LOAD_MESSAGES', this.currentTab)
+      this.$store.dispatch('LOAD_MESSAGES', this.currentTab)
     },
-    addNewMessage() {},
+    addNewMessage() {
+      this.isShowModalMessageAdd = true
+    },
     onFilter() {},
     showMessageModal() {
       this.onShowModalMessageNew = true
     },
     linkClass(idx) {
       if (this.tabIndex === idx) {
-        return ['bg-dark', 'text-light', 'border-dark', 'w-300']
+        return ['text-light', 'border-dark']
       } else {
-        return ['bg-light', 'text-info']
+        return ['text-light']
       }
     },
-
+    itemClass() {
+      return ['tab-item']
+    }
   },
   computed: {
     selectedTabName() {
@@ -81,12 +87,12 @@ export default {
   },
   components: {
     tableMessages,
-    MessageModalNew
+    modalAddMessage
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .messages-mgm {
   .search-row {
     padding-top: 10px;
@@ -113,7 +119,13 @@ export default {
   padding-top: 15px;
 }
 
-.nav-item {
-  width: 300px;
+.tabs.mytabs .nav-tabs .nav-item {
+  max-width: 300px;
+  .nav-link {
+    background: rgb(118, 113, 113);
+ }
+     .active {
+      background: #343a40;
+    }
 }
 </style>

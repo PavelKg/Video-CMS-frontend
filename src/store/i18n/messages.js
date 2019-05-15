@@ -24,6 +24,13 @@ const messages = {
       We will send you an email with the URL for the change to the email address you have entered.`,
       number_of_registered_users: 'Number of registered users',
       btn_add: 'Create New',
+      check: 'Check',
+      subject: 'Subject',
+      to: 'To',
+      from: 'From',
+      received: 'Received',
+      sent: 'Sent',
+
     },
     roles: {
       btn_add: 'Add Role',
@@ -69,6 +76,7 @@ const messages = {
       required: 'Required',
       register: 'Register',
       registration: 'Registration',
+      reply: 'Replay',
       change: 'Change',
       send: 'Send',
       add_new: 'Add new',
