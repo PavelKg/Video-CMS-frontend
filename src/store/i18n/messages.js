@@ -30,6 +30,7 @@ const messages = {
       from: 'From',
       received: 'Received',
       sent: 'Sent',
+      text: 'Text'
 
     },
     roles: {

@@ -75,7 +75,7 @@
             active_message ? mess_date_format(active_message.date) : ''
           }}</span>
         </div>
-        <button class="button btn-grey">{{ $t('label.reply') }}</button>
+        <button class="button btn-grey" @click="replyToSender"> {{ $t('label.reply') }}</button>
       </div>
       <div class="modal-text">
         {{ active_message ? active_message.text : '' }}
@@ -107,6 +107,10 @@ export default {
     showMessageModal(mess) {
       this.$store.commit('SET_ACTIVE_MESSAGE', mess)
       this.isShowModalMessageInfo = true
+    },
+    replyToSender(){
+      this.isShowModalMessageInfo = false
+      this.$emit('addNewMessageByReplay')
     },
     messageItem() {},
     mess_date_format(item) {

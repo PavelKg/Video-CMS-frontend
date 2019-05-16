@@ -5,6 +5,7 @@ export default {
   state: {
     messages: {
       list: [],
+      receivers: [],
       isListLoading: false,
       selected: null
     },
@@ -32,17 +33,26 @@ export default {
         }
         state.messages.list.push(message_item)
       }
+    },
+    LOAD_MESSAGES_RECEIVERS({commit}) {
+      commit('SET_MESSAGE_RECEIVERS', ["admin", "user1", "user2", "user3"])
     }
+
   },
   mutations: {
     SET_ACTIVE_MESSAGE(state, item) {
       state.messages.selected = item
+    },
+    SET_MESSAGE_RECEIVERS(state, list) {
+      state.messages.receivers = [...list]
     }
+
   },
   getters: {
     message_list: state => state.messages.list,
     active_message: state => state.messages.selected,
     message_box_column: state => tab => state.columns_name[tab],
-    isShowModalMessageInfo: state => state.messages.isShowModalMessageInfo
+    isShowModalMessageInfo: state => state.messages.isShowModalMessageInfo,
+    message_receivers: state => state.messages.receivers
   }
 }

@@ -32,14 +32,55 @@
         </b-tab>
       </b-tabs>
     </div>
-    <tableMessages :Type="selectedTabName" />
-    <modalAddMessage :isShowModal="isShowModalMessageAdd" />
+    <tableMessages
+      :Type="selectedTabName"
+      @addNewMessageByReplay="addNewMessageByReplay"
+    />
+    <b-modal
+      v-model="isShowModalMessageAdd"
+      header-bg-variant="dark"
+      header-text-variant="light"
+      hide-footer
+      centered
+    >
+      <div class="modal-zone">
+        <div class="modal-data-zone">
+          <b-form-select
+            v-model="modalMessData.receiver"
+            :options="message_receivers"
+          >
+            <template slot="first">
+              <option :value="null">To</option>
+            </template>
+          </b-form-select>
+          <p></p>
+          <b-form-input
+            v-model="modalMessData.subject"
+            :placeholder="$t('message.subject')"
+          ></b-form-input>
+          <p></p>
+          <b-form-textarea
+            id="textarea"
+            v-model="modalMessData.text"
+            :placeholder="$t('message.text')"
+            rows="3"
+            max-rows="6"
+          ></b-form-textarea>
+        </div>
+        <div class="modal-buttons-zone">
+          <button class="button btn-blue" @click="onSubmitNewMess">{{ $t('label.send') }}</button>
+          <button class="button btn-braun" @click="hideMessageModal">
+            {{ $t('label.cancel') }}
+          </button>
+        </div>
+      </div>
+    </b-modal>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import tableMessages from '@/components/elements/table-messages'
-import modalAddMessage from '@/components/elements/modal-message-new.vue'
 
 export default {
   name: 'message-list',
@@ -47,24 +88,40 @@ export default {
     return {
       tabs: ['Outbox', 'Inbox'],
       isShowModalMessageAdd: false,
-      tabIndex: 0
+      tabIndex: 0,
+      modalMessData: {
+        receiver: null,
+        subject: '',
+        text: '',
+        users_options: []
+      }
     }
   },
   mounted() {
     this.$store.dispatch('LOAD_MESSAGES', this.currentTab)
+    this.$store.dispatch('LOAD_MESSAGES_RECEIVERS')
   },
   methods: {
     changeTab(evt) {
-      //console.log('evt.target=', evt.target.text)
-      //this.currentTab = tab
       this.$store.dispatch('LOAD_MESSAGES', this.currentTab)
     },
     addNewMessage() {
-      this.isShowModalMessageAdd = true
+      this.showMessageModal()
+    },
+    addNewMessageByReplay() {
+      this.showMessageModal()
     },
     onFilter() {},
+    onSubmitNewMess() {
+      console.log('modalMessData=', this.modalMessData)
+      this.hideMessageModal()
+    },
     showMessageModal() {
-      this.onShowModalMessageNew = true
+      this.isShowModalMessageAdd = true
+    },
+    hideMessageModal() {
+      this.isShowModalMessageAdd = false
+      this.modalMessData = { ...this.modalMessData, receiver: null,  subject: '',  text: ''}
     },
     linkClass(idx) {
       if (this.tabIndex === idx) {
@@ -78,6 +135,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['groups', 'me', 'message_receivers']), 
     selectedTabName() {
       return this.currentTab.toLowerCase()
     },
@@ -86,8 +144,7 @@ export default {
     }
   },
   components: {
-    tableMessages,
-    modalAddMessage
+    tableMessages
   }
 }
 </script>
@@ -119,13 +176,23 @@ export default {
   padding-top: 15px;
 }
 
+.modal-zone {
+  .modal-buttons-zone {
+    display: flex;
+    padding-top: 10px;
+    .button {
+      margin-right: 10px;
+    }
+  }
+}
+
 .tabs.mytabs .nav-tabs .nav-item {
   max-width: 300px;
   .nav-link {
     background: rgb(118, 113, 113);
- }
-     .active {
-      background: #343a40;
-    }
+  }
+  .active {
+    background: #343a40;
+  }
 }
 </style>

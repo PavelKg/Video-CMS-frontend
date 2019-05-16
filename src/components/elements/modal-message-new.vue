@@ -1,7 +1,8 @@
 <template>
   <div class="message-new-block">
     <b-modal
-      v-model="isShowModal"
+      :visible="isShowMe"
+      @change="modalChangeState"
       header-bg-variant="dark"
       header-text-variant="light"
       hide-footer
@@ -9,16 +10,10 @@
     >
       <div class="modal-subject">
         <div class="modal-subj-date">
-          <span>{{ active_message ? active_message.subject : '' }}</span>
-          <span>{{
-            active_message ? mess_date_format(active_message.date) : ''
-          }}</span>
+          <span>{{}}</span>
         </div>
-        <button class="button btn-grey">{{ $t('label.reply') }}</button>
       </div>
-      <div class="modal-text">
-        {{ active_message ? active_message.text : '' }}
-      </div>
+      <div class="modal-text"></div>
     </b-modal>
   </div>
 </template>
@@ -32,13 +27,20 @@ export default {
   },
   data() {
     return {
-      isShowMe: this.isShowModal
+      
     }
   },
   computed: {
-    ...mapGetters(['active_message'])
+    ...mapGetters(['active_message']),
+    isShowMe() {
+      return this.isShowModal
+    } 
   },
-  methods: {}
+  methods: {
+    modalChangeState(evt) {
+      console.log('modalChangeState=', evt)
+    }
+  }
 }
 </script>
 
