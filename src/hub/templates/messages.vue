@@ -42,6 +42,7 @@
       header-text-variant="light"
       hide-footer
       centered
+      @hidden="hiddenModal"
     >
       <div class="modal-zone">
         <div class="modal-data-zone">
@@ -68,7 +69,9 @@
           ></b-form-textarea>
         </div>
         <div class="modal-buttons-zone">
-          <button class="button btn-blue" @click="onSubmitNewMess">{{ $t('label.send') }}</button>
+          <button class="button btn-blue" @click="onSubmitNewMess">
+            {{ $t('label.send') }}
+          </button>
           <button class="button btn-braun" @click="hideMessageModal">
             {{ $t('label.cancel') }}
           </button>
@@ -121,7 +124,14 @@ export default {
     },
     hideMessageModal() {
       this.isShowModalMessageAdd = false
-      this.modalMessData = { ...this.modalMessData, receiver: null,  subject: '',  text: ''}
+    },
+    hiddenModal() {
+      this.modalMessData = {
+        ...this.modalMessData,
+        receiver: null,
+        subject: '',
+        text: ''
+      }
     },
     linkClass(idx) {
       if (this.tabIndex === idx) {
@@ -135,7 +145,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['groups', 'me', 'message_receivers']), 
+    ...mapGetters(['groups', 'me', 'message_receivers']),
     selectedTabName() {
       return this.currentTab.toLowerCase()
     },

@@ -1,21 +1,5 @@
 <template>
-  <div class="message-new-block">
-    <b-modal
-      :visible="isShowMe"
-      @change="modalChangeState"
-      header-bg-variant="dark"
-      header-text-variant="light"
-      hide-footer
-      centered
-    >
-      <div class="modal-subject">
-        <div class="modal-subj-date">
-          <span>{{}}</span>
-        </div>
-      </div>
-      <div class="modal-text"></div>
-    </b-modal>
-  </div>
+  <div class="message-new-block"></div>
 </template>
 
 <script>
@@ -26,15 +10,13 @@ export default {
     isShowModal: Boolean
   },
   data() {
-    return {
-      
-    }
+    return {}
   },
   computed: {
     ...mapGetters(['active_message']),
     isShowMe() {
       return this.isShowModal
-    } 
+    }
   },
   methods: {
     modalChangeState(evt) {
