@@ -46,10 +46,7 @@
     >
       <div class="modal-zone">
         <div class="modal-data-zone">
-          <b-form-select
-            v-model="modalMessData.receiver"
-            :options="message_receivers"
-          >
+          <b-form-select v-model="modalMessData.receiver" :options="receivers">
             <template slot="first">
               <option :value="null">To</option>
             </template>
@@ -96,30 +93,52 @@ export default {
         receiver: null,
         subject: '',
         text: '',
-        users_options: []
+        imporant: false
       }
     }
   },
   mounted() {
-    this.$store.dispatch('LOAD_MESSAGES', this.currentTab)
+    this.$store.dispatch('LOAD_MESSAGES')
     this.$store.dispatch('LOAD_MESSAGES_RECEIVERS')
   },
   methods: {
     changeTab(evt) {
-      this.$store.dispatch('LOAD_MESSAGES', this.currentTab)
+      this.$store.dispatch('LOAD_MESSAGES')
     },
     addNewMessage() {
+      this.$store.commit('SET_ACTIVE_MESSAGE', null)
       this.showMessageModal()
     },
     addNewMessageByReplay() {
       this.showMessageModal()
     },
     onFilter() {},
+
     onSubmitNewMess() {
-      console.log('modalMessData=', this.modalMessData)
+      const {receiver, subject, text, imporant} = this.modalMessData
+      const messData = {
+        receiver_uid: receiver.uid,
+        receiver_cid: receiver.cid,
+        subject,
+        text,
+        imporant
+      }
+      console.log('modalMessData=', messData)
+      this.$store.dispatch('MESSAGE_ADD', messData).then(
+        res => {
+          this.$store.dispatch('LOAD_MESSAGES')
+        },
+        err => {
+          console.log('err=', err)
+        }
+      )
       this.hideMessageModal()
     },
     showMessageModal() {
+      if(this.active_message) {
+        const {receiver_uid, receiver_cid} = this.active_message
+        this.modalMessData.receiver = {uid: receiver_uid, cid: receiver_cid}
+      }
       this.isShowModalMessageAdd = true
     },
     hideMessageModal() {
@@ -145,12 +164,20 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['groups', 'me', 'message_receivers']),
+    ...mapGetters(['me', 'message_receivers', 'active_message']),
     selectedTabName() {
       return this.currentTab.toLowerCase()
     },
     currentTab() {
       return this.tabs[this.tabIndex]
+    },
+    receivers() {
+      return this.message_receivers.map(receiver => {
+        return {
+          value: {uid: receiver.uid, cid: receiver.cid},
+          text: receiver.uid
+        }
+      })
     }
   },
   components: {

@@ -197,9 +197,9 @@ export default {
         ...type_json
       }
     })
-  },  
+  },
 
-/** Upd user
+  /** Upd user
    * @param {string} target - {cid, uid}
    * @param {object} data - {"name": "string" }
    * @return {Promise<*>} - 201	Default Response
@@ -214,15 +214,77 @@ export default {
     })
   },
 
-    /** Del user
+  /** Del user
    * @param {string} target - {cid, uid}
    * @return {Promise<*>} - 200	Default Response
    * @throws Error
    */
   user_del(target) {
     const {cid, uid} = target
-    
+
     return Api.delete(`/companies/${cid}/users/${uid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ---------  MESSAGES MANAGEMENT  ---------------------*/
+  /** List of messages
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of messages
+   *  [{
+      "mid": 0,
+      "sender": "string",
+      "receiver": "string",
+      "subject": "string",
+      "text": "string",
+      "important": true,
+      "created_at": "string",
+      "deleted_at": "string"
+  }]
+ */
+  messages(filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/messages/${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** List of messages receivers
+   * @returns {Promise<*>} - 200 List of messages receivers
+   *  [
+        {
+          "uid": "string",
+          "cid": "string"
+        }
+      ]
+ */
+  receivers(filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/messages/receivers${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Add new message
+   * @param {object} body - 
+   * {
+      "receiver_cid": "string",
+      "receiver_uid": "string",
+      "subject": "string",
+      "text": "string",
+      "important": false
+      }
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  message_add(data) {
+    return Api.post(`/messages/`, data, {
       headers: {
         ...type_json
       }

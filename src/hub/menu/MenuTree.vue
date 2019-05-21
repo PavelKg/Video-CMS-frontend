@@ -83,7 +83,7 @@ export default {
   }
   .triangleSelected {
     transform: rotate(90deg);
-    left: 110px;
+    left: 139px;
     position: absolute;
     &:before {
       position: relative;

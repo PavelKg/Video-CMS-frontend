@@ -81,7 +81,7 @@ export default {
   position: fixed; /* Stay in place */
   height: 100%;
   background-color: $gray-dark;
-  width: 150px; /* 0 width - change this with JavaScript */
+  width: 180px; /* 0 width - change this with JavaScript */
   z-index: 10; /* Stay on top */
   left: 0;
   top: 50px;
@@ -91,7 +91,7 @@ export default {
 }
 .body {
   display: flex;
-  margin-left: 150px;
+  margin-left: 180px;
   margin-top: 50px;
   flex-direction: column;
   max-width: 930px;

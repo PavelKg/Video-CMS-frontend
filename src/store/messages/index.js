@@ -1,5 +1,4 @@
-// import Api from '@/api'
-const count = 20
+import Api from '@/api'
 
 export default {
   state: {
@@ -7,6 +6,7 @@ export default {
       list: [],
       receivers: [],
       isListLoading: false,
+      isReceiversLoading: false,
       selected: null
     },
     columns_name: {
@@ -15,41 +15,70 @@ export default {
     }
   },
   actions: {
-    LOAD_MESSAGES({state}, type) {
-      state.messages.list = []
-      const user_type = type.toLowerCase() === 'inbox' ? 'Sender' : 'admin'
-      for (let i = 0; i < count; i += 1) {
-        const message_item = {
-          mid: i,
-          date: new Date(2019, Math.random() * 12, Math.random() * 30),
-          user: user_type,
-          subject: `Please check new video`,
-          text: `Javascript Array Find Example | 
-          Array.prototype.find() Tutorial is today’s leading topic. 
-          The Javascript Array find() method returns a value of the first 
-          item in an array that satisfies a provided testing function. 
-          Otherwise undefined will be returned.`,
-          isSystem: false
+    async LOAD_MESSAGES({commit}, payload={}) {
+      const {filter} = payload
+      try {
+        commit('SET_MESSAGES_IS_LOADING', true)
+        const result = await Api.messages(filter)
+        if (Array.isArray(result.data) && result.status === 200) {
+          commit('SET_MESSAGES', result.data)
+        } else {
+          throw Error('Error load messages list')
         }
-        state.messages.list.push(message_item)
+      } catch (err) {
+        throw Error(`Error request messages from server: ${err}`)
+      } finally {
+        commit('SET_MESSAGES_IS_LOADING', false)
       }
     },
-    LOAD_MESSAGES_RECEIVERS({commit}) {
-      commit('SET_MESSAGE_RECEIVERS', ["admin", "user1", "user2", "user3"])
+    async MESSAGE_ADD({commit, getters}, payload) {
+      try {
+        const result = await Api.message_add(payload)
+        if (result.status === 201) {
+          return Promise.resolve('Message added success')
+        } else {
+          throw Error(`Error add message, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(`Error add new message: ${err.response.data.message}`)
+      }
+    },
+    async LOAD_MESSAGES_RECEIVERS({commit}, payload = {}) {
+      const {filter} = payload
+      try {
+        commit('SET_RECEIVERS_IS_LOADING', true)
+        const result = await Api.receivers(filter)
+        if (Array.isArray(result.data) && result.status === 200) {
+          commit('SET_MESSAGE_RECEIVERS', result.data)
+        } else {
+          throw Error('Error load messages receivers list')
+        }
+      } catch (err) {
+        throw Error(`Error request messages receivers from server: ${err}`)
+      } finally {
+        commit('SET_RECEIVERS_IS_LOADING', false)
+      }
     }
-
   },
   mutations: {
+    SET_MESSAGES(state, list) {
+      state.messages.list = [...list]
+    },
+    SET_MESSAGES_IS_LOADING(state, isload) {
+      state.messages.isListLoading = isload
+    },
     SET_ACTIVE_MESSAGE(state, item) {
       state.messages.selected = item
     },
     SET_MESSAGE_RECEIVERS(state, list) {
       state.messages.receivers = [...list]
+    },
+    SET_RECEIVERS_IS_LOADING(state, isLoad) {
+      state.messages.isReceiversLoading = isLoad
     }
-
   },
   getters: {
-    message_list: state => state.messages.list,
+    messages: state => state.messages.list,
     active_message: state => state.messages.selected,
     message_box_column: state => tab => state.columns_name[tab],
     isShowModalMessageInfo: state => state.messages.isShowModalMessageInfo,

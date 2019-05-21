@@ -26,9 +26,16 @@
           </div>
         </div>
       </template>
+      <template slot="user" slot-scope="item">
+        <div class="date-column">
+          {{
+            Type === 'outbox' ? item.item.receiver_uid : item.item.sender_uid
+          }}
+        </div>
+      </template>
       <template slot="date" slot-scope="item">
         <div class="date-column">
-          {{ mess_date_format(item.item.date) }}
+          {{ mess_date_format(item.item.created_at) }}
         </div>
       </template>
       <template slot="subject" slot-scope="item">
@@ -66,7 +73,7 @@
       header-bg-variant="dark"
       header-text-variant="light"
       hide-footer
-      centered 
+      centered
     >
       <div class="modal-subject">
         <div class="modal-subj-date">
@@ -75,7 +82,9 @@
             active_message ? mess_date_format(active_message.date) : ''
           }}</span>
         </div>
-        <button class="button btn-grey" @click="replyToSender"> {{ $t('label.reply') }}</button>
+        <button class="button btn-grey" @click="replyToSender">
+          {{ $t('label.reply') }}
+        </button>
       </div>
       <div class="modal-text">
         {{ active_message ? active_message.text : '' }}
@@ -97,9 +106,7 @@ export default {
       messages_selected: []
     }
   },
-  created() {
-    //console.log('columns=', this.columns)
-  },
+  created() {},
   props: {
     Type: String
   },
@@ -108,7 +115,7 @@ export default {
       this.$store.commit('SET_ACTIVE_MESSAGE', mess)
       this.isShowModalMessageInfo = true
     },
-    replyToSender(){
+    replyToSender() {
       this.isShowModalMessageInfo = false
       this.$emit('addNewMessageByReplay')
     },
@@ -133,15 +140,30 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['message_list', 'message_box_column', 'active_message']),
+    ...mapGetters(['messages', 'message_box_column', 'active_message', 'me']),
+    messages_by_types() {
+      let new_list = []
+      const {company_id: cid, uid} = this.me.profile
+      if (this.Type === 'outbox') {
+        new_list = this.messages.filter(
+          message => message.sender_uid === uid && message.sender_cid === cid
+        )
+      } else {
+        new_list = this.messages.filter(
+          message =>
+            message.receiver_uid === uid && message.receiver_cid === cid
+        )
+      }
+      return new_list
+    },
     messages_count() {
-      return this.message_list ? this.message_list.length : 0
+      return this.messages_by_types ? this.messages_by_types.length : 0
     },
     messages_on_page() {
       const begin = (this.currentPage - 1) * this.perPage
       const end = begin + this.perPage
 
-      return this.message_list.slice(begin, end)
+      return this.messages_by_types.slice(begin, end)
     },
     columns() {
       return this.message_box_column(this.Type)
