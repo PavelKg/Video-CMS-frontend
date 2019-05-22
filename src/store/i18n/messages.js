@@ -45,7 +45,7 @@ const messages = {
       oper_title_add: 'Add New Role',
       role_id: 'ID',
       role_name: 'Role Name',
-      administrator: 'Administrator',
+      administrator: 'Administrator'
     },
     users: {
       btn_add: 'Add New User',
@@ -68,10 +68,22 @@ const messages = {
       tbl_header_name: 'Group',
       tbl_header_mgn: 'Mng',
       tbl_deleted: 'Deleted',
-      group_name: 'Name',
+      name: 'Name',
+      group_name: 'Group Name',
       oper_title_edit: 'Group Information',
       oper_title_add: 'Add New Group',
       in_page: 'In page'
+    },
+    screen: {
+      display: 'Display',
+      hidden: 'Hidden'
+    },
+    videos: {
+      video_title: 'Video Title',
+      tag: 'Tag',
+      video_description: 'Video Description',
+      last_modified: 'Last modified',
+      video_information: 'Video Information'
     },
     label: {
       delete: 'Delete',
@@ -110,6 +122,8 @@ const messages = {
       all: 'All',
       public: 'Public',
       private: 'Private',
+      group: 'Group',
+      role: 'Role'
     }
   },
   ru: {
@@ -184,7 +198,6 @@ const messages = {
       received: '受信日時',
       sent: '送信日時',
       text: '本文'
-
     },
     roles: {
       btn_add: 'ロール追加',
@@ -257,7 +270,6 @@ const messages = {
       auto: '自動割当'
     }
   }
-
 }
 
 export default messages

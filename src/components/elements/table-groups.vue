@@ -7,10 +7,9 @@
       striped
       fixed
       hover
-      head-variant = 'dark'
+      head-variant="dark"
     >
       <template slot="name" slot-scope="row">
-
         <b-form-checkbox
           :id="row.item.gid"
           :name="`ch-${row.item.gid}`"
@@ -76,11 +75,15 @@ export default {
   data() {
     return {
       fields: [
-        {key: 'name', label: 'Name', thStyle: {'text-align': 'center'}},
+        {
+          key: 'name',
+          label: this.$t('groups.tbl_header_name'),
+          thStyle: {'text-align': 'center'}
+        },
         {
           key: 'mng',
-          label: 'Mng',
-          thStyle: {width: '120px !important', 'text-align': 'center'},
+          label: this.$t('groups.tbl_header_mgn'),
+          thStyle: {width: '120px !important', 'text-align': 'center'}
         }
       ],
       perPage: 4,
@@ -101,8 +104,11 @@ export default {
     },
     editGroup(group) {
       this.$store.commit('SET_ACTIVE_GROUP', group)
-      const params = {cid: this.me.profile.company_id, filter: `group_gid[eq]:'${group.gid}'`}
-      this.$store.dispatch('LOAD_USERS', params )
+      const params = {
+        cid: this.me.profile.company_id,
+        filter: `group_gid[eq]:'${group.gid}'`
+      }
+      this.$store.dispatch('LOAD_USERS', params)
       this.$emit(
         'contentElementClick',
         'root.subItems.groups.subItems.group_edit'
@@ -169,9 +175,11 @@ export default {
 
 @media screen and (max-width: 875px) {
   .groups-mng-panel {
-    button{margin-top: 15px}
+    button {
+      margin-top: 15px;
+    }
     .groups-mng-pag {
-      margin-top: 15px ;
+      margin-top: 15px;
       justify-content: flex-end;
     }
   }

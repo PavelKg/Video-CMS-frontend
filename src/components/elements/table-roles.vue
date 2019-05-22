@@ -102,7 +102,7 @@ export default {
         },
         {
           key: 'mng',
-          label: 'Mng',
+          label: this.$t('roles.tbl_header_mng'),
           thStyle: {width: '120px !important', 'text-align': 'center'}
         }
       ]

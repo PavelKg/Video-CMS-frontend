@@ -27,14 +27,14 @@
       <b-form-group id="input-group-gid">
         <b-form-select v-model="mnUser.gid" :options="group_options">
           <template slot="first">
-            <option :value="null" disabled><b>Group</b></option>
+            <option :value="null" disabled><b>{{ `${$t('label.group')}` }}</b></option>
           </template>
         </b-form-select>
       </b-form-group>
       <b-form-group id="input-group-rid">
         <b-form-select v-model="mnUser.rid" :options="role_options">
           <template slot="first">
-            <option :value="null" disabled>Role</option>
+            <option :value="null" disabled>{{ `${$t('label.role')}` }}</option>
           </template>
         </b-form-select>
       </b-form-group>
