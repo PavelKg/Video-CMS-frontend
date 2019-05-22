@@ -88,7 +88,7 @@ export default {
         })
     },
     switchLocale(code) {
-      this.$i18n.locale = code
+      this.$store.commit("CHANGE_LANG", code)
     },
     placeholder(item) {
       return `Enter you ${item}`
