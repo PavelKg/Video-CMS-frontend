@@ -166,12 +166,12 @@ const messages = {
     message: {
       appHeader: '視聴管理システム',
       app_name: '視聴管理システム',
-      company_id: 'Company ID',
+      company_id: '企業ID',
       personal_id: 'ID',
       password: 'Password',
       btnLogin: 'LOGIN',
       lnkPassRec: 'ID・パスワードを忘れた方はこちら',
-      authError: '認証エラー',
+      authError: '【認証エラー】IDまたはパスワードが違います',
       logOut: 'Log out',
       forgot_pass_descr: `ご登録頂いたメールアドレスをご入力いただき、【送信】ボタンを押してください。
       ご入力いただきましたメールアドレス宛に変更用URLを記載したメールを送信いたします。`,
@@ -182,7 +182,7 @@ const messages = {
       to: '宛先',
       from: '送信元',
       received: '受信日時',
-      sent: '送信',
+      sent: '送信日時',
       text: '本文'
 
     },
@@ -210,8 +210,8 @@ const messages = {
       user_id: 'ID',
       user_fullname: '氏名',
       user_email: 'E-Mail',
-      password: '現在のパスワード',
-      conf_password: '新しいパスワード'
+      password: '新しいパスワード',
+      conf_password: 'パスワード再入力'
     },
     groups: {
       btn_add: 'グループ新規追加',
@@ -245,7 +245,7 @@ const messages = {
       or: 'または',
       yes: '有',
       no: '無',
-      remove: '外す',
+      remove: '取消',
       edit_video: '動画情報の編集',
       thumb_image_upload: 'サムネイル画像アップロード',
       select_all: 'すべて',
