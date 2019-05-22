@@ -114,7 +114,6 @@ export default {
 #login-form {
   display: flex;
   flex-direction: column;
-  background-color: #fff;
   align-items: center;
   margin: 0 auto;
   padding: 20px 60px;
