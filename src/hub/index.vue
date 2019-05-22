@@ -35,7 +35,9 @@ export default {
     headerArea,
     menuArea
   },
-  created() {},
+  created() {
+    this.$store.commit('INIT_LANG')
+  },
   mounted() {
     this.loader()
       .then(() => {

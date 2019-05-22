@@ -2,8 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router/'
 import store from './store/'
-import VueI18n from 'vue-i18n'
-import messages from './store/i18n/messages'
+import i18n from './i18n';
 import dirClickOutside from './directive/click-outside.js'
 import closable from './directive/closable.js'
 import BootstrapVue from 'bootstrap-vue'
@@ -11,15 +10,6 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
-Vue.use(VueI18n)
-const i18n = new VueI18n({
-  locale: 'en', // set locale
-  fallbackLocale: 'en',
-  messages: messages, // set locale messages
-  silentTranslationWarn: true
-})
-
-//Vue.directive('click-outside', dirClickOutside)
 Vue.directive('closable', closable)
 Vue.use(BootstrapVue)
 
