@@ -35,8 +35,8 @@ export default {
     return {
       cbox_selected: 'display',
       cbox_options: [
-        {text: 'Display', value: 'display'},
-        {text: 'Hidden', value: 'hidden'}
+        {text: this.$t('screen.display'), value: 'display'},
+        {text: this.$t('screen.hidden'), value: 'hidden'}
       ]
     }
   },

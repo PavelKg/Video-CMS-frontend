@@ -12,12 +12,12 @@
           </div>
         </div>
         <div class="video-information">
-          <span class="title">Video Information</span>
-          <span class="sub-title">Last modified:</span>
+          <span class="title">{{$t('videos.video_information')}}</span>
+          <span class="sub-title">{{$t('videos.last_modified')}}:</span>
           <span class="value">{{active_video.last_mod.toLocaleDateString('en-US')}}</span>
-          <span class="sub-title">Tag:</span>
+          <span class="sub-title">{{$t('videos.tag')}}:</span>
           <span class="value">{{active_video.tag}}</span>
-          <span class="sub-title">Description:</span>
+          <span class="sub-title">{{$t('videos.video_description')}}:</span>
           <span class="value">{{active_video.description}}</span>
         </div>
       </div>

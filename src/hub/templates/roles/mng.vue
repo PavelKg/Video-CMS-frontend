@@ -19,7 +19,7 @@
       >
       </b-form-checkbox>
       <div>
-        <strong>{{ is_admin_state }}</strong>
+        <strong>{{ $t(`label.${is_admin_state}`) }}</strong>
       </div>
     </div>
     <div class="role-operation-button-zone">
@@ -77,7 +77,7 @@ export default {
       return `roles.oper_title_${this.oper}`
     },
     is_admin_state() {
-      return this.mnRole.is_admin ? 'Yes' : 'No'
+      return this.mnRole.is_admin ? 'yes' : 'no'
     }
   }
 }

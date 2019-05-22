@@ -2,7 +2,7 @@
   <div class="group-operation">
     <span>{{ $t(group_title) }}</span>
     <div class="group-oper-id">
-      <span v-if="oper === 'edit'">{{ `${$t('groups.group_name')}` }}:</span>
+      <span v-if="oper === 'edit'">{{ `${$t('groups.name')}` }}:</span>
       <b-form-input
         v-model="mnGroup.name"
         placeholder="Group Name"

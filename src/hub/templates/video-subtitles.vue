@@ -39,12 +39,12 @@
       </div>
       <div class="video-subtitles-inputs">
         <b-form-input
-          placeholder="VideoTitle"
+          :placeholder="`${$t('videos.video_title')}`"
           v-model="form.title"
         ></b-form-input>
-        <b-form-input placeholder="Tag" v-model="form.tag"></b-form-input>
+        <b-form-input :placeholder="`${$t('videos.tag')}`" v-model="form.tag"></b-form-input>
         <b-form-textarea
-          placeholder="Video description"
+          :placeholder="`${$t('videos.video_description')}`"
           v-model="form.descr"
         ></b-form-textarea>
       </div>

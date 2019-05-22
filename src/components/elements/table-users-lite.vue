@@ -45,7 +45,7 @@ export default {
         {key: 'uid', label: 'ID', thStyle: {'text-align': 'center'}},
         {
           key: 'fullname',
-          label: 'Name',
+          label: this.$t('users.tbl_header_name'),
           thStyle: {'max-width': '500px !important', 'text-align': 'center'},
           tdClass: 'table-column'
         }
