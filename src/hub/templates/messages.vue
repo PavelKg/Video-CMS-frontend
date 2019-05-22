@@ -7,7 +7,7 @@
       <div class="search-row">
         <b-form-input
           id="keywword_search"
-          placeholder="Keyword search"
+          :placeholder="`${$t('label.keyword_search')}`"
           @input="handleInput('search', $event.target.value)"
         />
         <div class="icon-button" @click="onFilter">
@@ -86,7 +86,7 @@ export default {
   name: 'message-list',
   data() {
     return {
-      tabs: ['Outbox', 'Inbox'],
+      tabs: [this.$t('message.tab_inbox'), this.$t('message.tab_outbox')],
       isShowModalMessageAdd: false,
       tabIndex: 0,
       modalMessData: {
@@ -123,7 +123,6 @@ export default {
         text,
         imporant
       }
-      console.log('modalMessData=', messData)
       this.$store.dispatch('MESSAGE_ADD', messData).then(
         res => {
           this.$store.dispatch('LOAD_MESSAGES')

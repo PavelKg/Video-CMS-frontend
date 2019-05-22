@@ -8,7 +8,7 @@
           <video ref="videoPlayer" controls class="player-zone-content"></video>
           <div class="comment-input">
             <input/>
-            <div class="send-button blue">Send</div>
+            <div class="send-button blue">{{$t('label.send')}}</div>
           </div>
         </div>
         <div class="video-information">

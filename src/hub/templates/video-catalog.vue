@@ -9,7 +9,7 @@
     <div class="search-row">
       <input
         id="keywword_search"
-        placeholder="Keyword search"
+        :placeholder="`${$t('label.keyword_search')}`"
         @input="handleInput('search', $event.target.value)"
       />
       <img src="@/assets/images/search_black.png" />
@@ -80,9 +80,9 @@ export default {
       years: [2019, 2018, 2017, 2016],
       months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12],
       acc_options: [
-        {text: 'All', value: 'all'},
-        {text: 'Public', value: 'public'},
-        {text: 'Private', value: 'private'}
+        {text: this.$t('label.all'), value: 'all'},
+        {text: this.$t('label.public'), value: 'public'},
+        {text: this.$t('label.private'), value: 'private'}
       ],
       acc_selected: 'all',
       perPage: 3,

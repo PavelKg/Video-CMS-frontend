@@ -7,11 +7,11 @@
       </div>
     </template>
     <template v-else-if="oper === 'add'">
-      <b-form-input v-model="mnRole.rid" placeholder="ID"></b-form-input>
+      <b-form-input v-model="mnRole.rid" :placeholder="`${$t('roles.role_id')}`"></b-form-input>
     </template>
-    <b-form-input v-model="mnRole.name" placeholder="Role Name"></b-form-input>
+    <b-form-input v-model="mnRole.name" :placeholder="`${$t('roles.role_name')}`"></b-form-input>
     <div class="check-admin">
-      <span>Administrator:</span>
+      <span>{{$t('roles.administrator')}}:</span>
       <b-form-checkbox
         id="check_isAdmin"
         v-model="mnRole.is_admin"
@@ -23,8 +23,8 @@
       </div>
     </div>
     <div class="role-operation-button-zone">
-      <button @click="save_click" class="button btn-blue">Save</button>
-      <button @click="cancel_click" class="button btn-blue">Cancel</button>
+      <button @click="save_click" class="button btn-blue">{{$t('label.save')}}</button>
+      <button @click="cancel_click" class="button btn-blue">{{$t('label.cancel')}}</button>
     </div>
   </div>
 </template>

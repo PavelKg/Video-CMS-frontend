@@ -30,8 +30,9 @@ const messages = {
       from: 'From',
       received: 'Received',
       sent: 'Sent',
-      text: 'Text'
-
+      text: 'Text',
+      tab_inbox: 'Inbox',
+      tab_outbox: 'Outbox'
     },
     roles: {
       btn_add: 'Add Role',
@@ -42,7 +43,9 @@ const messages = {
       tbl_deleted: 'Deleted',
       oper_title_edit: 'Role Information',
       oper_title_add: 'Add New Role',
-      role_id: 'ID'
+      role_id: 'ID',
+      role_name: 'Role Name',
+      administrator: 'Administrator',
     },
     users: {
       btn_add: 'Add New User',
@@ -80,6 +83,7 @@ const messages = {
       reply: 'Replay',
       change: 'Change',
       send: 'Send',
+      save: 'Save',
       add_new: 'Add new',
       storageVideoCapacity: 'Storage video capacity',
       forgot_pass: 'Forgot ID/password',
@@ -101,7 +105,11 @@ const messages = {
       logo_registration: 'Logo Registration',
       in_page: 'In-Page',
       people: 'people',
-      auto: 'Auto'
+      auto: 'Auto',
+      keyword_search: 'Keyword Search',
+      all: 'All',
+      public: 'Public',
+      private: 'Private',
     }
   },
   ru: {

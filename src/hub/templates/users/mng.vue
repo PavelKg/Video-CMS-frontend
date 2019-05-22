@@ -120,13 +120,15 @@ export default {
     this.$store
       .dispatch('LOAD_GROUPS', this.me.profile.company_id)
       .then(res => {
-        this.group_options = this.groups.map(item => {
-          return {value: item.gid, text: item.name}
-        })
+        this.group_options = this.groups
+          .filter(group => !Boolean(group.deleted_at))
+          .map(item => {
+            return {value: item.gid, text: item.name}
+          })
         this.mnUser.gid = Boolean(this.mnUser.gid) ? this.mnUser.gid : null
       })
     this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id).then(res => {
-      this.role_options = this.roles.map(item => {
+      this.role_options = this.roles.filter(role => !Boolean(role.deleted_at)).map(item => {
         return {value: item.rid, text: item.name}
       })
       this.mnUser.rid = Boolean(this.mnUser.rid) ? this.mnUser.rid : null

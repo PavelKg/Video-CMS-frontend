@@ -6,7 +6,7 @@
     <div class="search-row">
       <b-form-input
         id="keywword_search"
-        placeholder="Keyword search"
+        :placeholder="`${$t('label.keyword_search')}`"
         @input="handleInput('search', $event.target.value)"
       />
       <b-form-select v-model="selected_groups" :options="group_options">
