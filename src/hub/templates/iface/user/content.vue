@@ -12,6 +12,9 @@
   
   export default {
     name: "content-area",
+    created() {
+      this.$store.dispatch('LOAD_VIDEO_LIST')
+    },
     computed: {
       ...mapGetters(['userMenuActiveItem']),
       activePage() {

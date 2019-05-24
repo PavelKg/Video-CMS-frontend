@@ -1,7 +1,7 @@
 <template>
   <div id="login-form">
     <div class="logo-container">
-      <img src="../assets/images/video-icon.png" class="avatar">
+      <img src="../assets/images/video-icon.png" class="avatar" />
     </div>
     <div class="locales-container">
       <div
@@ -10,44 +10,50 @@
         :key="locale.code"
         @click="switchLocale(locale.code)"
       >
-        <span v-if="index !==0 ">|</span>
-        <span class="locale-item" :class="{ active: locale.code===activeLocale}">{{locale.code}}</span>
+        <span v-if="index !== 0">|</span>
+        <span
+          class="locale-item"
+          :class="{active: locale.code === activeLocale}"
+          >{{ locale.code }}</span
+        >
       </div>
     </div>
-    <div class="app-title">
-      <p>{{$t("message.app_name")}}</p>
+    <div class="login-app-title">
+      <span class="app-title-name">{{ $t('message.app_name') }}</span>
     </div>
     <form class="login" @submit.prevent="login">
       <div class="field-container">
         <div id="user_id" class="field-row">
-          <span>{{ $t("message.personal_id") }}</span>
+          <span>{{ $t('message.personal_id') }}:</span>
           <input
             id="personal_id"
             required
-            :placeholder="placeholder('personal ID')"
-            @input="handleInput('personalId',$event.target.value)"
-          >
+            :placeholder="`${$t('message.enter_you_personal_id')}`"
+            @input="handleInput('personalId', $event.target.value)"
+          />
         </div>
         <div id="password" class="field-row">
-          <span>{{ $t("message.password") }}</span>
+          <span>{{ $t('message.password') }}:</span>
           <input
             id="password"
             type="password"
             required
-            :placeholder="placeholder('password')"
+            :placeholder="`${$t('message.enter_you_password')}`"
             :value="password"
             @input="handleInput('password', $event.target.value)"
-          >
+          />
         </div>
       </div>
       <div class="errMess">
-        <span>{{$t(errMessage)}}</span>
+        <span>{{ $t(errMessage) }}</span>
       </div>
       <div class="button-container">
-        <button type="submit">{{ $t("message.btnLogin") }}</button>
+        <button type="submit" class="button btn-blue">
+          {{ $t('message.btnLogin') }}
+        </button>
       </div>
     </form>
-    <PassRec/>
+    <PassRec />
   </div>
 </template>
 
@@ -74,24 +80,19 @@ export default {
     login() {
       this.errMessage = ''
       const {personalId, password} = this
-      this.$store
-        .dispatch('LOGIN', {personalId, password})
-        .then(() => {
-          if (this.authStatus === 'success') {
-            this.$store.dispatch('GET_MY_PROFILE').then(() => {
-              this.$router.push(`/hub/${this.me_irole}`)
-            })
-          } else if (this.authStatus === 'error') {
-            this.errMessage = 'message.authError'
-          }
-          this.password = ''
-        })
+      this.$store.dispatch('LOGIN', {personalId, password}).then(() => {
+        if (this.authStatus === 'success') {
+          this.$store.dispatch('GET_MY_PROFILE').then(() => {
+            this.$router.push(`/hub/${this.me_irole}`)
+          })
+        } else if (this.authStatus === 'error') {
+          this.errMessage = 'message.authError'
+        }
+        this.password = ''
+      })
     },
     switchLocale(code) {
-      this.$store.commit("CHANGE_LANG", code)
-    },
-    placeholder(item) {
-      return `Enter you ${item}`
+      this.$store.commit('CHANGE_LANG', code)
     },
     handleInput(elem, value) {
       this[elem] = value
@@ -107,6 +108,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../assets/styles';
+
 .avatar {
   width: 128px;
   height: 128px;
@@ -116,7 +119,8 @@ export default {
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
-  padding: 20px 60px;
+  padding: 20px 0px;
+  width: 330px;
 }
 .logo-container {
   display: flex;
@@ -125,69 +129,69 @@ export default {
 }
 .locales-container {
   display: flex;
-  justify-content: center;
-  padding-left: 100px;
+  justify-content: flex-end;
+  align-self: flex-end;
+  margin-top: 10px;
+  //padding-left: 250px;
 }
 .locale {
   span {
     color: #cfcfcf;
   }
   span.active {
-    color: #4272c4;
+    color: $blue;
   }
   span.locale-item {
     margin: 0 4px;
     cursor: pointer;
   }
   span.locale-item:hover {
-    color: #4272c4;
+    color: $blue;
   }
 }
-.app-title {
-  padding: 10px 0;
-  p {
-    font-size: 20px;
-    padding: 5px 10px;
-    color: #4272c4;
-    border: 1px solid #4272c4;
-    border-radius: 4px;
-    text-align: center;
+.login-app-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 102px;
+  margin: 10px 0 20px 0;
+  border: 1px solid $blue;
+  //border-bottom: 1px solid $blue;
+  border-radius: 14px;
+  text-align: center;
+  .app-title-name {
+    font-size: 24px;
+    padding: 15px;
+    color: $blue;
+  }
+}
+.field-container {
+  display: flex;
+  flex-direction: column;
+  .field-row {
+    display: flex;
+    margin-bottom: 10px;
+    height: 30px;
+    span {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 7px;
+      font-size: 20px;
+      width: 100px;
+    }
+    input {
+      padding-left: 5px;
+    }
   }
 }
 
-.field-row {
-  display: flex;
-  align-content: center;
-  margin-bottom: 10px;
-  height: 30px;
-  align-content: space-between;
-  span {
-    line-height: 30px;
-    padding-right: 15px;
-    font-size: 20px;
-    white-space: nowrap;
-    text-align: right;
-    width: 100%;
-  }
-  input {
-    margin-left: auto;
-  }
-}
 .button-container {
   padding: 20px 0;
   display: flex;
   justify-content: center;
-}
-button {
-  background-color: #4272c4;
-  border: none;
-  font-size: 20px;
-  padding: 10px 40px;
-  color: #fff;
-  cursor: pointer;
-  text-transform: uppercase;
-  &:hover {
-    opacity: 0.8;
+  .button {
+    min-width: 100px;
   }
 }
 .password-recovery {

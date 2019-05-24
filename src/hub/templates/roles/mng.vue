@@ -24,7 +24,7 @@
     </div>
     <div class="role-operation-button-zone">
       <button @click="save_click" class="button btn-blue">{{$t('label.save')}}</button>
-      <button @click="cancel_click" class="button btn-blue">{{$t('label.cancel')}}</button>
+      <button @click="cancel_click" class="button btn-braun">{{$t('label.cancel')}}</button>
     </div>
   </div>
 </template>

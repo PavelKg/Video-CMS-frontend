@@ -27,7 +27,9 @@
       <b-form-group id="input-group-gid">
         <b-form-select v-model="mnUser.gid" :options="group_options">
           <template slot="first">
-            <option :value="null" disabled><b>{{ `${$t('label.group')}` }}</b></option>
+            <option :value="null" disabled
+              ><b>{{ `${$t('label.group')}` }}</b></option
+            >
           </template>
         </b-form-select>
       </b-form-group>
@@ -47,20 +49,26 @@
       <b-form-group id="input-group-password">
         <b-form-input
           v-model="mnUser.password"
+          type="password"
           :placeholder="`${$t('users.password')}`"
         ></b-form-input>
       </b-form-group>
       <b-form-group id="input-group-conf-password">
         <b-form-input
           v-model="mnUser.confPassword"
+          type="password"
           :placeholder="`${$t('users.conf_password')}`"
         ></b-form-input>
       </b-form-group>
       <template v-if="oper === 'edit'"> </template>
       <template v-else-if="oper === 'add'"> </template>
       <div class="user-operation-button-zone">
-        <button type="submit" class="button btn-blue">Save</button>
-        <button @click="cancel_click" class="button btn-blue">Cancel</button>
+        <button type="submit" class="button btn-blue">
+          {{ `${$t('label.save')}` }}
+        </button>
+        <button @click="cancel_click" class="button btn-braun">
+          {{ `${$t('label.cancel')}` }}
+        </button>
       </div>
     </b-form>
   </div>
@@ -114,7 +122,6 @@ export default {
 
   created() {
     if (this.oper === 'edit') {
-      console.log('this.user_selected=', this.user_selected)
       this.mnUser = {...this.user_selected}
     }
     this.$store
@@ -128,9 +135,11 @@ export default {
         this.mnUser.gid = Boolean(this.mnUser.gid) ? this.mnUser.gid : null
       })
     this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id).then(res => {
-      this.role_options = this.roles.filter(role => !Boolean(role.deleted_at)).map(item => {
-        return {value: item.rid, text: item.name}
-      })
+      this.role_options = this.roles
+        .filter(role => !Boolean(role.deleted_at))
+        .map(item => {
+          return {value: item.rid, text: item.name}
+        })
       this.mnUser.rid = Boolean(this.mnUser.rid) ? this.mnUser.rid : null
     })
   },
@@ -176,7 +185,6 @@ export default {
   }
   .button {
     margin: 0 10px;
-    height: 38px;
   }
   .check-admin {
     display: flex;

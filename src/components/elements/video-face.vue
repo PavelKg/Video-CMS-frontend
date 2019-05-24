@@ -7,6 +7,7 @@
       <b-form-checkbox :id="tag" :name="tag"></b-form-checkbox>
       <span :title="`${description}`">{{ description }}</span>
       <img
+        v-if="showSubtitles"
         @click="onSubtitles()"
         class="subtitles-svg"
         src="@/assets/images/subtitles.svg"
@@ -16,6 +17,8 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+
 export default {
   name: 'video-face-box',
   props: {
@@ -39,6 +42,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['me']),
     description() {
       return this.videoitem['description']
     },
@@ -49,6 +53,9 @@ export default {
       const num = Math.round(Math.random() * 5) + 1
       var images = require.context('@/assets/images/fake-face', false, /\.png$/)
       return images('./' + num + '.png')
+    },
+    showSubtitles() {
+      return this.me.profile.irole === 'admin'
     }
   }
 }
@@ -88,13 +95,13 @@ export default {
 
 @media screen and (max-width: 610px) {
   .video-box-item {
-    width: 400px
+    width: 400px;
   }
 }
 
 @media screen and (max-width: 875px) and (min-width: 610px) {
   .video-box-item {
-    width: 250px
+    width: 250px;
   }
 }
 </style>
