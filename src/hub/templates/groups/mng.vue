@@ -12,8 +12,8 @@
       <TableUsersLite /> </template>
     <template v-else-if="oper === 'add'"> </template>
     <div class="group-operation-button-zone">
-      <button @click="save_click" class="button btn-blue">Save</button>
-      <button @click="cancel_click" class="button btn-blue">Cancel</button>
+      <button @click="save_click" class="button btn-blue">{{ `${$t('label.save')}` }}</button>
+      <button @click="cancel_click" class="button btn-braun">{{ `${$t('label.cancel')}` }}</button>
     </div>
   </div>
 </template>

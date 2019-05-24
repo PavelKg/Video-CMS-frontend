@@ -59,8 +59,8 @@
       <template v-if="oper === 'edit'"> </template>
       <template v-else-if="oper === 'add'"> </template>
       <div class="user-operation-button-zone">
-        <button type="submit" class="button btn-blue">Save</button>
-        <button @click="cancel_click" class="button btn-blue">Cancel</button>
+        <button type="submit" class="button btn-blue">{{ `${$t('label.save')}` }}</button>
+        <button @click="cancel_click" class="button btn-braun">{{ `${$t('label.cancel')}` }}</button>
       </div>
     </b-form>
   </div>
@@ -176,7 +176,6 @@ export default {
   }
   .button {
     margin: 0 10px;
-    height: 38px;
   }
   .check-admin {
     display: flex;
