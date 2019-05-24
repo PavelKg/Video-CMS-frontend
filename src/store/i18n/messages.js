@@ -148,7 +148,69 @@ const messages = {
       authError: 'Ошибка авторизации',
       logOut: 'Log out',
       forgot_pass_descr: `Please enter your registered email address and press the [Send] button.
-      We will send you an email with the URL for the change to the email address you have entered.`
+      We will send you an email with the URL for the change to the email address you have entered.`,
+      number_of_registered_users: 'Number of registered users',
+      btn_add: 'Create New',
+      check: 'Check',
+      subject: 'Subject',
+      to: 'To',
+      from: 'From',
+      received: 'Received',
+      sent: 'Sent',
+      text: 'Text',
+      tab_inbox: 'Inbox',
+      tab_outbox: 'Outbox'
+    },
+    roles: {
+      btn_add: 'Add Role',
+      tbl_header_ID: 'ID',
+      tbl_header_name: 'Role Name',
+      tbl_header_auth: 'Administrator authority',
+      tbl_header_mng: 'Mng',
+      tbl_deleted: 'Deleted',
+      oper_title_edit: 'Role Information',
+      oper_title_add: 'Add New Role',
+      role_id: 'ID',
+      role_name: 'Role Name',
+      administrator: 'Administrator'
+    },
+    users: {
+      btn_add: 'Add New User',
+      tbl_header_ID: 'ID',
+      tbl_header_name: 'Name',
+      tbl_header_group: 'Group',
+      tbl_header_last_login: 'Last Login',
+      tbl_header_mgn: 'Mng',
+      tbl_deleted: 'Deleted',
+      oper_title_edit: 'User Information',
+      oper_title_add: 'Add New User',
+      user_id: 'ID',
+      user_fullname: 'Full Name',
+      user_email: 'E-Mail',
+      password: 'Password',
+      conf_password: 'Confirm Password'
+    },
+    groups: {
+      btn_add: 'Add New Group',
+      tbl_header_name: 'Group',
+      tbl_header_mgn: 'Mng',
+      tbl_deleted: 'Deleted',
+      name: 'Name',
+      group_name: 'Group Name',
+      oper_title_edit: 'Group Information',
+      oper_title_add: 'Add New Group',
+      in_page: 'In page'
+    },
+    screen: {
+      display: 'Display',
+      hidden: 'Hidden'
+    },
+    videos: {
+      video_title: 'Video Title',
+      tag: 'Tag',
+      video_description: 'Video Description',
+      last_modified: 'Last modified',
+      video_information: 'Video Information'
     },
     label: {
       delete: 'Delete',
@@ -157,13 +219,38 @@ const messages = {
       required: 'Required',
       register: 'Register',
       registration: 'Сохранить',
+      reply: 'Replay',
       change: 'Change',
       send: 'Send',
+      save: 'Save',
+      add_new: 'Add new',
       storageVideoCapacity: 'Storage video capacity',
       forgot_pass: 'Forgot ID/password',
       mail_address: 'Mail Address',
+      video_upload: 'Video upload',
+      select_file: 'Select File',
+      upload: 'Upload',
+      cancel: 'Cancel',
+      drop_file_here: 'Drop file here',
+      or: 'or',
+      yes: 'Yes',
+      no: 'No',
+      remove: 'Remove',
       edit_video: 'Редактировать информацию о ролике',
-      thumb_image_upload: 'Загрузить миниатюру'
+      thumb_image_upload: 'Загрузить миниатюру',
+      select_all: 'Select All',
+      deselect_all: 'Deselect All',
+      comment_box: 'Comment Box',
+      logo_registration: 'Logo Registration',
+      in_page: 'In-Page',
+      people: 'people',
+      auto: 'Auto',
+      keyword_search: 'Keyword Search',
+      all: 'All',
+      public: 'Public',
+      private: 'Private',
+      group: 'Group',
+      role: 'Role'
     }
   },
   jp: {
@@ -197,7 +284,9 @@ const messages = {
       from: '送信元',
       received: '受信日時',
       sent: '送信日時',
-      text: '本文'
+      text: '本文',
+      tab_inbox: '受信トレイ',
+      tab_outbox: '送信トレイ'
     },
     roles: {
       btn_add: 'ロール追加',
@@ -208,7 +297,9 @@ const messages = {
       tbl_deleted: '削除済',
       oper_title_edit: 'ロール情報',
       oper_title_add: 'ロール新規追加',
-      role_id: 'ID'
+      role_id: 'ID',
+      role_name: 'ロール名',
+      administrator: '管理者権限'
     },
     users: {
       btn_add: 'ユーザー新規追加',
@@ -231,10 +322,22 @@ const messages = {
       tbl_header_name: 'グループ名',
       tbl_header_mgn: '管理',
       tbl_deleted: '削除済',
+      name: '名前',
       group_name: 'グループ名',
       oper_title_edit: 'グループ情報',
       oper_title_add: 'グループ新規追加',
       in_page: 'ページ内選択'
+    },
+    screen: {
+      display: '表示する',
+      hidden: '非表示'
+    },
+    videos: {
+      video_title: '動画タイトル',
+      tag: 'タグ',
+      video_description: '動画の説明',
+      last_modified: '更新日時',
+      video_information: '動画情報'
     },
     label: {
       delete: '削除',
@@ -246,6 +349,7 @@ const messages = {
       reply: '返信',
       change: '変更',
       send: '送信',
+      save: '保存',
       add_new: '新規追加',
       storageVideoCapacity: 'ストレージ上限',
       forgot_pass: 'ID・パスワードを忘れてしまった方',
@@ -267,7 +371,13 @@ const messages = {
       logo_registration: 'ロゴ登録',
       in_page: 'ページ内選択',
       people: '人',
-      auto: '自動割当'
+      auto: '自動割当',
+      keyword_search: 'キーワード検索',
+      all: 'すべて',
+      public: '公開',
+      private: '非公開',
+      group: 'グループ',
+      role: 'ロール'
     }
   }
 }
