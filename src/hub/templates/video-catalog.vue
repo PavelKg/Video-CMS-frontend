@@ -2,7 +2,7 @@
   <div class="video-catalog">
     <div class="video-catalog-title">
       <span>{{ company_name }}</span>
-      <button @click="add_new_video" class="button btn-blue">
+      <button v-if="isAdmin" @click="add_new_video" class="button btn-blue">
         {{ $t('label.add_new') }}
       </button>
     </div>
@@ -16,13 +16,29 @@
     </div>
     <div class="video-data-filter">
       <div>
-      <b-form-select size="sm" v-model="selected" :options="years"></b-form-select>
-      <b-form-select size="sm" v-model="selected" :options="months"></b-form-select>
+        <b-form-select
+          size="sm"
+          v-model="selected"
+          :options="years"
+        ></b-form-select>
+        <b-form-select
+          size="sm"
+          v-model="selected"
+          :options="months"
+        ></b-form-select>
       </div>
       <div class="data-dev">~</div>
       <div>
-      <b-form-select size="sm" v-model="selected" :options="years"></b-form-select>
-      <b-form-select size="sm" v-model="selected" :options="months"></b-form-select>
+        <b-form-select
+          size="sm"
+          v-model="selected"
+          :options="years"
+        ></b-form-select>
+        <b-form-select
+          size="sm"
+          v-model="selected"
+          :options="months"
+        ></b-form-select>
       </div>
       <div class="video-data-filter-acc">
         <b-form-radio-group
@@ -45,17 +61,19 @@
       ></videoPrev>
     </div>
     <div class="videos-mng-panel">
-      <span>{{ $t('label.in_page') }}:</span>
-      <a href="#" id="selectAll" @click="toggleAll">{{
-        $t('label.select_all')
-      }}</a>
-      <span>|</span>
-      <a href="#" id="deselectAll" @click="toggleAll">{{
-        $t('label.deselect_all')
-      }}</a>
-      <button class="button btn-orange">
-        {{ $t('label.delete') }}
-      </button>
+      <div class="admin-mng-panel" v-if="isAdmin">
+        <span>{{ $t('label.in_page') }}:</span>
+        <a href="#" id="selectAll" @click="toggleAll">{{
+          $t('label.select_all')
+        }}</a>
+        <span>|</span>
+        <a href="#" id="deselectAll" @click="toggleAll">{{
+          $t('label.deselect_all')
+        }}</a>
+        <button class="button btn-orange">
+          {{ $t('label.delete') }}
+        </button>
+      </div>
       <div class="videos-mng-page">
         <b-pagination
           v-model="currentPage"
@@ -111,6 +129,9 @@ export default {
     ...mapGetters(['video_list', 'me']),
     company_name() {
       return this.me.profile.company_name
+    },
+    isAdmin() {
+      return this.me.profile.irole === 'admin'
     }
   }
 }
@@ -150,9 +171,9 @@ export default {
   align-content: space-between;
   flex-wrap: wrap;
   justify-content: flex-start;
-  select{
+  select {
     width: 100px;
-    margin:5px;
+    margin: 5px;
   }
   .video-data-filter-acc {
     margin: 5px;
@@ -178,6 +199,10 @@ export default {
   display: flex;
   align-items: center;
   margin-top: 15px;
+  .admin-mng-panel {
+    display: flex;
+    align-items: center;
+  }
   .videos-mng-page {
     display: flex;
     margin-left: auto;

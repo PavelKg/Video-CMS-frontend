@@ -23,8 +23,8 @@
       >
         <b-tab
           v-for="(tab, ind) in tabs"
-          :key="`tab-${tab}`"
-          :title="`${tab}`"
+          :key="`tab-${tab.name}`"
+          :title="`${tab.text}`"
           title-item-class="w-50"
           :title-link-class="linkClass(ind)"
           @click="changeTab"
@@ -86,7 +86,10 @@ export default {
   name: 'message-list',
   data() {
     return {
-      tabs: [this.$t('message.tab_inbox'), this.$t('message.tab_outbox')],
+      tabs: [
+        {name: 'inbox', text: this.$t('message.tab_inbox')},
+        {name: 'outbox', text: this.$t('message.tab_outbox')}
+      ],
       isShowModalMessageAdd: false,
       tabIndex: 0,
       modalMessData: {
@@ -134,7 +137,7 @@ export default {
       this.hideMessageModal()
     },
     showMessageModal() {
-      if(this.active_message) {
+      if (this.active_message) {
         const {receiver_uid, receiver_cid} = this.active_message
         this.modalMessData.receiver = {uid: receiver_uid, cid: receiver_cid}
       }
@@ -168,7 +171,7 @@ export default {
       return this.currentTab.toLowerCase()
     },
     currentTab() {
-      return this.tabs[this.tabIndex]
+      return this.tabs[this.tabIndex].name
     },
     receivers() {
       return this.message_receivers.map(receiver => {

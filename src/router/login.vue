@@ -178,7 +178,7 @@ export default {
       justify-content: flex-end;
       padding: 0 7px;
       font-size: 20px;
-      width: 120px;
+      width: 100px;
     }
     input {
       padding-left: 5px;
