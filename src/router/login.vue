@@ -120,7 +120,7 @@ export default {
   align-items: center;
   margin: 0 auto;
   padding: 20px 0px;
-  width: 350px;
+  width: 330px;
 }
 .logo-container {
   display: flex;
@@ -151,6 +151,7 @@ export default {
 }
 .login-app-title {
   display: flex;
+  justify-content: center;
   align-items: center;
   width: 100%;
   height: 102px;
@@ -165,25 +166,26 @@ export default {
     color: $blue;
   }
 }
-
-.field-row {
+.field-container {
   display: flex;
-  align-content: center;
-  margin-bottom: 10px;
-  height: 30px;
-  //align-content: space-between;
-  width: 100%;
-  span {
+  flex-direction: column;
+  .field-row {
     display: flex;
-    padding: 0 7px;
-    font-size: 20px;
-    width: 150px;
-    justify-content: flex-end;
-  }
-  input {
-    padding-left: 5px;
+    margin-bottom: 10px;
+    height: 30px;
+    span {
+      display: flex;
+      justify-content: flex-end;
+      padding: 0 7px;
+      font-size: 20px;
+      width: 120px;
+    }
+    input {
+      padding-left: 5px;
+    }
   }
 }
+
 .button-container {
   padding: 20px 0;
   display: flex;
