@@ -4,7 +4,7 @@ export default {
     company: '企業情報',
     video: '動画検索',
     messages: 'メッセージ',
-    roles: 'ロール設定',
+    roles: '権限設定',
     users: 'ユーザー管理',
     groups: 'グループ管理',
     screen: '画面カスタマイズ'
@@ -14,6 +14,8 @@ export default {
     app_name: '視聴管理システム',
     company_id: '企業ID',
     personal_id: 'ID',
+    enter_you_personal_id: 'IDを入力してください',
+    enter_you_password: 'パスワードを入力してください',
     password: 'Password',
     btnLogin: 'LOGIN',
     lnkPassRec: 'ID・パスワードを忘れた方はこちら',
@@ -34,16 +36,16 @@ export default {
     tab_outbox: '送信トレイ'
   },
   roles: {
-    btn_add: 'ロール追加',
+    btn_add: '権限追加',
     tbl_header_ID: 'ID',
-    tbl_header_name: 'ロール名',
+    tbl_header_name: '権限名',
     tbl_header_auth: '管理者権限',
-    tbl_header_mng: '設定',
+    tbl_header_mng: '管理',
     tbl_deleted: '削除済',
-    oper_title_edit: 'ロール情報',
-    oper_title_add: 'ロール新規追加',
+    oper_title_edit: '権限情報',
+    oper_title_add: '権限新規追加',
     role_id: 'ID',
-    role_name: 'ロール名',
+    role_name: '権限名',
     administrator: '管理者権限'
   },
   users: {
@@ -122,6 +124,6 @@ export default {
     public: '公開',
     private: '非公開',
     group: 'グループ',
-    role: 'ロール'
+    role: '権限'
   }
 }
