@@ -14,8 +14,8 @@ export default {
     app_name: '視聴管理システム',
     company_id: '企業ID',
     personal_id: 'ID',
-    enter_you_personal_id: 'IDを入力してください',
-    enter_you_password: 'パスワードを入力してください',
+    enter_you_personal_id: 'IDを入力',
+    enter_you_password: 'パスワードを入力',
     password: 'Password',
     btnLogin: 'LOGIN',
     lnkPassRec: 'ID・パスワードを忘れた方はこちら',
@@ -123,7 +123,8 @@ export default {
     all: 'すべて',
     public: '公開',
     private: '非公開',
-    group: 'グループ',
-    role: '権限'
+    group: 'グループを選択',
+    role: '権限',
+    not_selected: '未選択'
   }
 }
