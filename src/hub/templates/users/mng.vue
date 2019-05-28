@@ -29,8 +29,8 @@
       <b-form-group id="input-group-gid">
         <b-form-select v-model="mnUser.gid" :options="group_options">
           <template slot="first">
-            <option :value="null" disabled
-              ><b>{{ `${$t('label.group')}` }}</b></option
+            <option :value="null"
+              ><b>{{ `${$t('label.not_selected')}` }}</b></option
             >
           </template>
         </b-form-select>
@@ -38,7 +38,7 @@
       <b-form-group id="input-group-rid">
         <b-form-select v-model="mnUser.rid" :options="role_options" required>
           <template slot="first">
-            <option :value="null" disabled>{{ `${$t('label.role')}` }}</option>
+            <option :value="null" disabled>{{ `${$t('label.not_selected')}` }}</option>
           </template>
           
         </b-form-select>

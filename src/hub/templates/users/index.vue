@@ -11,7 +11,7 @@
       />
       <b-form-select v-model="selected_groups" :options="group_options">
         <template slot="first">
-          <option :value="null">Group</option>
+          <option :value="null">{{$t('label.group')}}</option>
         </template>
       </b-form-select>
       <div class="icon-button" @click="onFilter">
