@@ -75,7 +75,8 @@ export default {
           throw Error(`Error update group, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error update group: ${err}`)
+        //console.log('err-ror',err.response)
+        throw Error(err.response.data.message)
       }
     }
   },

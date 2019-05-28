@@ -3,7 +3,10 @@
     <button class="button btn-blue" @click="addNewGroup">
       {{ $t('groups.btn_add') }}
     </button>
-    <groupsTable @contentElementClick="contentElementClick" />
+    <groupsTable
+      @contentElementClick="contentElementClick"
+      @onContentError="onError"
+    />
   </div>
 </template>
 
@@ -22,10 +25,16 @@ export default {
         company_id: this.me.profile.company_id,
         gid: null
       })
-      this.$emit('contentElementClick', 'root.subItems.groups.subItems.group_add')
+      this.$emit(
+        'contentElementClick',
+        'root.subItems.groups.subItems.group_add'
+      )
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)
+    },
+    onError(message) {
+      this.$store.commit('SHOW_MESSAGE_ERROR', message)
     }
   },
   components: {
@@ -37,6 +46,4 @@ export default {
 }
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

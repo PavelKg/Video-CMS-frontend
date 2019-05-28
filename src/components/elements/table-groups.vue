@@ -88,7 +88,9 @@ export default {
       ],
       perPage: 4,
       currentPage: 1,
-      groups_selected: []
+      groups_selected: [],
+      modalShow: false,
+      modal_text: ''
     }
   },
   methods: {
@@ -121,7 +123,10 @@ export default {
           this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
         },
         err => {
-          console.log('err=', err)
+          this.$emit(
+            'onContentError',
+            `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`
+          )
         }
       )
     }

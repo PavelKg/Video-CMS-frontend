@@ -126,5 +126,11 @@ export default {
     group: 'Group',
     role: 'Role',
     not_selected: 'Not Selected'
+  },
+  errors: {
+    cannot_delete_a_group_with_existing_users:
+      'Cannot delete a group with existing users',
+    cannot_delete_a_role_with_existing_users:
+      'Cannot delete a role with existing users'
   }
 }
