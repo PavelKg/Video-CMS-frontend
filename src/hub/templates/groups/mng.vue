@@ -5,7 +5,7 @@
       <span v-if="oper === 'edit'">{{ `${$t('groups.name')}` }}:</span>
       <b-form-input
         v-model="mnGroup.name"
-        placeholder="Group Name"
+        :placeholder="`${$t('groups.group_name')}`"
       ></b-form-input>
     </div>
     <template v-if="oper === 'edit'">

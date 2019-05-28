@@ -11,6 +11,7 @@
             <b-form-input
               v-model="mnUser.uid"
               :placeholder="`${$t('users.user_id')}`"
+              required
             ></b-form-input>
             <button class="button btn-grey" @click="genUserId">
               {{ `${$t('label.auto')}` }}
@@ -22,28 +23,31 @@
         <b-form-input
           v-model="mnUser.fullname"
           :placeholder="`${$t('users.user_fullname')}`"
+          required
         ></b-form-input>
       </b-form-group>
       <b-form-group id="input-group-gid">
         <b-form-select v-model="mnUser.gid" :options="group_options">
           <template slot="first">
-            <option :value="null" disabled
-              ><b>{{ `${$t('label.group')}` }}</b></option
+            <option :value="null"
+              ><b>{{ `${$t('label.not_selected')}` }}</b></option
             >
           </template>
         </b-form-select>
       </b-form-group>
       <b-form-group id="input-group-rid">
-        <b-form-select v-model="mnUser.rid" :options="role_options">
+        <b-form-select v-model="mnUser.rid" :options="role_options" required>
           <template slot="first">
-            <option :value="null" disabled>{{ `${$t('label.role')}` }}</option>
+            <option :value="null" disabled>{{ `${$t('label.not_selected')}` }}</option>
           </template>
+          
         </b-form-select>
       </b-form-group>
       <b-form-group id="input-group-email">
         <b-form-input
           v-model="mnUser.email"
           :placeholder="`${$t('users.user_email')}`"
+          required
         ></b-form-input>
       </b-form-group>
       <b-form-group id="input-group-password">

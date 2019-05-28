@@ -124,6 +124,7 @@ export default {
     public: 'Public',
     private: 'Private',
     group: 'Group',
-    role: 'Role'
+    role: 'Role',
+    not_selected: 'Not Selected'
   }
 }

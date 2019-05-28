@@ -119,7 +119,6 @@ export default {
       this.$store.dispatch('GROUP_DEL').then(
         res => {
           this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
-          console.log(this.groups)
         },
         err => {
           console.log('err=', err)

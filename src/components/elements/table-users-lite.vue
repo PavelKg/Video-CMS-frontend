@@ -57,14 +57,17 @@ export default {
   methods: {},
   computed: {
     ...mapGetters(['users_list']),
+    active_users() {
+      return this.users_list.filter( user => !Boolean(user.deleted_at))
+    },
     users_count() {
-      return this.users_list ? this.users_list.length : 0
+      return this.active_users ? this.active_users.length : 0
     },
     users_on_page() {
       const begin = (this.currentPage - 1) * this.perPage
       const end = begin + this.perPage
 
-      return this.users_list.slice(begin, end)
+      return this.active_users.slice(begin, end)
     }
   }
 }
