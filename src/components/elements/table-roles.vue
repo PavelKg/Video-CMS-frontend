@@ -1,7 +1,7 @@
 <template>
   <div class="table-roles">
     <b-table
-      :items="roles_on_page"
+      :items="roles"
       :fields="fields"
       responsive="sm"
       striped
