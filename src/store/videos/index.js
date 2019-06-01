@@ -11,8 +11,10 @@ export default {
     async UPLOAD_VIDEO_FILES({state, commit, rootGetters}, formdata) {
       this.isUploading = true
       try {
-        const {company_id, uid} = rootGetters.me.profile
-        const resp = await Api.upload_files({cid:company_id, uid}, formdata)
+        const resp_url = await Api.getGcsSignedUrl()
+        const {url} = resp_url.data
+        console.log('url=', url)
+        const resp = await Api.upload_files(url, formdata)
         const code = resp.status
         if (code === 200 ) {
           this.isUploading = false

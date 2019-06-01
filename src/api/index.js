@@ -1,4 +1,5 @@
 import axios from 'axios'
+import axiosGcs from 'axios'
 
 const API_ROOT = 'https://vcms.pepex.kg/api'
 
@@ -7,7 +8,6 @@ const Api = axios.create({
   withCredentials: false,
   headers: {
     Accept: 'application/json',
-
     Authorization: `Bearer`
   }
 })
@@ -293,12 +293,50 @@ export default {
 
   /* ------------ VIDEOS ----------------------------*/
   /**  */
-  upload_files(target, formData) {
-    const {cid, uid} = target
-    return Api.post(`/company/${cid}/users/${uid}/videos`, formData, {
+
+  /** List of messages
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of messages
+   *  [{
+      "mid": 0,
+      "sender": "string",
+      "receiver": "string",
+      "subject": "string",
+      "text": "string",
+      "important": true,
+      "created_at": "string",
+      "deleted_at": "string"
+  }]
+ */
+  getGcsSignedUrl(options) {
+    //const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/videos/gcs-upload-surl`, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        ...type_json
       }
     })
+  },
+
+  upload_files(url, formData) {
+    console.log('form-data=', formData)
+    axiosGcs
+      .put(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(function() {
+        console.log('SUCCESS!!')
+      })
+      .catch(function() {
+        console.log('FAILURE!!')
+      })
+
+    // const {cid, uid} = target
+    // return Api.post(`/company/${cid}/users/${uid}/videos`, formData, {
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data'
+    //   }
+    // })
   }
 }
