@@ -125,7 +125,8 @@ export default {
     private: 'Private',
     group: 'Group',
     role: 'Role',
-    not_selected: 'Not Selected'
+    group_is_not_selected: 'Group Is Not Selected',
+    role_is_not_selected: 'Role Is Not Selected'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

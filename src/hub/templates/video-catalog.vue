@@ -18,12 +18,12 @@
       <div>
         <b-form-select
           size="sm"
-          v-model="selected"
+          v-model="period_filter.selected_year_from"
           :options="years"
         ></b-form-select>
         <b-form-select
           size="sm"
-          v-model="selected"
+          v-model="period_filter.selected_month_from"
           :options="months"
         ></b-form-select>
       </div>
@@ -31,12 +31,12 @@
       <div>
         <b-form-select
           size="sm"
-          v-model="selected"
-          :options="years"
+          v-model="period_filter.selected_year_to"
+          :options="years_to"
         ></b-form-select>
         <b-form-select
           size="sm"
-          v-model="selected"
+          v-model="period_filter.selected_month_to"
           :options="months"
         ></b-form-select>
       </div>
@@ -106,7 +106,12 @@ export default {
       perPage: 3,
       currentPage: 1,
       rows: 8,
-      selected: []
+      period_filter: {
+        selected_year_from: 2016,
+        selected_year_to: 2019,
+        selected_month_from: 1,
+        selected_month_to: 12
+      }
     }
   },
   methods: {
@@ -132,6 +137,10 @@ export default {
     },
     isAdmin() {
       return this.me.profile.irole === 'admin'
+    },
+    years_to() {
+      const _from = this.period_filter.selected_year_from
+      return this.years.filter(year => year >= _from)
     }
   }
 }
