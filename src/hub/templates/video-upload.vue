@@ -20,16 +20,15 @@
         </div>
       </form>
     </div>
-    <div v-for="(file, key) in files" :key="key" class="file-listing">
-      {{ `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} Mb)` }}
-      <div class="remove-container">
-        <a href="#" class="remove" @click="removeFile(key)">{{
-          $t('label.remove')
-        }}</a>
-      </div>
-    </div>
+    <FileUploadItem
+      v-for="(file, key) in files"
+      :key="key"
+      :id="key"
+      :file="file"
+    />
     <div class="video-upload-buttons">
-      <button class="button btn-blue"
+      <button
+        class="button btn-blue"
         @click="submitFiles()"
         :class="{'btn-disabled': files.length === 0}"
       >
@@ -43,13 +42,18 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+import FileUploadItem from '@/components/elements/file-upload-item'
+
 export default {
   name: 'upload-file',
   data() {
     return {
-      dragAndDropCapable: false,
-      files: []
+      dragAndDropCapable: false
     }
+  },
+  computed: {
+    ...mapGetters({files: 'files_for_upload'})
   },
   mounted() {
     this.dragAndDropCapable = this.determineDragAndDropCapable()
@@ -95,43 +99,36 @@ export default {
         'FileReader' in window
       )
     },
-    removeFile(key) {
-      this.files.splice(key, 1)
-    },
+    // removeFile(key) {
+    //   this.files.splice(key, 1)
+    // },
     addCustomFiles() {
-      this.files = [...this.files, ...event.target.files]
+      //this.files = [...this.files, ...event.target.files]
+      this.$store.commit('ADD_UPLOAD_FILE', event.target.files)
     },
     selectCustomFiles() {
       this.$refs.customInput.click()
     },
     backToCatalog() {
+      this.$store.commit('CLEAR_UPLOAD_FILES')
       this.$emit('contentElementClick', 'root.subItems.home')
     },
     submitFiles() {
       let formData = new FormData()
-
       for (var i = 0; i < this.files.length; i++) {
         let file = this.files[i]
 
         formData.append('files[' + i + ']', file)
       }
 
-      this.$store.dispatch('UPLOAD_VIDEO_FILES', formData)
+      this.$store
+        .dispatch('UPLOAD_VIDEO_FILES', formData)
         .then(res => {})
         .catch(err => {})
-      // axios
-      //   .post('/file-drag-drop', formData, {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data'
-      //     }
-      //   })
-      //   .then(function() {
-      //     console.log('SUCCESS!!')
-      //   })
-      //   .catch(function() {
-      //     console.log('FAILURE!!')
-      //   })
     }
+  },
+  components: {
+    FileUploadItem
   }
 }
 </script>
@@ -176,22 +173,7 @@ export default {
       }
     }
   }
-  .file-listing {
-    display: flex;
-    justify-content: space-between;
-    width: 400px;
-    margin-top: auto;
-    padding: 10px;
-    border-bottom: 1px solid $gray-lighter;
-    div.remove-container {
-      text-align: center;
-    }
 
-    div.remove-container a {
-      color: red;
-      cursor: pointer;
-    }
-  }
   .video-upload-buttons {
     display: flex;
     padding: 10px 0;

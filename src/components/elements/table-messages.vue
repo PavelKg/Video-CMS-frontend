@@ -22,7 +22,7 @@
             </b-form-checkbox>
           </div>
           <div class="star-place">
-            <input class="star" type="checkbox" />
+            <input id="rate-star" type="checkbox" />
           </div>
         </div>
       </template>
@@ -202,33 +202,34 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../assets/styles';
 .date-column {
   text-align: right;
 }
 
+.star-place {
+  line-height: 10px;
+  #rate-star {
+    visibility: hidden;
+    font-size: 30px;
+    cursor: pointer;
+    &:checked:before {
+      color: #c9c91d;
+      content: '\2605';
+    }
+  }
+}
+
+#rate-star::before {
+  content: '\2605';
+  visibility: visible;
+}
 .check-row {
   display: flex;
   justify-content: space-around;
   align-items: center;
   max-width: 50px;
-  .star-place {
-    line-height: 10px;
-    .star {
-      visibility: hidden;
-      font-size: 30px;
-      cursor: pointer;
-    }
-    .star:before {
-      content: '\2606';
-      visibility: visible;
-    }
-    .star:checked:before {
-      color: #c9c91d;
-      content: '\2605';
-    }
-  }
 }
 .messages-mng-panel {
   display: flex;

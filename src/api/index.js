@@ -294,49 +294,46 @@ export default {
   /* ------------ VIDEOS ----------------------------*/
   /**  */
 
-  /** List of messages
-   * @param {string} filter
-   * @returns {Promise<*>} - 200 List of messages
+  /** Get GCS Signed Url
+   * @param {array} - files list
+   * @returns {Promise<*>} - 200 List of Signed url
    *  [{
-      "mid": 0,
-      "sender": "string",
-      "receiver": "string",
-      "subject": "string",
-      "text": "string",
-      "important": true,
-      "created_at": "string",
-      "deleted_at": "string"
+      "name": "string",
+      "size": "integer",
+      "type": "string",
   }]
  */
-  getGcsSignedUrl(options) {
-    //const setFilter = !filter ? '' : `?filter=${filter}`
-    return Api.get(`/videos/gcs-upload-surl`, {
-      headers: {
-        ...type_json
+  getGcsSignedUrl(params) {
+    //console.log('params=', params)
+    return Api.get(
+      `/videos/gcs-upload-surl`,
+      {
+        params: params
+      },
+      {
+        headers: {
+          ...type_json
+        }
       }
-    })
+    )
   },
 
-  upload_files(url, formData) {
-    console.log('form-data=', formData)
-    axiosGcs
-      .put(url, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then(function() {
-        console.log('SUCCESS!!')
-      })
-      .catch(function() {
-        console.log('FAILURE!!')
-      })
-
-    // const {cid, uid} = target
-    // return Api.post(`/company/${cid}/users/${uid}/videos`, formData, {
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data'
-    //   }
-    // })
+  upload_files(url, file, progress_handler) {
+    progress_handler(0)
+    return axiosGcs({
+      method: 'PUT',
+      url: url,
+      headers: {
+        'Content-Type': file.type
+      },
+      onUploadProgress: function(progressEvent) {
+        progress_handler(
+          parseInt(
+            Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          )
+        )
+      },
+      data: file
+    })
   }
 }
