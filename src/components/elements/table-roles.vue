@@ -1,7 +1,7 @@
 <template>
   <div class="table-roles">
     <b-table
-      :items="roles_on_page"
+      :items="roles"
       :fields="fields"
       responsive="sm"
       striped
@@ -65,7 +65,10 @@ export default {
           this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)
         },
         err => {
-          console.log('err=', err)
+          this.$emit(
+            'onContentError',
+            `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`
+          )
         }
       )
     }
@@ -97,8 +100,10 @@ export default {
         },
         {
           key: 'is_admin',
-          label: !this.showColumn ? this.$t('roles.tbl_header_auth'): 'Is Admin',
-          thStyle: {'text-align': 'center'},
+          label: !this.showColumn
+            ? this.$t('roles.tbl_header_auth')
+            : 'Is Admin',
+          thStyle: {'text-align': 'center'}
         },
         {
           key: 'mng',
@@ -117,7 +122,6 @@ export default {
 
 <style lang="scss">
 @import '../../assets/styles';
-
 
 .deleted_item {
   color: $link;

@@ -11,19 +11,19 @@
     >
       <template slot="mid" slot-scope="row">
         <div class="check-row">
-          <div>
-            <b-form-checkbox
-              :id="String(row.item.mid)"
-              :name="`ch-${row.item.mid}`"
-              :value="row.item.mid"
-              v-model="messages_selected"
-              :disabled="Boolean(row.item.deleted_at)"
-            >
-            </b-form-checkbox>
-          </div>
-          <div class="star-place">
-            <input class="star" type="checkbox" />
-          </div>
+          <b-form-checkbox
+            :id="String(row.item.mid)"
+            :name="`ch-${row.item.mid}`"
+            :value="row.item.mid"
+            v-model="messages_selected"
+            :disabled="Boolean(row.item.deleted_at)"
+          >
+          </b-form-checkbox>
+        </div>
+      </template>
+      <template slot="important" slot-scope="data">
+        <div class="star-place">
+          <span class="star" :class="{selected: data.item.important}"></span>
         </div>
       </template>
       <template slot="user" slot-scope="item">
@@ -173,8 +173,13 @@ export default {
         {
           key: 'mid',
           label: '',
+          thStyle: {width: '50px !important', 'text-align': 'center'}
+        },
+        {
+          label:'#',
+          key: 'important',
           sortable: true,
-          thStyle: {'max-width': '50px !important', 'text-align': 'center'}
+          thStyle: {width: '50px !important'}
         },
         {
           key: 'subject',
@@ -202,10 +207,36 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../assets/styles';
 .date-column {
   text-align: right;
+}
+
+.star-place {
+  //max-width: 2px;
+  //line-height: 1px;
+  span {
+    font-size: 1em;
+  }
+  display: flex;
+  .star {
+    cursor: pointer;
+    &:before {
+      color: white;
+      content: '\2605';
+      text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    }
+  }
+
+  .selected {
+    &:before {
+      content: '\2605';
+      position: absolute;
+      transition: all 0.4s;
+      color: gold;
+    }
+  }
 }
 
 .check-row {
@@ -213,22 +244,6 @@ export default {
   justify-content: space-around;
   align-items: center;
   max-width: 50px;
-  .star-place {
-    line-height: 10px;
-    .star {
-      visibility: hidden;
-      font-size: 30px;
-      cursor: pointer;
-    }
-    .star:before {
-      content: '\2606';
-      visibility: visible;
-    }
-    .star:checked:before {
-      color: #c9c91d;
-      content: '\2605';
-    }
-  }
 }
 .messages-mng-panel {
   display: flex;

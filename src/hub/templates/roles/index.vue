@@ -6,7 +6,10 @@
       </button>
     </div>
     <div class="roles-mng-table">
-      <TableRoles @contentElementClick="contentElementClick" />
+      <TableRoles
+        @contentElementClick="contentElementClick"
+        @onContentError="onError"
+      />
     </div>
   </div>
 </template>
@@ -39,6 +42,9 @@ export default {
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)
+    },
+    onError(message) {
+      this.$store.commit('SHOW_MESSAGE_ERROR', message)
     }
   }
 }

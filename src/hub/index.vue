@@ -15,6 +15,9 @@
       <div class="content-zone">
         <component :is="component" v-if="component" />
       </div>
+      <b-modal v-model="modalErrorShow" size="sm" centered ok-only @change="onModalChange">
+        {{ $t(`${errors_message}`) }} !!!
+      </b-modal>
     </div>
   </div>
 </template>
@@ -28,12 +31,18 @@ export default {
   name: 'super-page',
   data() {
     return {
-      component: null
+      component: null,
+      modalErrorShow: false
     }
   },
   components: {
     headerArea,
     menuArea
+  },
+  watch: {
+    errors_isShow: function(newVal, oldVal) {
+      this.modalErrorShow = newVal
+    }
   },
   created() {
     this.$store.commit('INIT_LANG')
@@ -48,7 +57,12 @@ export default {
       })
   },
   computed: {
-    ...mapGetters(['windowsRect', 'me_irole']),
+    ...mapGetters([
+      'windowsRect',
+      'me_irole',
+      'errors_isShow',
+      'errors_message'
+    ]),
     loader() {
       return () => import(`./templates/iface/${this.me_irole}/content`)
     },
@@ -62,6 +76,10 @@ export default {
   methods: {
     onHideMenu() {
       this.$store.commit('MENU_HIDE')
+    },
+    onModalChange(isVisible) {
+      if (!isVisible) {this.$store.commit('HIDE_MESSAGE_ERROR')}
+
     }
   }
 }

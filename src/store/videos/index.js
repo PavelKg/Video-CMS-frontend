@@ -5,20 +5,70 @@ export default {
   state: {
     videos: [],
     active_video: {},
-    isUploading: false
+    filesForUpload: {
+      list: [],
+      isUploading: false
+    }
   },
   actions: {
-    async UPLOAD_VIDEO_FILES({state, commit, rootGetters}, formdata) {
-      this.isUploading = true
+    async UPLOAD_VIDEO_FILES({state, commit, rootGetters}) {
+      state.filesForUpload.isUploading = true
+
+      const files = state.filesForUpload.list.map(item => {
+        const {name, size, type} = item.file
+        return {name, size, type}
+      })
+
       try {
-        const {company_id, uid} = rootGetters.me.profile
-        const resp = await Api.upload_files({cid:company_id, uid}, formdata)
-        const code = resp.status
-        if (code === 200 ) {
-          this.isUploading = false
+        const res_url_list = await Promise.all(
+          files.map(async file => await Api.getGcsSignedUrl(file))
+        )
+        // const resp_url = await Api.getGcsSignedUrl(files)
+        const url_list = res_url_list.map(item => item.data)
+
+        // const xhr = new XMLHttpRequest()
+        // xhr.open('PUT', url, true)
+
+        // xhr.onload = function() {
+        //   if (xhr.status === 200) {
+        //     alert('Yay!')
+        //   } else {
+        //     alert('failure')
+        //   }
+        // }
+
+        // xhr.onerror = function() {
+        //   alert('failure')
+        // }
+
+        // xhr.setRequestHeader('Content-Type', 'image/jpeg')
+        // xhr.send(formdata)
+
+        const result = await Promise.all(
+          url_list.map(async (url_item, index) => {
+            const file_idx = state.filesForUpload.list.findIndex(function(
+              item
+            ) {
+              return item.file.name === url_item.name
+            })
+
+            if (!~file_idx) {
+              throw Error('Upload file not found')
+            }
+            const {progress_handler, file} = state.filesForUpload.list[file_idx]
+            return await Api.upload_files(url_item.url, file, progress_handler)
+          })
+        )
+
+        console.log('result=', result)
+        //const resp = await Api.upload_files(url, formdata)
+        const code = result.status
+        if (code === 200) {
+          state.filesForUpload.isUploading = false
         }
       } catch (err) {
-        this.isUploading = false
+        console.log('upload_file_error: ', err)
+        state.filesForUpload.isUploading = false
       }
     },
     async LOAD_VIDEO_LIST({state, commit}) {
@@ -35,7 +85,7 @@ export default {
         loadList.push(video_item)
       }
       commit('SET_VIDEO_LIST', loadList)
-    },    
+    }
   },
   mutations: {
     SET_VIDEO_LIST(state, _list) {
@@ -43,10 +93,48 @@ export default {
     },
     SET_ACTIVE_VIDEO(state, item) {
       state.active_video = item
+    },
+    ADD_UPLOAD_FILE(state, _files) {
+      // need add check for existing file name
+      const files = [..._files]
+      console.log('files=', files)
+      files.forEach(function(file) {
+        state.filesForUpload.list.push({file: file})
+      })
+      //state.filesForUpload.list = [...state.filesForUpload.list, ...files]
+      console.log('state.filesForUpload.list=', state.filesForUpload.list)
+    },
+    DEL_UPLOAD_FILE(state, file_name) {
+      console.log('file_name=', file_name)
+      const del_index = state.filesForUpload.list.findIndex(function(item) {
+        if (item.file.name === file_name) {
+          return true
+        }
+      })
+      if (~del_index) {
+        state.filesForUpload.list.splice(del_index, 1)
+      }
+    },
+    CLEAR_UPLOAD_FILES(state) {
+      // need add check for existing file name
+      state.filesForUpload.list = []
+    },
+    PROGRESS_UPLOAD_FILE(state, payload) {
+      const {name, progress_handler} = payload
+      const upd_index = state.filesForUpload.list.findIndex(function(item) {
+        if (item.file.name === name) {
+          return true
+        }
+      })
+      if (~upd_index) {
+        state.filesForUpload.list[upd_index].progress_handler = progress_handler
+      }
     }
   },
   getters: {
     video_list: state => state.videos,
-    active_video: state => state.active_video
+    active_video: state => state.active_video,
+    files_for_upload: state => state.filesForUpload.list.map(item => item.file),
+    storeFilesIsUploading: state => state.filesForUpload.isUploading
   }
 }

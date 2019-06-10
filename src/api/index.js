@@ -1,4 +1,5 @@
 import axios from 'axios'
+import axiosGcs from 'axios'
 
 const API_ROOT = 'https://vcms.pepex.kg/api'
 
@@ -7,7 +8,6 @@ const Api = axios.create({
   withCredentials: false,
   headers: {
     Accept: 'application/json',
-
     Authorization: `Bearer`
   }
 })
@@ -293,12 +293,47 @@ export default {
 
   /* ------------ VIDEOS ----------------------------*/
   /**  */
-  upload_files(target, formData) {
-    const {cid, uid} = target
-    return Api.post(`/company/${cid}/users/${uid}/videos`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+
+  /** Get GCS Signed Url
+   * @param {array} - files list
+   * @returns {Promise<*>} - 200 List of Signed url
+   *  [{
+      "name": "string",
+      "size": "integer",
+      "type": "string",
+  }]
+ */
+  getGcsSignedUrl(params) {
+    //console.log('params=', params)
+    return Api.get(
+      `/videos/gcs-upload-surl`,
+      {
+        params: params
+      },
+      {
+        headers: {
+          ...type_json
+        }
       }
+    )
+  },
+
+  upload_files(url, file, progress_handler) {
+    progress_handler(0)
+    return axiosGcs({
+      method: 'PUT',
+      url: url,
+      headers: {
+        'Content-Type': file.type
+      },
+      onUploadProgress: function(progressEvent) {
+        progress_handler(
+          parseInt(
+            Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          )
+        )
+      },
+      data: file
     })
   }
 }

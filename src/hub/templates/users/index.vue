@@ -11,14 +11,14 @@
       />
       <b-form-select v-model="selected_groups" :options="group_options">
         <template slot="first">
-          <option :value="null">{{$t('label.group')}}</option>
+          <option :value="null">{{ $t('label.group') }}</option>
         </template>
       </b-form-select>
       <div class="icon-button" @click="onFilter">
         <img src="@/assets/images/search_black.png" />
       </div>
     </div>
-    <UsersTable @contentElementClick="contentElementClick" />
+    <UsersTable @contentElementClick="contentElementClick" @onContentError="onError" />
   </div>
 </template>
 
@@ -72,6 +72,10 @@ export default {
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)
+    },
+    onError(message) {
+      console.log('onError')
+      this.$store.commit('SHOW_MESSAGE_ERROR', message)
     }
   }
 }
