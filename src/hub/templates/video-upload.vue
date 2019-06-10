@@ -57,9 +57,8 @@ export default {
   },
   mounted() {
     this.dragAndDropCapable = this.determineDragAndDropCapable()
-
     if (this.dragAndDropCapable) {
-      ;[
+      const allowActions = [
         'drag',
         'dragstart',
         'dragend',
@@ -67,7 +66,9 @@ export default {
         'dragenter',
         'dragleave',
         'drop'
-      ].forEach(
+      ]
+
+      allowActions.forEach(
         function(evt) {
           this.$refs.fileform.addEventListener(
             evt,
@@ -83,9 +84,11 @@ export default {
       this.$refs.fileform.addEventListener(
         'drop',
         function(e) {
-          for (let i = 0; i < e.dataTransfer.files.length; i++) {
-            this.files.push(e.dataTransfer.files[i])
-          }
+          console.log('drop files=', e.dataTransfer.files)
+          this.$store.commit('ADD_UPLOAD_FILE', e.dataTransfer.files)
+          // for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          //   this.files.push(e.dataTransfer.files[i])
+          // }
         }.bind(this)
       )
     }
@@ -102,9 +105,10 @@ export default {
     // removeFile(key) {
     //   this.files.splice(key, 1)
     // },
-    addCustomFiles() {
+    addCustomFiles(evt) {
       //this.files = [...this.files, ...event.target.files]
-      this.$store.commit('ADD_UPLOAD_FILE', event.target.files)
+      console.log('evt=', evt)
+      this.$store.commit('ADD_UPLOAD_FILE', evt.target.files)
     },
     selectCustomFiles() {
       this.$refs.customInput.click()
