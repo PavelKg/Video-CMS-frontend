@@ -125,6 +125,13 @@ export default {
     private: '非公開',
     group: 'グループを選択',
     role: '権限',
-    not_selected: '未選択'
+    group_is_not_selected: 'グループが選択されていません',
+    role_is_not_selected: '権限が選択されていません'
+  },
+  errors: {
+    cannot_delete_a_group_with_existing_users:
+      '既存のユーザーを含むグループを削除できません',
+    cannot_delete_a_role_with_existing_users:
+      '既存のユーザーを含む権限を削除できません'
   }
 }
