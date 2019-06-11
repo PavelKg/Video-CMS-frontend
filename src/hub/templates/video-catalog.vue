@@ -37,7 +37,7 @@
         <b-form-select
           size="sm"
           v-model="period_filter.selected_month_to"
-          :options="months"
+          :options="month_to"
         ></b-form-select>
       </div>
       <div class="video-data-filter-acc">
@@ -141,6 +141,13 @@ export default {
     years_to() {
       const _from = this.period_filter.selected_year_from
       return this.years.filter(year => year >= _from)
+    },
+    month_to() {
+      const _month_from =
+        this.period_filter.selected_year_from === this.period_filter.selected_year_to
+          ? this.period_filter.selected_month_from
+          : 1
+      return this.months.filter(month => month >= _month_from)
     }
   }
 }

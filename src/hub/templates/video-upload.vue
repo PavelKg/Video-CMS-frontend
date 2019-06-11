@@ -6,15 +6,16 @@
         <div class="upload-files-border">
           <span>{{ $t('label.drop_file_here') }}</span>
           <span>{{ $t('label.or') }}</span>
-          <div @click="selectCustomFiles" class="button btn-grey">
+          <button @click="selectCustomFiles" class="button btn-grey">
             {{ $t('label.select_file') }}
-          </div>
+          </button>
           <input
             type="file"
             id="file"
             ref="customInput"
             class="custom-file-input"
             multiple
+            accept="video/*"
             @change="addCustomFiles($event)"
           />
         </div>
@@ -84,11 +85,12 @@ export default {
       this.$refs.fileform.addEventListener(
         'drop',
         function(e) {
-          console.log('drop files=', e.dataTransfer.files)
-          this.$store.commit('ADD_UPLOAD_FILE', e.dataTransfer.files)
-          // for (let i = 0; i < e.dataTransfer.files.length; i++) {
-          //   this.files.push(e.dataTransfer.files[i])
-          // }
+          const dropFiles = [...e.dataTransfer.files].filter(item =>
+            /^video\/*/.test(item.type)
+          )
+          if (dropFiles.length) {
+            this.$store.commit('ADD_UPLOAD_FILE', dropFiles)
+          }
         }.bind(this)
       )
     }
@@ -106,8 +108,6 @@ export default {
     //   this.files.splice(key, 1)
     // },
     addCustomFiles(evt) {
-      //this.files = [...this.files, ...event.target.files]
-      console.log('evt=', evt)
       this.$store.commit('ADD_UPLOAD_FILE', evt.target.files)
     },
     selectCustomFiles() {

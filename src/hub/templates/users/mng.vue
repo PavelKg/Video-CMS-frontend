@@ -30,7 +30,7 @@
         <b-form-select v-model="mnUser.gid" :options="group_options">
           <template slot="first">
             <option :value="null"
-              ><b>{{ `${$t('label.role_is_not_selected')}` }}</b></option
+              ><b>{{ `${$t('label.group_is_not_selected')}` }}</b></option
             >
           </template>
         </b-form-select>
@@ -38,7 +38,7 @@
       <b-form-group id="input-group-rid">
         <b-form-select v-model="mnUser.rid" :options="role_options" required>
           <template slot="first">
-            <option :value="null" disabled>{{ `${$t('label.group_is_not_selected')}` }}</option>
+            <option :value="null" disabled>{{ `${$t('label.role_is_not_selected')}` }}</option>
           </template>
           
         </b-form-select>
@@ -55,6 +55,7 @@
           v-model="mnUser.password"
           type="password"
           :placeholder="`${$t('users.password')}`"
+          :required= "oper === 'add'"
         ></b-form-input>
       </b-form-group>
       <b-form-group id="input-group-conf-password">
@@ -62,6 +63,7 @@
           v-model="mnUser.confPassword"
           type="password"
           :placeholder="`${$t('users.conf_password')}`"
+          :required= "oper === 'add' && mnUser.password !== ''"
         ></b-form-input>
       </b-form-group>
       <template v-if="oper === 'edit'"> </template>
