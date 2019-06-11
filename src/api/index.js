@@ -291,6 +291,32 @@ export default {
     })
   },
 
+  /** starred message
+   * @param {string} mid - Message ID
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  message_starred(mid) {
+    return Api.post(`/messages/${mid}/star`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** unstarred message
+   * @param {string} mid - Message ID
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  message_unstarred(mid) {
+    return Api.delete(`/messages/${mid}/star`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /* ------------ VIDEOS ----------------------------*/
   /**  */
 

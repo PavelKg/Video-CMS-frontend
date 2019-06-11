@@ -21,9 +21,9 @@
           </b-form-checkbox>
         </div>
       </template>
-      <template slot="important" slot-scope="data">
-        <div class="star-place">
-          <span class="star" :class="{selected: data.item.important}"></span>
+      <template slot="starred" slot-scope="data">
+        <div class="star-place" @click="onStarred({mid: data.item.mid, state:data.item.starred})">
+          <span class="star" :class="{selected: data.item.starred}"></span>
         </div>
       </template>
       <template slot="user" slot-scope="item">
@@ -106,11 +106,17 @@ export default {
       messages_selected: []
     }
   },
-  created() {},
+  created() {
+  },
   props: {
     Type: String
   },
   methods: {
+    onStarred(payload) {
+      const new_state = !payload.state 
+      const action = new_state ? 'ADD': 'DEL'
+      this.$store.dispatch(`${action}_MESSAGE_STAR`, payload.mid)
+    },
     showMessageModal(mess) {
       this.$store.commit('SET_ACTIVE_MESSAGE', mess)
       this.isShowModalMessageInfo = true
@@ -177,7 +183,7 @@ export default {
         },
         {
           label:'#',
-          key: 'important',
+          key: 'starred',
           sortable: true,
           thStyle: {width: '50px !important'}
         },

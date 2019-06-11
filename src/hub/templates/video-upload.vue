@@ -6,15 +6,16 @@
         <div class="upload-files-border">
           <span>{{ $t('label.drop_file_here') }}</span>
           <span>{{ $t('label.or') }}</span>
-          <div @click="selectCustomFiles" class="button btn-grey">
+          <button @click="selectCustomFiles" class="button btn-grey">
             {{ $t('label.select_file') }}
-          </div>
+          </button>
           <input
             type="file"
             id="file"
             ref="customInput"
             class="custom-file-input"
             multiple
+            accept="video/*"
             @change="addCustomFiles($event)"
           />
         </div>
@@ -57,9 +58,8 @@ export default {
   },
   mounted() {
     this.dragAndDropCapable = this.determineDragAndDropCapable()
-
     if (this.dragAndDropCapable) {
-      ;[
+      const allowActions = [
         'drag',
         'dragstart',
         'dragend',
@@ -67,7 +67,9 @@ export default {
         'dragenter',
         'dragleave',
         'drop'
-      ].forEach(
+      ]
+
+      allowActions.forEach(
         function(evt) {
           this.$refs.fileform.addEventListener(
             evt,
@@ -83,8 +85,11 @@ export default {
       this.$refs.fileform.addEventListener(
         'drop',
         function(e) {
-          for (let i = 0; i < e.dataTransfer.files.length; i++) {
-            this.files.push(e.dataTransfer.files[i])
+          const dropFiles = [...e.dataTransfer.files].filter(item =>
+            /^video\/*/.test(item.type)
+          )
+          if (dropFiles.length) {
+            this.$store.commit('ADD_UPLOAD_FILE', dropFiles)
           }
         }.bind(this)
       )
@@ -102,9 +107,8 @@ export default {
     // removeFile(key) {
     //   this.files.splice(key, 1)
     // },
-    addCustomFiles() {
-      //this.files = [...this.files, ...event.target.files]
-      this.$store.commit('ADD_UPLOAD_FILE', event.target.files)
+    addCustomFiles(evt) {
+      this.$store.commit('ADD_UPLOAD_FILE', evt.target.files)
     },
     selectCustomFiles() {
       this.$refs.customInput.click()
