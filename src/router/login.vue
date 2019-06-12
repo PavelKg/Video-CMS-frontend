@@ -1,7 +1,7 @@
 <template>
   <div id="login-form">
     <div class="logo-container">
-      <img src="../assets/images/video-icon.png" class="avatar" />
+      <img src="../assets/images/p-streamCMS.png" class="avatar" />
     </div>
     <div class="locales-container">
       <div
@@ -75,6 +75,7 @@ export default {
   },
   mounted() {
     this.$store.commit('INIT_LANG')
+    //this.$store.commit('CHANGE_LANG', br_lang === 'ja' ? 'jp': br_lang)
   },
   methods: {
     login() {
@@ -111,8 +112,8 @@ export default {
 @import '../assets/styles';
 
 .avatar {
-  width: 128px;
-  height: 128px;
+  width: 330px;
+  //height: 128px;
 }
 #login-form {
   display: flex;

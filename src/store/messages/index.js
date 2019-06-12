@@ -22,6 +22,7 @@ export default {
         const result = await Api.messages(filter)
         if (Array.isArray(result.data) && result.status === 200) {
           commit('SET_MESSAGES', result.data)
+          commit('ORDER_MESSAGE', {sortBy: 'created_at', sortDesc: true})
         } else {
           throw Error('Error load messages list')
         }
@@ -102,6 +103,19 @@ export default {
         if (element.mid === mid) {
           state.messages.list[idx].starred = starred
         }
+      })
+    },
+    ORDER_MESSAGE(state, payload) {
+      const {sortBy, sortDesc} = payload
+      state.messages.list.sort(function(a, b) {
+        if (a[sortBy] > b[sortBy]) {
+          return sortDesc ? -1 : 1
+        }
+        if (a[sortBy] < b[sortBy]) {
+          return sortDesc ? 1 : -1
+        }
+        // a eq b
+        return 0
       })
     }
   },
