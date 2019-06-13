@@ -113,7 +113,7 @@ export default {
 
 .avatar {
   width: 330px;
-  //height: 128px;
+  height: 137px;
 }
 #login-form {
   display: flex;

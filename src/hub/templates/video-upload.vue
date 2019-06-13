@@ -110,7 +110,8 @@ export default {
     addCustomFiles(evt) {
       this.$store.commit('ADD_UPLOAD_FILE', evt.target.files)
     },
-    selectCustomFiles() {
+    selectCustomFiles(evt) {
+      evt.preventDefault()
       this.$refs.customInput.click()
     },
     backToCatalog() {
@@ -118,15 +119,16 @@ export default {
       this.$emit('contentElementClick', 'root.subItems.home')
     },
     submitFiles() {
-      let formData = new FormData()
-      for (var i = 0; i < this.files.length; i++) {
-        let file = this.files[i]
+      // let formData = new FormData()
+      // for (var i = 0; i < this.files.length; i++) {
+      //   let file = this.files[i]
 
-        formData.append('files[' + i + ']', file)
-      }
+      //   formData.append('files[]', file, "Math.random().avi")
+      // }
 
+      //console.log('formData=', formData.files)
       this.$store
-        .dispatch('UPLOAD_VIDEO_FILES', formData)
+        .dispatch('UPLOAD_VIDEO_FILES'/*, formData*/)
         .then(res => {})
         .catch(err => {})
     }

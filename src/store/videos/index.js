@@ -1,5 +1,12 @@
 import Api from '@/api'
 const count = 8
+const uuid = () =>
+  ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
+  )
 
 export default {
   state: {
@@ -13,15 +20,21 @@ export default {
   actions: {
     async UPLOAD_VIDEO_FILES({state, commit, rootGetters}) {
       state.filesForUpload.isUploading = true
+      console.log('state.filesForUpload=', state.filesForUpload)
 
       const files = state.filesForUpload.list.map(item => {
         const {name, size, type} = item.file
-        return {name, size, type}
+        const {uuid} = item
+        return {name, size, type, uuid}
       })
 
       try {
         const res_url_list = await Promise.all(
-          files.map(async file => await Api.getGcsSignedUrl(file))
+          files.map(async file => {
+            //file.name = file.uuid
+            console.log('file=', file)            
+            return await Api.getGcsSignedUrl(file)
+          })
         )
         // const resp_url = await Api.getGcsSignedUrl(files)
         const url_list = res_url_list.map(item => item.data)
@@ -43,13 +56,14 @@ export default {
 
         // xhr.setRequestHeader('Content-Type', 'image/jpeg')
         // xhr.send(formdata)
+        console.log('url_list=', url_list)
 
         const result = await Promise.all(
           url_list.map(async (url_item, index) => {
             const file_idx = state.filesForUpload.list.findIndex(function(
               item
             ) {
-              return item.file.name === url_item.name
+              return item.uuid === url_item.name
             })
 
             if (!~file_idx) {
@@ -97,15 +111,12 @@ export default {
     ADD_UPLOAD_FILE(state, _files) {
       // need add check for existing file name
       const files = [..._files]
-      console.log('files=', files)
       files.forEach(function(file) {
-        state.filesForUpload.list.push({file: file})
+        state.filesForUpload.list.push({file: file, uuid: uuid()})
       })
       //state.filesForUpload.list = [...state.filesForUpload.list, ...files]
-      console.log('state.filesForUpload.list=', state.filesForUpload.list)
     },
     DEL_UPLOAD_FILE(state, file_name) {
-      console.log('file_name=', file_name)
       const del_index = state.filesForUpload.list.findIndex(function(item) {
         if (item.file.name === file_name) {
           return true
