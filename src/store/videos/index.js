@@ -32,7 +32,7 @@ export default {
         const res_url_list = await Promise.all(
           files.map(async file => {
             //file.name = file.uuid
-            console.log('file=', file)            
+            console.log('file=', file)
             return await Api.getGcsSignedUrl(file)
           })
         )
@@ -63,7 +63,7 @@ export default {
             const file_idx = state.filesForUpload.list.findIndex(function(
               item
             ) {
-              return item.uuid === url_item.name
+              return item.uuid === url_item.uuid
             })
 
             if (!~file_idx) {
