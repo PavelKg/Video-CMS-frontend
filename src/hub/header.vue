@@ -39,6 +39,7 @@ export default {
   name: 'headerArea',
   mounted() {
     this.$store.dispatch('LOAD_USER_MENU', this.me_irole)
+    this.$store.dispatch('GET_ACTIVE_VIDEO_UUID')
   },
   data() {
     return {

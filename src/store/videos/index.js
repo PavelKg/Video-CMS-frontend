@@ -10,14 +10,39 @@ const uuid = () =>
 
 export default {
   state: {
-    videos: [],
-    active_video: {},
+    videos: {
+      list: [],
+      public: 'all',
+      period: ['1900-01-01', '2100-12-31']
+    },
+    active_video_uuid: {},
     filesForUpload: {
       list: [],
       isUploading: false
     }
   },
   actions: {
+
+    GET_ACTIVE_VIDEO_UUID: ({commit}) => {
+      if (localStorage.getItem('vcms-activ-video-uuid')) {
+        try {
+          const act_item = JSON.parse(localStorage.getItem('vcms-activ-video-uuid'))
+          const _item = act_item ? act_item : ''
+
+          commit('SET_ACTIVE_VIDEO', _item)
+        } catch (e) {
+          localStorage.removeItem('vcms-activ-video-uuid')
+        }
+      }
+    },
+    CLEAR_ACTIVE_VIDEO_UUID: () => localStorage.removeItem('vcms-activ-video-uuid'),
+    SAVE_ACTIVE_VIDEO_UUID: ({state}) => {
+      localStorage.setItem(
+        'vcms-activ-video-uuid',
+        JSON.stringify(state.active_video_uuid)
+      )
+    },
+
     async UPLOAD_VIDEO_FILES({state, commit, rootGetters}) {
       state.filesForUpload.isUploading = true
       console.log('state.filesForUpload=', state.filesForUpload)
@@ -85,29 +110,46 @@ export default {
         state.filesForUpload.isUploading = false
       }
     },
-    async LOAD_VIDEO_LIST({state, commit}) {
-      const loadList = []
-      for (let i = 0; i < count; i += 1) {
-        const video_item = {
-          tag: `tag-${i}`,
-          title: `Video-${i}-file`,
-          description: `This is - ${i + 1} moves from ${count}`,
-          last_mod: new Date(2018, Math.random() * 12, Math.random() * 30),
-          author_id: i * Math.random(1000),
-          url: 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8'
+    async LOAD_VIDEO_LIST({state, commit, getters}) {
+      const cid = getters.me.profile.company_id
+
+      try {
+        const result = await Api.videos_catalog({cid})
+        if (result.status === 200) {
+          commit('SET_VIDEO_LIST', result.data)
+        } else {
+          throw Error(`Error update role, status - ${result.status}`)
         }
-        loadList.push(video_item)
+      } catch (err) {
+        throw Error(err.response.data.message)
       }
-      commit('SET_VIDEO_LIST', loadList)
+
+      // for (let i = 0; i < count; i += 1) {
+      //   const video_item = {
+      //     tag: `tag-${i}`,
+      //     title: `Video-${i}-file`,
+      //     description: `This is - ${i + 1} moves from ${count}`,
+      //     last_mod: new Date(2018, Math.random() * 12, Math.random() * 30),
+      //     author_id: i * Math.random(1000),
+      //     url: 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8'
+      //   }
+      //   loadList.push(video_item)
+      // }
     }
   },
   mutations: {
     SET_VIDEO_LIST(state, _list) {
-      state.videos = [..._list]
+      state.videos.list = [..._list]
     },
-    SET_ACTIVE_VIDEO(state, item) {
-      state.active_video = item
+    SET_ACTIVE_VIDEO(state, uuid) {
+      state.active_video_uuid = uuid
     },
+    SET_VIDEO_PERIOD(state, _period){
+      state.videos.period = [..._period]
+    },
+    SET_VIDEO_PUBLIC(state, _public){
+      state.videos.public = _public
+    },    
     ADD_UPLOAD_FILE(state, _files) {
       // need add check for existing file name
       const files = [..._files]
@@ -143,7 +185,7 @@ export default {
     }
   },
   getters: {
-    video_list: state => state.videos,
+    video_list: state => state.videos.list,
     active_video: state => state.active_video,
     files_for_upload: state => state.filesForUpload.list.map(item => item.file),
     storeFilesIsUploading: state => state.filesForUpload.isUploading

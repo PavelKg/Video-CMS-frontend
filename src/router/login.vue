@@ -1,7 +1,7 @@
 <template>
   <div id="login-form">
     <div class="logo-container">
-      <img src="../assets/images/p-streamCMS.png" class="avatar" />
+      <img src="../assets/images/p-streamCMS-s.png" class="avatar" />
     </div>
     <div class="locales-container">
       <div
@@ -112,8 +112,8 @@ export default {
 @import '../assets/styles';
 
 .avatar {
-  width: 330px;
-  height: 137px;
+  //width: 330px;
+  //height: 137px;
 }
 #login-form {
   display: flex;

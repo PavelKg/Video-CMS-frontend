@@ -361,5 +361,37 @@ export default {
       },
       data: file
     })
+  },
+
+  /** List of videos
+   * @param {string} filter
+   * @param {string} limit
+   * @param {string} offset
+   * @returns {Promise<*>} - 200 List of messages
+   *  [{
+        "vid": "number",
+        "video_filename": "string",
+        "video_uuid": "string",
+        "video_status": "string",
+        "video_thumbnail": "string" - BASE64,,
+        "video_title": "string",
+        "video_tag": "string",
+        "video_description": "string",
+        "video_public": "boolean",
+        "created_at": "data",
+        "updated_at": "data",
+        "deleted_at": "data or null"
+  }]
+ */
+  videos_catalog({cid, filter, offset, limit}) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    //const setLimit = !limit ? '' : `?limit=${limit}`
+    //const setOffset = !offset ? '' : `?offset=${offset}`
+
+    return Api.get(`/companies/${cid}/videos/catalog${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
   }
 }
