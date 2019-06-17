@@ -53,11 +53,15 @@
         ></b-form-textarea>
       </div>
       <div class="video-subtitles-buttons">
-        <button type="submit" class="button btn-blue">
+        <button
+          :disabled="isVideosInfoUpdating || dataUpdated"
+          type="submit"
+          class="button btn-blue"
+        >
           {{ $t('label.registration') }}
         </button>
         <button @click="backToCatalog" class="button btn-braun">
-          {{ $t('label.cancel') }}
+          {{ dataUpdated ? $t('label.back') : $t('label.cancel') }}
         </button>
       </div>
     </form>
@@ -72,21 +76,27 @@ export default {
   data() {
     return {
       mainProps: {width: 75, height: 75, class: 'm1'},
+      dataUpdated: false,
       file: '',
       imagePreview: null,
       form: {
-        video_id: 0,
-        video_thumbnail: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+        video_uuid: '',
+        video_thumbnail: '',
+        //'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
         video_title: '',
         video_tag: '',
         video_description: ''
       }
     }
   },
+  created() {
+    this.$store
+      .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
+      .then(res => {
+        this.form = {...this.form, ...res}
+      })
+  },
   mounted() {
-    console.log('mounted=', this.active_video)
-    this.form = {...this.form, ...this.active_video}
-
     this.dragAndDropCapable = this.determineDragAndDropCapable()
 
     if (this.dragAndDropCapable) {
@@ -120,9 +130,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['active_video']),
-    i_thumbnail(){
-      return this.form.video_thumbnail
+    ...mapGetters(['active_video_uuid', 'isVideosInfoUpdating']),
+    i_thumbnail() {
+      return Boolean(this.form.video_thumbnail)
+        ? this.form.video_thumbnail
+        : require('@/assets/images/p-streamCMS-s.png')
     }
   },
   methods: {
@@ -136,8 +148,8 @@ export default {
     },
     deleteThumb() {
       this.file = ''
-      this.form.video_thumbnail =
-        'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
+      this.form.video_thumbnail = ''
+      //'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
     },
     onSelectFile(evt) {
       evt.preventDefault()
@@ -151,7 +163,25 @@ export default {
     },
     onSubmit(evt) {
       evt.preventDefault()
-      this.form.thumb = this.$refs['thumb-img'].src
+      const {
+        video_uuid,
+        video_thumbnail,
+        video_title,
+        video_tag,
+        video_description
+      } = this.form
+      this.$store
+        .dispatch('UPDATE_VIDEO_INFO', {
+          video_uuid,
+          video_thumbnail,
+          video_title,
+          video_tag,
+          video_description
+        })
+        .then(res => {
+          this.$store.dispatch('LOAD_VIDEO_LIST')
+          this.dataUpdated = true
+        })
     },
     addCustomFiles(evt) {
       evt.preventDefault()
@@ -166,7 +196,6 @@ export default {
             'load',
             function() {
               this.form.video_thumbnail = reader.result
-              console.log('this.form.video_thumbnail=', this.form.video_thumbnail)
             }.bind(this),
             false
           )

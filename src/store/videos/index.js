@@ -1,5 +1,5 @@
 import Api from '@/api'
-const count = 8
+
 const uuid = () =>
   ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
     (
@@ -13,20 +13,24 @@ export default {
     videos: {
       list: [],
       public: 'all',
-      period: ['1900-01-01', '2100-12-31']
+      period: ['1900-01-01', '2100-12-31'],
+      isInfoUpdating: false,
+      isListLoading: false,
+      selected: []
     },
-    active_video_uuid: {},
+    active_video_uuid: '',
     filesForUpload: {
       list: [],
       isUploading: false
     }
   },
   actions: {
-
     GET_ACTIVE_VIDEO_UUID: ({commit}) => {
       if (localStorage.getItem('vcms-activ-video-uuid')) {
         try {
-          const act_item = JSON.parse(localStorage.getItem('vcms-activ-video-uuid'))
+          const act_item = JSON.parse(
+            localStorage.getItem('vcms-activ-video-uuid')
+          )
           const _item = act_item ? act_item : ''
 
           commit('SET_ACTIVE_VIDEO', _item)
@@ -35,7 +39,8 @@ export default {
         }
       }
     },
-    CLEAR_ACTIVE_VIDEO_UUID: () => localStorage.removeItem('vcms-activ-video-uuid'),
+    CLEAR_ACTIVE_VIDEO_UUID: () =>
+      localStorage.removeItem('vcms-activ-video-uuid'),
     SAVE_ACTIVE_VIDEO_UUID: ({state}) => {
       localStorage.setItem(
         'vcms-activ-video-uuid',
@@ -43,7 +48,8 @@ export default {
       )
     },
 
-    async UPLOAD_VIDEO_FILES({state, commit, rootGetters}) {
+    async UPLOAD_VIDEO_FILES({state, commit, getters}) {
+      const cid = getters.me.profile.company_id
       state.filesForUpload.isUploading = true
       console.log('state.filesForUpload=', state.filesForUpload)
 
@@ -58,7 +64,7 @@ export default {
           files.map(async file => {
             //file.name = file.uuid
             console.log('file=', file)
-            return await Api.getGcsSignedUrl(file)
+            return await Api.getGcsSignedUrl(cid, file)
           })
         )
         // const resp_url = await Api.getGcsSignedUrl(files)
@@ -110,11 +116,21 @@ export default {
         state.filesForUpload.isUploading = false
       }
     },
+
     async LOAD_VIDEO_LIST({state, commit, getters}) {
       const cid = getters.me.profile.company_id
+      commit('SET_STATUS_VIDEOS_LOADING', true)
+      console.log('state.public=', state.public)
+      let filter =
+        state.videos.public === 'all'
+          ? ''
+          : `video_public[eq]:${Boolean(state.videos.public === 'public')}`
+
+      let offset = 0
+      let limit = 8
 
       try {
-        const result = await Api.videos_catalog({cid})
+        const result = await Api.videos_catalog({cid}, {filter, offset, limit})
         if (result.status === 200) {
           commit('SET_VIDEO_LIST', result.data)
         } else {
@@ -122,19 +138,53 @@ export default {
         }
       } catch (err) {
         throw Error(err.response.data.message)
+      } finally {
+        commit('SET_STATUS_VIDEOS_LOADING', false)
+      }
+    },
+    async LOAD_VIDEO_INFO_BY_UUID({state, commit, getters}, uuid) {
+      const cid = getters.me.profile.company_id
+      try {
+        const result = await Api.video_info_by_uuid({cid, uuid})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw Error(`Error update role, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      }
+    },
+    async UPDATE_VIDEO_INFO({state, commit, getters}, video_info) {
+      const cid = getters.me.profile.company_id
+      commit('SET_STATUS_INFO_UPDATTING', true)
+      const {
+        video_uuid: uuid,
+        video_thumbnail,
+        video_title,
+        video_tag,
+        video_description
+      } = video_info
+
+      const info_data = {
+        video_thumbnail,
+        video_title,
+        video_tag,
+        video_description
       }
 
-      // for (let i = 0; i < count; i += 1) {
-      //   const video_item = {
-      //     tag: `tag-${i}`,
-      //     title: `Video-${i}-file`,
-      //     description: `This is - ${i + 1} moves from ${count}`,
-      //     last_mod: new Date(2018, Math.random() * 12, Math.random() * 30),
-      //     author_id: i * Math.random(1000),
-      //     url: 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8'
-      //   }
-      //   loadList.push(video_item)
-      // }
+      try {
+        const result = await Api.video_update_info({cid, uuid, info_data})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw Error(`Error update role, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      } finally {
+        commit('SET_STATUS_INFO_UPDATTING', false)
+      }
     }
   },
   mutations: {
@@ -144,12 +194,13 @@ export default {
     SET_ACTIVE_VIDEO(state, uuid) {
       state.active_video_uuid = uuid
     },
-    SET_VIDEO_PERIOD(state, _period){
+    SET_VIDEO_PERIOD(state, _period) {
       state.videos.period = [..._period]
     },
-    SET_VIDEO_PUBLIC(state, _public){
+    SET_VIDEO_PUBLIC(state, _public) {
       state.videos.public = _public
-    },    
+      console.log('state.videos.public=', state.videos.public)
+    },
     ADD_UPLOAD_FILE(state, _files) {
       // need add check for existing file name
       const files = [..._files]
@@ -172,6 +223,26 @@ export default {
       // need add check for existing file name
       state.filesForUpload.list = []
     },
+    SET_STATUS_INFO_UPDATTING(state, status) {
+      state.videos.isInfoUpdating = status
+    },
+    SET_STATUS_VIDEOS_LOADING(state, status) {
+      state.videos.isListLoading = status
+    },
+    SET_VIDEO_SELECTED(state, uuid) {
+      if (state.videos.selected.indexOf(uuid) === -1) {
+        state.videos.selected.push(uuid)
+      }
+    },
+    UNSET_VIDEO_SELECTED(state, uuid) {
+      const ind = state.videos.selected.indexOf(uuid)
+      if (ind > -1) {
+        state.videos.selected.splice(ind, 1)
+      }
+    },
+    CLEAR_VIDEO_SELECTED(state) {
+      state.videos.selected = []
+    },
     PROGRESS_UPLOAD_FILE(state, payload) {
       const {name, progress_handler} = payload
       const upd_index = state.filesForUpload.list.findIndex(function(item) {
@@ -186,7 +257,10 @@ export default {
   },
   getters: {
     video_list: state => state.videos.list,
-    active_video: state => state.active_video,
+    isVideosInfoUpdating: state => state.videos.isInfoUpdating,
+    isVideosListLoading: state => state.videos.isListLoading,
+    videos_selected: state=> state.videos.selected,
+    active_video_uuid: state => state.active_video_uuid,
     files_for_upload: state => state.filesForUpload.list.map(item => item.file),
     storeFilesIsUploading: state => state.filesForUpload.isUploading
   }

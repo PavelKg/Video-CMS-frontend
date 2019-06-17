@@ -42,9 +42,10 @@
       </div>
       <div class="video-data-filter-acc">
         <b-form-radio-group
-          id="btn-filer-acc"
-          v-model="acc_selected"
-          :options="acc_options"
+          id="btn-filer-public"
+          v-model="public_selected"
+          @change="onPublicState"
+          :options="public_options"
           buttons
           button-variant="outline-primary"
           size="sm"
@@ -52,8 +53,9 @@
         ></b-form-radio-group>
       </div>
     </div>
-    <div class="video-box">
-      <videoPrev
+    <div class="video-box" >
+      <template v-if="isVideosListLoading"><span>Loading...</span></template>
+      <videoPrev :style="{opacity: isVideosListLoading? 0.1: 1}"
         v-for="vItem in video_list"
         :key="vItem.tag"
         :videoitem="vItem"
@@ -97,12 +99,13 @@ export default {
     return {
       years: [2019, 2018, 2017, 2016],
       months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12],
-      acc_options: [
+      public_options: [
         {text: this.$t('label.all'), value: 'all'},
         {text: this.$t('label.public'), value: 'public'},
         {text: this.$t('label.private'), value: 'private'}
       ],
-      acc_selected: 'all',
+      public_selected: 'all',
+      videos_selected: [],
       perPage: 3,
       currentPage: 1,
       rows: 8,
@@ -125,13 +128,28 @@ export default {
         'root.subItems.videos.subItems.video_upload'
       )
     },
-    toggleAll() {}
+    toggleAll(env) {
+      const action = env.target['id']
+      if (action === 'selectAll') {
+        this.video_list.forEach(element => {
+          this.$store.commit('SET_VIDEO_SELECTED', element.video_uuid)
+        });
+      } 
+      else {
+        this.$store.commit('CLEAR_VIDEO_SELECTED')
+            }
+          
+    },
+    onPublicState(new_state) {
+      this.$store.commit('SET_VIDEO_PUBLIC', new_state)
+      this.$store.dispatch('LOAD_VIDEO_LIST')
+    },
   },
   components: {
     videoPrev
   },
   computed: {
-    ...mapGetters(['video_list', 'me']),
+    ...mapGetters(['video_list', 'me', 'isVideosListLoading']),
     company_name() {
       return this.me.profile.company_name
     },
@@ -144,11 +162,16 @@ export default {
     },
     month_to() {
       const _month_from =
-        this.period_filter.selected_year_from === this.period_filter.selected_year_to
+        this.period_filter.selected_year_from ===
+        this.period_filter.selected_year_to
           ? this.period_filter.selected_month_from
           : 1
       return this.months.filter(month => month >= _month_from)
+    },
+    selectVideo(){
+      return true //this.videos_selected.indexOf() > -1
     }
+
   }
 }
 </script>
@@ -208,8 +231,14 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   overflow: auto;
-  align-content: flex-start;
+  //align-content: flex-end;
   justify-content: flex-start;
+  span {
+    position: absolute;
+    align-self: center;
+    font-size: 1.6em;
+    font-weight: 600
+  }
 }
 .videos-mng-panel {
   display: flex;

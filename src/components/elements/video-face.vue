@@ -1,12 +1,16 @@
 <template>
   <div class="video-box-item">
     <div class="video-box-item-content" @click="playVideo">
-      <img v-if="img_path" :src="img_path" />
-      <img v-else src="@/assets/images/p-streamCMS-s.png" />
+      <img :src="img_path" />
     </div>
     <div class="video-box-mng-panel">
       <div class="mng-panel-top">
-        <b-form-checkbox :id="tag" :name="tag"></b-form-checkbox>
+        <b-form-checkbox
+          @change="onCheckChange"
+          :checked="isSelected"
+          :id="tag"
+          :name="tag"
+        ></b-form-checkbox>
         <span :title="`${description}`">{{ title }}</span>
         <img
           v-if="showSubtitles"
@@ -27,12 +31,17 @@ import {mapGetters} from 'vuex'
 
 export default {
   name: 'video-face-box',
+  data() {
+    return {
+      //iAmSelected:false
+    }
+  },
   props: {
     videoitem: Object
   },
   methods: {
     playVideo() {
-      this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.uuid)
+      this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
       this.$store.commit('GET_COMMENTS')
       this.$emit(
         'activateContent',
@@ -40,18 +49,25 @@ export default {
       )
     },
     onSubtitles() {
-      this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.uuid)
+      this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
       this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
         'activateContent',
         'root.subItems.videos.subItems.video_subtitles'
       )
+    },
+    onCheckChange(new_state) {
+      const act = new_state ? 'SET' : 'UNSET'
+      this.$store.commit(`${act}_VIDEO_SELECTED`, this.videoitem.video_uuid)
     }
   },
   computed: {
-    ...mapGetters(['me']),
+    ...mapGetters(['me', 'videos_selected']),
     description() {
       return this.videoitem.video_description
+    },
+    isSelected() {
+      return this.videos_selected.indexOf(this.videoitem.video_uuid) > -1
     },
     updated_at() {
       return this.videoitem.updated_at
@@ -66,15 +82,12 @@ export default {
       return this.videoitem.video_title
     },
     tag() {
-      return `check-tag-${this.videoitem.video_tag}`
+      return `check-tag-${this.videoitem.video_uuid}`
     },
     img_path() {
-      // const num = Math.round(Math.random() * 5) + 1
-      // var images = require.context('@/assets/images/fake-face', false, /\.png$/)
-      // //console.log('images=', images())
-      // return images('./' + num + '.png')
-
-      return this.videoitem.video_thumbnail ? `data:image/jpeg;base64,${this.videoitem.video_thumbnail}` : null
+      return Boolean(this.videoitem.video_thumbnail)
+        ? this.videoitem.video_thumbnail
+        : require('@/assets/images/p-streamCMS-s.png')
     },
     showSubtitles() {
       return this.me.profile.irole === 'admin'
@@ -84,17 +97,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/styles';
+
 .video-box-item {
+  display: flex;
+  flex-direction: column;
   margin: 10px;
-  width: 200px;
-  height: 100%;
+
   .video-box-item-content {
     display: flex;
-    flex-direction: column;
-    height: 84px;
+    justify-content: center;
+    height: 140px;
+    width: 200px;
+    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.07);
     img {
-      width: 100%;
+      align-self: center;
+      padding: 5px;
+      max-width: 100%;
+      max-height: 100%;
       cursor: pointer;
+
+      //border: 1px solid $gray-lighter;
     }
   }
   .video-box-mng-panel {
@@ -102,6 +125,7 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     //background: #ddd;
+
     padding: 0 5px;
     .mng-panel-top {
       display: flex;
@@ -128,20 +152,22 @@ export default {
 }
 
 @media screen and (max-width: 610px) {
-  .video-box-item {
-    width: 400px;
+  .video-box-item .video-box-item-content {
+    width: 520px;
+    height: 250px;
   }
-  .mng-panel-bottom {
-    font-size: 1.5rem;
+  .video-box-mng-panel {
+    font-size: 1.3em;
   }
 }
 
 @media screen and (max-width: 875px) and (min-width: 610px) {
-  .video-box-item {
-    width: 250px;
+  .video-box-item .video-box-item-content {
+    width: 270px;
+    height: 180px;
   }
-    .mng-panel-bottom {
-      font-size: 1.3em;
-    }
+  .video-box-mng-panel {
+    font-size: 1.2em;
+  }
 }
 </style>

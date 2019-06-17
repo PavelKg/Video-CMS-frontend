@@ -321,18 +321,19 @@ export default {
   /**  */
 
   /** Get GCS Signed Url
-   * @param {array} - files list
+   * @param {cid} cid
+   * @param {params} {name, type, size, uuid} 
    * @returns {Promise<*>} - 200 List of Signed url
    *  [{
       "name": "string",
-      "size": "integer",
-      "type": "string",
+      "url": "string",
+      "uuid": "string",
   }]
  */
-  getGcsSignedUrl(params) {
+  getGcsSignedUrl(cid, params) {
     //console.log('params=', params)
     return Api.get(
-      `/videos/gcs-upload-surl`,
+      `/companies/${cid}/videos/gcs-upload-surl`,
       {
         params: params
       },
@@ -383,7 +384,8 @@ export default {
         "deleted_at": "data or null"
   }]
  */
-  videos_catalog({cid, filter, offset, limit}) {
+  videos_catalog({cid}, {filter, offset, limit}) {
+    console.log('filter', filter)
     const setFilter = !filter ? '' : `?filter=${filter}`
     //const setLimit = !limit ? '' : `?limit=${limit}`
     //const setOffset = !offset ? '' : `?offset=${offset}`
@@ -393,5 +395,49 @@ export default {
         ...type_json
       }
     })
+  },
+
+  /** Get video info by uuid
+   * @param {cid} cid
+   * @param {uuid} uuid
+   * @returns {Promise<*>} - 200 video info
+   *  {
+      "video_uuid": "string",
+      "video_filename": "string",
+      "video_status": "string",
+      "video_thumbnail": "string",
+      "video_title": "string",
+      "video_tag": "string",
+      "video_description": "string",
+      "video_public": true,
+      "created_at": "string",
+      "updated_at": "string",
+      "deleted_at": "string"
+    }
+  */
+  video_info_by_uuid({cid, uuid}) {
+    return Api.get(`/companies/${cid}/videos/${uuid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Upd video info
+   * @param {number} - cid
+   * @param {string} - uuid
+   * @param {object} info_data - {"video_title": "string" ...}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+
+  video_update_info({cid, uuid, info_data}) {
+    return Api.put(`/companies/${cid}/videos/${uuid}`, info_data, {
+      headers: {
+        ...type_json
+      }
+    })
   }
+
+
 }

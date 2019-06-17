@@ -95,7 +95,6 @@ export default {
   },
   methods: {
     toggleAll(env) {
-      console.log('groups_selected=', this.groups_selected)
       const action = env.target['id']
       this.groups_selected =
         action === 'selectAll'
