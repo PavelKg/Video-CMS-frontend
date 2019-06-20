@@ -16,6 +16,7 @@ export default {
       period: ['1900-01-01', '2100-12-31'],
       isInfoUpdating: false,
       isListLoading: false,
+      isDeleting: false,
       selected: []
     },
     active_video_uuid: '',
@@ -120,12 +121,13 @@ export default {
     async LOAD_VIDEO_LIST({state, commit, getters}) {
       const cid = getters.me.profile.company_id
       commit('SET_STATUS_VIDEOS_LOADING', true)
-      console.log('state.public=', state.public)
-      let filter =
+      let filter =  `videos.deleted_at[isNull]:,videos.created_at[gt]:'${state.videos.period[0]}'::date,videos.created_at[lt]:'${state.videos.period[1]}'::date`  
+      filter +=
         state.videos.public === 'all'
           ? ''
-          : `video_public[eq]:${Boolean(state.videos.public === 'public')}`
+          : `,video_public[eq]:${Boolean(state.videos.public === 'public')}`
 
+      
       let offset = 0
       let limit = 8
 
@@ -146,6 +148,19 @@ export default {
       const cid = getters.me.profile.company_id
       try {
         const result = await Api.video_info_by_uuid({cid, uuid})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw Error(`Error update role, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      }
+    },
+    async LOAD_VIDEO_THUMBNAIL({getters}, uuid){
+      const cid = getters.me.profile.company_id
+      try {
+        const result = await Api.video_thumbnail_by_uuid({cid, uuid})
         if (result.status === 200) {
           return result.data
         } else {
@@ -185,21 +200,43 @@ export default {
       } finally {
         commit('SET_STATUS_INFO_UPDATTING', false)
       }
+    },
+    async DELETE_VIDEO({state, getters}) {
+      const cid = getters.me.profile.company_id
+      state.videos.isDeleting = true
+
+      try {
+        await Promise.all(
+          state.videos.selected.map(async uuid => {
+            console.log('state.videos.selected=', uuid)
+            return await Api.video_delete({cid, uuid})
+          })
+        )
+      } catch (error) {
+      } finally {
+        state.videos.isDeleting = false
+      }
     }
   },
   mutations: {
     SET_VIDEO_LIST(state, _list) {
       state.videos.list = [..._list]
+      console.log('setvideo')
     },
     SET_ACTIVE_VIDEO(state, uuid) {
       state.active_video_uuid = uuid
     },
     SET_VIDEO_PERIOD(state, _period) {
-      state.videos.period = [..._period]
+      const {month_from, month_to, year_from, year_to} = _period
+      const from = new Date(year_from, month_from - 1, 2)
+        .toISOString()
+        .slice(0, 10)
+      const to = new Date(year_to, month_to, 1).toISOString().slice(0, 10)
+
+      state.videos.period = [from, to]
     },
     SET_VIDEO_PUBLIC(state, _public) {
       state.videos.public = _public
-      console.log('state.videos.public=', state.videos.public)
     },
     ADD_UPLOAD_FILE(state, _files) {
       // need add check for existing file name
@@ -256,10 +293,12 @@ export default {
     }
   },
   getters: {
-    video_list: state => state.videos.list,
+    video_list: state =>
+      state.videos.list.filter(video => !Boolean(video.deleted_at)),
     isVideosInfoUpdating: state => state.videos.isInfoUpdating,
     isVideosListLoading: state => state.videos.isListLoading,
-    videos_selected: state=> state.videos.selected,
+    isVideosDeleting: state => state.videos.isDeleting,
+    videos_selected: state => state.videos.selected,
     active_video_uuid: state => state.active_video_uuid,
     files_for_upload: state => state.filesForUpload.list.map(item => item.file),
     storeFilesIsUploading: state => state.filesForUpload.isUploading

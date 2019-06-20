@@ -18,26 +18,30 @@
       <div>
         <b-form-select
           size="sm"
-          v-model="period_filter.selected_year_from"
+          v-model="period_filter.year_from"
           :options="years"
+          @change="onPeriodState"
         ></b-form-select>
         <b-form-select
           size="sm"
-          v-model="period_filter.selected_month_from"
+          v-model="period_filter.month_from"
           :options="months"
+          @change="onPeriodState"
         ></b-form-select>
       </div>
       <div class="data-dev">~</div>
       <div>
         <b-form-select
           size="sm"
-          v-model="period_filter.selected_year_to"
+          v-model="period_filter.year_to"
           :options="years_to"
+          @change="onPeriodState"
         ></b-form-select>
         <b-form-select
           size="sm"
-          v-model="period_filter.selected_month_to"
+          v-model="period_filter.month_to"
           :options="month_to"
+          @change="onPeriodState"
         ></b-form-select>
       </div>
       <div class="video-data-filter-acc">
@@ -53,9 +57,15 @@
         ></b-form-radio-group>
       </div>
     </div>
-    <div class="video-box" >
-      <template v-if="isVideosListLoading"><span>Loading...</span></template>
-      <videoPrev :style="{opacity: isVideosListLoading? 0.1: 1}"
+    <div class="video-box">
+      <template v-if="isVideosListLoading">
+        <span>Loading...</span>
+      </template>
+      <template v-if="isVideosDeleting">
+        <span>Deleting...</span>
+      </template>
+      <videoPrev
+        :style="{opacity: isVideosListLoading ? 0.1 : 1}"
         v-for="vItem in video_list"
         :key="vItem.tag"
         :videoitem="vItem"
@@ -72,7 +82,11 @@
         <a href="#" id="deselectAll" @click="toggleAll">{{
           $t('label.deselect_all')
         }}</a>
-        <button class="button btn-orange">
+        <button
+          class="button btn-orange"
+          @click="onDelete"
+          :disabled="!hasSelected || isVideosDeleting"
+        >
           {{ $t('label.delete') }}
         </button>
       </div>
@@ -83,7 +97,8 @@
           :per-page="perPage"
           align="left"
           size="sm"
-        ></b-pagination>
+        >
+        </b-pagination>
       </div>
     </div>
   </div>
@@ -105,18 +120,18 @@ export default {
         {text: this.$t('label.private'), value: 'private'}
       ],
       public_selected: 'all',
-      videos_selected: [],
       perPage: 3,
       currentPage: 1,
       rows: 8,
       period_filter: {
-        selected_year_from: 2016,
-        selected_year_to: 2019,
-        selected_month_from: 1,
-        selected_month_to: 12
+        year_from: 2016,
+        year_to: 2019,
+        month_from: 1,
+        month_to: 12
       }
     }
   },
+  
   methods: {
     placeholder: () => $t('message.key_search'),
     activateContent(key) {
@@ -133,23 +148,39 @@ export default {
       if (action === 'selectAll') {
         this.video_list.forEach(element => {
           this.$store.commit('SET_VIDEO_SELECTED', element.video_uuid)
-        });
-      } 
-      else {
+        })
+      } else {
         this.$store.commit('CLEAR_VIDEO_SELECTED')
-            }
-          
+      }
     },
     onPublicState(new_state) {
       this.$store.commit('SET_VIDEO_PUBLIC', new_state)
       this.$store.dispatch('LOAD_VIDEO_LIST')
     },
+    onPeriodState() {
+      this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
+      this.$store.dispatch('LOAD_VIDEO_LIST')
+    },
+    onDelete() {
+      this.$store.dispatch('DELETE_VIDEO').then(res => {
+        this.$store.dispatch('LOAD_VIDEO_LIST')
+      })
+    }
   },
   components: {
     videoPrev
   },
   computed: {
-    ...mapGetters(['video_list', 'me', 'isVideosListLoading']),
+    ...mapGetters([
+      'video_list',
+      'me',
+      'isVideosListLoading',
+      'isVideosDeleting',
+      'videos_selected'
+    ]),
+    hasSelected() {
+      return Boolean(this.videos_selected.length)
+    },
     company_name() {
       return this.me.profile.company_name
     },
@@ -157,21 +188,16 @@ export default {
       return this.me.profile.irole === 'admin'
     },
     years_to() {
-      const _from = this.period_filter.selected_year_from
+      const _from = this.period_filter.year_from
       return this.years.filter(year => year >= _from)
     },
     month_to() {
       const _month_from =
-        this.period_filter.selected_year_from ===
-        this.period_filter.selected_year_to
-          ? this.period_filter.selected_month_from
+        this.period_filter.year_from === this.period_filter.year_to
+          ? this.period_filter.month_from
           : 1
       return this.months.filter(month => month >= _month_from)
-    },
-    selectVideo(){
-      return true //this.videos_selected.indexOf() > -1
     }
-
   }
 }
 </script>
@@ -237,7 +263,7 @@ export default {
     position: absolute;
     align-self: center;
     font-size: 1.6em;
-    font-weight: 600
+    font-weight: 600;
   }
 }
 .videos-mng-panel {

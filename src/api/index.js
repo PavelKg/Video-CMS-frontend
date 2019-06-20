@@ -384,17 +384,24 @@ export default {
         "deleted_at": "data or null"
   }]
  */
-  videos_catalog({cid}, {filter, offset, limit}) {
-    console.log('filter', filter)
-    const setFilter = !filter ? '' : `?filter=${filter}`
-    //const setLimit = !limit ? '' : `?limit=${limit}`
-    //const setOffset = !offset ? '' : `?offset=${offset}`
+  videos_catalog({cid}, {filter, offset = 0, limit}) {
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
 
-    return Api.get(`/companies/${cid}/videos/catalog${setFilter}`, {
-      headers: {
-        ...type_json
+    console.log(
+      'filter',
+      `/companies/${cid}/videos/catalog?${setFilter}${setLimit}${setOffset}`
+    )
+
+    return Api.get(
+      `/companies/${cid}/videos/catalog?${setFilter}${setLimit}${setOffset}`,
+      {
+        headers: {
+          ...type_json
+        }
       }
-    })
+    )
   },
 
   /** Get video info by uuid
@@ -423,6 +430,23 @@ export default {
     })
   },
 
+  /** Get video thumbnail by uuid
+   * @param {cid} cid
+   * @param {uuid} uuid
+   * @returns {Promise<*>} - 200 video info
+   *  {
+      "video_uuid": "string",
+      "video_thumbnail": "string",
+    }
+  */
+  video_thumbnail_by_uuid({cid, uuid}) {
+    return Api.get(`/companies/${cid}/videos/${uuid}/thumbnail`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** Upd video info
    * @param {number} - cid
    * @param {string} - uuid
@@ -437,7 +461,21 @@ export default {
         ...type_json
       }
     })
+  },
+
+  /** delete video
+   * @param {number} - cid
+   * @param {string} - uuid
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+
+  video_delete({cid, uuid}) {
+    console.log('{cid, uuid}=', {cid, uuid})
+    return Api.delete(`/companies/${cid}/videos/${uuid}`, {
+      headers: {
+        ...type_json
+      }
+    })
   }
-
-
 }

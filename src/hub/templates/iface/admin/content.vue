@@ -45,7 +45,7 @@ export default {
       this.$store.dispatch('SAVE_MENU_STATE')
     }
   },
-  mounted() {
+  created() {
     this.$store.dispatch('LOAD_VIDEO_LIST')
   },
   components: {
@@ -56,7 +56,7 @@ export default {
     root_messages,
     root_groups,
     root_groups_group_add,
-    root_groups_group_edit,    
+    root_groups_group_edit,
     root_roles,
     root_roles_role_add,
     root_roles_role_edit,

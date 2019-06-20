@@ -34,10 +34,19 @@ export default {
   data() {
     return {
       //iAmSelected:false
+      video_thumbnail: ''
     }
   },
   props: {
     videoitem: Object
+  },
+  mounted() {
+    this.$store.dispatch('LOAD_VIDEO_THUMBNAIL', this.videoitem.video_uuid).then(
+      res => {
+        this.video_thumbnail = res.video_thumbnail
+      },
+      error => {}
+    )
   },
   methods: {
     playVideo() {
@@ -85,8 +94,8 @@ export default {
       return `check-tag-${this.videoitem.video_uuid}`
     },
     img_path() {
-      return Boolean(this.videoitem.video_thumbnail)
-        ? this.videoitem.video_thumbnail
+      return Boolean(this.video_thumbnail)
+        ? this.video_thumbnail
         : require('@/assets/images/p-streamCMS-s.png')
     },
     showSubtitles() {

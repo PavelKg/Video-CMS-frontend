@@ -125,6 +125,20 @@ export default {
         'drop',
         function(e) {
           this.file = e.dataTransfer.files[0]
+
+          if (this.file) {
+            if (/\.(jpe?g|png|gif)$/i.test(this.file.name)) {
+              let reader = new FileReader()
+              reader.addEventListener(
+                'load',
+                function() {
+                  this.form.video_thumbnail = reader.result
+                }.bind(this),
+                false
+              )
+              reader.readAsDataURL(this.file)
+            }
+          }
         }.bind(this)
       )
     }
@@ -185,9 +199,8 @@ export default {
     },
     addCustomFiles(evt) {
       evt.preventDefault()
-      console.log('addCustomFiles')
-      this.file = event.target.files[0]
 
+      this.file = event.target.files[0]
       if (this.file) {
         if (/\.(jpe?g|png|gif)$/i.test(this.file.name)) {
           let reader = new FileReader()
