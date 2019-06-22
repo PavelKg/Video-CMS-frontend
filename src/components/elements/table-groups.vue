@@ -86,7 +86,7 @@ export default {
           thStyle: {width: '120px !important', 'text-align': 'center'}
         }
       ],
-      perPage: 4,
+      perPage: 8,
       currentPage: 1,
       groups_selected: [],
       modalShow: false,
@@ -172,7 +172,7 @@ export default {
     }
   }
   a {
-    padding: 0 10px;
+    //padding: 0 10px;
   }
 }
 

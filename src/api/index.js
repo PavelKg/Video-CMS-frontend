@@ -477,5 +477,22 @@ export default {
         ...type_json
       }
     })
+  },
+
+/** update video status
+   * @param {number} - cid
+   * @param {UUID} - uuid
+   * @param {string} - value
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+
+  video_update_status({cid, uuid, value}) {
+    return Api.put(`/companies/${cid}/videos/${uuid}/status`, {value}, {
+      headers: {
+        ...type_json
+      }
+    })
   }
+  
 }

@@ -55,9 +55,9 @@ export default {
         throw Error(`Error update user: ${err.response.data.message}`)
       }
     },
-    async USER_DEL({commit, getters}, payload) {
+    async USER_DEL({commit, getters}, uid) {
       const cid = getters.me.profile.company_id
-      const {uid} = getters.user_selected
+      //const {uid} = getters.user_selected
       try {
         const result = await Api.user_del({cid, uid})
         if (result.status === 204) {

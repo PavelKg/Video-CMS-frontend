@@ -22,16 +22,17 @@
       </form>
     </div>
     <FileUploadItem
-      v-for="(file, key) in files"
+      v-for="(up_file, key) in files_for_upload"
       :key="key"
-      :id="key"
-      :file="file"
+      :uuid="up_file.uuid"
+      :file="up_file.file"
+      :uploaded="up_file.uploaded"
     />
     <div class="video-upload-buttons">
       <button
         class="button btn-blue"
         @click="submitFiles()"
-        :class="{'btn-disabled': files.length === 0}"
+        :class="{'btn-disabled': notUploaded.length === 0}"
       >
         {{ $t('label.upload') }}
       </button>
@@ -54,7 +55,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({files: 'files_for_upload'})
+    ...mapGetters(['files_for_upload']),
+    notUploaded(){
+      return this.files_for_upload.filter(file => !Boolean(file.uploaded)&&!Boolean(file.isUploading))
+    }
   },
   mounted() {
     this.dragAndDropCapable = this.determineDragAndDropCapable()

@@ -58,17 +58,14 @@
       </div>
     </div>
     <div class="video-box">
-      <template v-if="isVideosListLoading">
-        <span>Loading...</span>
-      </template>
       <template v-if="isVideosDeleting">
         <span>Deleting...</span>
       </template>
       <videoPrev
         :style="{opacity: isVideosListLoading ? 0.1 : 1}"
-        v-for="vItem in video_list"
-        :key="vItem.tag"
-        :videoitem="vItem"
+        v-for="vItem in videos_on_page"
+        :key="vItem.video_uuid"
+        :face_uuid="vItem.video_uuid"
         v-on:activateContent="activateContent"
       ></videoPrev>
     </div>
@@ -93,10 +90,10 @@
       <div class="videos-mng-page">
         <b-pagination
           v-model="currentPage"
-          :total-rows="rows"
+          :total-rows="videos_count"
           :per-page="perPage"
           align="left"
-          size="sm"
+          size=""
         >
         </b-pagination>
       </div>
@@ -120,9 +117,8 @@ export default {
         {text: this.$t('label.private'), value: 'private'}
       ],
       public_selected: 'all',
-      perPage: 3,
+      perPage: 8,
       currentPage: 1,
-      rows: 8,
       period_filter: {
         year_from: 2016,
         year_to: 2019,
@@ -131,7 +127,16 @@ export default {
       }
     }
   },
-  
+  created() {
+    let curr = new Date()
+
+    this.period_filter.year_to = curr.getFullYear()
+    this.period_filter.month_to = curr.getMonth() + 1
+    curr.setMonth(curr.getMonth() - 1)
+
+    this.period_filter.year_from = curr.getFullYear()
+    this.period_filter.month_from = curr.getMonth() + 1
+  },
   methods: {
     placeholder: () => $t('message.key_search'),
     activateContent(key) {
@@ -178,6 +183,16 @@ export default {
       'isVideosDeleting',
       'videos_selected'
     ]),
+    videos_count() {
+      return this.video_list ? this.video_list.length : 0
+    },
+    videos_on_page() {
+      const begin = (this.currentPage - 1) * this.perPage
+      const end = begin + this.perPage
+
+      return this.video_list.slice(begin, end)
+    },
+
     hasSelected() {
       return Boolean(this.videos_selected.length)
     },

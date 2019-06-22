@@ -1,10 +1,10 @@
 <template>
   <div class="video-box-item">
-    <div class="video-box-item-content" @click="playVideo">
+    <div class="video-box-item-content" :class="{gray: videoitem.video_thumbnail==undefined}" @click="playVideo">
       <img :src="img_path" />
     </div>
-    <div class="video-box-mng-panel">
-      <div class="mng-panel-top">
+    <div class="video-box-mng-panel" >
+      <div class="mng-panel-top" >
         <b-form-checkbox
           @change="onCheckChange"
           :checked="isSelected"
@@ -19,12 +19,13 @@
           src="@/assets/images/subtitles.svg"
         />
       </div>
-      <div class="mng-panel-bottom">
-        <span>{{ `${$t('videos.last_modified')}: ${updated_at}` }}</span>
+      <div class="mng-panel-bottom" :class="{gray: videoitem.updated_at===''}">
+        <span v-if="videoitem.updated_at!==''">{{ `${$t('videos.last_modified')}: ${updated_at}` }}</span>
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import {mapGetters} from 'vuex'
@@ -33,20 +34,37 @@ export default {
   name: 'video-face-box',
   data() {
     return {
-      //iAmSelected:false
-      video_thumbnail: ''
+      videoitem: {
+        video_uuid: '',
+        video_thumbnail: undefined,
+        video_title: '',
+        video_description: '',
+        updated_at: ''
+      }
+      
     }
   },
   props: {
-    videoitem: Object
+    face_uuid: String
   },
-  mounted() {
-    this.$store.dispatch('LOAD_VIDEO_THUMBNAIL', this.videoitem.video_uuid).then(
-      res => {
-        this.video_thumbnail = res.video_thumbnail
-      },
-      error => {}
-    )
+  created() {
+    this.videoitem.video_uuid = this.face_uuid
+    this.$store
+      .dispatch('LOAD_VIDEO_THUMBNAIL', this.videoitem.video_uuid)
+      .then(
+        res => {
+          this.videoitem.video_thumbnail = res.video_thumbnail
+        },
+        error => {}
+      )
+    this.$store
+      .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.videoitem.video_uuid)
+      .then(
+        res => {
+          this.videoitem = {...this.videoitem, ...res}
+        },
+        error => {}
+      )      
   },
   methods: {
     playVideo() {
@@ -94,9 +112,9 @@ export default {
       return `check-tag-${this.videoitem.video_uuid}`
     },
     img_path() {
-      return Boolean(this.video_thumbnail)
-        ? this.video_thumbnail
-        : require('@/assets/images/p-streamCMS-s.png')
+      return this.videoitem.video_thumbnail !== ""
+        ?  this.videoitem.video_thumbnail
+      : require('@/assets/images/p-streamCMS-s.png')
     },
     showSubtitles() {
       return this.me.profile.irole === 'admin'
@@ -108,12 +126,17 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/styles';
 
+.gray{
+  background: $gray;
+}
+
 .video-box-item {
   display: flex;
   flex-direction: column;
   margin: 10px;
 
   .video-box-item-content {
+    border-radius: 4px;
     display: flex;
     justify-content: center;
     height: 140px;
@@ -152,6 +175,8 @@ export default {
       }
     }
     .mng-panel-bottom {
+      border-radius: 4px;
+      min-height: 18px;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;

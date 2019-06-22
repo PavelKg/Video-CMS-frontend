@@ -21,8 +21,7 @@ export default {
     },
     active_video_uuid: '',
     filesForUpload: {
-      list: [],
-      isUploading: false
+      list: []
     }
   },
   actions: {
@@ -52,66 +51,31 @@ export default {
     async UPLOAD_VIDEO_FILES({state, commit, getters}) {
       const cid = getters.me.profile.company_id
       state.filesForUpload.isUploading = true
-      console.log('state.filesForUpload=', state.filesForUpload)
 
-      const files = state.filesForUpload.list.map(item => {
-        const {name, size, type} = item.file
-        const {uuid} = item
-        return {name, size, type, uuid}
-      })
+      const files = state.filesForUpload.list
+        .filter(file => !Boolean(file.uploaded))
+        .map(item => {
+          const {name, size, type} = item.file
+          const {uuid} = item
+          return {name, size, type, uuid}
+        })
 
       try {
-        const res_url_list = await Promise.all(
-          files.map(async file => {
-            //file.name = file.uuid
-            console.log('file=', file)
-            return await Api.getGcsSignedUrl(cid, file)
-          })
-        )
-        // const resp_url = await Api.getGcsSignedUrl(files)
-        const url_list = res_url_list.map(item => item.data)
-
-        // const xhr = new XMLHttpRequest()
-        // xhr.open('PUT', url, true)
-
-        // xhr.onload = function() {
-        //   if (xhr.status === 200) {
-        //     alert('Yay!')
-        //   } else {
-        //     alert('failure')
-        //   }
-        // }
-
-        // xhr.onerror = function() {
-        //   alert('failure')
-        // }
-
-        // xhr.setRequestHeader('Content-Type', 'image/jpeg')
-        // xhr.send(formdata)
-        console.log('url_list=', url_list)
-
-        const result = await Promise.all(
-          url_list.map(async (url_item, index) => {
-            const file_idx = state.filesForUpload.list.findIndex(function(
-              item
-            ) {
-              return item.uuid === url_item.uuid
+        files.forEach(file => {
+          Api.getGcsSignedUrl(cid, file).then(res => {
+            const {url, uuid} = res.data
+            const {
+              progress_handler,
+              file: sFile
+            } = state.filesForUpload.list.find(item => item.uuid === uuid)
+            //isUploading = true
+            Api.upload_files(url, sFile, progress_handler).then(ures => {
+              console.log('ures=', ures)
+              Api.video_update_status({cid, uuid, value: 'uploaded'})
+              // this add api to set state = uploaded
             })
-
-            if (!~file_idx) {
-              throw Error('Upload file not found')
-            }
-            const {progress_handler, file} = state.filesForUpload.list[file_idx]
-            return await Api.upload_files(url_item.url, file, progress_handler)
           })
-        )
-
-        console.log('result=', result)
-        //const resp = await Api.upload_files(url, formdata)
-        const code = result.status
-        if (code === 200) {
-          state.filesForUpload.isUploading = false
-        }
+        })
       } catch (err) {
         console.log('upload_file_error: ', err)
         state.filesForUpload.isUploading = false
@@ -121,18 +85,20 @@ export default {
     async LOAD_VIDEO_LIST({state, commit, getters}) {
       const cid = getters.me.profile.company_id
       commit('SET_STATUS_VIDEOS_LOADING', true)
-      let filter =  `videos.deleted_at[isNull]:,videos.created_at[gt]:'${state.videos.period[0]}'::date,videos.created_at[lt]:'${state.videos.period[1]}'::date`  
+      let filter = `videos.deleted_at[isNull]:,videos.created_at[gt]:'${
+        state.videos.period[0]
+      }'::date,videos.created_at[lt]:'${state.videos.period[1]}'::date`
       filter +=
         state.videos.public === 'all'
           ? ''
           : `,video_public[eq]:${Boolean(state.videos.public === 'public')}`
 
-      
       let offset = 0
-      let limit = 8
+      let limit = 0
 
       try {
         const result = await Api.videos_catalog({cid}, {filter, offset, limit})
+        console.log('request video catalog')
         if (result.status === 200) {
           commit('SET_VIDEO_LIST', result.data)
         } else {
@@ -157,7 +123,7 @@ export default {
         throw Error(err.response.data.message)
       }
     },
-    async LOAD_VIDEO_THUMBNAIL({getters}, uuid){
+    async LOAD_VIDEO_THUMBNAIL({getters}, uuid) {
       const cid = getters.me.profile.company_id
       try {
         const result = await Api.video_thumbnail_by_uuid({cid, uuid})
@@ -242,9 +208,27 @@ export default {
       // need add check for existing file name
       const files = [..._files]
       files.forEach(function(file) {
-        state.filesForUpload.list.push({file: file, uuid: uuid()})
+        state.filesForUpload.list.push({
+          file: file,
+          uuid: uuid(),
+          uploaded: false,
+          isUploading: false
+        })
       })
       //state.filesForUpload.list = [...state.filesForUpload.list, ...files]
+    },
+    SET_UPLOADED_FILE(state, uuid) {
+      const uploaded_index = state.filesForUpload.list.findIndex(function(
+        item
+      ) {
+        if (item.uuid === uuid) {
+          return true
+        }
+      })
+      if (~uploaded_index) {
+        state.filesForUpload.list[uploaded_index].uploaded = true
+      }
+      console.log('state.filesForUpload.list=', state.filesForUpload.list)
     },
     DEL_UPLOAD_FILE(state, file_name) {
       const del_index = state.filesForUpload.list.findIndex(function(item) {
@@ -300,7 +284,6 @@ export default {
     isVideosDeleting: state => state.videos.isDeleting,
     videos_selected: state => state.videos.selected,
     active_video_uuid: state => state.active_video_uuid,
-    files_for_upload: state => state.filesForUpload.list.map(item => item.file),
-    storeFilesIsUploading: state => state.filesForUpload.isUploading
+    files_for_upload: state => state.filesForUpload.list
   }
 }

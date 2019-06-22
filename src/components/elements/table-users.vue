@@ -57,7 +57,11 @@
       <a href="#" id="deselectAll" @click="toggleAll">{{
         $t('label.deselect_all')
       }}</a>
-      <button class="button btn-orange" :disabled="users_selected.length === 0">
+      <button
+        @click="delSelectUsers"
+        class="button btn-orange"
+        :disabled="users_selected.length === 0"
+      >
         {{ $t('label.delete') }}
       </button>
       <div class="users-mng-pag">
@@ -79,7 +83,7 @@ export default {
   name: 'table-users',
   data() {
     return {
-      perPage: 3,
+      perPage: 8,
       currentPage: 1,
       users_selected: []
     }
@@ -87,9 +91,12 @@ export default {
   methods: {
     toggleAll(env) {
       const action = env.target['id']
+
       this.users_selected =
         action === 'selectAll'
-          ? this.users_list.map(user => String(user.cid))
+          ? this.users_on_page
+              .filter(user => !Boolean(user.deleted_at))
+              .map(user => String(user.uid))
           : []
     },
     last_login_format(item) {
@@ -111,20 +118,25 @@ export default {
       )
     },
     delUser(item) {
-      this.$store.commit('SET_ACTIVE_USER', item)
-      console.log('item=', item)
-      this.$store.dispatch('USER_DEL').then(
+      this.$store.dispatch('USER_DEL', item.uid).then(
         res => {
           this.$store.dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
-          this.$store.commit('SET_ACTIVE_USER', null)
-          // this.$emit(
-          //   'contentElementClick',
-          //   'root.subItems.users'
-          // )
         },
-        err => {
-          console.log('err=', err)
-        }
+        err => {}
+      )
+    },
+    delSelectUsers() {
+      const lstore = this.$store
+      Promise.all(
+        this.users_selected.map(function (user) {
+          return lstore.dispatch('USER_DEL', user)
+        })
+      ).then(
+        res => {
+          this.users_selected = []
+          this.$store.dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
+        },
+        err => {}
       )
     }
   },

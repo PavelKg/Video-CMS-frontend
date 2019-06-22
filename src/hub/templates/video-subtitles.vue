@@ -94,9 +94,16 @@ export default {
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then(res => {
         this.form = {...this.form, ...res}
+        this.$store
+          .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
+          .then(res => {
+            this.form = {...this.form, video_thumbnail: res.video_thumbnail}
+            console.log('this.form=', this.form)
+          })
       })
   },
   mounted() {
+    console.log('itemprop=', this.itemprop)
     this.dragAndDropCapable = this.determineDragAndDropCapable()
 
     if (this.dragAndDropCapable) {

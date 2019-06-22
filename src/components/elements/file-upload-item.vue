@@ -10,7 +10,7 @@
       :value="value"
       :max="max"
       show-progress
-      animated
+      :animated="animate"
     ></b-progress>
   </div>
 </template>
@@ -22,12 +22,14 @@ export default {
   data() {
     return {
       value: 0,
-      max: 100
+      max: 100,
+      animate:true
     }
   },
   props: {
     file: File,
-    id: Number
+    uuid: String,
+    uploaded: Boolean
   },
   created() {
     this.$store.commit('PROGRESS_UPLOAD_FILE', {
@@ -40,6 +42,10 @@ export default {
       this.$store.commit('DEL_UPLOAD_FILE', this.file.name)
     },
     uplProgress(val) {
+      if (val===100) {
+        this.$store.commit('SET_UPLOADED_FILE', this.uuid)
+        this.animate = false
+      }
       this.value = val
     }
   },

@@ -38,9 +38,10 @@
       <b-form-group id="input-group-rid">
         <b-form-select v-model="mnUser.rid" :options="role_options" required>
           <template slot="first">
-            <option :value="null" disabled>{{ `${$t('label.role_is_not_selected')}` }}</option>
+            <option :value="null" disabled>{{
+              `${$t('label.role_is_not_selected')}`
+            }}</option>
           </template>
-          
         </b-form-select>
       </b-form-group>
       <b-form-group id="input-group-email">
@@ -55,7 +56,7 @@
           v-model="mnUser.password"
           type="password"
           :placeholder="`${$t('users.password')}`"
-          :required= "oper === 'add'"
+          :required="oper === 'add'"
         ></b-form-input>
       </b-form-group>
       <b-form-group id="input-group-conf-password">
@@ -63,7 +64,7 @@
           v-model="mnUser.confPassword"
           type="password"
           :placeholder="`${$t('users.conf_password')}`"
-          :required= "oper === 'add' && mnUser.password !== ''"
+          :required="oper === 'add' && mnUser.password !== ''"
         ></b-form-input>
       </b-form-group>
       <template v-if="oper === 'edit'"> </template>
@@ -112,7 +113,6 @@ export default {
     },
     onSubmit(evt) {
       evt.preventDefault()
-      //alert(JSON.stringify(this.mnUser))
 
       const oper_type = this.oper === 'edit' ? 'USER_UPD' : 'USER_ADD'
       this.$store.dispatch(oper_type, this.mnUser).then(
@@ -127,9 +127,9 @@ export default {
   },
 
   created() {
-    if (this.oper === 'edit') {
-      this.mnUser = {...this.user_selected}
-    }
+    //if (this.oper === 'edit') {
+    this.mnUser = {...this.user_selected}
+    //}
     this.$store
       .dispatch('LOAD_GROUPS', this.me.profile.company_id)
       .then(res => {
