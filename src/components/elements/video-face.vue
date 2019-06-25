@@ -69,7 +69,7 @@ export default {
   methods: {
     playVideo() {
       this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
-      this.$store.commit('GET_COMMENTS')
+
       this.$emit(
         'activateContent',
         'root.subItems.videos.subItems.video_player'

@@ -1,7 +1,7 @@
 <template>
   <div id="login-form">
     <div class="logo-container">
-      <img src="../assets/images/p-streamCMS-s.png" class="avatar" />
+      <img src="../assets/images/demo-logo.png" class="avatar" />
     </div>
     <div class="locales-container">
       <div

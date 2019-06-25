@@ -6,9 +6,8 @@ export default {
     comments: [],
     active_comment: null
   },
-  actions: {},
-  mutations: {
-    GET_COMMENTS(state) {
+  actions: {
+    LOAD_COMMENTS({state}) {
       for (let i = 0; i < count; i += 1) {
         const comment_item = {
           id: i,
@@ -20,6 +19,9 @@ export default {
         state.comments.push(comment_item)
       }
     },
+  },
+  mutations: {
+
     SET_ACTIVE_COMMENT(state, id) {
       state.active_comment = id
     }

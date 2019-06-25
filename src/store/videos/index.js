@@ -20,6 +20,7 @@ export default {
       selected: []
     },
     active_video_uuid: '',
+    active_video_page:1,
     filesForUpload: {
       list: []
     }
@@ -47,6 +48,28 @@ export default {
         JSON.stringify(state.active_video_uuid)
       )
     },
+    GET_ACTIVE_VIDEO_PAGE: ({commit}) => {
+      if (localStorage.getItem('vcms-activ-video-page')) {
+        try {
+          const act_item = JSON.parse(
+            localStorage.getItem('vcms-activ-video-page')
+          )
+          const _item = act_item ? act_item : ''
+
+          commit('SET_ACTIVE_VIDEO_PAGE', _item)
+        } catch (e) {
+          localStorage.removeItem('vcms-activ-video-page')
+        }
+      }
+    },
+    CLEAR_ACTIVE_VIDEO_PAGE: () =>
+      localStorage.removeItem('vcms-activ-video-page'),
+    SAVE_ACTIVE_VIDEO_PAGE: ({state}) => {
+      localStorage.setItem(
+        'vcms-activ-video-page',
+        JSON.stringify(state.active_video_page)
+      )
+    },    
 
     async UPLOAD_VIDEO_FILES({state, commit, getters}) {
       const cid = getters.me.profile.company_id
@@ -98,7 +121,6 @@ export default {
 
       try {
         const result = await Api.videos_catalog({cid}, {filter, offset, limit})
-        console.log('request video catalog')
         if (result.status === 200) {
           commit('SET_VIDEO_LIST', result.data)
         } else {
@@ -187,10 +209,14 @@ export default {
   mutations: {
     SET_VIDEO_LIST(state, _list) {
       state.videos.list = [..._list]
-      console.log('setvideo')
     },
     SET_ACTIVE_VIDEO(state, uuid) {
       state.active_video_uuid = uuid
+    },
+    SET_ACTIVE_VIDEO_PAGE(state, num){
+
+      state.active_video_page = num
+      console.log('state.active_video_page=', state.active_video_page)
     },
     SET_VIDEO_PERIOD(state, _period) {
       const {month_from, month_to, year_from, year_to} = _period
@@ -284,6 +310,7 @@ export default {
     isVideosDeleting: state => state.videos.isDeleting,
     videos_selected: state => state.videos.selected,
     active_video_uuid: state => state.active_video_uuid,
+    active_video_page: state => state.active_video_page,
     files_for_upload: state => state.filesForUpload.list
   }
 }

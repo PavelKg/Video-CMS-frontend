@@ -89,7 +89,8 @@
       </div>
       <div class="videos-mng-page">
         <b-pagination
-          v-model="currentPage"
+          :value="currentPage"
+          @change="onPaggin"
           :total-rows="videos_count"
           :per-page="perPage"
           align="left"
@@ -118,7 +119,6 @@ export default {
       ],
       public_selected: 'all',
       perPage: 8,
-      currentPage: 1,
       period_filter: {
         year_from: 2016,
         year_to: 2019,
@@ -136,6 +136,7 @@ export default {
 
     this.period_filter.year_from = curr.getFullYear()
     this.period_filter.month_from = curr.getMonth() + 1
+
   },
   methods: {
     placeholder: () => $t('message.key_search'),
@@ -160,16 +161,25 @@ export default {
     },
     onPublicState(new_state) {
       this.$store.commit('SET_VIDEO_PUBLIC', new_state)
+      this.setPage(1)
       this.$store.dispatch('LOAD_VIDEO_LIST')
     },
     onPeriodState() {
       this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
+      this.setPage(1)
       this.$store.dispatch('LOAD_VIDEO_LIST')
     },
     onDelete() {
       this.$store.dispatch('DELETE_VIDEO').then(res => {
         this.$store.dispatch('LOAD_VIDEO_LIST')
       })
+    },
+    onPaggin(page) {
+      this.setPage(page)
+    },
+    setPage(num) {
+      this.$store.commit('SET_ACTIVE_VIDEO_PAGE', num)
+      this.$store.dispatch('SAVE_ACTIVE_VIDEO_PAGE')
     }
   },
   components: {
@@ -181,8 +191,12 @@ export default {
       'me',
       'isVideosListLoading',
       'isVideosDeleting',
-      'videos_selected'
+      'videos_selected',
+      'active_video_page'
     ]),
+    currentPage(){
+      return this.active_video_page
+    },
     videos_count() {
       return this.video_list ? this.video_list.length : 0
     },
