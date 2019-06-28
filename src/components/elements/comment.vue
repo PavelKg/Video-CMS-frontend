@@ -37,6 +37,9 @@
 export default {
   name: 'comment-template',
   props: {comment: Object, video_uuid: String},
+  created(){
+    console.log('created')
+  },
   data() {
     return {
       options: [

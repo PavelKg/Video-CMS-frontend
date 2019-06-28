@@ -69,6 +69,7 @@ export default {
   methods: {
     playVideo() {
       this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
+      this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
 
       this.$emit(
         'activateContent',
