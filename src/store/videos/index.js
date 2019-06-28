@@ -20,7 +20,7 @@ export default {
       selected: []
     },
     active_video_uuid: '',
-    active_video_page:1,
+    active_video_page: 1,
     filesForUpload: {
       list: []
     }
@@ -69,7 +69,7 @@ export default {
         'vcms-activ-video-page',
         JSON.stringify(state.active_video_page)
       )
-    },    
+    },
 
     async UPLOAD_VIDEO_FILES({state, commit, getters}) {
       const cid = getters.me.profile.company_id
@@ -132,6 +132,7 @@ export default {
         commit('SET_STATUS_VIDEOS_LOADING', false)
       }
     },
+
     async LOAD_VIDEO_INFO_BY_UUID({state, commit, getters}, uuid) {
       const cid = getters.me.profile.company_id
       try {
@@ -189,6 +190,21 @@ export default {
         commit('SET_STATUS_INFO_UPDATTING', false)
       }
     },
+
+    async UPDATE_VIDEO_PUBLIC_STATUS({getters, commit}, {uuid, value}) {
+      const cid = getters.me.profile.company_id
+      try {
+        const result = await Api.video_update_public_status({cid, uuid, value})
+        if (result.status === 200) {
+          commit('SET_VIDEO_PUBLIC_STATUS', {uuid, value: value === 'public'})
+        } else {
+          throw Error(`Error update video public status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      }
+    },
+
     async DELETE_VIDEO({state, getters}) {
       const cid = getters.me.profile.company_id
       state.videos.isDeleting = true
@@ -213,8 +229,7 @@ export default {
     SET_ACTIVE_VIDEO(state, uuid) {
       state.active_video_uuid = uuid
     },
-    SET_ACTIVE_VIDEO_PAGE(state, num){
-
+    SET_ACTIVE_VIDEO_PAGE(state, num) {
       state.active_video_page = num
       console.log('state.active_video_page=', state.active_video_page)
     },
@@ -280,6 +295,16 @@ export default {
       if (state.videos.selected.indexOf(uuid) === -1) {
         state.videos.selected.push(uuid)
       }
+    },
+    SET_VIDEO_PUBLIC_STATUS(state, {uuid, value}){
+      const ind = state.videos.list.findIndex(function(item){
+        return item.video_uuid === uuid
+      })
+      if (ind > -1) {
+        state.videos.list[ind].public = value
+      }      
+
+      console.log('state.videos.list[ind]=', state.videos.list[ind])
     },
     UNSET_VIDEO_SELECTED(state, uuid) {
       const ind = state.videos.selected.indexOf(uuid)

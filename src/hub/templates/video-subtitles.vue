@@ -98,7 +98,6 @@ export default {
           .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
           .then(res => {
             this.form = {...this.form, video_thumbnail: res.video_thumbnail}
-            console.log('this.form=', this.form)
           })
       })
   },

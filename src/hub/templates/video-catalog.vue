@@ -58,9 +58,6 @@
       </div>
     </div>
     <div class="video-box">
-      <template v-if="isVideosDeleting">
-        <span>Deleting...</span>
-      </template>
       <videoPrev
         :style="{opacity: isVideosListLoading ? 0.1 : 1}"
         v-for="vItem in videos_on_page"

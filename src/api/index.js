@@ -2,6 +2,7 @@ import axios from 'axios'
 import axiosGcs from 'axios'
 
 const API_ROOT = 'https://vcms.pepex.kg/api'
+//const API_ROOT = 'http://127.0.0.1:8769/api'
 
 const Api = axios.create({
   baseURL: API_ROOT,
@@ -389,11 +390,6 @@ export default {
     const setLimit = !limit ? '' : `&limit=${limit}`
     const setOffset = `&offset=${offset}`
 
-    console.log(
-      'filter',
-      `/companies/${cid}/videos/catalog?${setFilter}${setLimit}${setOffset}`
-    )
-
     return Api.get(
       `/companies/${cid}/videos/catalog?${setFilter}${setLimit}${setOffset}`,
       {
@@ -479,7 +475,7 @@ export default {
     })
   },
 
-/** update video status
+  /** update video status
    * @param {number} - cid
    * @param {UUID} - uuid
    * @param {string} - value
@@ -488,11 +484,130 @@ export default {
    */
 
   video_update_status({cid, uuid, value}) {
-    return Api.put(`/companies/${cid}/videos/${uuid}/status`, {value}, {
+    return Api.put(
+      `/companies/${cid}/videos/${uuid}/status`,
+      {value},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
+  /** update video public status
+   * @param {number} - cid
+   * @param {UUID} - uuid
+   * @param {string} - value ['public', 'private']
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+
+  video_update_public_status({cid, uuid, value}) {
+    return Api.put(
+      `/companies/${cid}/videos/${uuid}/public`,
+      {value},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
+  /* ------------ COMMENTS ----------------------------*/
+  /** List of comments
+   * @param {number} cid
+   * @param {uuid} uuid
+   * @param {string} filter
+   * @param {string} limit
+   * @param {string} offset
+   * @returns {Promise<*>} - 200 List of messages
+   *  [{
+        "comment_video_uuid": "string",
+        "comment_company_id": 0,
+        "comment_id": 0,
+        "comment_text": "string",
+        "comment_visible": true,
+        "comment_user_uid": "string",
+        "created_at": "string",
+        "updated_at": "string",
+        "deleted_at": "string"
+      }]
+  */
+  comments({cid, uuid}, {filter, offset = 0, limit}) {
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
+
+    return Api.get(`/companies/${cid}/videos/${uuid}/comments`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /** Add comment
+   * @param {number} cid
+   * @param {uuid} uuid
+   * @returns {Promise<*>} - 200
+   *  HEADERS: location →/api/companies/2/videos/b90c7920-0b66-4b49-8ee1-a2f76a37a228/comments/8
+   */
+  add_comment({cid, uuid, comment_text}) {
+    return Api.post(
+      `/companies/${cid}/videos/${uuid}/comments`,
+      {comment_text},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+  /** Get comment info
+   * @param {number} cid
+   * @param {uuid} uuid
+   * @param {number} comid
+   * @returns {Promise<*>} - 200
+   */
+  get_comment_info({cid, uuid, comid}) {
+    return Api.get(`/companies/${cid}/videos/${uuid}/comments/${comid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Change comment visible
+   * @param {number} cid
+   * @param {uuid} uuid
+   * @param {number} comid
+   * @param {boolean} value *body
+   * @returns {Promise<*>} - 200
+   */
+  comment_visible(payment) {
+    const {cid, uuid, comid, value} = payment
+    return Api.put(
+      `/companies/${cid}/videos/${uuid}/comments/${comid}/visible`,
+      {value},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+  /** Delete comment
+   * @param {number} cid
+   * @param {uuid} uuid
+   * @param {number} comid
+   * @returns {Promise<*>} - 200
+   */
+  del_comment(payment) {
+    const {cid, uuid, comid} = payment
+    return Api.delete(`/companies/${cid}/videos/${uuid}/comments/${comid}`, {
       headers: {
         ...type_json
       }
     })
   }
-  
 }

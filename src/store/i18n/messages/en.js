@@ -84,7 +84,14 @@ export default {
     tag: 'Tag',
     video_description: 'Video Description',
     last_modified: 'Last modified',
-    video_information: 'Video Information'
+    video_information: 'Video Information', 
+    public_settings: 'Public settings'
+  },
+  comments: {
+    id: 'ID',
+    display: 'Display',
+    hidden: 'Hidden',
+    deleted: 'Deleted'    
   },
   label: {
     delete: 'Delete',
