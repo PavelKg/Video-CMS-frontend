@@ -2,7 +2,7 @@
   <div class="comment-row">
     <div class="comment-data">
       <div class="comment-top-zone">
-        <span>{{ `${$t('comments.id')}:${comment.comment_id}` }}</span>
+        <span>{{ `${$t('comments.id')}: ${comment.comment_user_uid}` }}</span>
         <span>{{ created_date(comment.created_at) }}</span>
       </div>
       <div class="comment-bottom-zone">
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="comment-mng">
+    <div class="comment-mng" v-if="commentOwner">
       <template v-if="!deleted">
         <b-form-radio-group
           size="sm"
@@ -27,18 +27,20 @@
         </button>
       </template>
       <template v-else>
-        <span>{{$t('comments.deleted')}}</span>
+        <span>{{ $t('comments.deleted') }}</span>
       </template>
     </div>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+
 export default {
   name: 'comment-template',
   props: {comment: Object, video_uuid: String},
-  created(){
-    console.log('created')
+  created() {
+    console.log('created=', this.comment)
   },
   data() {
     return {
@@ -49,8 +51,13 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['me']),
     deleted() {
       return Boolean(this.comment.deleted_at)
+    },
+    commentOwner() {
+      const {company_id, uid} = this.me.profile
+      return this.comment.comment_user_uid === uid
     }
   },
   methods: {
@@ -82,10 +89,9 @@ export default {
 </script>
 
 <style lang="scss">
-
-.radio-group-zone{
-  .custom-radio{
-    //margin-right: 0;   
+.radio-group-zone {
+  .custom-radio {
+    //margin-right: 0;
   }
 }
 

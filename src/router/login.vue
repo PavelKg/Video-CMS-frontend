@@ -59,7 +59,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import PassRec from './passRecovery'
+import PassRec from './sendReqPassRecovery'
 
 export default {
   name: 'app',

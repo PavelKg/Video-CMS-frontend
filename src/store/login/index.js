@@ -48,10 +48,27 @@ export default {
         dispatch('LOGOUT')
         throw Error('Getting profile error')
       }
+    },
+    async PASSWORD_RECOVERY({commit}, payload) {
+      const {email, locale} = payload
+      try {
+        const resp = await Api.password_reset_request({email, locale})
+        //if (code === 200 && token) {
+      } catch (error) {}
+    },
+    async SAVE_RECOVERY_PASSWORD({commit}, payload) {
+      const {token, password} = payload
+      try {
+        const result = await Api.save_req_pass(token, password)
+        const code = result.status
+        if (code !== 200) {
+          console.log(result)
+        }
+      } catch (error) {}
     }
   },
   mutations: {
-    AUTH_REQUEST: state => {
+    AUTH_REQUEST: (state) => {
       state.authStatus = 'loading'
     },
     AUTH_SUCCESS: (state, token) => {
@@ -59,27 +76,27 @@ export default {
       console.log(token)
       state.authStatus = 'success'
     },
-    AUTH_ERROR: state => {
+    AUTH_ERROR: (state) => {
       state.authStatus = 'error'
     },
-    AUTH_LOGOUT: state => {
+    AUTH_LOGOUT: (state) => {
       console.log('AUTH_LOGOUT')
       state.authStatus = ''
       state.token = ''
     },
-    SET_HEADER_AUTH: state => {
+    SET_HEADER_AUTH: (state) => {
       Api.setHeaderAuth(state.token)
     },
     SET_USER: (state, _profile) => {
       state.me.profile = {..._profile}
       //localStorage.setItem('vcms-user', JSON.stringify(state.user))
-    }    
+    }
   },
   getters: {
-    token: state => state.token,
-    hasToken: state => Boolean(state.token),
-    authStatus: state => state.authStatus,
-    me: state => state.me,
-    me_irole: state => state.me.profile.irole,
+    token: (state) => state.token,
+    hasToken: (state) => Boolean(state.token),
+    authStatus: (state) => state.authStatus,
+    me: (state) => state.me,
+    me_irole: (state) => state.me.profile.irole
   }
 }

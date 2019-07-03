@@ -47,7 +47,11 @@
       </div>
       <div class="comment-input">
         <input v-model="comment_text" />
-        <button @click="addComment" class="button btn-blue">
+        <button
+          :disabled="comment_sending"
+          @click="addComment"
+          class="button btn-blue"
+        >
           {{ $t('label.send') }}
         </button>
       </div>
@@ -86,7 +90,8 @@ export default {
       options: [
         {text: this.$t('label.public'), value: 'public'},
         {text: this.$t('label.private'), value: 'private'}
-      ]
+      ],
+      comment_sending: false
     }
   },
   computed: {
@@ -148,7 +153,6 @@ export default {
   },
   methods: {
     onSubtitles() {
-      console.log('onSubtitles=')
       this.$store.commit('SET_ACTIVE_VIDEO', this.form.video_uuid)
       this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
@@ -157,17 +161,23 @@ export default {
       )
     },
     onChangePublic(val) {
-      console.log('public_val=', val)
       this.$store.dispatch('UPDATE_VIDEO_PUBLIC_STATUS', {
         uuid: this.form.video_uuid,
         value: val
       })
     },
     addComment() {
-      this.$store.dispatch('ADD_COMMENT', {
-        uuid: this.form.video_uuid,
-        text: this.comment_text
-      })
+      this.comment_sending = true
+      this.$store
+        .dispatch('ADD_COMMENT', {
+          uuid: this.form.video_uuid,
+          text: this.comment_text
+        })
+        .then(res => {}, err => {})
+        .finally(() => {
+          this.comment_text = ''
+          this.comment_sending = false
+        })
     }
   }
 }

@@ -3,12 +3,21 @@ import Router from 'vue-router'
 import store from '../store/'
 import Hub from '../hub/'
 import Login from './login'
+import RecoveryPassword from './recovery_password'
 
 Vue.use(Router)
 
+const ifNotTokenRecovery = (to, from, next) => {
+  const {token} = to.query
+  if (token) {
+    next()
+  } else {
+    next('/login')
+  }
+}
+
 const ifNotAuthenticated = (to, from, next) => {
   if (!store.getters.hasToken) {
-
     next()
     //return
   }
@@ -22,7 +31,7 @@ const ifNotAuthenticated = (to, from, next) => {
       .then(() => {
         next(`/hub/${store.getters.me_irole}`)
       })
-      .catch(err => next('/login'))
+      .catch((err) => next('/login'))
   }
 }
 
@@ -35,7 +44,7 @@ const ifAuthenticated = (to, from, next) => {
         console.log('ifAuthenticated - ok')
         next()
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('ifAuthenticated - err')
         next('/login')
       })
@@ -60,9 +69,15 @@ export default new Router({
       beforeEnter: ifAuthenticated
     },
     {
+      path: '/recovery-password',
+      name: 'recovery-password',
+      component: RecoveryPassword,
+      beforeEnter: ifNotTokenRecovery
+    },
+    {
       path: '/login',
       name: 'Login',
-      component: Login,
+      component: Login
       //beforeEnter: ifNotAuthenticated
     },
     {

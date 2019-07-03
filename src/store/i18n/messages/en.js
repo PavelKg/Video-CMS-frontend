@@ -24,6 +24,10 @@ export default {
     forgot_pass_descr: `Please enter your registered email address and press the [Send] button.
     We will send you an email with the URL for the change to the email address you have entered.`,
     number_of_registered_users: 'Number of registered users',
+    send_complited: 'Send completed.',
+    we_have_sent_email: 'We have sent you an email with the URL for the change to the email address you entered.',
+    destination_email_address: 'Destination email Address',
+    back_to_login_page: 'Back to login page',
     btn_add: 'Create New',
     check: 'Check',
     subject: 'Subject',

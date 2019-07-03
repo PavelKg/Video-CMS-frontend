@@ -23,7 +23,7 @@ export default {
   delHeaderAuth(token) {
     delete Api.defaults.headers.common['Authorization']
   },
-
+  /** Auth management */
   login(data) {
     const {personalId, password} = data
     return Api.post(`/users/login`, {
@@ -38,6 +38,47 @@ export default {
         ...type_json
       }
     })
+  },
+
+  /** Password recovery
+   * @param {string} email - user's email
+   * @param {string} locale - user locale
+   * @return {Promise<*>} - 202	Accepted
+   * @throws Error
+   */
+
+  password_reset_request(payload) {
+    const {email, locale} = payload
+    return Api.post(
+      `/users/password-reset-request`,
+      {email, locale},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
+  /** Save new Password (recovery)
+   * @param {string} token - temporary token
+   * @param {password} password - new user password
+   * @return {Promise<*>} - 200	Accepted
+   * @throws Error
+   */
+
+  save_req_pass(token, password) {
+    console.log('payload=', token, password)
+    return axios.put(
+      `${API_ROOT}/users/password`,
+      {password, token},
+      {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }
+    )
   },
 
   /** Roles management
