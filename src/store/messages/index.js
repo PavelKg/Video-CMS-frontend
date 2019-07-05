@@ -15,13 +15,14 @@ export default {
     }
   },
   actions: {
-    async LOAD_MESSAGES({commit}, payload={}) {
+    async LOAD_MESSAGES({commit}, payload = {}) {
       const {filter} = payload
       try {
         commit('SET_MESSAGES_IS_LOADING', true)
         const result = await Api.messages(filter)
         if (Array.isArray(result.data) && result.status === 200) {
           commit('SET_MESSAGES', result.data)
+          commit('ORDER_MESSAGE', {sortBy: 'created_at', sortDesc: true})
         } else {
           throw Error('Error load messages list')
         }
@@ -30,6 +31,26 @@ export default {
       } finally {
         commit('SET_MESSAGES_IS_LOADING', false)
       }
+    },
+    async ADD_MESSAGE_STAR({commit}, mid) {
+      try {
+        const result = await Api.message_starred(mid)
+        if (result.status === 201) {
+          commit('SET_MESSAGE_STAR', {mid: mid, starred: true})
+        } else {
+          throw Error('Error starred message')
+        }
+      } catch (err) {}
+    },
+    async DEL_MESSAGE_STAR({commit}, mid) {
+      try {
+        const result = await Api.message_unstarred(mid)
+        if (result.status === 204) {
+          commit('SET_MESSAGE_STAR', {mid: mid, starred: false})
+        } else {
+          throw Error('Error unstarred message')
+        }
+      } catch (err) {}
     },
     async MESSAGE_ADD({commit, getters}, payload) {
       try {
@@ -75,6 +96,27 @@ export default {
     },
     SET_RECEIVERS_IS_LOADING(state, isLoad) {
       state.messages.isReceiversLoading = isLoad
+    },
+    SET_MESSAGE_STAR(state, payload) {
+      const {mid, starred} = payload
+      state.messages.list.forEach((element, idx) => {
+        if (element.mid === mid) {
+          state.messages.list[idx].starred = starred
+        }
+      })
+    },
+    ORDER_MESSAGE(state, payload) {
+      const {sortBy, sortDesc} = payload
+      state.messages.list.sort(function(a, b) {
+        if (a[sortBy] > b[sortBy]) {
+          return sortDesc ? -1 : 1
+        }
+        if (a[sortBy] < b[sortBy]) {
+          return sortDesc ? 1 : -1
+        }
+        // a eq b
+        return 0
+      })
     }
   },
   getters: {

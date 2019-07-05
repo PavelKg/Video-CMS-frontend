@@ -1,12 +1,14 @@
 <template>
   <div class="users-table">
-    <button class="button btn-blue add-user">
-      {{ $t('users.btn_add') }}
-    </button>
-    <span
-      >{{ $t('message.number_of_registered_users') }}: {{ users_count }}
-      {{ $t('label.people') }}</span
-    >
+    <div class="user-table-mng">
+      <span>
+        {{ $t('message.number_of_registered_users') }}: {{ users_count }}
+        {{ $t('label.people') }}
+      </span>
+      <button class="button btn-blue add-user" @click="addNewUser">
+        {{ $t('users.btn_add') }}
+      </button>
+    </div>
     <b-table
       :items="users_on_page"
       :fields="fields"
@@ -17,7 +19,7 @@
       head-variant="dark"
     >
       <template slot="uid" slot-scope="item"
-        ><a href="#">{{ item.item.uid }}</a>
+        ><a @click="updUser(item.item)" href="#">{{ item.item.uid }}</a>
       </template>
       <template slot="fullname" slot-scope="item"
         ><div class="name-column">{{ item.item.fullname }}</div>
@@ -54,11 +56,31 @@ export default {
       currentPage: 1
     }
   },
-  methods: {},
+  props: {gid: String},
+  methods: {
+    addNewUser() {
+      this.$store.commit('SET_ACTIVE_USER', {
+        company_id: this.me.profile.company_id,
+        uid: null,
+        gid: this.gid
+      })
+      this.$emit('contentElementClick', 'root.subItems.users.subItems.user_add')
+    },
+    updUser(item) {
+      this.$store.commit('SET_ACTIVE_USER', {
+        company_id: this.me.profile.company_id,
+        ...item
+      })
+      this.$emit(
+        'contentElementClick',
+        'root.subItems.users.subItems.user_edit'
+      )
+    }
+  },
   computed: {
-    ...mapGetters(['users_list']),
+    ...mapGetters(['users_list', 'me']),
     active_users() {
-      return this.users_list.filter( user => !Boolean(user.deleted_at))
+      return this.users_list.filter(user => !Boolean(user.deleted_at))
     },
     users_count() {
       return this.active_users ? this.active_users.length : 0
@@ -74,14 +96,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/styles';
+
 .users-table {
   padding: 10px 0;
-  .add-user {
-    margin-bottom: 10px;
-    margin-left: auto;
-  }
-  span{
-    font-weight: 600
+  .user-table-mng {
+    display: flex;
+    .add-user {
+      margin-bottom: 5px;
+      margin-left: auto;
+    }
+    span {
+      color: $link;
+      align-self: center;
+      //font-weight: 500;
+    }
   }
 }
 .name-column {

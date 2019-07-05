@@ -7,13 +7,21 @@
         v-model="mnGroup.name"
         :placeholder="`${$t('groups.group_name')}`"
       ></b-form-input>
+      <button :disabled="mnGroup.name === src_name" @click="save_click" class="button btn-blue">
+        {{ `${$t('label.register')}` }}
+      </button>
     </div>
     <template v-if="oper === 'edit'">
-      <TableUsersLite /> </template>
+      <TableUsersLite
+        :gid="mnGroup.gid"
+        @contentElementClick="contentElementClick"
+      />
+    </template>
     <template v-else-if="oper === 'add'"> </template>
     <div class="group-operation-button-zone">
-      <button @click="save_click" class="button btn-blue">{{ `${$t('label.save')}` }}</button>
-      <button @click="cancel_click" class="button btn-braun">{{ `${$t('label.cancel')}` }}</button>
+      <button @click="cancel_click" class="button btn-braun">
+        {{ `${$t('label.cancel')}` }}
+      </button>
     </div>
   </div>
 </template>
@@ -31,6 +39,7 @@ export default {
   },
   data() {
     return {
+      src_name: '',
       mnGroup: {
         name: '',
         gid: ''
@@ -38,6 +47,9 @@ export default {
     }
   },
   methods: {
+    contentElementClick(menu_item) {
+      this.$emit('contentElementClick', menu_item)
+    },
     cancel_click() {
       this.$emit('contentElementClick', 'root.subItems.groups')
     },
@@ -56,6 +68,7 @@ export default {
 
   created() {
     if (this.oper === 'edit') {
+      this.src_name = this.group_selected.name
       this.mnGroup = {...this.group_selected}
     }
   },

@@ -7,6 +7,10 @@
       striped
       fixed
       hover
+      no-local-sorting
+      @sort-changed="sortingChanged"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
       head-variant="dark"
     >
       <template slot="mid" slot-scope="row">
@@ -21,19 +25,23 @@
           </b-form-checkbox>
         </div>
       </template>
-      <template slot="important" slot-scope="data">
-        <div class="star-place">
-          <span class="star" :class="{selected: data.item.important}"></span>
+      <template slot="starred" slot-scope="data">
+        <div
+          class="star-place"
+          @click="onStarred({mid: data.item.mid, state: data.item.starred})"
+        >
+          <span class="star" :class="{selected: data.item.starred}"></span>
         </div>
       </template>
-      <template slot="user" slot-scope="item">
+      <template slot="sender_uid" slot-scope="item">
         <div class="date-column">
-          {{
-            Type === 'outbox' ? item.item.receiver_uid : item.item.sender_uid
-          }}
+          {{ item.item.sender_uid }}
         </div>
       </template>
-      <template slot="date" slot-scope="item">
+      <template slot="receiver_uid" slot-scope="item">
+        <div class="date-column">{{ item.item.receiver_uid }} - {{ Type }}</div>
+      </template>
+      <template slot="created_at" slot-scope="item">
         <div class="date-column">
           {{ mess_date_format(item.item.created_at) }}
         </div>
@@ -103,14 +111,30 @@ export default {
       isShowModalMessageInfo: false,
       perPage: 7,
       currentPage: 1,
-      messages_selected: []
+      messages_selected: [],
+      sortBy: 'created_at',
+      sortDesc: false
     }
   },
-  created() {},
   props: {
     Type: String
   },
+  watch: {
+    Type(newval, oldval) {
+      this.sortBy = 'created_at'
+      this.sortDesc = false
+    }
+  },
   methods: {
+    sortingChanged(ctx) {
+      const {sortBy, sortDesc} = ctx
+      this.$store.commit('ORDER_MESSAGE', {sortBy, sortDesc})
+    },
+    onStarred(payload) {
+      const new_state = !payload.state
+      const action = new_state ? 'ADD' : 'DEL'
+      this.$store.dispatch(`${action}_MESSAGE_STAR`, payload.mid)
+    },
     showMessageModal(mess) {
       this.$store.commit('SET_ACTIVE_MESSAGE', mess)
       this.isShowModalMessageInfo = true
@@ -176,8 +200,8 @@ export default {
           thStyle: {width: '50px !important', 'text-align': 'center'}
         },
         {
-          label:'#',
-          key: 'important',
+          label: '#',
+          key: 'starred',
           sortable: true,
           thStyle: {width: '50px !important'}
         },
@@ -190,13 +214,23 @@ export default {
           tdClass: this.showColumn
         },
         {
-          key: `user`,
+          key: 'receiver_uid',
           sortable: true,
-          label: this.$t(`message.${this.columns[2]}`),
-          thStyle: {'text-align': 'center'}
+          label: this.$t(`message.to`),
+          thStyle: {'text-align': 'center'},
+          thClass: this.Type === 'inbox' ? 'd-none' : '',
+          tdClass: this.Type === 'inbox' ? 'd-none' : ''
         },
         {
-          key: `date`,
+          key: 'sender_uid',
+          sortable: true,
+          label: this.$t(`message.from`),
+          thStyle: {'text-align': 'center'},
+          thClass: this.Type === 'outbox' ? 'd-none' : '',
+          tdClass: this.Type === 'outbox' ? 'd-none' : ''
+        },
+        {
+          key: `created_at`,
           sortable: true,
           label: this.$t(`message.${this.columns[3]}`),
           thStyle: {'text-align': 'center'}

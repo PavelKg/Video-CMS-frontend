@@ -1,7 +1,7 @@
 <template>
   <div id="login-form">
     <div class="logo-container">
-      <img src="../assets/images/video-icon.png" class="avatar" />
+      <img src="../assets/images/demo-logo.png" class="avatar" />
     </div>
     <div class="locales-container">
       <div
@@ -59,7 +59,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import PassRec from './passRecovery'
+import PassRec from './sendReqPassRecovery'
 
 export default {
   name: 'app',
@@ -75,6 +75,7 @@ export default {
   },
   mounted() {
     this.$store.commit('INIT_LANG')
+    //this.$store.commit('CHANGE_LANG', br_lang === 'ja' ? 'jp': br_lang)
   },
   methods: {
     login() {
@@ -111,8 +112,8 @@ export default {
 @import '../assets/styles';
 
 .avatar {
-  width: 128px;
-  height: 128px;
+  //width: 330px;
+  //height: 137px;
 }
 #login-form {
   display: flex;

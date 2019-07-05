@@ -7,6 +7,7 @@
         <div class="video-subtitles-thumbnail-left">
           <b-img
             v-bind="mainProps"
+            :src="i_thumbnail"
             blank-color="#fff"
             thumbnail
             fluid-grow
@@ -22,9 +23,9 @@
             <div class="upload-files-border">
               <span>{{ $t('label.drop_file_here') }}</span>
               <span>{{ $t('label.or') }}</span>
-              <div @click="selectCustomFiles" class="button btn-grey">
+              <button @click="onSelectFile($event)" class="button btn-grey">
                 {{ $t('label.select_file') }}
-              </div>
+              </button>
               <input
                 type="file"
                 id="file"
@@ -40,20 +41,27 @@
       <div class="video-subtitles-inputs">
         <b-form-input
           :placeholder="`${$t('videos.video_title')}`"
-          v-model="form.title"
+          v-model="form.video_title"
         ></b-form-input>
-        <b-form-input :placeholder="`${$t('videos.tag')}`" v-model="form.tag"></b-form-input>
+        <b-form-input
+          :placeholder="`${$t('videos.tag')}`"
+          v-model="form.video_tag"
+        ></b-form-input>
         <b-form-textarea
           :placeholder="`${$t('videos.video_description')}`"
-          v-model="form.descr"
+          v-model="form.video_description"
         ></b-form-textarea>
       </div>
       <div class="video-subtitles-buttons">
-        <button type="submit" class="button btn-blue">
+        <button
+          :disabled="isVideosInfoUpdating || dataUpdated"
+          type="submit"
+          class="button btn-blue"
+        >
           {{ $t('label.registration') }}
         </button>
         <button @click="backToCatalog" class="button btn-braun">
-          {{ $t('label.cancel') }}
+          {{ dataUpdated ? $t('label.back') : $t('label.cancel') }}
         </button>
       </div>
     </form>
@@ -61,22 +69,40 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
+
 export default {
   name: 'video-subtitles',
   data() {
     return {
-      mainProps: {blank: true, width: 75, height: 75, class: 'm1'},
+      mainProps: {width: 75, height: 75, class: 'm1'},
+      dataUpdated: false,
       file: '',
       imagePreview: null,
       form: {
-        thumb: '',
-        title: '',
-        tag: '',
-        descr: ''
+        video_uuid: '',
+        video_thumbnail: '',
+        //'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
+        video_title: '',
+        video_tag: '',
+        video_description: ''
       }
     }
   },
+  created() {
+    this.$store
+      .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
+      .then(res => {
+        this.form = {...this.form, ...res}
+        this.$store
+          .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
+          .then(res => {
+            this.form = {...this.form, video_thumbnail: res.video_thumbnail}
+          })
+      })
+  },
   mounted() {
+    console.log('itemprop=', this.itemprop)
     this.dragAndDropCapable = this.determineDragAndDropCapable()
 
     if (this.dragAndDropCapable) {
@@ -105,8 +131,30 @@ export default {
         'drop',
         function(e) {
           this.file = e.dataTransfer.files[0]
+
+          if (this.file) {
+            if (/\.(jpe?g|png|gif)$/i.test(this.file.name)) {
+              let reader = new FileReader()
+              reader.addEventListener(
+                'load',
+                function() {
+                  this.form.video_thumbnail = reader.result
+                }.bind(this),
+                false
+              )
+              reader.readAsDataURL(this.file)
+            }
+          }
         }.bind(this)
       )
+    }
+  },
+  computed: {
+    ...mapGetters(['active_video_uuid', 'isVideosInfoUpdating']),
+    i_thumbnail() {
+      return Boolean(this.form.video_thumbnail)
+        ? this.form.video_thumbnail
+        : require('@/assets/images/p-streamCMS-s.png')
     }
   },
   methods: {
@@ -120,10 +168,11 @@ export default {
     },
     deleteThumb() {
       this.file = ''
-      this.$refs['thumb-img'].src =
-        'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
+      this.form.video_thumbnail = ''
+      //'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
     },
-    selectCustomFiles() {
+    onSelectFile(evt) {
+      evt.preventDefault()
       this.$refs.customInput.click()
     },
     backToCatalog() {
@@ -134,11 +183,30 @@ export default {
     },
     onSubmit(evt) {
       evt.preventDefault()
-      this.form.thumb = this.$refs['thumb-img'].src
+      const {
+        video_uuid,
+        video_thumbnail,
+        video_title,
+        video_tag,
+        video_description
+      } = this.form
+      this.$store
+        .dispatch('UPDATE_VIDEO_INFO', {
+          video_uuid,
+          video_thumbnail,
+          video_title,
+          video_tag,
+          video_description
+        })
+        .then(res => {
+          this.$store.dispatch('LOAD_VIDEO_LIST')
+          this.dataUpdated = true
+        })
     },
-    addCustomFiles() {
-      this.file = event.target.files[0]
+    addCustomFiles(evt) {
+      evt.preventDefault()
 
+      this.file = event.target.files[0]
       if (this.file) {
         if (/\.(jpe?g|png|gif)$/i.test(this.file.name)) {
           let reader = new FileReader()
@@ -146,7 +214,7 @@ export default {
           reader.addEventListener(
             'load',
             function() {
-              this.$refs['thumb-img'].src = reader.result
+              this.form.video_thumbnail = reader.result
             }.bind(this),
             false
           )

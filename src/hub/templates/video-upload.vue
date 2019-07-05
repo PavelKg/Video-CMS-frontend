@@ -6,31 +6,33 @@
         <div class="upload-files-border">
           <span>{{ $t('label.drop_file_here') }}</span>
           <span>{{ $t('label.or') }}</span>
-          <div @click="selectCustomFiles" class="button btn-grey">
+          <button @click="selectCustomFiles" class="button btn-grey">
             {{ $t('label.select_file') }}
-          </div>
+          </button>
           <input
             type="file"
             id="file"
             ref="customInput"
             class="custom-file-input"
             multiple
+            accept="video/*"
             @change="addCustomFiles($event)"
           />
         </div>
       </form>
     </div>
     <FileUploadItem
-      v-for="(file, key) in files"
+      v-for="(up_file, key) in files_for_upload"
       :key="key"
-      :id="key"
-      :file="file"
+      :uuid="up_file.uuid"
+      :file="up_file.file"
+      :uploaded="up_file.uploaded"
     />
     <div class="video-upload-buttons">
       <button
         class="button btn-blue"
         @click="submitFiles()"
-        :class="{'btn-disabled': files.length === 0}"
+        :class="{'btn-disabled': notUploaded.length === 0}"
       >
         {{ $t('label.upload') }}
       </button>
@@ -53,13 +55,15 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({files: 'files_for_upload'})
+    ...mapGetters(['files_for_upload']),
+    notUploaded(){
+      return this.files_for_upload.filter(file => !Boolean(file.uploaded)&&!Boolean(file.isUploading))
+    }
   },
   mounted() {
     this.dragAndDropCapable = this.determineDragAndDropCapable()
-
     if (this.dragAndDropCapable) {
-      ;[
+      const allowActions = [
         'drag',
         'dragstart',
         'dragend',
@@ -67,7 +71,9 @@ export default {
         'dragenter',
         'dragleave',
         'drop'
-      ].forEach(
+      ]
+
+      allowActions.forEach(
         function(evt) {
           this.$refs.fileform.addEventListener(
             evt,
@@ -83,8 +89,11 @@ export default {
       this.$refs.fileform.addEventListener(
         'drop',
         function(e) {
-          for (let i = 0; i < e.dataTransfer.files.length; i++) {
-            this.files.push(e.dataTransfer.files[i])
+          const dropFiles = [...e.dataTransfer.files].filter(item =>
+            /^video\/*/.test(item.type)
+          )
+          if (dropFiles.length) {
+            this.$store.commit('ADD_UPLOAD_FILE', dropFiles)
           }
         }.bind(this)
       )
@@ -92,7 +101,7 @@ export default {
   },
   methods: {
     determineDragAndDropCapable() {
-      var div = document.createElement('div')
+      const div = document.createElement('div')
       return (
         ('draggable' in div || ('ondragstart' in div && 'ondrop' in div)) &&
         'FormData' in window &&
@@ -102,11 +111,11 @@ export default {
     // removeFile(key) {
     //   this.files.splice(key, 1)
     // },
-    addCustomFiles() {
-      //this.files = [...this.files, ...event.target.files]
-      this.$store.commit('ADD_UPLOAD_FILE', event.target.files)
+    addCustomFiles(evt) {
+      this.$store.commit('ADD_UPLOAD_FILE', evt.target.files)
     },
-    selectCustomFiles() {
+    selectCustomFiles(evt) {
+      evt.preventDefault()
       this.$refs.customInput.click()
     },
     backToCatalog() {
@@ -114,15 +123,16 @@ export default {
       this.$emit('contentElementClick', 'root.subItems.home')
     },
     submitFiles() {
-      let formData = new FormData()
-      for (var i = 0; i < this.files.length; i++) {
-        let file = this.files[i]
+      // let formData = new FormData()
+      // for (var i = 0; i < this.files.length; i++) {
+      //   let file = this.files[i]
 
-        formData.append('files[' + i + ']', file)
-      }
+      //   formData.append('files[]', file, "Math.random().avi")
+      // }
 
+      //console.log('formData=', formData.files)
       this.$store
-        .dispatch('UPLOAD_VIDEO_FILES', formData)
+        .dispatch('UPLOAD_VIDEO_FILES'/*, formData*/)
         .then(res => {})
         .catch(err => {})
     }

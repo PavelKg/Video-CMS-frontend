@@ -1,7 +1,9 @@
 <template>
   <div class="export-block">
     <div>
-      <a href="#" @click="toggleModal" class="password-recovery">{{ $t("message.lnkPassRec")}}</a>
+      <a href="#" @click="toggleModal" class="password-recovery">{{
+        $t('message.lnkPassRec')
+      }}</a>
     </div>
     <div v-if="modalVisible" class="export-modal-block">
       <button type="button" class="export-modal-close" @click="hideModal">
@@ -9,10 +11,10 @@
       </button>
       <form @submit.prevent="onSubmit">
         <div class="export-modal-main">
-          <div class="export-modal-title">{{$t('label.forgot_pass')}}</div>
-          <div class="export-text">{{$t('message.forgot_pass_descr')}}</div>
+          <div class="export-modal-title">{{ $t('label.forgot_pass') }}</div>
+          <div class="export-text">{{ $t('message.forgot_pass_descr') }}</div>
           <div class="export-field">
-            <div>{{$t('label.mail_address')}}:</div>
+            <div>{{ $t('label.mail_address') }}:</div>
             <input
               v-model.trim="exportEmail"
               type="email"
@@ -20,15 +22,32 @@
               class="form-control"
               required
               placeholder="hello@yoursite.com"
-            >
+            />
           </div>
         </div>
         <div class="export-modal-btns">
-          <button type="submit" class="btn btn-primary" @click="onSubmit">
+          <button
+            type="submit"
+            class="button btn-blue"
+            @click="onSubmit"
+            :disabled="onSendDisabled"
+          >
             <span>{{ $t('label.send') }}</span>
           </button>
         </div>
       </form>
+      <template v-if="showSendResult">
+        <div class="result-message-block">
+          <span class="mess-title">{{ $t('message.send_complited') }}</span>
+          <span>{{ $t('message.we_have_sent_email') }}</span>
+          <span>{{
+            `${$t('message.destination_email_address')}: ${exportEmail}`
+          }}</span>
+          <b-link href="#" @click="hideModal" class="mess-home-link">{{
+            $t('message.back_to_login_page')
+          }}</b-link>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -38,10 +57,15 @@ export default {
   data() {
     return {
       exportEmail: '',
-      modalVisible: ''
+      modalVisible: '',
+      showSendResult: false
     }
   },
-  computed: {},
+  computed: {
+    onSendDisabled() {
+      return this.showSendResult
+    }
+  },
   methods: {
     toggleModal() {
       this.modalVisible = !this.modalVisible
@@ -51,18 +75,25 @@ export default {
     },
     hideModal() {
       this.modalVisible = false
+      this.exportEmail = ''
+      this.showSendResult = false
     },
     showModal() {
       this.modalVisible = true
     },
     onSubmit() {
       if (this.exportEmail) {
-        // this.$store.dispatch('PASSWORD_RECOVERY', {
-        //   expExt: '',
-        //   email: this.exportEmail,
-        // })
-        this.exportEmail = ''
-        this.hideModal()
+        this.$store
+          .dispatch('PASSWORD_RECOVERY', {
+            locale: this.$i18n.locale,
+            email: this.exportEmail
+          })
+          .then((res) => {
+            this.showSendResult = true
+          }, (err) => {})
+
+        //this.exportEmail = ''
+        //this.hideModal()
       }
     }
   }
@@ -72,9 +103,32 @@ export default {
 <style lang="scss">
 @import '@/assets/styles.scss';
 
-.export-block {
+.result-message-block {
   position: inherit;
-  padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  background: $white;
+  border: 1px solid $gray-lighter;
+  width: 90%;
+  height: 90%;
+  align-self: center;
+  span {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  .mess-title {
+    padding-top: 30px;
+    font-size: 1.2rem;
+  }
+  .mess-home-link {
+    align-self: center;
+  }
+}
+
+.export-block {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 .export-btn {
@@ -96,9 +150,8 @@ export default {
 }
 .export-modal-block {
   position: absolute;
-  top: 30%;
-  right: 30%;
-  margin-top: 15px;
+  display: flex;
+  justify-content: center;
   width: 600px;
   background: #fff;
   border-radius: 4px;
@@ -131,7 +184,7 @@ export default {
   }
 }
 .export-modal-main {
-  max-width: 380px;
+  max-width: 450px;
   margin: 0 auto;
   text-align: center;
   padding: 15px 24px 0;
@@ -151,6 +204,8 @@ export default {
   line-height: 18px;
 }
 .export-modal-btns {
+  display: flex;
+  justify-content: center;
   margin-top: 40px;
   padding: 20px 24px;
   border-top: 1px solid #f5f5f5;
@@ -163,6 +218,7 @@ export default {
 
 .export-field {
   display: flex;
+  align-items: center;
   padding: 30px 24px 10px 24px;
 }
 
