@@ -24,6 +24,10 @@ export default {
     forgot_pass_descr: `ご登録頂いたメールアドレスをご入力いただき、【送信】ボタンを押してください。
     ご入力いただきましたメールアドレス宛に変更用URLを記載したメールを送信いたします。`,
     number_of_registered_users: 'ユーザー登録数',
+    send_complited: '送信完了しました。',
+    we_have_sent_email: 'ご入力いただきましたメールアドレス宛に変更用URLを記載したメールを送信いたしました。',
+    destination_email_address: '送信メールアドレス',
+    back_to_login_page: 'ログインページへ戻る',
     btn_add: '新規作成',
     check: 'Check',
     subject: '件名',
@@ -84,7 +88,14 @@ export default {
     tag: 'タグ',
     video_description: '動画の説明',
     last_modified: '更新日時',
-    video_information: '動画情報'
+    video_information: '動画情報', 
+    public_settings: '動画公開設定'
+  },
+  comments: {
+    id: 'ID',
+    display: '公開',
+    hidden: '非公開',
+    deleted: '削除'    
   },
   label: {
     delete: '削除',
