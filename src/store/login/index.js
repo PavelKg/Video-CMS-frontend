@@ -53,14 +53,17 @@ export default {
       const {email, locale} = payload
       try {
         const resp = await Api.password_reset_request({email, locale})
-        //if (code === 200 && token) {
+        const code = resp.status
+        if (code !== 202) {
+          throw Error('Email is not find')
+        }
       } catch (error) {}
     },
     async SAVE_RECOVERY_PASSWORD({commit}, payload) {
       const {token, password} = payload
       try {
-        const result = await Api.save_req_pass(token, password)
-        const code = result.status
+        const resp = await Api.save_req_pass(token, password)
+        const code = resp.status
         if (code !== 200) {
           console.log(result)
         }

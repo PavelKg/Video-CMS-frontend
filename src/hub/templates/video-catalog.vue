@@ -44,7 +44,7 @@
           @change="onPeriodState"
         ></b-form-select>
       </div>
-      <div class="video-data-filter-acc">
+      <div v-if="!isUser" class="video-data-filter-acc">
         <b-form-radio-group
           id="btn-filer-public"
           v-model="public_selected"
@@ -133,7 +133,7 @@ export default {
 
     this.period_filter.year_from = curr.getFullYear()
     this.period_filter.month_from = curr.getMonth() + 1
-
+    console.log('me=', this.me)
   },
   methods: {
     placeholder: () => $t('message.key_search'),
@@ -191,6 +191,9 @@ export default {
       'videos_selected',
       'active_video_page'
     ]),
+    isUser(){
+      return this.me.profile.irole === 'user'
+    },
     currentPage(){
       return this.active_video_page
     },

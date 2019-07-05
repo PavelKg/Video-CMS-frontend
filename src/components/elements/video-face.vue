@@ -1,10 +1,14 @@
 <template>
   <div class="video-box-item">
-    <div class="video-box-item-content" :class="{gray: videoitem.video_thumbnail==undefined}" @click="playVideo">
+    <div
+      class="video-box-item-content"
+      :class="{gray: videoitem.video_thumbnail == undefined}"
+      @click="playVideo"
+    >
       <img :src="img_path" />
     </div>
-    <div class="video-box-mng-panel" >
-      <div class="mng-panel-top" >
+    <div class="video-box-mng-panel">
+      <div class="mng-panel-top">
         <b-form-checkbox
           @change="onCheckChange"
           :checked="isSelected"
@@ -19,13 +23,17 @@
           src="@/assets/images/subtitles.svg"
         />
       </div>
-      <div class="mng-panel-bottom" :class="{gray: videoitem.updated_at===''}">
-        <span v-if="videoitem.updated_at!==''">{{ `${$t('videos.last_modified')}: ${updated_at}` }}</span>
+      <div
+        class="mng-panel-bottom"
+        :class="{gray: videoitem.updated_at === ''}"
+      >
+        <span v-if="videoitem.updated_at !== ''">{{
+          `${$t('videos.last_modified')}: ${updated_at}`
+        }}</span>
       </div>
     </div>
   </div>
 </template>
-
 
 <script>
 import {mapGetters} from 'vuex'
@@ -41,7 +49,6 @@ export default {
         video_description: '',
         updated_at: ''
       }
-      
     }
   },
   props: {
@@ -64,7 +71,7 @@ export default {
           this.videoitem = {...this.videoitem, ...res}
         },
         error => {}
-      )      
+      )
   },
   methods: {
     playVideo() {
@@ -113,9 +120,9 @@ export default {
       return `check-tag-${this.videoitem.video_uuid}`
     },
     img_path() {
-      return this.videoitem.video_thumbnail !== ""
-        ?  this.videoitem.video_thumbnail
-      : require('@/assets/images/p-streamCMS-s.png')
+      return this.videoitem.video_thumbnail !== ''
+        ? this.videoitem.video_thumbnail
+        : require('@/assets/images/p-streamCMS-s.png')
     },
     showSubtitles() {
       return this.me.profile.irole === 'admin'
@@ -127,7 +134,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/styles';
 
-.gray{
+.gray {
   background: $gray;
 }
 
