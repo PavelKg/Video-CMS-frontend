@@ -5,7 +5,13 @@
       <span class="video-title">{{ form.video_title || 'Video Title' }}</span>
       <div class="video-content-zone">
         <div class="player-zone">
-          <video ref="videoPlayer" controls class="player-zone-content"></video>
+          <video
+            @play="videoPlay"
+            ref="videoPlayer"
+            controls
+            class="player-zone-content"
+            autoplay="true"
+          ></video>
           <div class="video-information">
             <div>
               <span class="title">{{ $t('videos.video_information') }}</span>
@@ -76,15 +82,15 @@ export default {
   name: 'video-player',
   data() {
     return {
+      video: null,
+      hls: null,
       comment_text: '',
       form: {
         video_title: '',
         updated_at: '',
         video_tag: '',
         video_descrioption: '',
-        video_url:
-          'https://storage.googleapis.com/p-streamcms/bitmovin/encoding-ui/40040e8d-fbfa-49b9-bde1-d367683a0adb/2019-03-28T10-20-18Z/162eb810-5143-11e9-929f-8d50de7b40e9/manifest.m3u8',
-        //'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8'
+        video_output_file: '',
         video_public: true
       },
       options: [
@@ -99,6 +105,9 @@ export default {
 
     videoHasUrl() {
       return true //this.active_video && this.active_video.hasOwnProperty('url')
+    },
+    isHlsSupported() {
+      return Hls.isSupported()
     },
     updated_at() {
       return this.form.updated_at
@@ -120,38 +129,39 @@ export default {
     this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
-      .then(res => {
+      .then((res) => {
         this.form = {...this.form, ...res}
+        if (this.isHlsSupported) {
+          this.hls = new Hls()
+          this.hls.loadSource(this.form.video_output_file)
+          this.hls.attachMedia(this.video)
+          this.hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {})
+        }
       })
   },
   mounted() {
-    if (this.videoHasUrl) {
-      let video = this.$refs.videoPlayer
-      if (Hls.isSupported()) {
-        var hls = new Hls()
-        hls.loadSource(this.form.video_url)
-        hls.attachMedia(video)
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-          video.play()
-        })
-      } else {
-        addSourceToVideo(
-          video,
-          'https://p0.oc.kg:8081/video/c/hd3/Mortal_Engines_HD.mp4',
-          'video/mp4'
-        )
-        video.play()
-      }
+    this.video = this.$refs.videoPlayer
 
-      function addSourceToVideo(element, src, type) {
-        var source = document.createElement('source')
-        source.src = src
-        source.type = type
-        element.appendChild(source)
-      }
-    }
+    // } else {
+    //   addSourceToVideo(
+    //     video,
+    //     this.form.video_output_file,
+    //     'video/mp4'
+    //   )
+    //   video.play()
+    //}
+
+    // function addSourceToVideo(element, src, type) {
+    //   var source = document.createElement('source')
+    //   source.src = src
+    //   source.type = type
+    //   element.appendChild(source)
+    // }
   },
   methods: {
+    videoPlay() {
+      console.log('on play video')
+    },
     onSubtitles() {
       this.$store.commit('SET_ACTIVE_VIDEO', this.form.video_uuid)
       this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
@@ -173,7 +183,7 @@ export default {
           uuid: this.form.video_uuid,
           text: this.comment_text
         })
-        .then(res => {}, err => {})
+        .then((res) => {}, (err) => {})
         .finally(() => {
           this.comment_text = ''
           this.comment_sending = false
