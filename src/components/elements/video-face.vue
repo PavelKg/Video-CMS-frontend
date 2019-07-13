@@ -6,6 +6,20 @@
       @click="playVideo"
     >
       <img :src="img_path" />
+      <IconBase
+        class="video_status"
+        :icon-name="
+          videoitem.video_public ? $t('label.public') : $t('label.private')
+        "
+        :icon-color="videoitem.video_public ? 'green' : '#F15B52'"
+      >
+        <template v-if="videoitem.video_public">
+          <IconLockOpen />
+        </template>
+        <template v-else>
+          <IconLockClose />
+        </template>
+      </IconBase>
     </div>
     <div class="video-box-mng-panel">
       <div class="mng-panel-top">
@@ -37,6 +51,9 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import IconBase from '../IconBase.vue'
+import IconLockClose from '../icons/IconLock'
+import IconLockOpen from '../icons/IconLockOpen'
 
 export default {
   name: 'video-face-box',
@@ -47,6 +64,7 @@ export default {
         video_thumbnail: undefined,
         video_title: '',
         video_description: '',
+        video_public: '',
         updated_at: ''
       }
     }
@@ -55,23 +73,28 @@ export default {
     face_uuid: String
   },
   created() {
+    console.log('recreate_video')
     this.videoitem.video_uuid = this.face_uuid
     this.$store
       .dispatch('LOAD_VIDEO_THUMBNAIL', this.videoitem.video_uuid)
       .then(
-        res => {
+        (res) => {
           this.videoitem.video_thumbnail = res.video_thumbnail
         },
-        error => {}
+        (error) => {}
       )
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.videoitem.video_uuid)
       .then(
-        res => {
+        (res) => {
+          console.log('res=', res)
           this.videoitem = {...this.videoitem, ...res}
         },
-        error => {}
+        (error) => {}
       )
+  },
+  updated() {
+    console.log('face_updateted')
   },
   methods: {
     playVideo() {
@@ -127,6 +150,11 @@ export default {
     showSubtitles() {
       return this.me.profile.irole === 'admin'
     }
+  },
+  components: {
+    IconBase,
+    IconLockClose,
+    IconLockOpen
   }
 }
 </script>
@@ -142,6 +170,7 @@ export default {
   display: flex;
   flex-direction: column;
   margin: 10px;
+  position: relative;
 
   .video-box-item-content {
     border-radius: 4px;
@@ -151,13 +180,22 @@ export default {
     width: 200px;
     box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.07);
     img {
+      position: absolute;
       align-self: center;
       padding: 5px;
-      max-width: 100%;
-      max-height: 100%;
+      max-width: 200px;
+      max-height: 140px;
       cursor: pointer;
 
       //border: 1px solid $gray-lighter;
+    }
+    svg {
+      width: 24px;
+      height: 18px;
+      position: absolute;
+      top: 20px;
+
+      right: 20px;
     }
   }
   .video-box-mng-panel {

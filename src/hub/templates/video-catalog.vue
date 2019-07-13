@@ -77,6 +77,20 @@
           $t('label.deselect_all')
         }}</a>
         <button
+          class="button btn-gray"
+          @click="onPublicSelected"
+          :disabled="!hasSelected"
+        >
+          {{ $t('label.public') }}
+        </button>
+        <button
+          class="button btn-gray"
+          @click="onPrivateSelected"
+          :disabled="!hasSelected"
+        >
+          {{ $t('label.private') }}
+        </button>
+        <button
           class="button btn-orange"
           @click="onDelete"
           :disabled="!hasSelected || isVideosDeleting"
@@ -102,6 +116,7 @@
 <script>
 import {mapGetters} from 'vuex'
 import videoPrev from '@/components/elements/video-face'
+//import {Promise} from 'q'
 
 export default {
   name: 'video-catalog',
@@ -136,6 +151,23 @@ export default {
     console.log('me=', this.me)
   },
   methods: {
+    changePublicStatus(val) {
+      const value = val
+      const chanded = this.videos_selected.map(async (video_uuid) => {
+        try {
+          await this.$store.dispatch('UPDATE_VIDEO_PUBLIC_STATUS', {
+            uuid: video_uuid,
+            value
+          })
+        } catch (error) {}
+      })
+
+      Promise.all(chanded).then(() => {
+        console.log('reload_videos')
+        this.$store.dispatch('LOAD_VIDEO_LIST')
+        this.onPublicState(this.public_selected)
+      })
+    },
     placeholder: () => $t('message.key_search'),
     activateContent(key) {
       this.$emit('contentElementClick', key)
@@ -149,7 +181,7 @@ export default {
     toggleAll(env) {
       const action = env.target['id']
       if (action === 'selectAll') {
-        this.video_list.forEach(element => {
+        this.video_list.forEach((element) => {
           this.$store.commit('SET_VIDEO_SELECTED', element.video_uuid)
         })
       } else {
@@ -167,9 +199,15 @@ export default {
       this.$store.dispatch('LOAD_VIDEO_LIST')
     },
     onDelete() {
-      this.$store.dispatch('DELETE_VIDEO').then(res => {
+      this.$store.dispatch('DELETE_VIDEO').then((res) => {
         this.$store.dispatch('LOAD_VIDEO_LIST')
       })
+    },
+    onPrivateSelected() {
+      this.changePublicStatus('private')
+    },
+    onPublicSelected() {
+      this.changePublicStatus('public')
     },
     onPaggin(page) {
       this.setPage(page)
@@ -182,6 +220,11 @@ export default {
   components: {
     videoPrev
   },
+  watch:{
+    video_list(new_val, old_val){
+      console.log('video_list changed',new_val, old_val)
+    }
+  },
   computed: {
     ...mapGetters([
       'video_list',
@@ -191,10 +234,10 @@ export default {
       'videos_selected',
       'active_video_page'
     ]),
-    isUser(){
+    isUser() {
       return this.me.profile.irole === 'user'
     },
-    currentPage(){
+    currentPage() {
       return this.active_video_page
     },
     videos_count() {
@@ -214,18 +257,20 @@ export default {
       return this.me.profile.company_name
     },
     isAdmin() {
-      return this.me.profile.irole === 'admin'
+      return (
+        this.me.profile.irole === 'admin' || this.me.profile.irole === 'super'
+      )
     },
     years_to() {
       const _from = this.period_filter.year_from
-      return this.years.filter(year => year >= _from)
+      return this.years.filter((year) => year >= _from)
     },
     month_to() {
       const _month_from =
         this.period_filter.year_from === this.period_filter.year_to
           ? this.period_filter.month_from
           : 1
-      return this.months.filter(month => month >= _month_from)
+      return this.months.filter((month) => month >= _month_from)
     }
   }
 }
@@ -286,7 +331,7 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   overflow: auto;
-  //align-content: flex-end;
+  position: relative;
   justify-content: flex-start;
   span {
     position: absolute;
@@ -300,8 +345,12 @@ export default {
   align-items: center;
   margin-top: 15px;
   .admin-mng-panel {
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
+    .button {
+      margin-right: 10px;
+    }
   }
   .videos-mng-page {
     display: flex;

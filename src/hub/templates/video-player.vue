@@ -6,7 +6,6 @@
       <div class="video-content-zone">
         <div class="player-zone">
           <video
-            @play="videoPlay"
             ref="videoPlayer"
             controls
             class="player-zone-content"
@@ -141,27 +140,8 @@ export default {
   },
   mounted() {
     this.video = this.$refs.videoPlayer
-
-    // } else {
-    //   addSourceToVideo(
-    //     video,
-    //     this.form.video_output_file,
-    //     'video/mp4'
-    //   )
-    //   video.play()
-    //}
-
-    // function addSourceToVideo(element, src, type) {
-    //   var source = document.createElement('source')
-    //   source.src = src
-    //   source.type = type
-    //   element.appendChild(source)
-    // }
   },
   methods: {
-    videoPlay() {
-      console.log('on play video')
-    },
     onSubtitles() {
       this.$store.commit('SET_ACTIVE_VIDEO', this.form.video_uuid)
       this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')

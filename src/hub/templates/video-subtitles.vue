@@ -82,7 +82,6 @@ export default {
       form: {
         video_uuid: '',
         video_thumbnail: '',
-        //'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
         video_title: '',
         video_tag: '',
         video_description: ''
@@ -92,17 +91,16 @@ export default {
   created() {
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
-      .then(res => {
+      .then((res) => {
         this.form = {...this.form, ...res}
         this.$store
           .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
-          .then(res => {
+          .then((res) => {
             this.form = {...this.form, video_thumbnail: res.video_thumbnail}
           })
       })
   },
   mounted() {
-    console.log('itemprop=', this.itemprop)
     this.dragAndDropCapable = this.determineDragAndDropCapable()
 
     if (this.dragAndDropCapable) {
@@ -198,7 +196,7 @@ export default {
           video_tag,
           video_description
         })
-        .then(res => {
+        .then((res) => {
           this.$store.dispatch('LOAD_VIDEO_LIST')
           this.dataUpdated = true
         })

@@ -31,7 +31,7 @@
             <div class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
-                @click="delGroup(item.item)"
+                @click="delGroup(item.item.gid)"
               /></div
           ></template>
           <template v-else>
@@ -51,6 +51,7 @@
       }}</a>
       <button
         class="button btn-orange"
+        @click="delGroups"
         :disabled="groups_selected.length === 0"
       >
         {{ $t('label.delete') }}
@@ -99,8 +100,8 @@ export default {
       this.groups_selected =
         action === 'selectAll'
           ? this.groups_on_page
-              .filter(group => group.deleted_at === '')
-              .map(item => String(item.gid))
+              .filter((group) => group.deleted_at === '')
+              .map((item) => String(item.gid))
           : []
     },
     editGroup(group) {
@@ -115,19 +116,39 @@ export default {
         'root.subItems.groups.subItems.group_edit'
       )
     },
-    delGroup(group) {
-      this.$store.commit('SET_ACTIVE_GROUP', group)
-      this.$store.dispatch('GROUP_DEL').then(
-        res => {
+    delGroup(group_gid) {
+      this.$store.dispatch('GROUP_DEL', group_gid).then(
+        (res) => {
           this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
         },
-        err => {
+        (err) => {
           this.$emit(
             'onContentError',
             `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`
           )
         }
       )
+    },
+    delGroups() {
+      const deleted_groups = this.groups_selected.map(async (group_gid) => {
+        try {
+          await this.$store.dispatch('GROUP_DEL', group_gid)
+          const ind = this.groups_selected.findIndex((gid) => gid === group_gid)
+          if (ind > -1) {
+            this.groups_selected.splice(ind, 1)
+          }
+        } catch (error) {
+          console.log('error')
+          this.$emit(
+            'onContentError',
+            `errors.${error.message.toLowerCase().replace(/\s/gi, '_')}`
+          )
+        }
+      })
+
+      Promise.all(deleted_groups).then(() => {
+        this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
+      })
     }
   },
   computed: {

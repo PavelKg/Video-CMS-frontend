@@ -64,9 +64,9 @@ export default {
         throw Error(`Error update group: ${err.response.data.message}`)
       }
     },
-    async GROUP_DEL({commit, getters}, payload) {
+    async GROUP_DEL({commit, getters}, gid) {
       const cid = getters.me.profile.company_id
-      const {gid} = getters.group_selected
+      //const {gid} = getters.group_selected
       try {
         const result = await Api.group_del({cid, gid})
         if (result.status === 204) {

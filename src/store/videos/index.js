@@ -224,7 +224,9 @@ export default {
   },
   mutations: {
     SET_VIDEO_LIST(state, _list) {
+      console.log('state.videos.list=', state.videos.list)
       state.videos.list = [..._list]
+      console.log('state.videos.list1=', state.videos.list)
     },
     SET_ACTIVE_VIDEO(state, uuid) {
       state.active_video_uuid = uuid
@@ -301,7 +303,7 @@ export default {
         return item.video_uuid === uuid
       })
       if (ind > -1) {
-        state.videos.list[ind].public = value
+        state.videos.list[ind].video_public = value
       }      
 
       console.log('state.videos.list[ind]=', state.videos.list[ind])
