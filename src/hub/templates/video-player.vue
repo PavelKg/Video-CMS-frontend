@@ -5,11 +5,7 @@
       <span class="video-title">{{ form.video_title || 'Video Title' }}</span>
       <div class="video-content-zone">
         <div class="player-zone">
-          <video
-            ref="videoPlayer"
-            controls
-            class="player-zone-content"
-          ></video>
+          <video ref="videoPlayer" controls class="player-zone-content"></video>
           <div class="video-information">
             <div>
               <span class="title">{{ $t('videos.video_information') }}</span>
@@ -132,14 +128,13 @@ export default {
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then((res) => {
         this.form = {...this.form, ...res}
-        console.log('Hls.isSupported()=', Hls.isSupported())
         if (Hls.isSupported()) {
           this.hls = new Hls()
           this.hls.loadSource(this.form.video_output_file)
           this.hls.attachMedia(this.video)
           this.hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {})
         }
-      })    
+      })
   },
   methods: {
     onSubtitles() {

@@ -32,7 +32,10 @@
       <button
         class="button btn-blue"
         @click="submitFiles()"
-        :class="{'btn-disabled': notUploaded.length === 0}"
+        :class="{
+          'btn-disabled':
+            hasUpload.length === 0 || isProcessingUpload.length !== 0
+        }"
       >
         {{ $t('label.upload') }}
       </button>
@@ -56,10 +59,11 @@ export default {
   },
   computed: {
     ...mapGetters(['files_for_upload']),
-    notUploaded() {
-      return this.files_for_upload.filter(
-        (file) => !Boolean(file.uploaded) && !Boolean(file.isUploading)
-      )
+    hasUpload() {
+      return this.files_for_upload.filter((file) => !Boolean(file.uploaded))
+    },
+    isProcessingUpload() {
+      return this.files_for_upload.filter((file) => Boolean(file.isUploading))
     }
   },
   mounted() {
