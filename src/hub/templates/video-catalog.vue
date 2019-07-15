@@ -331,7 +331,6 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   overflow: auto;
-  position: relative;
   justify-content: flex-start;
   span {
     position: absolute;

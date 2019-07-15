@@ -9,7 +9,6 @@
             ref="videoPlayer"
             controls
             class="player-zone-content"
-            autoplay="true"
           ></video>
           <div class="video-information">
             <div>
@@ -126,20 +125,21 @@ export default {
   },
   created() {
     this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
+  },
+  mounted() {
+    this.video = this.$refs.videoPlayer
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then((res) => {
         this.form = {...this.form, ...res}
-        if (this.isHlsSupported) {
+        console.log('Hls.isSupported()=', Hls.isSupported())
+        if (Hls.isSupported()) {
           this.hls = new Hls()
           this.hls.loadSource(this.form.video_output_file)
           this.hls.attachMedia(this.video)
           this.hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {})
         }
-      })
-  },
-  mounted() {
-    this.video = this.$refs.videoPlayer
+      })    
   },
   methods: {
     onSubtitles() {
