@@ -29,7 +29,7 @@
           :id="tag"
           :name="tag"
         ></b-form-checkbox>
-        <span :title="`${description}`">{{ title }}</span>
+        <span :title="`${title}: ${description}`">{{ title }}</span>
         <img
           v-if="showSubtitles"
           @click="onSubtitles()"
@@ -202,6 +202,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 200px;
     //background: #ddd;
 
     padding: 0 5px;
