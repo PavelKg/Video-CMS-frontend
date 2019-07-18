@@ -8,12 +8,10 @@
       <img :src="img_path" />
       <IconBase
         class="video_status"
-        :icon-name="
-          videoitem.video_public ? $t('label.public') : $t('label.private')
-        "
-        :icon-color="videoitem.video_public ? 'green' : '#F15B52'"
+        :icon-name="face_public ? $t('label.public') : $t('label.private')"
+        :icon-color="face_public ? 'green' : '#F15B52'"
       >
-        <template v-if="videoitem.video_public">
+        <template v-if="face_public">
           <IconLockOpen />
         </template>
         <template v-else>
@@ -70,10 +68,10 @@ export default {
     }
   },
   props: {
-    face_uuid: String
+    face_uuid: String,
+    face_public: Boolean
   },
   created() {
-    console.log('recreate_video')
     this.videoitem.video_uuid = this.face_uuid
     this.$store
       .dispatch('LOAD_VIDEO_THUMBNAIL', this.videoitem.video_uuid)
@@ -87,15 +85,12 @@ export default {
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.videoitem.video_uuid)
       .then(
         (res) => {
-          console.log('res=', res)
           this.videoitem = {...this.videoitem, ...res}
         },
         (error) => {}
       )
   },
-  updated() {
-    console.log('face_updateted')
-  },
+  updated() {},
   methods: {
     playVideo() {
       this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)

@@ -75,7 +75,7 @@ export default {
       const cid = getters.me.profile.company_id
 
       const files = state.filesForUpload.list
-        .filter((file) => !Boolean(file.uploaded)&&!Boolean(file.isUploading))
+        .filter((file) => !Boolean(file.uploaded) && !Boolean(file.isUploading))
         .map((item) => {
           const {name, size, type} = item.file
           const {uuid} = item
@@ -223,16 +223,13 @@ export default {
   },
   mutations: {
     SET_VIDEO_LIST(state, _list) {
-      console.log('state.videos.list=', state.videos.list)
       state.videos.list = [..._list]
-      console.log('state.videos.list1=', state.videos.list)
     },
     SET_ACTIVE_VIDEO(state, uuid) {
       state.active_video_uuid = uuid
     },
     SET_ACTIVE_VIDEO_PAGE(state, num) {
       state.active_video_page = num
-      console.log('state.active_video_page=', state.active_video_page)
     },
     SET_VIDEO_PERIOD(state, _period) {
       const {month_from, month_to, year_from, year_to} = _period
@@ -271,7 +268,6 @@ export default {
         state.filesForUpload.list[uploaded_index].uploaded = true
         state.filesForUpload.list[uploaded_index].isUploading = false
       }
-      console.log('state.filesForUpload.list=', state.filesForUpload.list)
     },
     SET_IS_UPLOADING_FILE(state, uuid) {
       const uploading_index = state.filesForUpload.list.findIndex(function(
@@ -317,8 +313,6 @@ export default {
       if (ind > -1) {
         state.videos.list[ind].video_public = value
       }
-
-      console.log('state.videos.list[ind]=', state.videos.list[ind])
     },
     UNSET_VIDEO_SELECTED(state, uuid) {
       const ind = state.videos.selected.indexOf(uuid)

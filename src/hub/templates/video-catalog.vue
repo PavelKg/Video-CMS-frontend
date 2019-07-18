@@ -63,6 +63,7 @@
         v-for="vItem in videos_on_page"
         :key="vItem.video_uuid"
         :face_uuid="vItem.video_uuid"
+        :face_public="vItem.video_public"
         v-on:activateContent="activateContent"
       ></videoPrev>
     </div>
@@ -148,7 +149,6 @@ export default {
 
     this.period_filter.year_from = curr.getFullYear()
     this.period_filter.month_from = curr.getMonth() + 1
-    console.log('me=', this.me)
   },
   methods: {
     changePublicStatus(val) {
@@ -163,9 +163,8 @@ export default {
       })
 
       Promise.all(chanded).then(() => {
-        console.log('reload_videos')
-        this.$store.dispatch('LOAD_VIDEO_LIST')
-        this.onPublicState(this.public_selected)
+        //this.$store.dispatch('LOAD_VIDEO_LIST')
+        //this.onPublicState(this.public_selected)
       })
     },
     placeholder: () => $t('message.key_search'),

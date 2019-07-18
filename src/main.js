@@ -9,6 +9,7 @@ import BootstrapVue from 'bootstrap-vue'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import 'video.js/dist/video-js.css'
 
 Vue.directive('closable', closable)
 Vue.use(BootstrapVue)

@@ -5,7 +5,7 @@
       <span class="video-title">{{ form.video_title || 'Video Title' }}</span>
       <div class="video-content-zone">
         <div class="player-zone">
-          <VideojsPlayer :video_url="form.video_output_file" class="video"> </VideojsPlayer>
+          <video ref="videoPlayer" controls class="player-zone-content"></video>
           <div class="video-information">
             <div>
               <span class="title">{{ $t('videos.video_information') }}</span>
@@ -69,14 +69,15 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import VideojsPlayer from '@/components/elements/videojs-player'
+import Hls from 'hls.js'
 import Comment from '@/components/elements/comment'
 
 export default {
-  name: 'p-video-player',
+  name: 'video-player',
   data() {
     return {
-      player: undefined,
+      video: null,
+      hls: null,
       comment_text: '',
       form: {
         video_title: '',
@@ -90,13 +91,18 @@ export default {
         {text: this.$t('label.public'), value: 'public'},
         {text: this.$t('label.private'), value: 'private'}
       ],
-      comment_sending: false,
-      videoHasUrl: true
+      comment_sending: false
     }
   },
   computed: {
     ...mapGetters(['active_video_uuid', 'comment_list']),
 
+    videoHasUrl() {
+      return true //this.active_video && this.active_video.hasOwnProperty('url')
+    },
+    isHlsSupported() {
+      return Hls.isSupported()
+    },
     updated_at() {
       return this.form.updated_at
         ? new Date(this.form.updated_at)
@@ -111,34 +117,24 @@ export default {
     }
   },
   components: {
-    Comment,
-    VideojsPlayer
+    Comment
   },
   created() {
+    this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
+  },
+  mounted() {
+    this.video = this.$refs.videoPlayer
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then((res) => {
         this.form = {...this.form, ...res}
-        //this.videoOptions.sources.src = this.form.video_output_file
-
-        //console.log('this.videoOptions=', this.videoOptions.sources.src)
-        // if (!this.player) {
-        //   this.player = videojs(
-        //     this.$refs.videoPlayer,
-        //     this.videoOptions,
-        //     function onPlayerReady() {
-        //       console.log('onPlayerReady', this)
-        //     }
-        //   )
-        // }
+        if (Hls.isSupported()) {
+          this.hls = new Hls()
+          this.hls.loadSource(this.form.video_output_file)
+          this.hls.attachMedia(this.video)
+          this.hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {})
+        }
       })
-    this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
-  },
-  mounted() {},
-  beforeDestroy() {
-    if (this.player) {
-      this.player.dispose()
-    }
   },
   methods: {
     onSubtitles() {
@@ -174,7 +170,6 @@ export default {
 
 <style lang="scss">
 @import '../../assets/styles';
-//@import 'video.js/dist/video-js.css';
 
 .comment-table {
   height: 300px;
@@ -198,10 +193,7 @@ export default {
     justify-content: space-between;
     flex-wrap: wrap;
 
-    .video {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    video {
       width: 100%;
       max-width: 670px;
       height: auto;
