@@ -96,7 +96,7 @@ export default {
         this.$store
           .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
           .then((res) => {
-            this.form = {...this.form, video_thumbnail: res.video_thumbnail}
+            this.form.video_thumbnail = res.video_thumbnail
           })
       })
   },
@@ -173,10 +173,15 @@ export default {
       evt.preventDefault()
       this.$refs.customInput.click()
     },
-    backToCatalog() {
+    backToCatalog(evt) {
+      evt.preventDefault()
+      Object.keys(this.form).forEach((key) => {
+        this.form[key] = ''
+      })
       this.$emit('contentElementClick', 'root.subItems.home')
     },
-    onButtonReg() {
+    onButtonReg(evt) {
+      evt.preventDefault()
       this.$refs['subtitlesForm'].onSubmit
     },
     onSubmit(evt) {
