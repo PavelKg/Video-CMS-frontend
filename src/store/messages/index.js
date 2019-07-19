@@ -64,6 +64,18 @@ export default {
         throw Error(`Error add new message: ${err.response.data.message}`)
       }
     },
+    async MESSAGE_DEL({commit, getters}, payload) {
+      try {
+        const result = await Api.message_del(payload)
+        if (result.status === 204) {
+          return Promise.resolve('Message deleted success')
+        } else {
+          throw Error(`Error del message, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(`Error del message: ${err.response.data.message}`)
+      }
+    },    
     async LOAD_MESSAGES_RECEIVERS({commit}, payload = {}) {
       const {filter} = payload
       try {

@@ -35,6 +35,7 @@
     <tableMessages
       :Type="selectedTabName"
       @addNewMessageByReplay="addNewMessageByReplay"
+      @reloadMessages="reloadMessages"
     />
     <b-modal
       v-model="isShowModalMessageAdd"
@@ -101,16 +102,17 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('LOAD_MESSAGES', {
-      direction: this.tabs[this.tabIndex].name
-    })
+    this.reloadMessages()
     this.$store.dispatch('LOAD_MESSAGES_RECEIVERS')
   },
   methods: {
-    changeTab(evt) {
+    reloadMessages() {
       this.$store.dispatch('LOAD_MESSAGES', {
         direction: this.tabs[this.tabIndex].name
       })
+    },
+    changeTab(evt) {
+      this.reloadMessages()
     },
     addNewMessage() {
       this.$store.commit('SET_ACTIVE_MESSAGE', null)
@@ -132,9 +134,7 @@ export default {
       }
       this.$store.dispatch('MESSAGE_ADD', messData).then(
         (res) => {
-          this.$store.dispatch('LOAD_MESSAGES', {
-            direction: this.tabs[this.tabIndex].name
-          })
+          this.reloadMessages()
         },
         (err) => {
           console.log('err=', err)

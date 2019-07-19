@@ -334,6 +334,24 @@ export default {
     })
   },
 
+  /** Del message
+   * @param {object} - 
+   * {
+      "direction": "string" - [inbox|outbox],
+      "mid": "numeric"
+      }
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  message_del(payload) {
+    const {direction, mid} = payload
+    return Api.delete(`/messages/${direction}/${mid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** starred message
    * @param {string} mid - Message ID
    * @return {Promise<*>} - 200	Default Response

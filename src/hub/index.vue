@@ -93,7 +93,7 @@ export default {
   position: fixed; /* Stay in place */
   width: 100%;
   height: 50px;
-  z-index: 1; /* Stay on top */
+  z-index: 10; /* Stay on top */
   top: 0; /* Stay at the top */
   left: 0;
 }

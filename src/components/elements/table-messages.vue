@@ -61,6 +61,7 @@
       <button
         class="button btn-orange"
         :disabled="messages_selected.length === 0"
+        @click="onDeleteMessages"
       >
         {{ $t('label.delete') }}
       </button>
@@ -120,6 +121,7 @@ export default {
     Type(newval, oldval) {
       this.sortBy = 'created_at'
       this.sortDesc = false
+      this.messages_selected = []
     }
   },
   methods: {
@@ -158,6 +160,23 @@ export default {
               .filter((message) => !Boolean(message.deleted_at))
               .map((item) => String(item.mid))
           : []
+    },
+    onDeleteMessages() {
+      const direction = this.Type
+      const deleted_messages = Promise.all(
+        this.messages_selected.map(async (mid) => {
+          return await this.$store.dispatch('MESSAGE_DEL', {direction, mid})
+        })
+      )
+      deleted_messages.then(
+        (res) => {
+          this.messages_selected = []
+          this.$emit('reloadMessages')
+        },
+        (error) => {
+          throw Error(error)
+        }
+      )
     }
   },
   computed: {
