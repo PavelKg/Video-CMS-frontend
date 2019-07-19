@@ -197,6 +197,7 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     width: 200px;
+    flex-wrap: wrap;
     //background: #ddd;
 
     padding: 0 5px;
@@ -229,12 +230,15 @@ export default {
 @media screen and (max-width: 610px) {
   .video-box-item {
     width: 100%;
+    height: 350px;
     .video-box-item-content {
       width: 100%;
       height: 100%;
+      margin: 0 auto;
       img {
         max-width: 100%;
         max-height: 100%;
+        height: auto;
       }
     }
     .video-box-mng-panel {

@@ -341,17 +341,20 @@ export default {
   display: flex;
   align-items: center;
   margin-top: 15px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   .admin-mng-panel {
     font-size: 0.9rem;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     .button {
       margin-right: 10px;
     }
   }
   .videos-mng-page {
     display: flex;
-    margin-left: auto;
+    //margin-left: auto;
     > * {
       margin-bottom: 0;
     }
