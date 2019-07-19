@@ -276,19 +276,20 @@ export default {
    * @param {string} filter
    * @returns {Promise<*>} - 200 List of messages
    *  [{
-      "mid": 0,
-      "sender": "string",
-      "receiver": "string",
-      "subject": "string",
-      "text": "string",
-      "important": true,
-      "created_at": "string",
-      "deleted_at": "string"
+    "mid": 0,
+    "cp_uid": "string",
+    "cp_cid": "string",
+    "cp_cname": "string",
+    "subject": "string",
+    "text": "string",
+    "starred": true,
+    "created_at": "string",
+    "deleted_at": "string"
   }]
  */
-  messages(filter) {
+  messages(direction, filter) {
     const setFilter = !filter ? '' : `?filter=${filter}`
-    return Api.get(`/messages/${setFilter}`, {
+    return Api.get(`/messages/${direction}/${setFilter}`, {
       headers: {
         ...type_json
       }

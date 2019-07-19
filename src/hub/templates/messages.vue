@@ -18,6 +18,7 @@
     <div class="messages-tabs">
       <b-tabs
         v-model="tabIndex"
+        @input="changeTab"
         class="mytabs"
         active-tab-class="font-weight-bold text-success"
       >
@@ -27,7 +28,6 @@
           :title="`${tab.text}`"
           title-item-class="w-50"
           :title-link-class="linkClass(ind)"
-          @click="changeTab"
         >
         </b-tab>
       </b-tabs>
@@ -101,12 +101,16 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('LOAD_MESSAGES')
+    this.$store.dispatch('LOAD_MESSAGES', {
+      direction: this.tabs[this.tabIndex].name
+    })
     this.$store.dispatch('LOAD_MESSAGES_RECEIVERS')
   },
   methods: {
     changeTab(evt) {
-      this.$store.dispatch('LOAD_MESSAGES')
+      this.$store.dispatch('LOAD_MESSAGES', {
+        direction: this.tabs[this.tabIndex].name
+      })
     },
     addNewMessage() {
       this.$store.commit('SET_ACTIVE_MESSAGE', null)
@@ -127,10 +131,12 @@ export default {
         imporant
       }
       this.$store.dispatch('MESSAGE_ADD', messData).then(
-        res => {
-          this.$store.dispatch('LOAD_MESSAGES')
+        (res) => {
+          this.$store.dispatch('LOAD_MESSAGES', {
+            direction: this.tabs[this.tabIndex].name
+          })
         },
-        err => {
+        (err) => {
           console.log('err=', err)
         }
       )
@@ -174,7 +180,7 @@ export default {
       return this.tabs[this.tabIndex].name
     },
     receivers() {
-      return this.message_receivers.map(receiver => {
+      return this.message_receivers.map((receiver) => {
         return {
           value: {uid: receiver.uid, cid: receiver.cid},
           text: receiver.uid

@@ -33,13 +33,10 @@
           <span class="star" :class="{selected: data.item.starred}"></span>
         </div>
       </template>
-      <template slot="sender_uid" slot-scope="item">
+      <template slot="cp_uid" slot-scope="item">
         <div class="date-column">
-          {{ item.item.sender_uid }}
+          {{ item.item.cp_uid }}
         </div>
-      </template>
-      <template slot="receiver_uid" slot-scope="item">
-        <div class="date-column">{{ item.item.receiver_uid }} - {{ Type }}</div>
       </template>
       <template slot="created_at" slot-scope="item">
         <div class="date-column">
@@ -158,27 +155,15 @@ export default {
       this.messages_selected =
         action === 'selectAll'
           ? this.messages_on_page
-              .filter(message => !Boolean(message.deleted_at))
-              .map(item => String(item.mid))
+              .filter((message) => !Boolean(message.deleted_at))
+              .map((item) => String(item.mid))
           : []
     }
   },
   computed: {
-    ...mapGetters(['messages', 'message_box_column', 'active_message', 'me']),
+    ...mapGetters(['messages', 'messages_box_column', 'active_message', 'me']),
     messages_by_types() {
-      let new_list = []
-      const {company_id: cid, uid} = this.me.profile
-      if (this.Type === 'outbox') {
-        new_list = this.messages.filter(
-          message => message.sender_uid === uid && message.sender_cid === cid
-        )
-      } else {
-        new_list = this.messages.filter(
-          message =>
-            message.receiver_uid === uid && message.receiver_cid === cid
-        )
-      }
-      return new_list
+      return this.messages
     },
     messages_count() {
       return this.messages_by_types ? this.messages_by_types.length : 0
@@ -190,7 +175,7 @@ export default {
       return this.messages_by_types.slice(begin, end)
     },
     columns() {
-      return this.message_box_column(this.Type)
+      return this.messages_box_column(this.Type)
     },
     fields() {
       return [
@@ -214,20 +199,10 @@ export default {
           tdClass: this.showColumn
         },
         {
-          key: 'receiver_uid',
+          key: 'cp_uid',
           sortable: true,
-          label: this.$t(`message.to`),
-          thStyle: {'text-align': 'center'},
-          thClass: this.Type === 'inbox' ? 'd-none' : '',
-          tdClass: this.Type === 'inbox' ? 'd-none' : ''
-        },
-        {
-          key: 'sender_uid',
-          sortable: true,
-          label: this.$t(`message.from`),
-          thStyle: {'text-align': 'center'},
-          thClass: this.Type === 'outbox' ? 'd-none' : '',
-          tdClass: this.Type === 'outbox' ? 'd-none' : ''
+          label: this.$t(`message.${this.columns[2]}`),
+          thStyle: {'text-align': 'center'}
         },
         {
           key: `created_at`,
