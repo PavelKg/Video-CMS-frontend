@@ -1,17 +1,22 @@
 <template>
   <div class="comment-row">
-    <div class="comment-data">
-      <div class="comment-top-zone">
-        <span>{{ `${$t('comments.id')}: ${comment.comment_user_uid}` }}</span>
-        <span>{{ created_date(comment.created_at) }}</span>
+    <template v-if="isDeleted">
+      <span class="deleted_info">{{
+        $t('message.this_comment_has_been_deleted')
+      }}</span>
+    </template>
+    <template v-else>
+      <div class="comment-data">
+        <div class="comment-top-zone">
+          <span>{{ `${$t('comments.id')}: ${comment.comment_user_uid}` }}</span>
+          <span>{{ created_date(comment.created_at) }}</span>
+        </div>
+        <div class="comment-bottom-zone">
+          <span>{{ comment.comment_text }}</span>
+        </div>
       </div>
-      <div class="comment-bottom-zone">
-        <span>{{ comment.comment_text }}</span>
-      </div>
-    </div>
 
-    <div class="comment-mng" v-if="commentOwner">
-      <template v-if="!deleted">
+      <div class="comment-mng" v-if="commentOwner">
         <b-form-radio-group
           size="sm"
           :id="`radio-visible-set-${comment.comment_id}`"
@@ -25,11 +30,8 @@
         <button @click="onDelete" class="button btn-orange">
           {{ $t('label.delete') }}
         </button>
-      </template>
-      <template v-else>
-        <span>{{ $t('comments.deleted') }}</span>
-      </template>
-    </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -40,7 +42,7 @@ export default {
   name: 'comment-template',
   props: {comment: Object, video_uuid: String},
   created() {
-    console.log('created=', this.comment)
+    console.log('created=', this.me.profile)
   },
   data() {
     return {
@@ -52,12 +54,15 @@ export default {
   },
   computed: {
     ...mapGetters(['me']),
-    deleted() {
+    isDeleted() {
       return Boolean(this.comment.deleted_at)
     },
     commentOwner() {
-      const {company_id, uid} = this.me.profile
-      return this.comment.comment_user_uid === uid
+      const {company_id, uid, irole} = this.me.profile
+      return (
+        this.comment.comment_user_uid === uid ||
+        ['admin', 'super'].includes(irole)
+      )
     }
   },
   methods: {
@@ -94,7 +99,12 @@ export default {
     //margin-right: 0;
   }
 }
-
+.deleted_info {
+  font-size: 0.9em;
+  margin-right: 15px;
+  opacity: 0.7;
+  font-style: italic;
+}
 .comment-row {
   display: flex;
   flex-direction: row;

@@ -37,7 +37,8 @@ export default {
     sent: 'Sent',
     text: 'Text',
     tab_inbox: 'Inbox',
-    tab_outbox: 'Outbox'
+    tab_outbox: 'Outbox',
+    this_comment_has_been_deleted: 'This comment has been deleted.'
   },
   roles: {
     btn_add: 'Add Role',
