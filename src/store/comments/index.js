@@ -113,7 +113,7 @@ export default {
       state.comments.list.sort(function(a, b) {
         return new Date(b.created_at) - new Date(a.created_at)
       }),
-    active_comment: state => state.comments.list[state.comment.active],
-    active_comment_id: state => state.comment.active
+    active_comment: state => state.comments.list[state.comments.active],
+    active_comment_id: state => state.comments.active
   }
 }

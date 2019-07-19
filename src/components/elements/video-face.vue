@@ -175,7 +175,6 @@ export default {
     width: 200px;
     box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.07);
     img {
-      position: absolute;
       align-self: center;
       padding: 5px;
       max-width: 200px;

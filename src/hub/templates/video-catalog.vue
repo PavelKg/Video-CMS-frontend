@@ -221,7 +221,6 @@ export default {
   },
   watch:{
     video_list(new_val, old_val){
-      console.log('video_list changed',new_val, old_val)
     }
   },
   computed: {
