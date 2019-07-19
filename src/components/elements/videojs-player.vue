@@ -17,13 +17,16 @@ export default {
       player: null,
       options: {
         controls: true,
-        fluid: true
+        autoplay: 'true',
+        fluid: true,
+        preload: 'auto',
+        hls: {overrideNative: true}
       }
     }
   },
   watch: {
-    video_url(new_val, old_val){
-      if(Boolean(new_val)){
+    video_url(new_val, old_val) {
+      if (Boolean(new_val)) {
         this.player.src({src: new_val})
       }
     }
@@ -33,7 +36,7 @@ export default {
       this.$refs.videoPlayer,
       this.options,
       function onPlayerReady() {
-        //console.log('onPlayerReady', this)
+        console.log('onPlayerReady', this)
       }
     )
   },

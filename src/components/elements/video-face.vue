@@ -227,21 +227,29 @@ export default {
 }
 
 @media screen and (max-width: 610px) {
-  .video-box-item .video-box-item-content {
-    width: 520px;
-    height: 250px;
-  }
-  .video-box-mng-panel {
-    font-size: 1.3em;
+  .video-box-item {
+    width: 100%;
+    .video-box-item-content {
+      width: 100%;
+      height: 100%;
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+    .video-box-mng-panel {
+      width: 100%;
+      font-size: 1.3em;
+    }
   }
 }
 
 @media screen and (max-width: 875px) and (min-width: 610px) {
   .video-box-item .video-box-item-content {
-    width: 270px;
-    height: 180px;
+    width: 100%;
   }
   .video-box-mng-panel {
+    width: 100%;
     font-size: 1.2em;
   }
 }
