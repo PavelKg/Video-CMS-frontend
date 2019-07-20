@@ -1,3 +1,5 @@
+import router from '@/router'
+
 const findPropByName = function(obj, path) {
   const paths = path.split('.')
   let current = obj
@@ -69,96 +71,180 @@ const menuStructure = {
       }
     }
   },
+  // admin: {
+  //   root: {
+  //     isOpen: true,
+  //     activeItem: 'root.subItems.home',
+  //     caption: '',
+  //     visible: true,
+  //     subItems: {
+  //       home: {
+  //         caption: 'menu.home',
+  //         visible: true
+  //       },
+  //       users: {
+  //         caption: 'menu.users',
+  //         visible: true,
+  //         subItems: {
+  //           add: {
+  //             type: 'users.user_add',
+  //             caption: 'menu.user_add'
+  //           },
+  //           edit: {
+  //             type: 'users.user_add',
+  //             caption: 'menu.user_edit'
+  //           },
+  //           info: {
+  //             type: 'users.user_info',
+  //             caption: 'menu.user_info'
+  //           }
+  //         }
+  //       },
+  //       videos: {
+  //         caption: 'menu.videos',
+  //         type: 'videos.list',
+  //         subItems: {
+  //           player: {
+  //             type: 'videos.video_player',
+  //             caption: 'menu.video_player'
+  //           },
+  //           upload: {
+  //             type: 'videos.video_upload',
+  //             caption: 'menu.video_upload'
+  //           },
+  //           edit: {
+  //             type: 'videos.video_subtitles',
+  //             caption: 'menu.video_subtitles'
+  //           }
+  //         }
+  //       },
+  //       groups: {
+  //         caption: 'menu.groups',
+  //         type: 'group.list',
+  //         visible: true,
+  //         subItems: {
+  //           edit: {
+  //             type: 'groups.group_edit',
+  //             caption: 'menu.group_edit'
+  //           },
+  //           add: {
+  //             type: 'groups.group_add',
+  //             caption: 'menu.group_add'
+  //           }
+  //         }
+  //       },
+  //       messages: {
+  //         caption: 'menu.messages',
+  //         type: 'messages.list',
+  //         visible: true
+  //       },
+  //       screen: {
+  //         caption: 'menu.screen',
+  //         type: 'screen.settings',
+  //         visible: true
+  //       },
+  //       roles: {
+  //         caption: 'menu.roles',
+  //         type: 'roles.list',
+  //         visible: true,
+  //         subItems: {
+  //           edit: {
+  //             type: 'roles.role_edit',
+  //             caption: 'menu.role_edit'
+  //           },
+  //           add: {
+  //             type: 'roles.role_add',
+  //             caption: 'menu.role_add'
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // },
+
   admin: {
-    root: {
-      isOpen: true,
-      activeItem: 'root.subItems.home',
-      caption: '',
+    home: {
+      caption: 'menu.home',
+      visible: true
+    },
+    users: {
+      caption: 'menu.users',
       visible: true,
       subItems: {
-        home: {
-          caption: 'menu.home',
-          visible: true
+        add: {
+          type: 'users.user_add',
+          caption: 'menu.user_add'
         },
-        users: {
-          caption: 'menu.users',
-          visible: true,
-          subItems: {
-            add: {
-              type: 'users.user_add',
-              caption: 'menu.user_add'
-            },
-            edit: {
-              type: 'users.user_add',
-              caption: 'menu.user_edit'
-            },
-            info: {
-              type: 'users.user_info',
-              caption: 'menu.user_info'
-            }
-          }
+        edit: {
+          type: 'users.user_add',
+          caption: 'menu.user_edit'
         },
-        videos: {
-          caption: 'menu.videos',
-          type: 'videos.list',
-          subItems: {
-            player: {
-              type: 'videos.video_player',
-              caption: 'menu.video_player'
-            },
-            upload: {
-              type: 'videos.video_upload',
-              caption: 'menu.video_upload'
-            },
-            edit: {
-              type: 'videos.video_subtitles',
-              caption: 'menu.video_subtitles'
-            }
-          }
+        info: {
+          type: 'users.user_info',
+          caption: 'menu.user_info'
+        }
+      }
+    },
+    videos: {
+      caption: 'menu.videos',
+      type: 'videos.list',
+      subItems: {
+        player: {
+          type: 'videos.video_player',
+          caption: 'menu.video_player'
         },
-        groups: {
-          caption: 'menu.groups',
-          type: 'group.list',
-          visible: true,
-          subItems: {
-            edit: {
-              type: 'groups.group_edit',
-              caption: 'menu.group_edit'
-            },            
-            add: {
-              type: 'groups.group_add',
-              caption: 'menu.group_add'
-            }                        
-          }          
+        upload: {
+          type: 'videos.video_upload',
+          caption: 'menu.video_upload'
         },
-        messages: {
-          caption: 'menu.messages',
-          type: 'messages.list',
-          visible: true
+        edit: {
+          type: 'videos.video_subtitles',
+          caption: 'menu.video_subtitles'
+        }
+      }
+    },
+    groups: {
+      caption: 'menu.groups',
+      type: 'group.list',
+      visible: true,
+      subItems: {
+        edit: {
+          type: 'groups.group_edit',
+          caption: 'menu.group_edit'
         },
-        screen: {
-          caption: 'menu.screen',
-          type: 'screen.settings',
-          visible: true
+        add: {
+          type: 'groups.group_add',
+          caption: 'menu.group_add'
+        }
+      }
+    },
+    messages: {
+      caption: 'menu.messages',
+      type: 'messages.list',
+      visible: true
+    },
+    screen: {
+      caption: 'menu.screen',
+      type: 'screen.settings',
+      visible: true
+    },
+    roles: {
+      caption: 'menu.roles',
+      type: 'roles.list',
+      visible: true,
+      subItems: {
+        edit: {
+          type: 'roles.role_edit',
+          caption: 'menu.role_edit'
         },
-        roles: {
-          caption: 'menu.roles',
-          type: 'roles.list',
-          visible: true,
-          subItems: {
-            edit: {
-              type: 'roles.role_edit',
-              caption: 'menu.role_edit'
-            },            
-            add: {
-              type: 'roles.role_add',
-              caption: 'menu.role_add'
-            }                        
-          }
+        add: {
+          type: 'roles.role_add',
+          caption: 'menu.role_add'
         }
       }
     }
   },
+
   user: {
     root: {
       isOpen: true,
@@ -240,21 +326,21 @@ export default {
     },
     ITEM_STATE: (state, item) => {
       state.menu.root.activeItem = item
+      console.log('router push - ', item)
     },
-    MENU_HIDE: state => {
+    MENU_HIDE: (state) => {
       state.visible = false
     },
-    MENU_SHOW: state => {
+    MENU_SHOW: (state) => {
       state.visible = true
     },
-    MENU_TOGGLE: state => {
-      console.log('state.visible=', state.visible)
+    MENU_TOGGLE: (state) => {
       state.visible = Boolean(!state.visible)
     }
   },
   getters: {
-    userMenu: state => state.menu,
-    userMenuVisible: state => Boolean(state.visible),
-    userMenuActiveItem: state => state.menu.root.activeItem
+    userMenu: (state) => state.menu,
+    userMenuVisible: (state) => Boolean(state.visible),
+    userMenuActiveItem: (state) => state.menu.root.activeItem
   }
 }

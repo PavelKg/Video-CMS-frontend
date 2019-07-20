@@ -31,21 +31,22 @@ export default {
   },
   methods: {
     handleClick(node, key) {
+      console.log('node, key=', node, key)
       if (node.isSection) {
         this.$store.commit('SECTION_STATE', key)
       } else if (!node.isSection) {
         console.log('menu_key=', key)
-        this.$store.commit('MENU_HIDE')
-        switch (key) {
-          case 'root.subItems.roles':
-            break
-          case 'root.subItems.home':
-            break
-          case  'root.subItems.users':
-            break
-          default:
-            break
-        }
+        //this.$store.commit('MENU_HIDE')
+        // switch (key) {
+        //   case 'root.subItems.roles':
+        //     break
+        //   case 'root.subItems.home':
+        //     break
+        //   case  'root.subItems.users':
+        //     break
+        //   default:
+        //     break
+        // }
         this.$store.commit('ITEM_STATE', key)
       }
       this.$store.dispatch('SAVE_MENU_STATE')

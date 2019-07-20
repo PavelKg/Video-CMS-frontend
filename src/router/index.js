@@ -24,13 +24,13 @@ const ifNotAuthenticated = (to, from, next) => {
   }
   const isAuth = store.getters.authStatus === 'success'
   if (isAuth) {
-    next(`/hub/${store.getters.me_irole}`)
+    next(`/hub`)
   } else {
     store.commit('SET_HEADER_AUTH')
     store
       .dispatch('GET_MY_PROFILE')
       .then(() => {
-        next(`/hub/${store.getters.me_irole}`)
+        next(`/hub`)
       })
       .catch((err) => next('/login'))
   }
@@ -64,7 +64,7 @@ export default new Router({
       redirect: '/login'
     },
     {
-      path: '/hub/:role',
+      path: '/hub',
       name: 'Role',
       component: Hub,
       beforeEnter: ifAuthenticated

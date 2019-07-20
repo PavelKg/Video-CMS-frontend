@@ -197,7 +197,6 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     width: 200px;
-    flex-wrap: wrap;
     //background: #ddd;
 
     padding: 0 5px;

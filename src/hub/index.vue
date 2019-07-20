@@ -45,6 +45,10 @@ export default {
     }
   },
   created() {
+    const { routes } = this.$router.options;
+    let routeData = routes.find(r => r.path === this.$route.path);
+
+    this.$store.dispatch('LOAD_USER_MENU', this.me_irole)
     this.$store.commit('INIT_LANG')
   },
   mounted() {
@@ -60,6 +64,7 @@ export default {
     ...mapGetters([
       'windowsRect',
       'me_irole',
+      'userMenu',
       'errors_isShow',
       'errors_message'
     ]),

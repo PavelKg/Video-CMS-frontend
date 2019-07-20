@@ -35,12 +35,12 @@ export default {
   mounted() {},
   methods: {
     menuHandleClick(node, myKey) {
-      switch (myKey) {
-        case 'root.subItems.company.subItems.videos':
-          break
-        default:
-          break
-      }
+      // switch (myKey) {
+      //   case 'root.subItems.company.subItems.videos':
+      //     break
+      //   default:
+      //     break
+      // }
       this.handleClick(node, myKey)
     }
   },
