@@ -68,7 +68,7 @@ export default {
         company_id: this.me.profile.company_id,
         uid: null
       })
-      this.$emit('contentElementClick', 'root.subItems.users.subItems.user_add')
+      this.contentElementClick('root.users_add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)

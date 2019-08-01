@@ -13,9 +13,18 @@
     </div>
     <div class="body">
       <div class="content-zone">
-        <component :is="component" v-if="component" />
+        <router-view
+          v-on:contentElementClick="contentElementClick"
+          class="view"
+        />
       </div>
-      <b-modal v-model="modalErrorShow" size="sm" centered ok-only @change="onModalChange">
+      <b-modal
+        v-model="modalErrorShow"
+        size="sm"
+        centered
+        ok-only
+        @change="onModalChange"
+      >
         {{ $t(`${errors_message}`) }} !!!
       </b-modal>
     </div>
@@ -45,20 +54,30 @@ export default {
     }
   },
   created() {
-    const { routes } = this.$router.options;
-    let routeData = routes.find(r => r.path === this.$route.path);
+    // const {routes} = this.$router.options
+    // let routeData = routes.find((r) => r.path === this.$route.path)
 
-    this.$store.dispatch('LOAD_USER_MENU', this.me_irole)
+    this.$store.dispatch('LOAD_USER_MENU', this.me_irole).then((res) => {
+      // console.log('this.userMenu=', this.userMenu)
+      // //const roleModules = modulesChilds(this.userMenu)
+      // const childs = routeChilds(this.userMenu, '')
+      // routeData.children = childs
+      // console.log('routeData=', [routeData])
+      // this.$router.addRoutes([routeData])
+      // // console.log('this.$router.options=', this.$router.options)
+      this.$store.dispatch('LOAD_MENU_STATE')
+    })
+
     this.$store.commit('INIT_LANG')
   },
   mounted() {
-    this.loader()
-      .then(() => {
-        this.component = () => this.loader()
-      })
-      .catch(() => {
-        this.component = () => import('./templates/iface/user/content')
-      })
+    // this.loader()
+    //   .then(() => {
+    //     this.component = () => this.loader()
+    //   })
+    //   .catch(() => {
+    //     this.component = () => import('./templates/iface/user/content')
+    //   })
   },
   computed: {
     ...mapGetters([
@@ -68,9 +87,9 @@ export default {
       'errors_isShow',
       'errors_message'
     ]),
-    loader() {
-      return () => import(`./templates/iface/${this.me_irole}/content`)
-    },
+    // loader() {
+    //   return () => import(`./templates/iface/${this.me_irole}/content`)
+    // },
     isMenuVisible() {
       return this.$store.getters.userMenuVisible
     },
@@ -83,8 +102,14 @@ export default {
       this.$store.commit('MENU_HIDE')
     },
     onModalChange(isVisible) {
-      if (!isVisible) {this.$store.commit('HIDE_MESSAGE_ERROR')}
-
+      if (!isVisible) {
+        this.$store.commit('HIDE_MESSAGE_ERROR')
+      }
+    },
+    contentElementClick(key) {
+      console.log('key=', key)
+      this.$store.commit('ITEM_STATE', key)
+      this.$store.dispatch('SAVE_MENU_STATE')
     }
   }
 }
@@ -125,6 +150,7 @@ export default {
     //flex-grow: 10;
     overflow: auto;
     background-color: $gray-lightest;
+    padding: 20px 20px;
   }
 }
 

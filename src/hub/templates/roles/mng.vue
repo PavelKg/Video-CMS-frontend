@@ -47,13 +47,13 @@ export default {
   },
   methods: {
     cancel_click() {
-      this.$emit('contentElementClick', 'root.subItems.roles')
+      this.$emit('contentElementClick', 'root.roles')
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'ROLE_UPD' : 'ROLE_ADD'
       this.$store.dispatch(oper_type, this.mnRole).then(
         res => {
-          this.$emit('contentElementClick', 'root.subItems.roles')
+          this.$emit('contentElementClick', 'root.roles')
         },
         err => {
           console.log('err=', err)

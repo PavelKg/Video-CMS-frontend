@@ -38,7 +38,7 @@ export default {
         company_id: this.me.profile.company_id,
         rid: null
       })
-      this.$emit('contentElementClick', 'root.subItems.roles.subItems.role_add')
+      this.contentElementClick('root.roles_add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)

@@ -26,7 +26,7 @@ export default {
   computed: {
     ...mapGetters(['userMenu', 'userMenuActiveItem', 'me']),
     menuItems() {
-      return this.userMenu.root
+      return this.userMenu
     }
   },
   methods: {
@@ -35,18 +35,6 @@ export default {
       if (node.isSection) {
         this.$store.commit('SECTION_STATE', key)
       } else if (!node.isSection) {
-        console.log('menu_key=', key)
-        //this.$store.commit('MENU_HIDE')
-        // switch (key) {
-        //   case 'root.subItems.roles':
-        //     break
-        //   case 'root.subItems.home':
-        //     break
-        //   case  'root.subItems.users':
-        //     break
-        //   default:
-        //     break
-        // }
         this.$store.commit('ITEM_STATE', key)
       }
       this.$store.dispatch('SAVE_MENU_STATE')

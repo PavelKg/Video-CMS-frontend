@@ -55,7 +55,7 @@ export default {
       this.$store.commit('SET_ACTIVE_ROLE', role)
       this.$emit(
         'contentElementClick',
-        'root.subItems.roles.subItems.role_edit'
+        'root.roles_edit'
       )
     },
     delRole(role) {

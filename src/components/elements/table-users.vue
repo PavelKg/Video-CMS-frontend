@@ -114,7 +114,7 @@ export default {
       })
       this.$emit(
         'contentElementClick',
-        'root.subItems.users.subItems.user_edit'
+        'root.users_edit'
       )
     },
     delUser(item) {

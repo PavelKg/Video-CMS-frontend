@@ -98,7 +98,7 @@ export default {
 
       this.$emit(
         'activateContent',
-        'root.subItems.videos.subItems.video_player'
+        'root.videos_player'
       )
     },
     onSubtitles() {
@@ -106,7 +106,7 @@ export default {
       this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
         'activateContent',
-        'root.subItems.videos.subItems.video_subtitles'
+        'root.videos_subtitles'
       )
     },
     onCheckChange(new_state) {

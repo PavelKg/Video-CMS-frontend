@@ -7,7 +7,11 @@
         v-model="mnGroup.name"
         :placeholder="`${$t('groups.group_name')}`"
       ></b-form-input>
-      <button :disabled="mnGroup.name === src_name" @click="save_click" class="button btn-blue">
+      <button
+        :disabled="mnGroup.name === src_name"
+        @click="save_click"
+        class="button btn-blue"
+      >
         {{ `${$t('label.register')}` }}
       </button>
     </div>
@@ -51,15 +55,15 @@ export default {
       this.$emit('contentElementClick', menu_item)
     },
     cancel_click() {
-      this.$emit('contentElementClick', 'root.subItems.groups')
+      this.$contentElementClick('root.groups')
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'GROUP_UPD' : 'GROUP_ADD'
       this.$store.dispatch(oper_type, this.mnGroup).then(
-        res => {
-          this.$emit('contentElementClick', 'root.subItems.groups')
+        (res) => {
+          this.$contentElementClick('root.groups')
         },
-        err => {
+        (err) => {
           console.log('err=', err)
         }
       )

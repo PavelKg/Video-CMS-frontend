@@ -104,7 +104,7 @@ export default {
   },
   methods: {
     cancel_click() {
-      this.$emit('contentElementClick', 'root.subItems.users')
+      this.$emit('contentElementClick', 'root.users')
     },
     save_click() {},
     genUserId(evt) {
@@ -117,7 +117,7 @@ export default {
       const oper_type = this.oper === 'edit' ? 'USER_UPD' : 'USER_ADD'
       this.$store.dispatch(oper_type, this.mnUser).then(
         res => {
-          this.$emit('contentElementClick', 'root.subItems.users')
+          this.$emit('contentElementClick', 'root.users')
         },
         err => {
           console.log('err=', err)

@@ -163,83 +163,100 @@ const menuStructure = {
   // },
 
   admin: {
-    home: {
-      caption: 'menu.home',
-      visible: true
-    },
-    users: {
-      caption: 'menu.users',
-      visible: true,
-      subItems: {
-        add: {
-          type: 'users.user_add',
-          caption: 'menu.user_add'
-        },
-        edit: {
-          type: 'users.user_add',
-          caption: 'menu.user_edit'
-        },
-        info: {
-          type: 'users.user_info',
-          caption: 'menu.user_info'
+    isOpen: true,
+    visible: true,
+    subItems: {
+      videos: {
+        caption: 'menu.home',
+        type: 'videos.list',
+        visible: true,
+        component: 'videos',
+        subItems: {
+          player: {
+            type: 'videos.player',
+            caption: 'menu.video_player',
+            component: 'videos_player'
+          },
+          upload: {
+            type: 'videos.upload',
+            caption: 'menu.video_upload',
+            component: 'videos_upload'
+          },
+          edit: {
+            type: 'videos.subtitles',
+            caption: 'menu.video_subtitles',
+            component: 'videos_subtitles'
+          }
         }
-      }
-    },
-    videos: {
-      caption: 'menu.videos',
-      type: 'videos.list',
-      subItems: {
-        player: {
-          type: 'videos.video_player',
-          caption: 'menu.video_player'
-        },
-        upload: {
-          type: 'videos.video_upload',
-          caption: 'menu.video_upload'
-        },
-        edit: {
-          type: 'videos.video_subtitles',
-          caption: 'menu.video_subtitles'
+      },
+      users: {
+        caption: 'menu.users',
+        visible: true,
+        component: 'users',
+        subItems: {
+          add: {
+            type: 'users.add',
+            caption: 'menu.user_add',
+            component: 'users_add'
+          },
+          edit: {
+            type: 'users.add',
+            caption: 'menu.user_edit',
+            component: 'users_edit'
+          },
+          info: {
+            type: 'users.info',
+            caption: 'menu.user_info',
+            component: 'users_edit'
+          }
         }
-      }
-    },
-    groups: {
-      caption: 'menu.groups',
-      type: 'group.list',
-      visible: true,
-      subItems: {
-        edit: {
-          type: 'groups.group_edit',
-          caption: 'menu.group_edit'
-        },
-        add: {
-          type: 'groups.group_add',
-          caption: 'menu.group_add'
+      },
+      groups: {
+        caption: 'menu.groups',
+        type: 'group.list',
+        visible: true,
+        component: 'groups',
+        subItems: {
+          edit: {
+            type: 'groups.edit',
+            caption: 'menu.group_edit',
+            component: 'groups_edit'
+          },
+          add: {
+            type: 'groups.add',
+            caption: 'menu.group_add',
+            component: 'groups_add'
+          }
         }
-      }
-    },
-    messages: {
-      caption: 'menu.messages',
-      type: 'messages.list',
-      visible: true
-    },
-    screen: {
-      caption: 'menu.screen',
-      type: 'screen.settings',
-      visible: true
-    },
-    roles: {
-      caption: 'menu.roles',
-      type: 'roles.list',
-      visible: true,
-      subItems: {
-        edit: {
-          type: 'roles.role_edit',
-          caption: 'menu.role_edit'
-        },
-        add: {
-          type: 'roles.role_add',
-          caption: 'menu.role_add'
+      },
+      messages: {
+        caption: 'menu.messages',
+        type: 'messages.list',
+        visible: true,
+        component: 'messages'
+      },
+      screen: {
+        caption: 'menu.screen',
+        type: 'screen.settings',
+        visible: true,
+        component: 'screen'
+      },
+      roles: {
+        caption: 'menu.roles',
+        type: 'roles.list',
+        visible: true,
+        component: 'roles',
+        subItems: {
+          edit: {
+            type: 'roles.edit',
+            caption: 'menu.role_edit',
+            component: 'roles_edit'
+          },
+          add: {
+            type: 'roles.add',
+            caption: 'menu.role_add',
+            component: 'roles_add'
+          }
         }
       }
     }
@@ -282,9 +299,8 @@ export default {
   state: {
     visible: false,
     menu: {
-      root: {
-        activeItem: false
-      }
+      list: {},
+      activeItem: false
     }
   },
   actions: {
@@ -292,7 +308,7 @@ export default {
       if (localStorage.getItem('vcms-activ-menu')) {
         try {
           const act_item = JSON.parse(localStorage.getItem('vcms-activ-menu'))
-          const _item = act_item ? act_item : 'root.subItems.home'
+          const _item = act_item ? act_item : 'root.videos'
 
           commit('ITEM_STATE', _item)
         } catch (e) {
@@ -304,29 +320,32 @@ export default {
     SAVE_MENU_STATE: ({state}) => {
       localStorage.setItem(
         'vcms-activ-menu',
-        JSON.stringify(state.menu.root.activeItem)
+        JSON.stringify(state.menu.activeItem)
       )
     },
-    LOAD_USER_MENU: ({commit, dispatch}, userMenuType) => {
+    LOAD_USER_MENU: async ({commit, dispatch}, userMenuType) => {
       if (userMenuType) {
         commit('SET_USER_MENU', menuStructure[userMenuType])
       }
-      dispatch('LOAD_MENU_STATE')
+      //await dispatch('LOAD_MENU_STATE')
     }
   },
   mutations: {
     SET_USER_MENU: (state, userMenu) => {
-      state.menu = userMenu
+      state.menu.list = {...userMenu}
     },
     SECTION_STATE: (state, section) => {
-      let sec = findPropByName(state.menu, section)
+      let sec = findPropByName(state.menu.list, section)
       if (sec.isSection) {
         sec.isOpen = !sec.isOpen
       }
     },
     ITEM_STATE: (state, item) => {
-      state.menu.root.activeItem = item
-      console.log('router push - ', item)
+      console.log('item=', item)
+      state.menu.activeItem = item
+      const nav = item.replace('root', 'hub').replace(/\./gi, '/')
+      router.push({ path: `/${nav}` })
+      console.log('router push - ', nav)
     },
     MENU_HIDE: (state) => {
       state.visible = false
@@ -339,8 +358,8 @@ export default {
     }
   },
   getters: {
-    userMenu: (state) => state.menu,
+    userMenu: (state) => state.menu.list,
     userMenuVisible: (state) => Boolean(state.visible),
-    userMenuActiveItem: (state) => state.menu.root.activeItem
+    userMenuActiveItem: (state) => state.menu.activeItem
   }
 }

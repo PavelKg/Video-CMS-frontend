@@ -64,7 +64,7 @@ export default {
         uid: null,
         gid: this.gid
       })
-      this.$emit('contentElementClick', 'root.subItems.users.subItems.user_add')
+      this.$emit('contentElementClick', 'root.users_add')
     },
     updUser(item) {
       this.$store.commit('SET_ACTIVE_USER', {
@@ -73,7 +73,7 @@ export default {
       })
       this.$emit(
         'contentElementClick',
-        'root.subItems.users.subItems.user_edit'
+        'root.users_edit'
       )
     }
   },

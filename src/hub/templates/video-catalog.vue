@@ -172,9 +172,8 @@ export default {
       this.$emit('contentElementClick', key)
     },
     add_new_video() {
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.videos.subItems.video_upload'
+      this.activateContent(
+        'root.videos_upload'
       )
     },
     toggleAll(env) {

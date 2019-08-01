@@ -25,10 +25,7 @@ export default {
         company_id: this.me.profile.company_id,
         gid: null
       })
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.groups.subItems.group_add'
-      )
+      this.contentElementClick('root.groups_add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)
