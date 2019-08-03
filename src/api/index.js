@@ -208,10 +208,10 @@ export default {
   },
 
   /* ---------  USERS MANAGEMENT  ---------------------*/
-  /** List of groups
+  /** List of users
    * @param {string} cid
    * @param {string} filter
-   * @returns {Promise<*>} - 200 List of groups
+   * @returns {Promise<*>} - 200 List of users
    * [{
     "gid": "string",
     "name": "string",
@@ -221,6 +221,29 @@ export default {
   users(cid, filter) {
     const setFilter = !filter ? '' : `?filter=${filter}`
     return Api.get(`/companies/${cid}/users/${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** User data
+   * @param {string} cid
+   * @param {string} uid
+   * @returns {Promise<*>} - 200 User data
+   * {
+      "uid": "string",
+      "fullname": "string",
+      "gid": "string",
+      "group_name": "string",
+      "rid": "string",
+      "email": "string",
+      "deleted_at": "string",
+      "last_login": "string"
+    }
+ */
+  user_info(cid, uid) {
+    return Api.get(`/companies/${cid}/users/${uid}`, {
       headers: {
         ...type_json
       }

@@ -146,7 +146,7 @@ export default {
       this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
         'contentElementClick',
-        'root.videos_subtitles'
+        '/hub/videos_subtitles'
       )
     },
     onChangePublic(val) {

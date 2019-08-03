@@ -141,6 +141,7 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch('LOAD_VIDEO_LIST')
     let curr = new Date()
 
     this.period_filter.year_to = curr.getFullYear()
@@ -173,7 +174,7 @@ export default {
     },
     add_new_video() {
       this.activateContent(
-        'root.videos_upload'
+        '/hub/videos_upload'
       )
     },
     toggleAll(env) {

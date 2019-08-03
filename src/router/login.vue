@@ -84,7 +84,7 @@ export default {
       this.$store.dispatch('LOGIN', {personalId, password}).then(() => {
         if (this.authStatus === 'success') {
           this.$store.dispatch('GET_MY_PROFILE').then(() => {
-            this.$router.push(`/hub`)
+            this.$router.push(`/hub/videos`)
           })
         } else if (this.authStatus === 'error') {
           this.errMessage = 'message.authError'

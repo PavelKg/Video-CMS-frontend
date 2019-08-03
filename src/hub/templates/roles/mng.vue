@@ -7,11 +7,17 @@
       </div>
     </template>
     <template v-else-if="oper === 'add'">
-      <b-form-input v-model="mnRole.rid" :placeholder="`${$t('roles.role_id')}`"></b-form-input>
+      <b-form-input
+        v-model="mnRole.rid"
+        :placeholder="`${$t('roles.role_id')}`"
+      ></b-form-input>
     </template>
-    <b-form-input v-model="mnRole.name" :placeholder="`${$t('roles.role_name')}`"></b-form-input>
+    <b-form-input
+      v-model="mnRole.name"
+      :placeholder="`${$t('roles.role_name')}`"
+    ></b-form-input>
     <div class="check-admin">
-      <span>{{$t('roles.administrator')}}:</span>
+      <span>{{ $t('roles.administrator') }}:</span>
       <b-form-checkbox
         id="check_isAdmin"
         v-model="mnRole.is_admin"
@@ -23,8 +29,12 @@
       </div>
     </div>
     <div class="role-operation-button-zone">
-      <button @click="save_click" class="button btn-blue">{{$t('label.save')}}</button>
-      <button @click="cancel_click" class="button btn-braun">{{$t('label.cancel')}}</button>
+      <button @click="save_click" class="button btn-blue">
+        {{ $t('label.save') }}
+      </button>
+      <button @click="cancel_click" class="button btn-braun">
+        {{ $t('label.cancel') }}
+      </button>
     </div>
   </div>
 </template>
@@ -32,10 +42,11 @@
 <script>
 import {mapGetters} from 'vuex'
 
-const re = /\.(\w+)$/i
-
 export default {
   name: 'role-mng-form',
+  props: {
+    oper: String
+  },
   data() {
     return {
       mnRole: {
@@ -47,15 +58,15 @@ export default {
   },
   methods: {
     cancel_click() {
-      this.$emit('contentElementClick', 'root.roles')
+      this.$emit('contentElementClick', '/hub/roles')
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'ROLE_UPD' : 'ROLE_ADD'
       this.$store.dispatch(oper_type, this.mnRole).then(
-        res => {
-          this.$emit('contentElementClick', 'root.roles')
+        (res) => {
+          this.$emit('contentElementClick', '/hub/roles')
         },
-        err => {
+        (err) => {
           console.log('err=', err)
         }
       )
@@ -66,13 +77,9 @@ export default {
     if (this.oper === 'edit') {
       this.mnRole = {...this.role_selected}
     }
-    
   },
   computed: {
     ...mapGetters(['userMenuActiveItem', 'role_selected']),
-    oper() {
-      return this.userMenuActiveItem.match(re)[1].split('_')[1]
-    },
     role_title() {
       return `roles.oper_title_${this.oper}`
     },

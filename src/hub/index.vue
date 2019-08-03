@@ -54,17 +54,7 @@ export default {
     }
   },
   created() {
-    // const {routes} = this.$router.options
-    // let routeData = routes.find((r) => r.path === this.$route.path)
-
     this.$store.dispatch('LOAD_USER_MENU', this.me_irole).then((res) => {
-      // console.log('this.userMenu=', this.userMenu)
-      // //const roleModules = modulesChilds(this.userMenu)
-      // const childs = routeChilds(this.userMenu, '')
-      // routeData.children = childs
-      // console.log('routeData=', [routeData])
-      // this.$router.addRoutes([routeData])
-      // // console.log('this.$router.options=', this.$router.options)
       this.$store.dispatch('LOAD_MENU_STATE')
     })
 
@@ -107,9 +97,7 @@ export default {
       }
     },
     contentElementClick(key) {
-      console.log('key=', key)
-      this.$store.commit('ITEM_STATE', key)
-      this.$store.dispatch('SAVE_MENU_STATE')
+      this.$store.dispatch('MENU_NAVIGATE', key)
     }
   }
 }
@@ -149,7 +137,6 @@ export default {
     display: flex;
     //flex-grow: 10;
     overflow: auto;
-    background-color: $gray-lightest;
     padding: 20px 20px;
   }
 }

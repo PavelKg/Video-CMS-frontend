@@ -25,7 +25,7 @@ export default {
         company_id: this.me.profile.company_id,
         gid: null
       })
-      this.contentElementClick('root.groups_add')
+      this.contentElementClick('/hub/groups_add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)

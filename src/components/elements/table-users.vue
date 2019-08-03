@@ -107,14 +107,16 @@ export default {
             .replace(/\-/gi, '/')
         : ''
     },
-    editUser(item) {
+    editUser(userProp) {
+      console.log('item=', userProp)
       this.$store.commit('SET_ACTIVE_USER', {
         company_id: this.me.profile.company_id,
-        ...item
+        ...userProp
       })
+      const {cid, uid} = userProp
       this.$emit(
         'contentElementClick',
-        'root.users_edit'
+        `/hub/users_edit/cid/${cid}/uid/${uid}`
       )
     },
     delUser(item) {

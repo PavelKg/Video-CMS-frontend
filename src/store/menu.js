@@ -304,13 +304,13 @@ export default {
     }
   },
   actions: {
-    LOAD_MENU_STATE: ({commit}) => {
+    LOAD_MENU_STATE: ({dispatch}) => {
       if (localStorage.getItem('vcms-activ-menu')) {
         try {
           const act_item = JSON.parse(localStorage.getItem('vcms-activ-menu'))
-          const _item = act_item ? act_item : 'root.videos'
+          const _item = act_item ? act_item : '/hub/videos'
 
-          commit('ITEM_STATE', _item)
+          dispatch('MENU_NAVIGATE', _item)
         } catch (e) {
           localStorage.removeItem('vcms-activ-menu')
         }
@@ -323,11 +323,21 @@ export default {
         JSON.stringify(state.menu.activeItem)
       )
     },
-    LOAD_USER_MENU: async ({commit, dispatch}, userMenuType) => {
+    LOAD_USER_MENU: async ({commit}, userMenuType) => {
       if (userMenuType) {
         commit('SET_USER_MENU', menuStructure[userMenuType])
       }
-      //await dispatch('LOAD_MENU_STATE')
+    },
+    MENU_NAVIGATE: ({commit, dispatch}, navTo) => {
+      const {path: navFrom, meta} = router.currentRoute
+      console.log('navigate to - ', navTo, navFrom)
+
+      router.push({path: navTo})
+      if (navTo === navFrom) {
+        //const {menuItem} = meta
+        commit('ITEM_STATE', navTo)
+        dispatch('SAVE_MENU_STATE')
+      }
     }
   },
   mutations: {
@@ -341,11 +351,7 @@ export default {
       }
     },
     ITEM_STATE: (state, item) => {
-      console.log('item=', item)
       state.menu.activeItem = item
-      const nav = item.replace('root', 'hub').replace(/\./gi, '/')
-      router.push({ path: `/${nav}` })
-      console.log('router push - ', nav)
     },
     MENU_HIDE: (state) => {
       state.visible = false

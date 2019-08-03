@@ -113,7 +113,7 @@ export default {
       this.$store.dispatch('LOAD_USERS', params)
       this.$emit(
         'contentElementClick',
-        'root.groups_edit'
+        '/hub/groups_edit'
       )
     },
     delGroup(group_gid) {

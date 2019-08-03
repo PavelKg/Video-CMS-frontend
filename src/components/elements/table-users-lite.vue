@@ -64,16 +64,18 @@ export default {
         uid: null,
         gid: this.gid
       })
-      this.$emit('contentElementClick', 'root.users_add')
+      this.$emit('contentElementClick', `/hub/users_add/cid/${this.me.profile.company_id}/?gid=${this.gid}`)
     },
-    updUser(item) {
+    updUser(userInfo) {
+      console.log('user_item=', userInfo)
       this.$store.commit('SET_ACTIVE_USER', {
         company_id: this.me.profile.company_id,
-        ...item
+        ...userInfo
       })
+      const {cid, uid} = userInfo
       this.$emit(
         'contentElementClick',
-        'root.users_edit'
+        `/hub/users_edit/cid/${cid}/uid/${uid}`
       )
     }
   },

@@ -55,7 +55,7 @@ export default {
       this.$store.commit('SET_ACTIVE_ROLE', role)
       this.$emit(
         'contentElementClick',
-        'root.roles_edit'
+        '/hub/roles_edit'
       )
     },
     delRole(role) {

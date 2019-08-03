@@ -34,12 +34,13 @@
 import {mapGetters} from 'vuex'
 import TableUsersLite from '@/components/elements/table-users-lite'
 
-const re = /\.(\w+)$/i
-
 export default {
   name: 'group-mng-form',
   components: {
     TableUsersLite
+  },
+  props: {
+    oper: String
   },
   data() {
     return {
@@ -55,13 +56,13 @@ export default {
       this.$emit('contentElementClick', menu_item)
     },
     cancel_click() {
-      this.$contentElementClick('root.groups')
+      this.contentElementClick('/hub/groups')
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'GROUP_UPD' : 'GROUP_ADD'
       this.$store.dispatch(oper_type, this.mnGroup).then(
         (res) => {
-          this.$contentElementClick('root.groups')
+          this.contentElementClick('/hub/groups')
         },
         (err) => {
           console.log('err=', err)
@@ -78,9 +79,6 @@ export default {
   },
   computed: {
     ...mapGetters(['userMenuActiveItem', 'group_selected']),
-    oper() {
-      return this.userMenuActiveItem.match(re)[1].split('_')[1]
-    },
     group_title() {
       return `groups.oper_title_${this.oper}`
     }

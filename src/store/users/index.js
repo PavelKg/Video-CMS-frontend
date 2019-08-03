@@ -25,6 +25,20 @@ export default {
         commit('SET_USERS_IS_LOADING', false)
       }
     },
+    async LOAD_USER_INFO({commit}, payload) {
+      const {cid, uid} = payload
+      try {
+        const result = await Api.user_info(cid, uid)
+        if ((result.data) && result.status === 200) {
+          return result.data
+        } else {
+          throw Error('Error load users list')
+        }
+      } catch (err) {
+        throw Error('Error request users from server')
+      } finally {
+      }
+    },
     async USER_ADD({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
       try {
@@ -82,8 +96,8 @@ export default {
     }
   },
   getters: {
-    users_list: state => state.users.list,
-    users_is_loading: state => state.users.isListLoading,
-    user_selected: state => state.users.selected
+    users_list: (state) => state.users.list,
+    users_is_loading: (state) => state.users.isListLoading,
+    user_selected: (state) => state.users.selected
   }
 }

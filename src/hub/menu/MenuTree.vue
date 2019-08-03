@@ -7,14 +7,20 @@
         class="triangle-bottom"
         :class="{triangleActive: node.isOpen}"
       ></div>
-      <div v-if="myKey === userMenuActiveItem" class="triangleSelected" />
+      <div
+        v-if="
+          myKey ===
+            (userMenuActiveItem ? userMenuActiveItem.split(/_\w+$/)[0] : '')
+        "
+        class="triangleSelected"
+      />
     </div>
     <div v-if="node.subItems && node.isOpen">
       <node
         v-for="(value, key) in node.subItems"
         :node="value"
         :key="key"
-        :myKey="`${myKey}.${key}`"
+        :myKey="`${myKey}/${key}`"
         :handle-click="handleClick"
       ></node>
     </div>

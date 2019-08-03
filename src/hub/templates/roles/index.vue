@@ -38,7 +38,7 @@ export default {
         company_id: this.me.profile.company_id,
         rid: null
       })
-      this.contentElementClick('root.roles_add')
+      this.contentElementClick('/hub/roles_add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)
