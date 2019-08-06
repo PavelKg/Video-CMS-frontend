@@ -120,10 +120,6 @@ export default {
         : ''
     },
     editUser(userProp) {
-      // this.$store.commit('SET_ACTIVE_USER', {
-      //   company_id: this.me.profile.company_id,
-      //   ...userProp
-      // })
       const {cid, uid} = userProp
       this.$emit('contentElementClick', `/hub/users_edit/uid/${uid}`)
     },

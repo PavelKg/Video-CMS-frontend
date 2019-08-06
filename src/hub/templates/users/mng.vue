@@ -73,7 +73,7 @@
         <button type="submit" class="button btn-blue">
           {{ `${$t('label.save')}` }}
         </button>
-        <button @click="cancel_click" class="button btn-braun">
+        <button @click="onCancel" class="button btn-braun">
           {{ `${$t('label.cancel')}` }}
         </button>
       </div>
@@ -104,9 +104,9 @@ export default {
     }
   },
   methods: {
-    cancel_click() {
-      this.$router.go(-1)
-      //this.$emit('contentElementClick', '/hub/users')
+    onCancel() {
+      evt.preventDefault()
+      this.$routes.go(-1)
     },
     save_click() {},
     genUserId(evt) {

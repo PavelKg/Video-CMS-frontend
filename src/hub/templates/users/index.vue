@@ -73,10 +73,6 @@ export default {
         .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
     },
     addNewUser() {
-      // this.$store.commit('SET_ACTIVE_USER', {
-      //   company_id: this.me.profile.company_id,
-      //   uid: null
-      // })
       this.contentElementClick(`/hub/users_add`)
     },
     contentElementClick(key) {
