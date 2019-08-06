@@ -11,8 +11,8 @@ export default {
   actions: {
     async LOAD_USERS({commit}, payload) {
       const {cid, filter} = payload
+      commit('SET_USERS_IS_LOADING', true)
       try {
-        commit('SET_USERS_IS_LOADING', true)
         const result = await Api.users(cid, filter)
         if (Array.isArray(result.data) && result.status === 200) {
           commit('SET_USERS', result.data)
@@ -22,7 +22,21 @@ export default {
       } catch (err) {
         throw Error('Error request users from server')
       } finally {
-        commit('SET_USERS_IS_LOADING', false)
+        //commit('SET_USERS_IS_LOADING', false)
+      }
+    },
+    async LOAD_USER_INFO({commit}, payload) {
+      const {cid, uid} = payload
+      try {
+        const result = await Api.user_info(cid, uid)
+        if (result.data && result.status === 200) {
+          return result.data
+        } else {
+          throw Error('Error load users list')
+        }
+      } catch (err) {
+        throw Error('Error request users from server')
+      } finally {
       }
     },
     async USER_ADD({commit, getters}, payload) {
@@ -78,12 +92,14 @@ export default {
       state.users.isListLoading = isload
     },
     SET_ACTIVE_USER(state, user) {
+      state.users.isListLoading = true
       state.users.selected = user
+      state.users.isListLoading = false
     }
   },
   getters: {
-    users_list: state => state.users.list,
-    users_is_loading: state => state.users.isListLoading,
-    user_selected: state => state.users.selected
+    users_list: (state) => state.users.list,
+    users_is_loading: (state) => state.users.isListLoading,
+    user_selected: (state) => state.users.selected
   }
 }

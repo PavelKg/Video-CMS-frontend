@@ -7,15 +7,23 @@
       </div>
     </template>
     <template v-else-if="oper === 'add'">
-      <b-form-input v-model="mnRole.rid" :placeholder="`${$t('roles.role_id')}`"></b-form-input>
+      <b-form-input
+        v-model="mnRole.rid"
+        :placeholder="`${$t('roles.role_id')}`"
+      ></b-form-input>
     </template>
-    <b-form-input v-model="mnRole.name" :placeholder="`${$t('roles.role_name')}`"></b-form-input>
+    <b-form-input
+      v-model="mnRole.name"
+      :placeholder="`${$t('roles.role_name')}`"
+      :disabled="isDeleted"
+    ></b-form-input>
     <div class="check-admin">
-      <span>{{$t('roles.administrator')}}:</span>
+      <span>{{ $t('roles.administrator') }}:</span>
       <b-form-checkbox
         id="check_isAdmin"
         v-model="mnRole.is_admin"
         name="check_isAdmin"
+        :disabled="isDeleted"
       >
       </b-form-checkbox>
       <div>
@@ -23,8 +31,16 @@
       </div>
     </div>
     <div class="role-operation-button-zone">
-      <button @click="save_click" class="button btn-blue">{{$t('label.save')}}</button>
-      <button @click="cancel_click" class="button btn-braun">{{$t('label.cancel')}}</button>
+      <button
+        @click="save_click"
+        class="button btn-blue"
+        :disabled="onDisabledSave"
+      >
+        {{ $t('label.save') }}
+      </button>
+      <button @click="cancel_click" class="button btn-braun">
+        {{ $t('label.cancel') }}
+      </button>
     </div>
   </div>
 </template>
@@ -32,30 +48,35 @@
 <script>
 import {mapGetters} from 'vuex'
 
-const re = /\.(\w+)$/i
-
 export default {
   name: 'role-mng-form',
+  props: {
+    oper: String
+  },
   data() {
     return {
       mnRole: {
         is_admin: false,
         name: '',
         rid: ''
+      },
+      defRole: {
+        is_admin: false,
+        name: ''
       }
     }
   },
   methods: {
     cancel_click() {
-      this.$emit('contentElementClick', 'root.subItems.roles')
+      this.$emit('contentElementClick', '/hub/roles')
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'ROLE_UPD' : 'ROLE_ADD'
       this.$store.dispatch(oper_type, this.mnRole).then(
-        res => {
-          this.$emit('contentElementClick', 'root.subItems.roles')
+        (res) => {
+          this.$emit('contentElementClick', '/hub/roles')
         },
-        err => {
+        (err) => {
           console.log('err=', err)
         }
       )
@@ -63,21 +84,39 @@ export default {
   },
 
   created() {
+    const {rid = null} = this.$route.params
+    const cid = this.me.profile.company_id
+
     if (this.oper === 'edit') {
-      this.mnRole = {...this.role_selected}
+      this.$store.dispatch('LOAD_ROLE_INFO', {cid, rid}).then((role) => {
+        this.defRole.name = role.name
+        this.defRole.is_admin = role.is_admin
+        this.mnRole = {...role}
+      })
+    } else {
+      this.mnRole.cid = cid
     }
-    
   },
   computed: {
-    ...mapGetters(['userMenuActiveItem', 'role_selected']),
-    oper() {
-      return this.userMenuActiveItem.match(re)[1].split('_')[1]
-    },
+    ...mapGetters(['userMenuActiveItem', 'me']),
     role_title() {
       return `roles.oper_title_${this.oper}`
     },
     is_admin_state() {
       return this.mnRole.is_admin ? 'yes' : 'no'
+    },
+    onDisabledSave() {
+      if (this.oper === 'edit') {
+        return (
+          this.mnRole.name === this.defRole.name &&
+          this.mnRole.is_admin === this.defRole.is_admin
+        )
+      } else {
+        return false // check field
+      }
+    },
+    isDeleted() {
+      return Boolean(this.mnRole.deleted_at)
     }
   }
 }

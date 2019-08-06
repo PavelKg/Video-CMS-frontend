@@ -1,16 +1,20 @@
 <template>
   <div v-if="node && node.visible" class="menu-item">
     <div class="menu-item-name" @click="menuHandleClick(node, myKey)">
-      <span v-if="node.caption" class="caption">{{$t(node.caption)}}</span>
-      <div v-if="node.isSection" class="triangle-bottom" :class="{triangleActive: node.isOpen}"/>
-      <div v-if="myKey === userMenuActiveItem" class="triangleSelected"/>
+      <span v-if="node.caption" class="caption">{{ $t(node.caption) }}</span>
+      <div
+        v-if="node.isSection"
+        class="triangle-bottom"
+        :class="{triangleActive: node.isOpen}"
+      ></div>
+      <div v-if="myKey === selected_item" class="triangleSelected" />
     </div>
     <div v-if="node.subItems && node.isOpen">
       <node
         v-for="(value, key) in node.subItems"
         :node="value"
         :key="key"
-        :myKey="myKey + '.subItems.' + key"
+        :myKey="`${myKey}/${key}`"
         :handle-click="handleClick"
       ></node>
     </div>
@@ -24,7 +28,8 @@ export default {
   name: 'node',
   data() {
     return {
-      showChildren: true
+      showChildren: true,
+      selected_item: '/hub/videos'
     }
   },
   props: {
@@ -32,15 +37,14 @@ export default {
     myKey: String,
     handleClick: Function
   },
+  watch: {
+    $route: function(value) {
+      this.selected_item = value.meta.menuItem
+    }
+  },
   mounted() {},
   methods: {
     menuHandleClick(node, myKey) {
-      switch (myKey) {
-        case 'root.subItems.company.subItems.videos':
-          break
-        default:
-          break
-      }
       this.handleClick(node, myKey)
     }
   },

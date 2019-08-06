@@ -43,7 +43,6 @@ export default {
         const result = await Api.my_profile()
         const {irole = 'user'} = result.data
         commit('SET_USER', result.data)
-        dispatch('LOAD_USER_MENU', irole)
       } catch (e) {
         dispatch('LOGOUT')
         throw Error('Getting profile error')

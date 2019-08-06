@@ -98,7 +98,7 @@ export default {
 
       this.$emit(
         'activateContent',
-        'root.subItems.videos.subItems.video_player'
+        `/hub/videos_player/uuid/${this.videoitem.video_uuid}`
       )
     },
     onSubtitles() {
@@ -106,7 +106,7 @@ export default {
       this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
         'activateContent',
-        'root.subItems.videos.subItems.video_subtitles'
+        '/hub/videos_subtitles'
       )
     },
     onCheckChange(new_state) {
@@ -197,7 +197,6 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     width: 200px;
-    flex-wrap: wrap;
     //background: #ddd;
 
     padding: 0 5px;

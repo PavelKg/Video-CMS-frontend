@@ -2,7 +2,7 @@
   <div class="menu-table">
     <menu-tree
       :node="menuItems"
-      :myKey="'root'"
+      :myKey="'/hub'"
       :handle-click="handleClick"
     ></menu-tree>
   </div>
@@ -26,7 +26,14 @@ export default {
   computed: {
     ...mapGetters(['userMenu', 'userMenuActiveItem', 'me']),
     menuItems() {
-      return this.userMenu.root
+      return this.userMenu
+    }
+  },
+  watch: {
+    $route: function(value) {
+      console.log('$route-value=', value, value.meta.menuItem)
+      this.$store.commit('ITEM_STATE', value.fullPath)
+      this.$store.dispatch('SAVE_MENU_STATE')
     }
   },
   methods: {
@@ -34,21 +41,9 @@ export default {
       if (node.isSection) {
         this.$store.commit('SECTION_STATE', key)
       } else if (!node.isSection) {
-        console.log('menu_key=', key)
-        this.$store.commit('MENU_HIDE')
-        switch (key) {
-          case 'root.subItems.roles':
-            break
-          case 'root.subItems.home':
-            break
-          case  'root.subItems.users':
-            break
-          default:
-            break
-        }
-        this.$store.commit('ITEM_STATE', key)
+        this.$store.dispatch('MENU_NAVIGATE', key)
       }
-      this.$store.dispatch('SAVE_MENU_STATE')
+      //this.$store.dispatch('SAVE_MENU_STATE')
     }
   }
 }

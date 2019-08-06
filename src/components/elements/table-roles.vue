@@ -52,19 +52,17 @@ export default {
   },
   methods: {
     editRole(role) {
-      this.$store.commit('SET_ACTIVE_ROLE', role)
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.roles.subItems.role_edit'
-      )
+      const {rid} = role
+      this.$emit('contentElementClick', `/hub/roles_edit/rid/${rid}`)
     },
     delRole(role) {
-      this.$store.commit('SET_ACTIVE_ROLE', role)
-      this.$store.dispatch('ROLE_DEL').then(
-        res => {
-          this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)
+      const {rid} = role
+      const cid = this.me.profile.company_id
+      this.$store.dispatch('ROLE_DEL', rid).then(
+        (res) => {
+          this.$store.dispatch('LOAD_ROLES', cid)
         },
-        err => {
+        (err) => {
           this.$emit(
             'onContentError',
             `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`

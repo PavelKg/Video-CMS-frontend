@@ -178,7 +178,7 @@ export default {
       Object.keys(this.form).forEach((key) => {
         this.form[key] = ''
       })
-      this.$emit('contentElementClick', 'root.subItems.home')
+      this.$emit('contentElementClick', '/hub/videos')
     },
     onButtonReg(evt) {
       evt.preventDefault()

@@ -17,18 +17,13 @@ import groupsTable from '@/components/elements/table-groups'
 export default {
   name: 'groups-mng',
   created() {
-    this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
+    this.$store
+      .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+      .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
   },
   methods: {
     addNewGroup() {
-      this.$store.commit('SET_ACTIVE_GROUP', {
-        company_id: this.me.profile.company_id,
-        gid: null
-      })
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.groups.subItems.group_add'
-      )
+      this.contentElementClick('/hub/groups_add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)

@@ -13,9 +13,18 @@
     </div>
     <div class="body">
       <div class="content-zone">
-        <component :is="component" v-if="component" />
+        <router-view
+          v-on:contentElementClick="contentElementClick"
+          class="view"
+        />
       </div>
-      <b-modal v-model="modalErrorShow" size="sm" centered ok-only @change="onModalChange">
+      <b-modal
+        v-model="modalErrorShow"
+        size="sm"
+        centered
+        ok-only
+        @change="onModalChange"
+      >
         {{ $t(`${errors_message}`) }} !!!
       </b-modal>
     </div>
@@ -45,27 +54,32 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch('LOAD_USER_MENU', this.me_irole).then((res) => {
+      this.$store.dispatch('LOAD_MENU_STATE')
+    })
+
     this.$store.commit('INIT_LANG')
   },
   mounted() {
-    this.loader()
-      .then(() => {
-        this.component = () => this.loader()
-      })
-      .catch(() => {
-        this.component = () => import('./templates/iface/user/content')
-      })
+    // this.loader()
+    //   .then(() => {
+    //     this.component = () => this.loader()
+    //   })
+    //   .catch(() => {
+    //     this.component = () => import('./templates/iface/user/content')
+    //   })
   },
   computed: {
     ...mapGetters([
       'windowsRect',
       'me_irole',
+      'userMenu',
       'errors_isShow',
       'errors_message'
     ]),
-    loader() {
-      return () => import(`./templates/iface/${this.me_irole}/content`)
-    },
+    // loader() {
+    //   return () => import(`./templates/iface/${this.me_irole}/content`)
+    // },
     isMenuVisible() {
       return this.$store.getters.userMenuVisible
     },
@@ -78,8 +92,12 @@ export default {
       this.$store.commit('MENU_HIDE')
     },
     onModalChange(isVisible) {
-      if (!isVisible) {this.$store.commit('HIDE_MESSAGE_ERROR')}
-
+      if (!isVisible) {
+        this.$store.commit('HIDE_MESSAGE_ERROR')
+      }
+    },
+    contentElementClick(key) {
+      this.$store.dispatch('MENU_NAVIGATE', key)
     }
   }
 }
@@ -119,7 +137,7 @@ export default {
     display: flex;
     //flex-grow: 10;
     overflow: auto;
-    background-color: $gray-lightest;
+    padding: 20px 20px;
   }
 }
 

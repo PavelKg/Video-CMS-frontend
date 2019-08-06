@@ -7,7 +7,11 @@
         v-model="mnGroup.name"
         :placeholder="`${$t('groups.group_name')}`"
       ></b-form-input>
-      <button :disabled="mnGroup.name === src_name" @click="save_click" class="button btn-blue">
+      <button
+        :disabled="mnGroup.name === src_name"
+        @click="save_click"
+        class="button btn-blue"
+      >
         {{ `${$t('label.register')}` }}
       </button>
     </div>
@@ -30,12 +34,13 @@
 import {mapGetters} from 'vuex'
 import TableUsersLite from '@/components/elements/table-users-lite'
 
-const re = /\.(\w+)$/i
-
 export default {
   name: 'group-mng-form',
   components: {
     TableUsersLite
+  },
+  props: {
+    oper: String
   },
   data() {
     return {
@@ -51,15 +56,15 @@ export default {
       this.$emit('contentElementClick', menu_item)
     },
     cancel_click() {
-      this.$emit('contentElementClick', 'root.subItems.groups')
+      this.$router.go(-1)
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'GROUP_UPD' : 'GROUP_ADD'
       this.$store.dispatch(oper_type, this.mnGroup).then(
-        res => {
-          this.$emit('contentElementClick', 'root.subItems.groups')
+        (res) => {
+          this.contentElementClick('/hub/groups')
         },
-        err => {
+        (err) => {
           console.log('err=', err)
         }
       )
@@ -67,16 +72,26 @@ export default {
   },
 
   created() {
+    const {gid = null} = this.$route.params
+    this.mnGroup.gid = gid
+    const cid = this.me.profile.company_id
+
     if (this.oper === 'edit') {
-      this.src_name = this.group_selected.name
-      this.mnGroup = {...this.group_selected}
+      this.$store.dispatch('LOAD_GROUP_INFO', {cid, gid}).then((group) => {
+        this.src_name = group.name
+        this.mnGroup.name = group.name
+      })
+      const params = {
+        cid,
+        filter: `group_gid[eq]:'${gid}'`
+      }
+      this.$store
+        .dispatch('LOAD_USERS', params)
+        .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
     }
   },
   computed: {
-    ...mapGetters(['userMenuActiveItem', 'group_selected']),
-    oper() {
-      return this.userMenuActiveItem.match(re)[1].split('_')[1]
-    },
+    ...mapGetters(['userMenuActiveItem', 'me']),
     group_title() {
       return `groups.oper_title_${this.oper}`
     }

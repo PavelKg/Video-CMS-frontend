@@ -93,8 +93,7 @@ export default {
     })
   },
 
-  role_data(target) {
-    const {cid, rid} = target
+  role_info(cid, rid) {
     return Api.get(`/companies/${cid}/roles/${rid}`, {
       headers: {
         ...type_json
@@ -163,6 +162,25 @@ export default {
     })
   },
 
+  /** Group Info
+   * @param {number} cid 
+   * @param {string} gid 
+   * @returns {Promise<*>} - 200 group object
+   * {
+        "gid": "string",
+        "cid": "string",
+        "name": "string",
+        "deleted_at": "string"
+      }
+ */
+  group_info(cid, gid) {
+    return Api.get(`/companies/${cid}/groups/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** Add new group
    * @param {string} cid - Company ID
    * @param {object} data - {"gid": "string", "name": "string" }
@@ -208,10 +226,10 @@ export default {
   },
 
   /* ---------  USERS MANAGEMENT  ---------------------*/
-  /** List of groups
+  /** List of users
    * @param {string} cid
    * @param {string} filter
-   * @returns {Promise<*>} - 200 List of groups
+   * @returns {Promise<*>} - 200 List of users
    * [{
     "gid": "string",
     "name": "string",
@@ -221,6 +239,29 @@ export default {
   users(cid, filter) {
     const setFilter = !filter ? '' : `?filter=${filter}`
     return Api.get(`/companies/${cid}/users/${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** User data
+   * @param {string} cid
+   * @param {string} uid
+   * @returns {Promise<*>} - 200 User data
+   * {
+      "uid": "string",
+      "fullname": "string",
+      "gid": "string",
+      "group_name": "string",
+      "rid": "string",
+      "email": "string",
+      "deleted_at": "string",
+      "last_login": "string"
+    }
+ */
+  user_info(cid, uid) {
+    return Api.get(`/companies/${cid}/users/${uid}`, {
       headers: {
         ...type_json
       }

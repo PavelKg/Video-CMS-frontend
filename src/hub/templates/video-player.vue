@@ -115,6 +115,8 @@ export default {
     VideojsPlayer
   },
   created() {
+    const {uuid = null} = this.$route.params
+    console.log('uuid=', uuid)
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then((res) => {
@@ -146,7 +148,7 @@ export default {
       this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
         'contentElementClick',
-        'root.subItems.videos.subItems.video_subtitles'
+        '/hub/videos_subtitles'
       )
     },
     onChangePublic(val) {

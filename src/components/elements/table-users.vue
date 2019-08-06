@@ -67,6 +67,7 @@
       <div class="users-mng-pag">
         <b-pagination
           v-model="currentPage"
+          @change="setPage"
           :total-rows="users_count"
           :per-page="perPage"
           align="left"
@@ -88,6 +89,17 @@ export default {
       users_selected: []
     }
   },
+  created() {},
+  watch: {
+    $route(newVal) {
+      this.currentPage = newVal.query.page ? newVal.query.page : 1
+    },
+    users_is_loading(newVal, oldVal) {
+      if (!newVal) {
+        this.currentPage = this.$route.query.page ? this.$route.query.page : 1
+      }
+    }
+  },
   methods: {
     toggleAll(env) {
       const action = env.target['id']
@@ -95,8 +107,8 @@ export default {
       this.users_selected =
         action === 'selectAll'
           ? this.users_on_page
-              .filter(user => !Boolean(user.deleted_at))
-              .map(user => String(user.uid))
+              .filter((user) => !Boolean(user.deleted_at))
+              .map((user) => String(user.uid))
           : []
     },
     last_login_format(item) {
@@ -107,41 +119,46 @@ export default {
             .replace(/\-/gi, '/')
         : ''
     },
-    editUser(item) {
-      this.$store.commit('SET_ACTIVE_USER', {
-        company_id: this.me.profile.company_id,
-        ...item
-      })
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.users.subItems.user_edit'
-      )
+    editUser(userProp) {
+      // this.$store.commit('SET_ACTIVE_USER', {
+      //   company_id: this.me.profile.company_id,
+      //   ...userProp
+      // })
+      const {cid, uid} = userProp
+      this.$emit('contentElementClick', `/hub/users_edit/uid/${uid}`)
     },
     delUser(item) {
       this.$store.dispatch('USER_DEL', item.uid).then(
-        res => {
-          this.$store.dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
+        (res) => {
+          this.$store
+            .dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
+            .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
         },
-        err => {}
+        (err) => {}
       )
     },
     delSelectUsers() {
       const lstore = this.$store
       Promise.all(
-        this.users_selected.map(function (user) {
+        this.users_selected.map(function(user) {
           return lstore.dispatch('USER_DEL', user)
         })
       ).then(
-        res => {
+        (res) => {
           this.users_selected = []
-          this.$store.dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
+          this.$store
+            .dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
+            .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
         },
-        err => {}
+        (err) => {}
       )
+    },
+    setPage(num) {
+      this.$emit('contentElementClick', `/hub/users/?page=${num}`)
     }
   },
   computed: {
-    ...mapGetters(['users_list', 'me', 'is_mobile_width']),
+    ...mapGetters(['users_list', 'me', 'is_mobile_width', 'users_is_loading']),
     users_count() {
       return this.users_list ? this.users_list.length : 0
     },

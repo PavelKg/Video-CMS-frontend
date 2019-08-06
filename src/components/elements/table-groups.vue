@@ -58,7 +58,8 @@
       </button>
       <div class="groups-mng-pag">
         <b-pagination
-          v-model="currentPage"
+          :value="currentPage"
+          @change="setPage"
           :total-rows="groups_count"
           :per-page="perPage"
           align="left"
@@ -94,6 +95,16 @@ export default {
       modal_text: ''
     }
   },
+  watch: {
+    $route(newVal) {
+      this.currentPage = newVal.query.page ? newVal.query.page : 1
+    },
+    groups_is_loading(newVal, oldVal) {
+      if (!newVal) {
+        this.currentPage = this.$route.query.page ? this.$route.query.page : 1
+      }
+    }
+  },
   methods: {
     toggleAll(env) {
       const action = env.target['id']
@@ -105,21 +116,14 @@ export default {
           : []
     },
     editGroup(group) {
-      this.$store.commit('SET_ACTIVE_GROUP', group)
-      const params = {
-        cid: this.me.profile.company_id,
-        filter: `group_gid[eq]:'${group.gid}'`
-      }
-      this.$store.dispatch('LOAD_USERS', params)
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.groups.subItems.group_edit'
-      )
+      this.$emit('contentElementClick', `/hub/groups_edit/gid/${group.gid}`)
     },
     delGroup(group_gid) {
       this.$store.dispatch('GROUP_DEL', group_gid).then(
         (res) => {
-          this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
+          this.$store
+            .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+            .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
         },
         (err) => {
           this.$emit(
@@ -147,12 +151,17 @@ export default {
       })
 
       Promise.all(deleted_groups).then(() => {
-        this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
+        this.$store
+          .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+          .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
       })
+    },
+    setPage(num) {
+      this.$emit('contentElementClick', `/hub/groups/?page=${num}`)
     }
   },
   computed: {
-    ...mapGetters(['groups', 'me']),
+    ...mapGetters(['groups', 'me', 'groups_is_loading']),
     groups_count() {
       return this.groups ? this.groups.length : 0
     },
