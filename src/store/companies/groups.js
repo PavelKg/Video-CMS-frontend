@@ -21,7 +21,20 @@ export default {
       } catch (err) {
         throw Error('Error request groups from server')
       } finally {
-        commit('SET_GROUPS_IS_LOADING', false)
+      }
+    },
+    async LOAD_GROUP_INFO({commit}, payload) {
+      const {cid, gid} = payload
+      try {
+        const result = await Api.group_info(cid, gid)
+        if (result.data && result.status === 200) {
+          return result.data
+        } else {
+          throw Error('Error load groups list')
+        }
+      } catch (err) {
+        throw Error('Error request groups from server')
+      } finally {
       }
     },
     async LOAD_GROUP_DATA({commit}, payload) {
@@ -92,8 +105,8 @@ export default {
     }
   },
   getters: {
-    groups: state => state.groups.list,
-    group_selected: state => state.groups.selected,
-    groups_is_list_loading: state => state.groups.isListLoading
+    groups: (state) => state.groups.list,
+    group_selected: (state) => state.groups.selected,
+    groups_is_loading: (state) => state.groups.isListLoading
   }
 }

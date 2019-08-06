@@ -102,7 +102,7 @@
       <div class="videos-mng-page">
         <b-pagination
           :value="currentPage"
-          @change="onPaggin"
+          @change="setPage"
           :total-rows="videos_count"
           :per-page="perPage"
           align="left"
@@ -137,11 +137,17 @@ export default {
         year_to: 2019,
         month_from: 1,
         month_to: 12
-      }
+      },
+      active_video_page: 1
     }
   },
   created() {
-    this.$store.dispatch('LOAD_VIDEO_LIST')
+    this.$store.dispatch('LOAD_VIDEO_LIST').then(() => {
+      this.active_video_page = this.$route.query.page
+        ? this.$route.query.page
+        : 1
+    })
+
     let curr = new Date()
 
     this.period_filter.year_to = curr.getFullYear()
@@ -151,6 +157,7 @@ export default {
     this.period_filter.year_from = curr.getFullYear()
     this.period_filter.month_from = curr.getMonth() + 1
   },
+  mounted() {},
   methods: {
     changePublicStatus(val) {
       const value = val
@@ -173,9 +180,7 @@ export default {
       this.$emit('contentElementClick', key)
     },
     add_new_video() {
-      this.activateContent(
-        '/hub/videos_upload'
-      )
+      this.activateContent('/hub/videos_upload')
     },
     toggleAll(env) {
       const action = env.target['id']
@@ -208,19 +213,23 @@ export default {
     onPublicSelected() {
       this.changePublicStatus('public')
     },
-    onPaggin(page) {
-      this.setPage(page)
-    },
+    // onPaggin(page) {
+    //   this.setPage(page)
+    // },
     setPage(num) {
-      this.$store.commit('SET_ACTIVE_VIDEO_PAGE', num)
-      this.$store.dispatch('SAVE_ACTIVE_VIDEO_PAGE')
+      this.$emit('contentElementClick', `/hub/videos/?page=${num}`)
+      //this.$store.dispatch('SAVE_ACTIVE_VIDEO_PAGE', num)
     }
   },
   components: {
     videoPrev
   },
-  watch:{
-    video_list(new_val, old_val){
+  watch: {
+    video_list(new_val, old_val) {},
+    $route(to, from) {
+      if (to.query.page) {
+        this.active_video_page = to.query.page
+      }
     }
   },
   computed: {
@@ -229,8 +238,7 @@ export default {
       'me',
       'isVideosListLoading',
       'isVideosDeleting',
-      'videos_selected',
-      'active_video_page'
+      'videos_selected'
     ]),
     isUser() {
       return this.me.profile.irole === 'user'

@@ -54,9 +54,9 @@ export default {
           const act_item = JSON.parse(
             localStorage.getItem('vcms-activ-video-page')
           )
-          const _item = act_item ? act_item : ''
-
-          commit('SET_ACTIVE_VIDEO_PAGE', _item)
+          const _item = act_item ? act_item : 1
+          return _item
+          //commit('SET_ACTIVE_VIDEO_PAGE', _item)
         } catch (e) {
           localStorage.removeItem('vcms-activ-video-page')
         }
@@ -64,10 +64,10 @@ export default {
     },
     CLEAR_ACTIVE_VIDEO_PAGE: () =>
       localStorage.removeItem('vcms-activ-video-page'),
-    SAVE_ACTIVE_VIDEO_PAGE: ({state}) => {
+    SAVE_ACTIVE_VIDEO_PAGE: ({state}, num) => {
       localStorage.setItem(
         'vcms-activ-video-page',
-        JSON.stringify(state.active_video_page)
+        JSON.stringify(num)
       )
     },
 

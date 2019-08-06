@@ -32,7 +32,7 @@ export default {
   watch: {
     $route: function(value) {
       console.log('$route-value=', value, value.meta.menuItem)
-      this.$store.commit('ITEM_STATE', value.path)
+      this.$store.commit('ITEM_STATE', value.fullPath)
       this.$store.dispatch('SAVE_MENU_STATE')
     }
   },

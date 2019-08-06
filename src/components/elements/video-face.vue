@@ -98,7 +98,7 @@ export default {
 
       this.$emit(
         'activateContent',
-        '/hub/videos_player'
+        `/hub/videos_player/uuid/${this.videoitem.video_uuid}`
       )
     },
     onSubtitles() {

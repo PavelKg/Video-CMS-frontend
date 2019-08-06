@@ -93,8 +93,7 @@ export default {
     })
   },
 
-  role_data(target) {
-    const {cid, rid} = target
+  role_info(cid, rid) {
     return Api.get(`/companies/${cid}/roles/${rid}`, {
       headers: {
         ...type_json
@@ -157,6 +156,25 @@ export default {
  */
   groups(cid) {
     return Api.get(`/companies/${cid}/groups`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Group Info
+   * @param {number} cid 
+   * @param {string} gid 
+   * @returns {Promise<*>} - 200 group object
+   * {
+        "gid": "string",
+        "cid": "string",
+        "name": "string",
+        "deleted_at": "string"
+      }
+ */
+  group_info(cid, gid) {
+    return Api.get(`/companies/${cid}/groups/${gid}`, {
       headers: {
         ...type_json
       }

@@ -7,13 +7,7 @@
         class="triangle-bottom"
         :class="{triangleActive: node.isOpen}"
       ></div>
-      <div
-        v-if="
-          myKey ===
-            (userMenuActiveItem ? userMenuActiveItem.split(/_\w+$/)[0] : '')
-        "
-        class="triangleSelected"
-      />
+      <div v-if="myKey === selected_item" class="triangleSelected" />
     </div>
     <div v-if="node.subItems && node.isOpen">
       <node
@@ -34,13 +28,19 @@ export default {
   name: 'node',
   data() {
     return {
-      showChildren: true
+      showChildren: true,
+      selected_item: '/hub/videos'
     }
   },
   props: {
     node: Object,
     myKey: String,
     handleClick: Function
+  },
+  watch: {
+    $route: function(value) {
+      this.selected_item = value.meta.menuItem
+    }
   },
   mounted() {},
   methods: {

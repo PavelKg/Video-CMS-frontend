@@ -34,10 +34,6 @@ export default {
   },
   methods: {
     addNewRole() {
-      this.$store.commit('SET_ACTIVE_ROLE', {
-        company_id: this.me.profile.company_id,
-        rid: null
-      })
       this.contentElementClick('/hub/roles_add')
     },
     contentElementClick(key) {

@@ -105,7 +105,8 @@ export default {
   },
   methods: {
     cancel_click() {
-      this.$emit('contentElementClick', '/hub/users')
+      this.$router.go(-1)
+      //this.$emit('contentElementClick', '/hub/users')
     },
     save_click() {},
     genUserId(evt) {
@@ -118,7 +119,11 @@ export default {
       const oper_type = this.oper === 'edit' ? 'USER_UPD' : 'USER_ADD'
       this.$store.dispatch(oper_type, this.mnUser).then(
         (res) => {
-          this.$emit('contentElementClick', '/hub/users')
+          if (this.oper === 'edit') {
+            this.$router.go(-1)
+          } else {
+            this.$emit('contentElementClick', '/hub/users')
+          }
         },
         (err) => {
           console.log('err=', err)
@@ -128,7 +133,8 @@ export default {
   },
 
   created() {
-    const {cid, uid = null} = this.$route.params
+    const {uid = null} = this.$route.params
+    const cid = this.me.profile.company_id
 
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_USER_INFO', {cid, uid}).then((res) => {
@@ -144,6 +150,7 @@ export default {
     }
 
     this.$store.dispatch('LOAD_GROUPS', cid).then((res) => {
+      this.$store.commit('SET_GROUPS_IS_LOADING', false)
       this.group_options = this.groups
         .filter((group) => !Boolean(group.deleted_at))
         .map((item) => {

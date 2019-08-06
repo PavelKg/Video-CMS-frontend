@@ -15,6 +15,7 @@
     <b-form-input
       v-model="mnRole.name"
       :placeholder="`${$t('roles.role_name')}`"
+      :disabled="isDeleted"
     ></b-form-input>
     <div class="check-admin">
       <span>{{ $t('roles.administrator') }}:</span>
@@ -22,6 +23,7 @@
         id="check_isAdmin"
         v-model="mnRole.is_admin"
         name="check_isAdmin"
+        :disabled="isDeleted"
       >
       </b-form-checkbox>
       <div>
@@ -29,7 +31,11 @@
       </div>
     </div>
     <div class="role-operation-button-zone">
-      <button @click="save_click" class="button btn-blue">
+      <button
+        @click="save_click"
+        class="button btn-blue"
+        :disabled="onDisabledSave"
+      >
         {{ $t('label.save') }}
       </button>
       <button @click="cancel_click" class="button btn-braun">
@@ -53,6 +59,10 @@ export default {
         is_admin: false,
         name: '',
         rid: ''
+      },
+      defRole: {
+        is_admin: false,
+        name: ''
       }
     }
   },
@@ -74,17 +84,39 @@ export default {
   },
 
   created() {
+    const {rid = null} = this.$route.params
+    const cid = this.me.profile.company_id
+
     if (this.oper === 'edit') {
-      this.mnRole = {...this.role_selected}
+      this.$store.dispatch('LOAD_ROLE_INFO', {cid, rid}).then((role) => {
+        this.defRole.name = role.name
+        this.defRole.is_admin = role.is_admin
+        this.mnRole = {...role}
+      })
+    } else {
+      this.mnRole.cid = cid
     }
   },
   computed: {
-    ...mapGetters(['userMenuActiveItem', 'role_selected']),
+    ...mapGetters(['userMenuActiveItem', 'me']),
     role_title() {
       return `roles.oper_title_${this.oper}`
     },
     is_admin_state() {
       return this.mnRole.is_admin ? 'yes' : 'no'
+    },
+    onDisabledSave() {
+      if (this.oper === 'edit') {
+        return (
+          this.mnRole.name === this.defRole.name &&
+          this.mnRole.is_admin === this.defRole.is_admin
+        )
+      } else {
+        return false // check field
+      }
+    },
+    isDeleted() {
+      return Boolean(this.mnRole.deleted_at)
     }
   }
 }

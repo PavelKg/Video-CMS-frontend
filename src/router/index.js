@@ -89,7 +89,7 @@ export default new Router({
       children: [
         {path: 'videos', component: videos, meta: {menuItem: '/hub/videos'}},
         {
-          path: 'videos_player',
+          path: 'videos_player/uuid/:uuid',
           component: videos_player,
           meta: {menuItem: '/hub/videos'}
         },
@@ -99,19 +99,19 @@ export default new Router({
           meta: {menuItem: '/hub/videos'}
         },
         {
-          path: 'videos_subtitles',
+          path: 'videos_subtitles/vid/:vid',
           component: videos_subtitles,
           meta: {menuItem: '/hub/videos'}
         },
         {path: 'users', component: users, meta: {menuItem: '/hub/users'}},
         {
-          path: 'users_add/cid/:cid',
+          path: 'users_add',
           component: users_add,
           meta: {menuItem: '/hub/users'},
           props: {oper: 'add'}
         },
         {
-          path: 'users_edit/cid/:cid/uid/:uid',
+          path: 'users_edit/uid/:uid',
           component: users_edit,
           meta: {menuItem: '/hub/users'},
           props: {oper: 'edit'}
@@ -124,7 +124,7 @@ export default new Router({
           props: {oper: 'add'}
         },
         {
-          path: 'groups_edit',
+          path: 'groups_edit/gid/:gid',
           component: groups_edit,
           meta: {menuItem: '/hub/groups'},
           props: {oper: 'edit'}
@@ -142,7 +142,7 @@ export default new Router({
           props: {oper: 'add'}
         },
         {
-          path: 'roles_edit',
+          path: 'roles_edit/rid/:rid',
           component: roles_edit,
           meta: {menuItem: '/hub/roles'},
           props: {oper: 'edit'}

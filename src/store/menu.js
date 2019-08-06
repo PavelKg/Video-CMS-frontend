@@ -308,9 +308,7 @@ export default {
       if (localStorage.getItem('vcms-activ-menu')) {
         try {
           const act_item = JSON.parse(localStorage.getItem('vcms-activ-menu'))
-          const _item = act_item ? act_item : '/hub/videos'
-
-          dispatch('MENU_NAVIGATE', _item)
+          const _item = act_item ? act_item : '/hub/videos/?page=1'
         } catch (e) {
           localStorage.removeItem('vcms-activ-menu')
         }
@@ -330,7 +328,6 @@ export default {
     },
     MENU_NAVIGATE: ({commit, dispatch}, navTo) => {
       const {path: navFrom, meta} = router.currentRoute
-      console.log('navigate to - ', navTo, navFrom)
 
       router.push({path: navTo})
       if (navTo === navFrom) {

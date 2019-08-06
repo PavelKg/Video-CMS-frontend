@@ -56,7 +56,7 @@ export default {
       this.$emit('contentElementClick', menu_item)
     },
     cancel_click() {
-      this.contentElementClick('/hub/groups')
+      this.$router.go(-1)
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'GROUP_UPD' : 'GROUP_ADD'
@@ -72,13 +72,26 @@ export default {
   },
 
   created() {
+    const {gid = null} = this.$route.params
+    this.mnGroup.gid = gid
+    const cid = this.me.profile.company_id
+
     if (this.oper === 'edit') {
-      this.src_name = this.group_selected.name
-      this.mnGroup = {...this.group_selected}
+      this.$store.dispatch('LOAD_GROUP_INFO', {cid, gid}).then((group) => {
+        this.src_name = group.name
+        this.mnGroup.name = group.name
+      })
+      const params = {
+        cid,
+        filter: `group_gid[eq]:'${gid}'`
+      }
+      this.$store
+        .dispatch('LOAD_USERS', params)
+        .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
     }
   },
   computed: {
-    ...mapGetters(['userMenuActiveItem', 'group_selected']),
+    ...mapGetters(['userMenuActiveItem', 'me']),
     group_title() {
       return `groups.oper_title_${this.oper}`
     }
