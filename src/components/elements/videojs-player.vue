@@ -1,6 +1,14 @@
 <template>
-  <div>
-    <video ref="videoPlayer" class="video-js vjs-big-play-centered"></video>
+  <div class="player-item">
+    <video
+      ref="videoPlayer"
+      class="video-js vjs-big-play-centered"
+      width="100%"
+      height="100%"
+      data-setup='{
+        "fluid": "true",
+        "aspectRatio":"16:9"}'
+    ></video>
   </div>
 </template>
 
@@ -18,8 +26,7 @@ export default {
       options: {
         controls: true,
         autoplay: 'true',
-        fluid: true,
-        preload: 'auto',
+        //preload: 'auto',
         hls: {overrideNative: true}
       }
     }
@@ -35,9 +42,7 @@ export default {
     this.player = videojs(
       this.$refs.videoPlayer,
       this.options,
-      function onPlayerReady() {
-        console.log('onPlayerReady', this)
-      }
+      function onPlayerReady() {}
     )
   },
   beforeDestroy() {
@@ -47,3 +52,5 @@ export default {
   }
 }
 </script>
+
+<style lang="scss"></style>

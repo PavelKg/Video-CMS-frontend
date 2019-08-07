@@ -16,20 +16,24 @@
         </div>
       </div>
 
-      <div class="comment-mng" v-if="commentOwner">
-        <b-form-radio-group
-          size="sm"
-          :id="`radio-visible-set-${comment.comment_id}`"
-          :checked="visible_status(comment.comment_visible)"
-          @change="onChangeVisible"
-          :options="options"
-          :name="`radio-visible-set-${comment.comment_id}`"
-          class="radio-group-zone"
-        >
-        </b-form-radio-group>
-        <button @click="onDelete" class="button btn-orange">
-          {{ $t('label.delete') }}
-        </button>
+      <div class="comment-mng" >
+        <template v-if="!isUser">
+          <b-form-radio-group
+            size="sm"
+            :id="`radio-visible-set-${comment.comment_id}`"
+            :checked="visible_status(comment.comment_visible)"
+            @change="onChangeVisible"
+            :options="options"
+            :name="`radio-visible-set-${comment.comment_id}`"
+            class="radio-group-zone"
+          >
+          </b-form-radio-group
+        ></template>
+        <template v-if="commentOwner || !isUser">
+          <button @click="onDelete" class="button btn-orange">
+            {{ $t('label.delete') }}
+          </button>
+        </template>
       </div>
     </template>
   </div>
@@ -41,9 +45,7 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'comment-template',
   props: {comment: Object, video_uuid: String},
-  created() {
-    console.log('created=', this.me.profile)
-  },
+  created() {},
   data() {
     return {
       options: [
@@ -60,9 +62,11 @@ export default {
     commentOwner() {
       const {company_id, uid, irole} = this.me.profile
       return (
-        this.comment.comment_user_uid === uid ||
-        ['admin', 'super'].includes(irole)
+        this.comment.comment_user_uid === uid 
       )
+    },
+    isUser() {
+      return this.me.profile.irole === 'user'
     }
   },
   methods: {
