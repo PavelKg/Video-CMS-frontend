@@ -170,44 +170,36 @@ const menuStructure = {
         caption: 'menu.home',
         type: 'videos.list',
         visible: true,
-        component: 'videos',
         subItems: {
           player: {
             type: 'videos.player',
-            caption: 'menu.video_player',
-            component: 'videos_player'
+            caption: 'menu.video_player'
           },
           upload: {
             type: 'videos.upload',
-            caption: 'menu.video_upload',
-            component: 'videos_upload'
+            caption: 'menu.video_upload'
           },
           edit: {
             type: 'videos.subtitles',
-            caption: 'menu.video_subtitles',
-            component: 'videos_subtitles'
+            caption: 'menu.video_subtitles'
           }
         }
       },
       users: {
         caption: 'menu.users',
         visible: true,
-        component: 'users',
         subItems: {
           add: {
             type: 'users.add',
-            caption: 'menu.user_add',
-            component: 'users_add'
+            caption: 'menu.user_add'
           },
           edit: {
             type: 'users.add',
-            caption: 'menu.user_edit',
-            component: 'users_edit'
+            caption: 'menu.user_edit'
           },
           info: {
             type: 'users.info',
-            caption: 'menu.user_info',
-            component: 'users_edit'
+            caption: 'menu.user_info'
           }
         }
       },
@@ -215,47 +207,39 @@ const menuStructure = {
         caption: 'menu.groups',
         type: 'group.list',
         visible: true,
-        component: 'groups',
         subItems: {
           edit: {
             type: 'groups.edit',
-            caption: 'menu.group_edit',
-            component: 'groups_edit'
+            caption: 'menu.group_edit'
           },
           add: {
             type: 'groups.add',
-            caption: 'menu.group_add',
-            component: 'groups_add'
+            caption: 'menu.group_add'
           }
         }
       },
       messages: {
         caption: 'menu.messages',
         type: 'messages.list',
-        visible: true,
-        component: 'messages'
+        visible: true
       },
       screen: {
         caption: 'menu.screen',
         type: 'screen.settings',
-        visible: true,
-        component: 'screen'
+        visible: true
       },
       roles: {
         caption: 'menu.roles',
         type: 'roles.list',
         visible: true,
-        component: 'roles',
         subItems: {
           edit: {
             type: 'roles.edit',
-            caption: 'menu.role_edit',
-            component: 'roles_edit'
+            caption: 'menu.role_edit'
           },
           add: {
             type: 'roles.add',
-            caption: 'menu.role_add',
-            component: 'roles_add'
+            caption: 'menu.role_add'
           }
         }
       }
@@ -263,33 +247,24 @@ const menuStructure = {
   },
 
   user: {
-    root: {
-      isOpen: true,
-      activeItem: 'root.subItems.home',
-      caption: '',
-      visible: true,
-      subItems: {
-        home: {
-          caption: 'menu.home',
-          visible: true
-        },
-        messages: {
-          caption: 'menu.messages',
-          type: 'messages.list',
-          visible: true
-        },
-        videos: {
-          caption: 'menu.videos',
-          type: 'videos.list',
-          subItems: {
-            caption: 'videos.messages',
-            type: 'videos.list',
-            player: {
-              type: 'videos.video_player',
-              caption: 'menu.video_player'
-            }
+    isOpen: true,
+    visible: true,
+    subItems: {
+      videos: {
+        caption: 'menu.home',
+        type: 'videos.list',
+        visible: true,
+        subItems: {
+          player: {
+            type: 'videos.video_player',
+            caption: 'menu.video_player'
           }
         }
+      },
+      messages: {
+        caption: 'menu.messages',
+        type: 'messages.list',
+        visible: true
       }
     }
   }
