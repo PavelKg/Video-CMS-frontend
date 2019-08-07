@@ -5,7 +5,8 @@
       <span class="video-title">{{ form.video_title || 'Video Title' }}</span>
       <div class="video-content-zone">
         <div class="player-zone">
-          <VideojsPlayer :video_url="form.video_output_file" class="video"> </VideojsPlayer>
+          <VideojsPlayer :video_url="form.video_output_file" class="video">
+          </VideojsPlayer>
           <div class="video-information">
             <div>
               <span class="title">{{ $t('videos.video_information') }}</span>
@@ -25,23 +26,27 @@
                 >
                 <span class="value">{{ form.video_description }}</span>
               </div>
-              <button @click="onSubtitles" class="button btn-grey">
-                {{ $t('label.edit') }}
-              </button>
+              <template v-if="!isUser">
+                <button @click="onSubtitles" class="button btn-grey">
+                  {{ $t('label.edit') }}
+                </button>
+              </template>
             </div>
-            <div>
-              <span class="sub-title">
-                {{ $t('videos.public_settings') }}:
-              </span>
-              <b-form-radio-group
-                id="radio-public-set"
-                :checked="public_status"
-                @change="onChangePublic"
-                :options="options"
-                name="radio-options"
-              >
-              </b-form-radio-group>
-            </div>
+            <template v-if="!isUser">
+              <div>
+                <span class="sub-title">
+                  {{ $t('videos.public_settings') }}:
+                </span>
+                <b-form-radio-group
+                  id="radio-public-set"
+                  :checked="public_status"
+                  @change="onChangePublic"
+                  :options="options"
+                  name="radio-options"
+                >
+                </b-form-radio-group>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -77,6 +82,7 @@ export default {
   data() {
     return {
       player: undefined,
+      active_video_uuid: undefined,
       comment_text: '',
       form: {
         video_title: '',
@@ -95,7 +101,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['active_video_uuid', 'comment_list']),
+    ...mapGetters(['comment_list', 'me']),
 
     updated_at() {
       return this.form.updated_at
@@ -108,6 +114,9 @@ export default {
     },
     public_status() {
       return this.form.video_public ? 'public' : 'private'
+    },
+    isUser() {
+      return this.me.profile.irole === 'user'
     }
   },
   components: {
@@ -116,6 +125,7 @@ export default {
   },
   created() {
     const {uuid = null} = this.$route.params
+    this.active_video_uuid = uuid
     console.log('uuid=', uuid)
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
@@ -144,11 +154,9 @@ export default {
   },
   methods: {
     onSubtitles() {
-      this.$store.commit('SET_ACTIVE_VIDEO', this.form.video_uuid)
-      this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
         'contentElementClick',
-        '/hub/videos_subtitles'
+        `/hub/videos_subtitles/uuid/${this.active_video_uuid}`
       )
     },
     onChangePublic(val) {
@@ -204,9 +212,9 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100%;
-      max-width: 670px;
+      width: 670px;
       height: auto;
+      max-height: 380px;
       margin-right: 10px;
     }
     span.title {
