@@ -17,7 +17,7 @@ const roles = () => import('@/hub/templates/roles/')
 const roles_add = () => import('@/hub/templates/roles/mng')
 const roles_edit = () => import('@/hub/templates/roles/mng')
 const screen = () => import('@/hub/templates/screen')
-const videos_player = () => import('@/hub/templates/video-player')
+const videos_player = () => import('@/hub/templates/video-player_old')
 const videos_upload = () => import('@/hub/templates/video-upload')
 const videos_subtitles = () => import('@/hub/templates/video-subtitles')
 
