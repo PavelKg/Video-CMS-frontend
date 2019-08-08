@@ -28,12 +28,13 @@
           :name="tag"
         ></b-form-checkbox>
         <span :title="`${title}: ${description}`">{{ title }}</span>
+        <template v-if="showSubtitles">
         <img
-          v-if="showSubtitles"
           @click="onSubtitles()"
           class="subtitles-svg"
           src="@/assets/images/subtitles.svg"
         />
+        </template>
       </div>
       <div
         class="mng-panel-bottom"
@@ -93,8 +94,8 @@ export default {
   updated() {},
   methods: {
     playVideo() {
-      this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
-      this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
+      // this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
+      // this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
 
       this.$emit(
         'activateContent',
@@ -102,11 +103,11 @@ export default {
       )
     },
     onSubtitles() {
-      this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
-      this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
+      // this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
+      // this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
         'activateContent',
-        '/hub/videos_subtitles'
+        `/hub/videos_subtitles/uuid/${this.videoitem.video_uuid}`
       )
     },
     onCheckChange(new_state) {
@@ -143,7 +144,7 @@ export default {
         : require('@/assets/images/p-streamCMS-s.png')
     },
     showSubtitles() {
-      return this.me.profile.irole === 'admin'
+      return this.me.profile.irole !== 'user'
     }
   },
   components: {

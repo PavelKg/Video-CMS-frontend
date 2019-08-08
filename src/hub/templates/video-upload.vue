@@ -126,7 +126,8 @@ export default {
     },
     backToCatalog() {
       this.$store.commit('CLEAR_UPLOAD_FILES')
-      this.$emit('contentElementClick', '/hub/videos')
+      //this.$emit('contentElementClick', '/hub/videos')
+      this.$router.go(-1)
     },
     submitFiles() {
       this.$store

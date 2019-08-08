@@ -142,11 +142,17 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('LOAD_VIDEO_LIST').then(() => {
-      this.active_video_page = this.$route.query.page
-        ? this.$route.query.page
-        : 1
-    })
+    const query = this.$route.query
+    this.updateProc(query)
+
+    // this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
+    // this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
+
+    // this.$store.dispatch('LOAD_VIDEO_LIST').then(() => {
+    //   this.active_video_page = this.$route.query.page
+    //     ? this.$route.query.page
+    //     : 1
+    // })
 
     let curr = new Date()
 
@@ -193,14 +199,15 @@ export default {
       }
     },
     onPublicState(new_state) {
-      this.$store.commit('SET_VIDEO_PUBLIC', new_state)
-      this.setPage(1)
-      this.$store.dispatch('LOAD_VIDEO_LIST')
+      const publicState = new_state
+      const page = 1
+      this.updatePageByFilters({publicState, page})
     },
     onPeriodState() {
-      this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
-      this.setPage(1)
-      this.$store.dispatch('LOAD_VIDEO_LIST')
+      const {year_from, year_to, month_from, month_to} = this.period_filter
+      const from = `${year_from}-${('0' + month_from).slice(-2)}`
+      const to = `${year_to}-${('0' + month_to).slice(-2)}`
+      this.updatePageByFilters({from, to})
     },
     onDelete() {
       this.$store.dispatch('DELETE_VIDEO').then((res) => {
@@ -217,8 +224,44 @@ export default {
     //   this.setPage(page)
     // },
     setPage(num) {
-      this.$emit('contentElementClick', `/hub/videos/?page=${num}`)
-      //this.$store.dispatch('SAVE_ACTIVE_VIDEO_PAGE', num)
+      const page = num
+      this.updatePageByFilters({page})
+    },
+    updatePageByFilters(params) {
+      let sendQuery = {...this.$route.query}
+      if (typeof params === 'object') {
+        for (let param in params) {
+          sendQuery[param] = params[param]
+        }
+      } else {
+      }
+      this.$router.push({path: '/hub/videos', query: {...sendQuery}})
+    },
+    updateProc(query) {
+      for (const key in query) {
+        switch (key) {
+          case 'publicState':
+            this.public_selected = query[key]
+            break
+          case 'from':
+            const _date_from = query[key].split('-')
+            this.period_filter.year_from = _date_from[0]
+            this.period_filter.month_from = +_date_from[1]
+            break
+          case 'to':
+            const _date_to = query[key].split('-')
+            this.period_filter.year_to = _date_to[0]
+            this.period_filter.month_to = +_date_to[1]
+            break
+          default:
+            break
+        }
+        this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
+        this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
+        this.$store
+          .dispatch('LOAD_VIDEO_LIST')
+          .then(() => (this.active_video_page = query.page ? query.page : 1))
+      }
     }
   },
   components: {
@@ -227,6 +270,7 @@ export default {
   watch: {
     video_list(new_val, old_val) {},
     $route(to, from) {
+      this.updateProc(to.query)
       if (to.query.page) {
         this.active_video_page = to.query.page
       }

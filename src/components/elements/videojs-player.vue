@@ -8,12 +8,15 @@
       data-setup='{
         "fluid": "true",
         "aspectRatio":"16:9"}'
+      loop
+      preload="auto"
     ></video>
   </div>
 </template>
 
 <script>
 import videojs from 'video.js'
+import 'videojs-flash'
 
 export default {
   name: 'VideoPlayer',
@@ -26,8 +29,11 @@ export default {
       options: {
         controls: true,
         autoplay: 'true',
-        //preload: 'auto',
-        hls: {overrideNative: true}
+        techOrder: ['html5', 'flash'],
+        //preload: 'metadata',
+        hls: {overrideNative: true},
+        responsive: true,
+        html5: {nativeAudioTracks: false}
       }
     }
   },
