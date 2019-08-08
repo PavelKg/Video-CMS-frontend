@@ -256,12 +256,12 @@ export default {
           default:
             break
         }
-        this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
-        this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
-        this.$store
-          .dispatch('LOAD_VIDEO_LIST')
-          .then(() => (this.active_video_page = query.page ? query.page : 1))
       }
+      this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
+      this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
+      this.$store
+        .dispatch('LOAD_VIDEO_LIST')
+        .then(() => (this.active_video_page = query.page ? query.page : 1))
     }
   },
   components: {
