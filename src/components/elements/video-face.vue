@@ -29,11 +29,11 @@
         ></b-form-checkbox>
         <span :title="`${title}: ${description}`">{{ title }}</span>
         <template v-if="showSubtitles">
-        {{this.videoitem.video_uuid}}<img
-          @click="onSubtitles()"
-          class="subtitles-svg"
-          src="@/assets/images/subtitles.svg"
-        />
+          <img
+            @click="onSubtitles()"
+            class="subtitles-svg"
+            src="@/assets/images/subtitles.svg"
+          />
         </template>
       </div>
       <div
