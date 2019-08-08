@@ -85,10 +85,12 @@ export default {
         video_title: '',
         video_tag: '',
         video_description: ''
-      }
+      },
+      active_video_uuid: ''
     }
   },
   created() {
+    this.active_video_uuid = this.$route.params.uuid
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then((res) => {
@@ -148,7 +150,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['active_video_uuid', 'isVideosInfoUpdating']),
+    ...mapGetters(['isVideosInfoUpdating']),
     i_thumbnail() {
       return Boolean(this.form.video_thumbnail)
         ? this.form.video_thumbnail

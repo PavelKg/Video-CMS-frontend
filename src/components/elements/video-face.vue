@@ -29,7 +29,7 @@
         ></b-form-checkbox>
         <span :title="`${title}: ${description}`">{{ title }}</span>
         <template v-if="showSubtitles">
-        <img
+        {{this.videoitem.video_uuid}}<img
           @click="onSubtitles()"
           class="subtitles-svg"
           src="@/assets/images/subtitles.svg"
@@ -105,6 +105,7 @@ export default {
     onSubtitles() {
       // this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
       // this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
+
       this.$emit(
         'activateContent',
         `/hub/videos_subtitles/uuid/${this.videoitem.video_uuid}`
