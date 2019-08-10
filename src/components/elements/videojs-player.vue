@@ -8,7 +8,6 @@
       data-setup='{
         "fluid": "true",
         "aspectRatio":"16:9"}'
-      loop
       preload="auto"
     ></video>
   </div>

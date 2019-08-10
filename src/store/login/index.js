@@ -40,8 +40,8 @@ export default {
     },
     async GET_MY_PROFILE({commit, dispatch}) {
       try {
+        console.log('GET_MY_PROFILE')
         const result = await Api.my_profile()
-        const {irole = 'user'} = result.data
         commit('SET_USER', result.data)
       } catch (e) {
         dispatch('LOGOUT')

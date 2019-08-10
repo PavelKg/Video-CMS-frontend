@@ -24,7 +24,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userMenu', 'userMenuActiveItem', 'me']),
+    ...mapGetters(['userMenu', 'me']),
     menuItems() {
       return this.userMenu
     }
@@ -40,6 +40,7 @@ export default {
       if (node.isSection) {
         this.$store.commit('SECTION_STATE', key)
       } else if (!node.isSection) {
+        console.log('MENU_NAVIGATE FROM MENU = ', key)
         this.$store.dispatch('MENU_NAVIGATE', key)
       }
     }

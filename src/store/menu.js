@@ -303,13 +303,12 @@ export default {
     },
     MENU_NAVIGATE: ({commit, dispatch}, navTo) => {
       const {path: navFrom, meta} = router.currentRoute
-
-      router.push({path: navTo})
       if (navTo === navFrom) {
-        //const {menuItem} = meta
         commit('ITEM_STATE', navTo)
         dispatch('SAVE_MENU_STATE')
       }
+      console.log('Before router.push to ', navTo)
+      router.push({path: navTo})
     }
   },
   mutations: {

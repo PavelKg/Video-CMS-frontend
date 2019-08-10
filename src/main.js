@@ -27,3 +27,7 @@ new Vue({
   store,
   render: (h) => h(App)
 }).$mount('#app')
+
+router.beforeEach((to, from, next) => {
+  console.log('beforeEach from s% to s%', from, to)
+})

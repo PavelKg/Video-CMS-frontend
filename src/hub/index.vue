@@ -97,6 +97,7 @@ export default {
       }
     },
     contentElementClick(key) {
+      console.log('MENU_NAVIGATE = ', key)
       this.$store.dispatch('MENU_NAVIGATE', key)
     }
   }
