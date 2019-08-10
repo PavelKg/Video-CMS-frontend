@@ -107,9 +107,9 @@ export default {
     async LOAD_VIDEO_LIST({state, commit, getters}) {
       const cid = getters.me.profile.company_id
       commit('SET_STATUS_VIDEOS_LOADING', true)
-      let filter = `videos.deleted_at[isNull]:,videos.created_at[gt]:'${
+      let filter = `videos.deleted_at[isNull]:,videos.updated_at[gt]:'${
         state.videos.period[0]
-      }'::date,videos.created_at[lt]:'${state.videos.period[1]}'::date`
+      }'::date,videos.updated_at[lt]:'${state.videos.period[1]}'::date`
       filter +=
         state.videos.public === 'all'
           ? ''

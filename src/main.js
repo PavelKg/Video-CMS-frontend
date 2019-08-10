@@ -30,4 +30,5 @@ new Vue({
 
 router.beforeEach((to, from, next) => {
   console.log('beforeEach from s% to s%', from, to)
+  next()
 })
