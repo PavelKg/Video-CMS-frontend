@@ -70,13 +70,17 @@
     <div class="videos-mng-panel">
       <div class="admin-mng-panel" v-if="isAdmin">
         <span>{{ $t('label.in_page') }}:</span>
-        <a href="#" id="selectAll" @click="toggleAll">{{
+        <a href="#" id="selectAll" @click="toggleAll('selectAll')">{{
           $t('label.select_all')
         }}</a>
         <span>|</span>
-        <a href="#" id="deselectAll" @click="toggleAll">{{
-          $t('label.deselect_all')
-        }}</a>
+        <a
+          href="#"
+          id="deselectAll"
+          @click="toggleAll('deselectAll')"
+          :class="{isDisabled: videos_selected.length === 0}"
+          >{{ $t('label.deselect_all') }}</a
+        >
         <button
           class="button btn-gray"
           @click="onPublicSelected"
@@ -188,10 +192,10 @@ export default {
     add_new_video() {
       this.activateContent('/hub/videos_upload')
     },
-    toggleAll(env) {
-      const action = env.target['id']
+    toggleAll(action) {
+      //const action = env.target['id']
       if (action === 'selectAll') {
-        this.video_list.forEach((element) => {
+        this.videos_on_page.forEach((element) => {
           this.$store.commit('SET_VIDEO_SELECTED', element.video_uuid)
         })
       } else {
@@ -235,6 +239,7 @@ export default {
         }
       } else {
       }
+      this.toggleAll('deselectAll')
       this.$router.push({path: '/hub/videos', query: {...sendQuery}})
     },
     updateProc(query) {
@@ -414,5 +419,16 @@ export default {
   a {
     padding: 0 10px;
   }
+}
+.isDisabled {
+  //cursor: not-allowed;
+  opacity: 0.5;
+  cursor: unset;
+}
+.isDisabled > a {
+  color: currentColor;
+  display: inline-block; /* For IE11/ MS Edge bug */
+  pointer-events: none;
+  text-decoration: none;
 }
 </style>
