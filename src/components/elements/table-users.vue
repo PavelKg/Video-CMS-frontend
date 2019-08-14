@@ -112,12 +112,7 @@ export default {
           : []
     },
     last_login_format(item) {
-      return item
-        ? new Date(item)
-            .toISOString()
-            .slice(0, 10)
-            .replace(/\-/gi, '/')
-        : ''
+      return item ? item.slice(0, 10).replace(/\-/gi, '/') : ''
     },
     editUser(userProp) {
       const {cid, uid} = userProp

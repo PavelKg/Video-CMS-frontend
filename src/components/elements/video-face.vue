@@ -126,8 +126,9 @@ export default {
     },
     updated_at() {
       return this.videoitem.updated_at
-        ? new Date(this.videoitem.updated_at)
-            .toISOString()
+        ? this.videoitem.updated_at
+            //new Date(this.videoitem.updated_at)
+            //  .toISOString()
             .slice(0, 19)
             .replace(/\-/gi, '/')
             .replace(/T/gi, ' ')

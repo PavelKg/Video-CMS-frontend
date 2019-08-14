@@ -145,8 +145,7 @@ export default {
     messageItem() {},
     mess_date_format(item) {
       return item
-        ? new Date(item)
-            .toISOString()
+        ? item
             .slice(0, 19)
             .replace(/\-/gi, '/')
             .replace(/T/gi, ' ')
