@@ -143,9 +143,10 @@ export default {
       this.hideMessageModal()
     },
     showMessageModal() {
+      console.log('this.active_message=', this.active_message)
       if (this.active_message) {
-        const {receiver_uid, receiver_cid} = this.active_message
-        this.modalMessData.receiver = {uid: receiver_uid, cid: receiver_cid}
+        const {cp_uid, cp_cid} = this.active_message
+        this.modalMessData.receiver = {uid: cp_uid, cid: cp_cid}
       }
       this.isShowModalMessageAdd = true
     },

@@ -83,15 +83,17 @@
     >
       <div class="modal-subject">
         <div class="modal-subj-date">
-          <span>{{ active_message ? active_message.subject : '' }}</span>
-          <span>{{
-            active_message ? mess_date_format(active_message.date) : ''
+          <span class="title">{{ $t('message.subject') }}</span>
+          <span class="b-text">{{ active_message ? active_message.subject : '' }}</span>
+          <span class="b-text">{{
+            active_message ? mess_date_format(active_message.created_at) : ''
           }}</span>
         </div>
         <button class="button btn-grey" @click="replyToSender">
           {{ $t('label.reply') }}
         </button>
       </div>
+      <span class="title">{{ $t('message.text') }}</span>
       <div class="modal-text">
         {{ active_message ? active_message.text : '' }}
       </div>
@@ -294,10 +296,18 @@ export default {
   .modal-subj-date {
     display: flex;
     flex-direction: column;
+    .b-text{
+      font-weight: 600
+    }
   }
 }
 .modal-text {
   padding-top: 5px;
+  //border: 1px solid $gray-lighter
+}
+span.title {
+  color: $link;
+  padding-bottom: 3px;
 }
 
 @media screen and (max-width: 875px) {
