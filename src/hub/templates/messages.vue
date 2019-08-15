@@ -67,7 +67,11 @@
           ></b-form-textarea>
         </div>
         <div class="modal-buttons-zone">
-          <button class="button btn-blue" @click="onSubmitNewMess">
+          <button
+            class="button btn-blue"
+            @click="onSubmitNewMess"
+            :disabled="!isReadyToSend"
+          >
             {{ $t('label.send') }}
           </button>
           <button class="button btn-braun" @click="hideMessageModal">
@@ -143,7 +147,6 @@ export default {
       this.hideMessageModal()
     },
     showMessageModal() {
-      console.log('this.active_message=', this.active_message)
       if (this.active_message) {
         const {cp_uid, cp_cid} = this.active_message
         this.modalMessData.receiver = {uid: cp_uid, cid: cp_cid}
@@ -187,6 +190,13 @@ export default {
           text: receiver.uid
         }
       })
+    },
+    isReadyToSend() {
+      return (
+        this.modalMessData.subject.trim().length > 0 &&
+        this.modalMessData.text.trim().length > 0 &&
+        Boolean(this.modalMessData.receiver)
+      )
     }
   },
   components: {
