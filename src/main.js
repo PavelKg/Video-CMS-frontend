@@ -1,5 +1,5 @@
 import '@babel/polyfill'
-//import 'babel-polyfill' 
+//import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router/'
@@ -12,7 +12,6 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import 'video.js/dist/video-js.css'
-
 
 Vue.directive('closable', closable)
 Vue.use(BootstrapVue)
@@ -29,6 +28,6 @@ new Vue({
 }).$mount('#app')
 
 router.beforeEach((to, from, next) => {
-  console.log('beforeEach from s% to s%', from, to)
+  store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
   next()
 })
