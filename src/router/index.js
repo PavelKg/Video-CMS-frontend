@@ -57,6 +57,7 @@ const ifNotAuthenticated = (to, from, next) => {
 const ifAuthenticated = (to, from, next) => {
   if (store.getters.hasToken) {
     store.commit('SET_HEADER_AUTH')
+    store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
     store
       .dispatch('GET_MY_PROFILE')
       .then(() => {

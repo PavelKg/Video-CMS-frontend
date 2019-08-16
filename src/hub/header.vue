@@ -38,7 +38,7 @@ export default {
   props: {},
   name: 'headerArea',
   mounted() {
-    this.$store.dispatch('GET_ACTIVE_VIDEO_UUID')
+    //this.$store.dispatch('GET_ACTIVE_VIDEO_UUID')
   },
   data() {
     return {

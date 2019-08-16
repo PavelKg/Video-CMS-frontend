@@ -19,7 +19,7 @@
         />
       </div>
       <b-modal
-        v-model="modalErrorShow"
+        :visible="modalErrorShow"
         size="sm"
         centered
         ok-only
@@ -40,18 +40,12 @@ export default {
   name: 'super-page',
   data() {
     return {
-      component: null,
-      modalErrorShow: false
+      component: null
     }
   },
   components: {
     headerArea,
     menuArea
-  },
-  watch: {
-    errors_isShow: function(newVal, oldVal) {
-      this.modalErrorShow = newVal
-    }
   },
   created() {
     this.$store.dispatch('LOAD_USER_MENU', this.me_irole).then((res) => {
@@ -85,6 +79,9 @@ export default {
     },
     isSmallScreen() {
       return this.windowsRect.width < this.windowsRect.tabletMaxWidth
+    },
+    modalErrorShow() {
+      return this.errors_isShow
     }
   },
   methods: {
@@ -97,7 +94,6 @@ export default {
       }
     },
     contentElementClick(key) {
-      console.log('MENU_NAVIGATE = ', key)
       this.$store.dispatch('MENU_NAVIGATE', key)
     }
   }

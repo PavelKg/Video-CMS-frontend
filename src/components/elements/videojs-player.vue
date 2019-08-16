@@ -19,9 +19,7 @@ import 'videojs-flash'
 
 export default {
   name: 'VideoPlayer',
-  props: {
-    video_url: String
-  },
+  props: {videoUrl: String},
   data() {
     return {
       player: null,
@@ -37,7 +35,8 @@ export default {
     }
   },
   watch: {
-    video_url(new_val, old_val) {
+    videoUrl(new_val, old_val) {
+      console.log('new_val=', new_val)
       if (Boolean(new_val)) {
         this.player.src({src: new_val})
       }
@@ -47,7 +46,9 @@ export default {
     this.player = videojs(
       this.$refs.videoPlayer,
       this.options,
-      function onPlayerReady() {}
+      function onPlayerReady() {
+        //console.log('Player Ready!!!')
+      }
     )
   },
   beforeDestroy() {

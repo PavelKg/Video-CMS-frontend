@@ -7,7 +7,7 @@
         class="triangle-bottom"
         :class="{triangleActive: node.isOpen}"
       ></div>
-      <div v-if="myKey === selected_item" class="triangleSelected" />
+      <div v-if="myKey === userMenuActiveItem" class="triangleSelected" />
     </div>
     <div v-if="node.subItems && node.isOpen">
       <node
@@ -29,18 +29,13 @@ export default {
   data() {
     return {
       showChildren: true,
-      selected_item: '/hub/videos'
+      selected_item: ''
     }
   },
   props: {
     node: Object,
     myKey: String,
     handleClick: Function
-  },
-  watch: {
-    $route: function(value) {
-      this.selected_item = value.meta.menuItem
-    }
   },
   mounted() {},
   methods: {
@@ -55,6 +50,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/assets/styles.scss';
+
 .menu-item {
   font-size: 0.9em;
   display: flex;
@@ -97,7 +94,7 @@ export default {
       margin-top: 4px;
       border-style: solid;
       border-width: 15px 15px 0;
-      border-color: #fff transparent transparent;
+      border-color: $gray-lightest transparent transparent;
       content: '';
     }
   }

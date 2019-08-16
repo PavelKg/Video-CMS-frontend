@@ -29,18 +29,12 @@ export default {
       return this.userMenu
     }
   },
-  watch: {
-    $route: function(value) {
-      this.$store.commit('ITEM_STATE', value.fullPath)
-      this.$store.dispatch('SAVE_MENU_STATE')
-    }
-  },
   methods: {
     handleClick(node, key) {
       if (node.isSection) {
         this.$store.commit('SECTION_STATE', key)
       } else if (!node.isSection) {
-        console.log('MENU_NAVIGATE FROM MENU = ', key)
+        this.$store.commit('MENU_HIDE')
         this.$store.dispatch('MENU_NAVIGATE', key)
       }
     }

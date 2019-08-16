@@ -104,9 +104,9 @@ export default {
     }
   },
   methods: {
-    onCancel() {
+    onCancel(evt) {
       evt.preventDefault()
-      this.$routes.go(-1)
+      this.$router.go(-1)
     },
     save_click() {},
     genUserId(evt) {

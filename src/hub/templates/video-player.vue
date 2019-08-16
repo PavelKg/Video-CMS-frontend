@@ -5,8 +5,7 @@
       <span class="video-title">{{ form.video_title || 'Video Title' }}</span>
       <div class="video-content-zone">
         <div class="player-zone">
-          <VideojsPlayer :video_url="form.video_output_file" class="video">
-          </VideojsPlayer>
+          <VideojsPlayer :videoUrl="videoUrl" class="video"> </VideojsPlayer>
           <div class="video-information">
             <div>
               <span class="title">{{ $t('videos.video_information') }}</span>
@@ -75,14 +74,15 @@
 <script>
 import {mapGetters} from 'vuex'
 import VideojsPlayer from '@/components/elements/videojs-player'
+//import VideojsPlayer from '@/components/elements/temp_player'
 import Comment from '@/components/elements/comment'
 
 export default {
   name: 'p-video-player',
   data() {
     return {
-      player: undefined,
       active_video_uuid: undefined,
+      videoUrl: '',
       comment_text: '',
       form: {
         video_title: '',
@@ -105,8 +105,9 @@ export default {
 
     updated_at() {
       return this.form.updated_at
-        ? new Date(this.form.updated_at)
-            .toISOString()
+        ? this.form.updated_at
+            //new Date(this.form.updated_at)
+            //  .toISOString()
             .slice(0, 19)
             .replace(/\-/gi, '/')
             .replace(/T/gi, ' ')
@@ -131,27 +132,11 @@ export default {
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then((res) => {
         this.form = {...this.form, ...res}
-        //this.videoOptions.sources.src = this.form.video_output_file
-
-        //console.log('this.videoOptions=', this.videoOptions.sources.src)
-        // if (!this.player) {
-        //   this.player = videojs(
-        //     this.$refs.videoPlayer,
-        //     this.videoOptions,
-        //     function onPlayerReady() {
-        //       console.log('onPlayerReady', this)
-        //     }
-        //   )
-        // }
+        this.videoUrl = res.video_output_file
       })
     this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
   },
   mounted() {},
-  beforeDestroy() {
-    if (this.player) {
-      this.player.dispose()
-    }
-  },
   methods: {
     onSubtitles() {
       this.$emit(
