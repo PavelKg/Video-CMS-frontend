@@ -11,7 +11,7 @@
     >
       <menuArea />
     </div>
-    <div class="body">
+    <div class="contents">
       <div class="content-zone">
         <router-view
           v-on:contentElementClick="contentElementClick"
@@ -124,17 +124,14 @@ export default {
   padding-top: 10px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
-.body {
-  display: flex;
+.contents {
+  //display: flex;
   margin-left: 180px;
   margin-top: 50px;
-  flex-direction: column;
-  max-width: 930px;
+
   .content-zone {
-    display: flex;
-    //flex-grow: 10;
     overflow: auto;
-    padding: 20px 20px;
+    padding: 20px;
   }
 }
 
@@ -142,7 +139,7 @@ export default {
   .menu-zone {
     opacity: 0.95;
   }
-  .body {
+  .contents {
     margin-left: 0px;
   }
 }

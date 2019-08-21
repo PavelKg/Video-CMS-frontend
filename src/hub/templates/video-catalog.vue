@@ -146,6 +146,7 @@ export default {
     }
   },
   created() {
+    this.$store.commit('CLEAR_VIDEO_SELECTED')
     const query = this.$route.query
     this.updateProc(query)
 

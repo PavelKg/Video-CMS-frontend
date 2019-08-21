@@ -1,52 +1,52 @@
 <template>
-  <div>
-    <div v-if="!videoHasUrl">Sorry, file not found !!!</div>
-    <div v-else class="video-content">
+  <div class="preview-video">
+    <template v-if="!videoHasUrl">
+      <div>Loading data from server...</div>
+    </template>
+    <template v-else>
       <span class="video-title">{{ form.video_title || 'Video Title' }}</span>
       <div class="video-content-zone">
-        <div class="player-zone">
-          <VideojsPlayer :videoUrl="videoUrl" class="video"> </VideojsPlayer>
-          <div class="video-information">
-            <div>
-              <span class="title">{{ $t('videos.video_information') }}</span>
-              <div class="video-information-row">
-                <span class="sub-title">{{ $t('videos.last_modified') }}:</span>
-                <span class="value">{{ updated_at }}</span>
-              </div>
+        <VideoPlayer :videourl="videoUrl" />
+        <div class="video-information">
+          <div>
+            <span class="title">{{ $t('videos.video_information') }}</span>
+            <div class="video-information-row">
+              <span class="sub-title ">{{ $t('videos.last_modified') }}:</span>
+              <span class="value wraped">{{ updated_at }}</span>
+            </div>
 
-              <div class="video-information-row">
-                <span class="sub-title">{{ $t('videos.tag') }}:</span>
-                <span class="value">{{ form.video_tag }}</span>
-              </div>
+            <div class="video-information-row">
+              <span class="sub-title">{{ $t('videos.tag') }}:</span>
+              <span class="value">{{ form.video_tag }}</span>
+            </div>
 
-              <div class="video-information-row">
-                <span class="sub-title"
-                  >{{ $t('videos.video_description') }}:</span
-                >
-                <span class="value">{{ form.video_description }}</span>
-              </div>
-              <template v-if="!isUser">
-                <button @click="onSubtitles" class="button btn-grey">
-                  {{ $t('label.edit') }}
-                </button>
-              </template>
+            <div class="video-information-row">
+              <span class="sub-title"
+                >{{ $t('videos.video_description') }}:</span
+              >
+              <span class="value">{{ form.video_description }}</span>
             </div>
             <template v-if="!isUser">
-              <div>
-                <span class="sub-title">
-                  {{ $t('videos.public_settings') }}:
-                </span>
-                <b-form-radio-group
-                  id="radio-public-set"
-                  :checked="public_status"
-                  @change="onChangePublic"
-                  :options="options"
-                  name="radio-options"
-                >
-                </b-form-radio-group>
-              </div>
+              <button @click="onSubtitles" class="button btn-grey">
+                {{ $t('label.edit') }}
+              </button>
             </template>
           </div>
+          <template v-if="!isUser">
+            <div>
+              <span class="sub-title">
+                {{ $t('videos.public_settings') }}:
+              </span>
+              <b-form-radio-group
+                id="radio-public-set"
+                :checked="public_status"
+                @change="onChangePublic"
+                :options="options"
+                name="radio-options"
+              >
+              </b-form-radio-group>
+            </div>
+          </template>
         </div>
       </div>
       <div class="comment-input">
@@ -67,14 +67,14 @@
           :video_uuid="form.video_uuid"
         />
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script>
 import {mapGetters} from 'vuex'
-import VideojsPlayer from '@/components/elements/videojs-player'
-//import VideojsPlayer from '@/components/elements/temp_player'
+import VideoPlayer from '@/components/elements/videojs-player'
+//import VideoPlayer  from '@/components/elements/temp_player'
 import Comment from '@/components/elements/comment'
 
 export default {
@@ -97,7 +97,7 @@ export default {
         {text: this.$t('label.private'), value: 'private'}
       ],
       comment_sending: false,
-      videoHasUrl: true
+      videoHasUrl: false
     }
   },
   computed: {
@@ -122,7 +122,7 @@ export default {
   },
   components: {
     Comment,
-    VideojsPlayer
+    VideoPlayer
   },
   created() {
     const {uuid = null} = this.$route.params
@@ -131,6 +131,8 @@ export default {
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then((res) => {
+        console.log('res.video_output_file=', res.video_output_file)
+        this.videoHasUrl = true
         this.form = {...this.form, ...res}
         this.videoUrl = res.video_output_file
       })
@@ -169,11 +171,18 @@ export default {
 
 <style lang="scss">
 @import '../../assets/styles';
-//@import 'video.js/dist/video-js.css';
+
+.wraped {
+  padding: 0;
+  flex-grow: 2;
+}
 
 .comment-table {
+  display: flex;
+  min-width: 100%;
+  flex-direction: column;
   height: 300px;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .video-title {
@@ -184,52 +193,36 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-content: stretch;
-  width: 100%;
-  align-items: flex-start;
-  .player-zone {
-    width: 100%;
+  span.title {
+    font-weight: bold;
+    font-size: 1.3em;
+  }
+  .video-information {
+    width: 20rem;
+    //width: 220px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    //flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-left: auto;
     flex-wrap: wrap;
-
-    .video {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 670px;
-      height: auto;
-      max-height: 380px;
-      margin-right: 10px;
-    }
-    span.title {
-      font-weight: bold;
-      font-size: 1.3em;
-    }
-    .video-information {
-      max-width: 180px;
+    .video-information-row {
       display: flex;
       flex-direction: column;
-      //flex-wrap: wrap;
-      justify-content: flex-startn;
-      .video-information-row {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: wrap;
-        margin-top: 10px;
-        span.sub-title {
-          font-weight: bold;
-          font-size: 1rem;
-        }
-        span.value {
-          font-size: 0.9rem;
-          color: $link;
-        }
+      flex-wrap: wrap;
+      margin-top: 10px;
+      span.sub-title {
+        font-weight: bold;
+        font-size: 1rem;
       }
-      .button {
-        margin-top: auto;
-        margin: 10px 0;
+      span.value {
+        font-size: 0.9rem;
+        color: $link;
       }
+    }
+    .button {
+      margin-top: auto;
+      margin: 10px 0;
     }
   }
 }
@@ -251,5 +244,24 @@ export default {
     margin-left: 10px;
   }
 }
-//}
+
+@media screen and (max-width: 610px) {
+  .video-content-zone {
+    flex-wrap: wrap;
+  }
+  .video-information {
+    align-self: stretch;
+    min-width: 100%;
+  }
+}
+
+@media screen and (max-width: 875px) and (min-width: 610px) {
+  .video-content-zone {
+    flex-wrap: wrap;
+  }
+  .video-information {
+    align-self: stretch;
+    min-width: 100%;
+  }
+}
 </style>

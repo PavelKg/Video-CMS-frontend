@@ -7,16 +7,12 @@
     </template>
     <template v-else>
       <div class="comment-data">
-        <div class="comment-top-zone">
-          <span>{{ `${$t('comments.id')}: ${comment.comment_user_uid}` }}</span>
-          <span>{{ created_date(comment.created_at) }}</span>
-        </div>
-        <div class="comment-bottom-zone">
-          <span>{{ comment.comment_text }}</span>
-        </div>
+        <span>{{ `${$t('comments.id')}: ${comment.comment_user_uid}` }}</span>
+        <span>{{ created_date(comment.created_at) }}</span>
+        <span class="comment-text">{{ comment.comment_text }}</span>
       </div>
 
-      <div class="comment-mng" >
+      <div class="comment-mng">
         <template v-if="!isUser">
           <b-form-radio-group
             size="sm"
@@ -24,6 +20,7 @@
             :checked="visible_status(comment.comment_visible)"
             @change="onChangeVisible"
             :options="options"
+            stacked
             :name="`radio-visible-set-${comment.comment_id}`"
             class="radio-group-zone"
           >
@@ -61,9 +58,7 @@ export default {
     },
     commentOwner() {
       const {company_id, uid, irole} = this.me.profile
-      return (
-        this.comment.comment_user_uid === uid 
-      )
+      return this.comment.comment_user_uid === uid
     },
     isUser() {
       return this.me.profile.irole === 'user'
@@ -72,9 +67,8 @@ export default {
   methods: {
     created_date(item) {
       return item
-        ? new Date(item)
-            .toISOString()
-            .slice(0, 16)
+        ? item
+            .slice(0, 20)
             .replace(/\-/gi, '/')
             .replace(/T/gi, ' ')
         : ''
@@ -100,7 +94,7 @@ export default {
 <style lang="scss">
 .radio-group-zone {
   .custom-radio {
-    //margin-right: 0;
+    margin-right: 0;
   }
 }
 .deleted_info {
@@ -116,15 +110,17 @@ export default {
   justify-content: flex-start;
   padding: 5px;
   .comment-data {
-    .comment-top-zone {
-      span {
-        font-size: 0.9em;
-        margin-right: 15px;
+    display: flex;
+    flex-direction: column;
+    span {
+      font-size: 0.9em;
+      margin-right: 15px;
+      &.comment-text {
+        font-style: italic;
       }
     }
-    .comment-bottom-zone {
-      font-style: italic;
-    }
+
+
   }
   .comment-mng {
     margin-left: auto;
