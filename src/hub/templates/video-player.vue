@@ -133,12 +133,17 @@ export default {
     console.log('uuid=', uuid)
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
-      .then((res) => {
-        this.videoHasUrl = true
-        this.form = {...this.form, ...res}
-        this.videoUrl = res.video_output_file
-      })
-    this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
+      .then(
+        (res) => {
+          this.videoHasUrl = true
+          this.form = {...this.form, ...res}
+          this.videoUrl = res.video_output_file
+          this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
+        },
+        (err) => {
+          this.$store.dispatch('MENU_NAVIGATE', '/hub/pageNotFound')
+        }
+      )
   },
   mounted() {},
   methods: {

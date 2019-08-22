@@ -149,7 +149,7 @@ export default new Router({
           props: {oper: 'edit'}
         },
         {path: 'screen', component: screen, meta: {menuItem: '/hub/screen'}},
-        {path: 'pageNotFind', component: NotFoundComponent}
+        {path: 'pageNotFound', component: NotFoundComponent}
       ]
     },
     {
@@ -167,7 +167,7 @@ export default new Router({
     {
       path: '*',
       //component: NotFoundComponent
-      redirect: '/hub/pageNotFind'
+      redirect: '/hub/pageNotFound'
     }
   ],
   scrollBehavior(to, from, savedPosition) {

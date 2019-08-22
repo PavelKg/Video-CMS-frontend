@@ -84,7 +84,7 @@
       <div class="modal-subject">
         <div class="modal-subj-date">
           <span class="title">{{ $t('message.subject') }}</span>
-          <span class="b-text">{{ active_message ? active_message.subject : '' }}</span>
+          <span class="b-text" v-html="active_message ? active_message.subject : ''"></span>
           <span class="b-text">{{
             active_message ? mess_date_format(active_message.created_at) : ''
           }}</span>
@@ -94,9 +94,8 @@
         </button>
       </div>
       <span class="title">{{ $t('message.text') }}</span>
-      <div class="modal-text">
-        {{ active_message ? active_message.text : '' }}
-      </div>
+      <span class="modal-text" v-html="`<p>${active_message ? active_message.text : ''}`">
+      </span>
     </b-modal>
   </div>
 </template>
@@ -296,14 +295,14 @@ export default {
   .modal-subj-date {
     display: flex;
     flex-direction: column;
-    .b-text{
-      font-weight: 600
+    .b-text {
+      font-weight: 600;
     }
   }
 }
-.modal-text {
+span.modal-text {
   padding-top: 5px;
-  //border: 1px solid $gray-lighter
+  white-space: pre-wrap;
 }
 span.title {
   color: $link;

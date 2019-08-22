@@ -62,6 +62,7 @@
             id="textarea"
             v-model="modalMessData.text"
             :placeholder="$t('message.text')"
+            wrap="hard"
             rows="3"
             max-rows="6"
           ></b-form-textarea>

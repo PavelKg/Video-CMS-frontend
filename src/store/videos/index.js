@@ -132,7 +132,7 @@ export default {
       }
     },
 
-    async LOAD_VIDEO_INFO_BY_UUID({state, commit, getters}, uuid) {
+    async LOAD_VIDEO_INFO_BY_UUID({getters, dispatch}, uuid) {
       const cid = getters.me.profile.company_id
       try {
         const result = await Api.video_info_by_uuid({cid, uuid})
@@ -142,7 +142,16 @@ export default {
           throw Error(`Error update role, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(err.response.data.message)
+        switch (err.response.data.statusCode) {
+          case 500:
+              throw Error(err.response.data.message)
+            break;
+          default:
+              console.log('videos error not 500 =', err.response)            
+              throw Error(err.response.data.message)
+            break;
+        }
+        
       }
     },
     async LOAD_VIDEO_THUMBNAIL({getters}, uuid) {
