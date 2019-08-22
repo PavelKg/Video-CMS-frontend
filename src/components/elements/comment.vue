@@ -109,6 +109,7 @@ export default {
   border-bottom: 1px solid #dcdcdc;
   justify-content: flex-start;
   padding: 5px;
+  align-items: stretch;
   .comment-data {
     display: flex;
     flex-direction: column;

@@ -24,7 +24,7 @@
               <span class="sub-title"
                 >{{ $t('videos.video_description') }}:</span
               >
-              <span class="value">{{ form.video_description }}</span>
+              <span class="value">{{ multilineText }}</span>
             </div>
             <template v-if="!isUser">
               <button @click="onSubtitles" class="button btn-grey">
@@ -118,6 +118,9 @@ export default {
     },
     isUser() {
       return this.me.profile.irole === 'user'
+    },
+    multilineText() {
+      return this.form.video_description
     }
   },
   components: {
@@ -131,7 +134,6 @@ export default {
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then((res) => {
-        console.log('res.video_output_file=', res.video_output_file)
         this.videoHasUrl = true
         this.form = {...this.form, ...res}
         this.videoUrl = res.video_output_file
@@ -181,8 +183,11 @@ export default {
   display: flex;
   min-width: 100%;
   flex-direction: column;
-  height: 300px;
+  //height: 300px;
   overflow-y: auto;
+  -webkit-overflow-y: auto;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .video-title {
@@ -218,6 +223,7 @@ export default {
       span.value {
         font-size: 0.9rem;
         color: $link;
+        white-space: pre-wrap;
       }
     }
     .button {

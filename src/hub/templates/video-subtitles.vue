@@ -50,6 +50,7 @@
         <b-form-textarea
           :placeholder="`${$t('videos.video_description')}`"
           v-model="form.video_description"
+          wrap="hard"
         ></b-form-textarea>
       </div>
       <div class="video-subtitles-buttons">
