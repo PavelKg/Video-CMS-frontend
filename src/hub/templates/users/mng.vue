@@ -1,83 +1,91 @@
 <template>
   <div class="user-operation">
-    <span>{{ $t(user_title) }}</span>
-    <b-form @submit="onSubmit">
-      <b-form-group id="input-group-id">
-        <div class="user-oper-id">
-          <template v-if="oper === 'edit'">
-            <span>{{ `${$t('users.user_id')}` }} : {{ mnUser.uid }} </span>
-          </template>
-          <template v-if="oper === 'add'">
-            <b-form-input
-              v-model="mnUser.uid"
-              :placeholder="`${$t('users.user_id')}`"
-              required
-            ></b-form-input>
-            <button class="button btn-grey" @click="genUserId">
-              {{ `${$t('label.auto')}` }}
-            </button>
-          </template>
-        </div>
-      </b-form-group>
-      <b-form-group id="input-group-fullname">
-        <b-form-input
-          v-model="mnUser.fullname"
-          :placeholder="`${$t('users.user_fullname')}`"
-          required
-        ></b-form-input>
-      </b-form-group>
-      <b-form-group id="input-group-gid">
-        <b-form-select v-model="mnUser.gid" :options="group_options">
-          <template slot="first">
-            <option :value="null"
-              ><b>{{ `${$t('label.group_is_not_selected')}` }}</b></option
-            >
-          </template>
-        </b-form-select>
-      </b-form-group>
-      <b-form-group id="input-group-rid">
-        <b-form-select v-model="mnUser.rid" :options="role_options" required>
-          <template slot="first">
-            <option :value="null" disabled>{{
-              `${$t('label.role_is_not_selected')}`
-            }}</option>
-          </template>
-        </b-form-select>
-      </b-form-group>
-      <b-form-group id="input-group-email">
-        <b-form-input
-          v-model="mnUser.email"
-          :placeholder="`${$t('users.user_email')}`"
-          required
-        ></b-form-input>
-      </b-form-group>
-      <b-form-group id="input-group-password">
-        <b-form-input
-          v-model="mnUser.password"
-          type="password"
-          :placeholder="`${$t('users.password')}`"
-          :required="oper === 'add'"
-        ></b-form-input>
-      </b-form-group>
-      <b-form-group id="input-group-conf-password">
-        <b-form-input
-          v-model="mnUser.confPassword"
-          type="password"
-          :placeholder="`${$t('users.conf_password')}`"
-          :required="oper === 'add' && mnUser.password !== ''"
-        ></b-form-input>
-      </b-form-group>
-      <template v-if="oper === 'edit'"> </template>
-      <template v-else-if="oper === 'add'"> </template>
-      <div class="user-operation-button-zone">
-        <button type="submit" class="button btn-blue">
-          {{ `${$t('label.save')}` }}
-        </button>
+    <template v-if="userNotFound">
+      <div class="user-not-found">
+        <span>Sorry. User is not found!!!</span><br />
         <button @click="onCancel" class="button btn-braun">
-          {{ `${$t('label.cancel')}` }}
+          {{ `${$t('label.back')}` }}
         </button>
       </div>
-    </b-form>
+    </template>
+    <template v-else>
+      <span>{{ $t(user_title) }}</span>
+      <b-form @submit="onSubmit">
+        <b-form-group id="input-group-id">
+          <div class="user-oper-id">
+            <template v-if="oper === 'edit'">
+              <span>{{ `${$t('users.user_id')}` }} : {{ mnUser.uid }} </span>
+            </template>
+            <template v-if="oper === 'add'">
+              <b-form-input
+                v-model="mnUser.uid"
+                :placeholder="`${$t('users.user_id')}`"
+                required
+              ></b-form-input>
+              <button class="button btn-grey" @click="genUserId">
+                {{ `${$t('label.auto')}` }}
+              </button>
+            </template>
+          </div>
+        </b-form-group>
+        <b-form-group :disabled="isUserDelete" id="input-group-fullname">
+          <b-form-input
+            v-model="mnUser.fullname"
+            :placeholder="`${$t('users.user_fullname')}`"
+            required
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group :disabled="isUserDelete" id="input-group-gid">
+          <b-form-select v-model="mnUser.gid" :options="group_options">
+            <template slot="first">
+              <option :value="null"
+                ><b>{{ `${$t('label.group_is_not_selected')}` }}</b></option
+              >
+            </template>
+          </b-form-select>
+        </b-form-group>
+        <b-form-group :disabled="isUserDelete" id="input-group-rid">
+          <b-form-select v-model="mnUser.rid" :options="role_options" required>
+            <template slot="first">
+              <option :value="null" disabled>{{
+                `${$t('label.role_is_not_selected')}`
+              }}</option>
+            </template>
+          </b-form-select>
+        </b-form-group>
+        <b-form-group :disabled="isUserDelete" id="input-group-email">
+          <b-form-input
+            v-model="mnUser.email"
+            :placeholder="`${$t('users.user_email')}`"
+            required
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group :disabled="isUserDelete" id="input-group-password">
+          <b-form-input
+            v-model="mnUser.password"
+            type="password"
+            :placeholder="`${$t('users.password')}`"
+            :required="oper === 'add'"
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group :disabled="isUserDelete" id="input-group-conf-password">
+          <b-form-input
+            v-model="mnUser.confPassword"
+            type="password"
+            :placeholder="`${$t('users.conf_password')}`"
+            :required="oper === 'add' && mnUser.password !== ''"
+          ></b-form-input>
+        </b-form-group>
+        <div class="user-operation-button-zone">
+          <button v-if="!isUserDelete" type="submit" class="button btn-blue">
+            {{ `${$t('label.save')}` }}
+          </button>
+          <button @click="onCancel" class="button btn-braun">
+            {{ `${$t('label.back')}` }}
+          </button>
+        </div>
+      </b-form>
+    </template>
   </div>
 </template>
 
@@ -97,16 +105,19 @@ export default {
         gid: null,
         rid: null,
         email: '',
-        password: null
+        password: null,
+        deleted_at: ''
       },
       group_options: [],
-      role_options: []
+      role_options: [],
+      userNotFound: false
     }
   },
   methods: {
     onCancel(evt) {
       evt.preventDefault()
-      this.$router.go(-1)
+      //this.$router.go(-1)
+      this.$emit('contentElementClick', '/hub/users')
     },
     save_click() {},
     genUserId(evt) {
@@ -137,9 +148,20 @@ export default {
     const cid = this.me.profile.company_id
 
     if (this.oper === 'edit') {
-      this.$store.dispatch('LOAD_USER_INFO', {cid, uid}).then((res) => {
-        this.mnUser = {...res}
-      })
+      this.$store.dispatch('LOAD_USER_INFO', {cid, uid}).then(
+        (res) => {
+          this.mnUser = {...res}
+          if (this.mnUser.gid === '') {
+            this.mnUser.gid = null
+          }
+          if (this.mnUser.rid === '') {
+            this.mnUser.rid = null
+          }
+        },
+        (error) => {
+          this.userNotFound = true
+        }
+      )
     } else {
       const query = this.$route.query
       if (query) {
@@ -150,6 +172,12 @@ export default {
     }
 
     this.$store.dispatch('LOAD_GROUPS', cid).then((res) => {
+      const isExistGid = this.groups.find((group) => {
+        return group.gid === this.mnUser.gid && !Boolean(group.deleted_at)
+      })
+      if (!isExistGid) {
+        this.mnUser.gid = null
+      }
       this.$store.commit('SET_GROUPS_IS_LOADING', false)
       this.group_options = this.groups
         .filter((group) => !Boolean(group.deleted_at))
@@ -163,18 +191,21 @@ export default {
         .map((item) => {
           return {value: item.rid, text: item.name}
         })
+      const isExistRid = this.roles.find((role) => {
+        return role.rid === this.mnUser.rid && !Boolean(role.deleted_at)
+      })
+      if (!isExistRid) {
+        this.mnUser.rid = null
+      }
     })
   },
   computed: {
-    ...mapGetters([
-      'userMenuActiveItem',
-      'user_selected',
-      'groups',
-      'roles',
-      'me'
-    ]),
+    ...mapGetters(['groups', 'roles', 'me']),
     user_title() {
       return `users.oper_title_${this.oper}`
+    },
+    isUserDelete() {
+      return Boolean(this.mnUser.deleted_at)
     }
   }
 }
@@ -225,5 +256,13 @@ export default {
       margin-right: 10px;
     }
   }
+}
+.user-not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 30px;
+  font-size: 1.2rem
 }
 </style>
