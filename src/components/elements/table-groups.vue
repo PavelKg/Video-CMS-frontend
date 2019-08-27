@@ -16,6 +16,7 @@
           :value="row.item.gid"
           v-model="groups_selected"
           :disabled="row.item.deleted_at !== ''"
+          class="truncate-text"
           >{{ row.item.name }}
         </b-form-checkbox>
       </template>
@@ -188,6 +189,12 @@ export default {
 .mng-column {
   display: flex;
   justify-content: space-around;
+}
+
+.truncate-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .groups-mng-panel {

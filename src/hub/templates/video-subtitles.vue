@@ -47,6 +47,7 @@
           :placeholder="`${$t('videos.tag')}`"
           v-model="form.video_tag"
         ></b-form-input>
+        <multiselect v-model="value" :options="options"></multiselect>
         <b-form-textarea
           :placeholder="`${$t('videos.video_description')}`"
           v-model="form.video_description"
@@ -80,6 +81,8 @@ export default {
       dataUpdated: false,
       file: '',
       imagePreview: null,
+      value: null,
+      options: ['list', 'of', 'options'],
       form: {
         video_uuid: '',
         video_thumbnail: '',

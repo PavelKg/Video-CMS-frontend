@@ -88,7 +88,11 @@ export default new Router({
       component: Hub,
       beforeEnter: ifAuthenticated,
       children: [
-        {path: 'videos', component: videos, meta: {menuItem: '/hub/videos'}},
+        {
+          path: 'videos',
+          component: videos,
+          meta: {menuItem: '/hub/videos'}
+        },
         {
           path: 'videos_player/uuid/:uuid',
           component: videos_player,
@@ -97,37 +101,45 @@ export default new Router({
         {
           path: 'videos_upload',
           component: videos_upload,
-          meta: {menuItem: '/hub/videos'}
+          meta: {menuItem: '/hub/videos', notForUser: 'true'}
         },
         {
           path: 'videos_subtitles/uuid/:uuid',
           component: videos_subtitles,
-          meta: {menuItem: '/hub/videos'}
+          meta: {menuItem: '/hub/videos', notForUser: 'true'}
         },
-        {path: 'users', component: users, meta: {menuItem: '/hub/users'}},
+        {
+          path: 'users',
+          component: users,
+          meta: {menuItem: '/hub/users', notForUser: 'true'}
+        },
         {
           path: 'users_add',
           component: users_add,
-          meta: {menuItem: '/hub/users'},
+          meta: {menuItem: '/hub/users', notForUser: 'true'},
           props: {oper: 'add'}
         },
         {
           path: 'users_edit/uid/:uid',
           component: users_edit,
-          meta: {menuItem: '/hub/users'},
+          meta: {menuItem: '/hub/users', notForUser: 'true'},
           props: {oper: 'edit'}
         },
-        {path: 'groups', component: groups, meta: {menuItem: '/hub/groups'}},
+        {
+          path: 'groups',
+          component: groups,
+          meta: {menuItem: '/hub/groups', notForUser: 'true'}
+        },
         {
           path: 'groups_add',
           component: groups_add,
-          meta: {menuItem: '/hub/groups'},
+          meta: {menuItem: '/hub/groups', notForUser: 'true'},
           props: {oper: 'add'}
         },
         {
           path: 'groups_edit/gid/:gid',
           component: groups_edit,
-          meta: {menuItem: '/hub/groups'},
+          meta: {menuItem: '/hub/groups', notForUser: 'true'},
           props: {oper: 'edit'}
         },
         {
@@ -135,20 +147,28 @@ export default new Router({
           component: messages,
           meta: {menuItem: '/hub/messages'}
         },
-        {path: 'roles', component: roles, meta: {menuItem: '/hub/roles'}},
+        {
+          path: 'roles',
+          component: roles,
+          meta: {menuItem: '/hub/roles', notForUser: 'true'}
+        },
         {
           path: 'roles_add',
           component: roles_add,
-          meta: {menuItem: '/hub/roles'},
+          meta: {menuItem: '/hub/roles', notForUser: 'true'},
           props: {oper: 'add'}
         },
         {
           path: 'roles_edit/rid/:rid',
           component: roles_edit,
-          meta: {menuItem: '/hub/roles'},
+          meta: {menuItem: '/hub/roles', notForUser: 'true'},
           props: {oper: 'edit'}
         },
-        {path: 'screen', component: screen, meta: {menuItem: '/hub/screen'}},
+        {
+          path: 'screen',
+          component: screen,
+          meta: {menuItem: '/hub/screen', notForUser: 'true'}
+        },
         {path: 'pageNotFound', component: NotFoundComponent}
       ]
     },

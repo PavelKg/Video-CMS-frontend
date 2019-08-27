@@ -19,10 +19,10 @@
       head-variant="dark"
     >
       <template slot="uid" slot-scope="item"
-        ><a @click="updUser(item.item)" href="#">{{ item.item.uid }}</a>
+        ><a @click="updUser(item.item)" href="#" ><p class="truncate-text">{{ item.item.uid }}</p></a>
       </template>
       <template slot="fullname" slot-scope="item"
-        ><div class="name-column">{{ item.item.fullname }}</div>
+        ><p class="truncate-text">{{ item.item.fullname }}</p>
       </template>
     </b-table>
     <div class="users-mng-pag">
@@ -102,12 +102,15 @@ export default {
     }
   }
 }
-.name-column {
-  display: flex;
-  justify-content: center;
-}
+
 .users-mng-pag {
   display: flex;
   justify-content: flex-end;
+}
+
+.truncate-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

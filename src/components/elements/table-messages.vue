@@ -21,6 +21,7 @@
             :value="row.item.mid"
             v-model="messages_selected"
             :disabled="Boolean(row.item.deleted_at)"
+            class="truncate-text"
           >
           </b-form-checkbox>
         </div>
@@ -34,18 +35,18 @@
         </div>
       </template>
       <template slot="cp_uid" slot-scope="item">
-        <div class="date-column">
+        <p class="date-column truncate-text">
           {{ item.item.cp_uid }}
-        </div>
+        </p>
       </template>
       <template slot="created_at" slot-scope="item">
-        <div class="date-column">
+        <p class="date-column truncate-text">
           {{ mess_date_format(item.item.created_at) }}
-        </div>
+        </p>
       </template>
       <template slot="subject" slot-scope="item">
         <a href="#" @click="showMessageModal(item.item)">
-          {{ item.item.subject }}
+          <p class="truncate-text">{{ item.item.subject }}</p>
         </a>
       </template>
     </b-table>
@@ -83,19 +84,30 @@
     >
       <div class="modal-subject">
         <div class="modal-subj-date">
-          <span class="title">{{ $t('message.subject') }}</span>
-          <span class="b-text" v-html="active_message ? active_message.subject : ''"></span>
-          <span class="b-text">{{
-            active_message ? mess_date_format(active_message.created_at) : ''
-          }}</span>
+          <div class="subject-title-row">
+            <span class="title">{{ $t('message.subject') }}</span>
+            <button class="button btn-grey" @click="replyToSender">
+              {{ $t('label.reply') }}
+            </button>
+          </div>
+
+          <p
+            class="b-text"
+            v-html="active_message ? active_message.subject : ''"
+          ></p>
+          <p
+            class="b-text"
+            v-html="
+              active_message ? mess_date_format(active_message.created_at) : ''
+            "
+          ></p>
         </div>
-        <button class="button btn-grey" @click="replyToSender">
-          {{ $t('label.reply') }}
-        </button>
       </div>
       <span class="title">{{ $t('message.text') }}</span>
-      <span class="modal-text" v-html="`<p>${active_message ? active_message.text : ''}`">
-      </span>
+      <p
+        class="b-text"
+        v-html="`${active_message ? active_message.text : ''}`"
+      ></p>
     </b-modal>
   </div>
 </template>
@@ -201,13 +213,13 @@ export default {
         {
           key: 'mid',
           label: '',
-          thStyle: {width: '50px !important', 'text-align': 'center'}
+          thStyle: {width: '2em !important', 'text-align': 'center'}
         },
         {
           label: '#',
           key: 'starred',
           sortable: true,
-          thStyle: {width: '50px !important'}
+          thStyle: {width: '3.5rem !important'}
         },
         {
           key: 'subject',
@@ -239,6 +251,12 @@ export default {
 @import '../../assets/styles';
 .date-column {
   text-align: right;
+}
+
+.truncate-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .star-place {
@@ -286,6 +304,12 @@ export default {
   }
 }
 
+.b-text {
+  display: block;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  padding-top: 5px;
+}
 .modal-subject {
   display: flex;
   border-bottom: 1px solid $gray-lighter;
@@ -295,18 +319,18 @@ export default {
   .modal-subj-date {
     display: flex;
     flex-direction: column;
-    .b-text {
-      font-weight: 600;
+    width: 100%;
+    .subject-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   }
-}
-span.modal-text {
-  padding-top: 5px;
-  white-space: pre-wrap;
 }
 span.title {
   color: $link;
   padding-bottom: 3px;
+  white-space: pre-wrap;
 }
 
 @media screen and (max-width: 875px) {
