@@ -44,7 +44,7 @@
           @change="onPeriodState"
         ></b-form-select>
       </div>
-      <div class="video-data-filter-acc">
+      <div v-if="!isUser" class="video-data-filter-acc">
         <b-form-radio-group
           id="btn-filer-public"
           v-model="public_selected"
@@ -63,19 +63,38 @@
         v-for="vItem in videos_on_page"
         :key="vItem.video_uuid"
         :face_uuid="vItem.video_uuid"
+        :face_public="vItem.video_public"
         v-on:activateContent="activateContent"
       ></videoPrev>
     </div>
     <div class="videos-mng-panel">
       <div class="admin-mng-panel" v-if="isAdmin">
         <span>{{ $t('label.in_page') }}:</span>
-        <a href="#" id="selectAll" @click="toggleAll">{{
+        <a href="#" id="selectAll" @click="toggleAll('selectAll')">{{
           $t('label.select_all')
         }}</a>
         <span>|</span>
-        <a href="#" id="deselectAll" @click="toggleAll">{{
-          $t('label.deselect_all')
-        }}</a>
+        <a
+          href="#"
+          id="deselectAll"
+          @click="toggleAll('deselectAll')"
+          :class="{isDisabled: videos_selected.length === 0}"
+          >{{ $t('label.deselect_all') }}</a
+        >
+        <button
+          class="button btn-gray"
+          @click="onPublicSelected"
+          :disabled="!hasSelected"
+        >
+          {{ $t('label.public') }}
+        </button>
+        <button
+          class="button btn-gray"
+          @click="onPrivateSelected"
+          :disabled="!hasSelected"
+        >
+          {{ $t('label.private') }}
+        </button>
         <button
           class="button btn-orange"
           @click="onDelete"
@@ -87,7 +106,7 @@
       <div class="videos-mng-page">
         <b-pagination
           :value="currentPage"
-          @change="onPaggin"
+          @change="setPage"
           :total-rows="videos_count"
           :per-page="perPage"
           align="left"
@@ -102,6 +121,7 @@
 <script>
 import {mapGetters} from 'vuex'
 import videoPrev from '@/components/elements/video-face'
+//import {Promise} from 'q'
 
 export default {
   name: 'video-catalog',
@@ -121,10 +141,24 @@ export default {
         year_to: 2019,
         month_from: 1,
         month_to: 12
-      }
+      },
+      active_video_page: 1
     }
   },
   created() {
+    this.$store.commit('CLEAR_VIDEO_SELECTED')
+    const query = this.$route.query
+    this.updateProc(query)
+
+    // this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
+    // this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
+
+    // this.$store.dispatch('LOAD_VIDEO_LIST').then(() => {
+    //   this.active_video_page = this.$route.query.page
+    //     ? this.$route.query.page
+    //     : 1
+    // })
+
     let curr = new Date()
 
     this.period_filter.year_to = curr.getFullYear()
@@ -133,23 +167,36 @@ export default {
 
     this.period_filter.year_from = curr.getFullYear()
     this.period_filter.month_from = curr.getMonth() + 1
-
   },
+  mounted() {},
   methods: {
+    changePublicStatus(val) {
+      const value = val
+      const chanded = this.videos_selected.map(async (video_uuid) => {
+        try {
+          await this.$store.dispatch('UPDATE_VIDEO_PUBLIC_STATUS', {
+            uuid: video_uuid,
+            value
+          })
+        } catch (error) {}
+      })
+
+      Promise.all(chanded).then(() => {
+        //this.$store.dispatch('LOAD_VIDEO_LIST')
+        //this.onPublicState(this.public_selected)
+      })
+    },
     placeholder: () => $t('message.key_search'),
     activateContent(key) {
       this.$emit('contentElementClick', key)
     },
     add_new_video() {
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.videos.subItems.video_upload'
-      )
+      this.activateContent('/hub/videos_upload')
     },
-    toggleAll(env) {
-      const action = env.target['id']
+    toggleAll(action) {
+      //const action = env.target['id']
       if (action === 'selectAll') {
-        this.video_list.forEach(element => {
+        this.videos_on_page.forEach((element) => {
           this.$store.commit('SET_VIDEO_SELECTED', element.video_uuid)
         })
       } else {
@@ -157,30 +204,83 @@ export default {
       }
     },
     onPublicState(new_state) {
-      this.$store.commit('SET_VIDEO_PUBLIC', new_state)
-      this.setPage(1)
-      this.$store.dispatch('LOAD_VIDEO_LIST')
+      const publicState = new_state
+      const page = 1
+      this.updatePageByFilters({publicState, page})
     },
     onPeriodState() {
-      this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
-      this.setPage(1)
-      this.$store.dispatch('LOAD_VIDEO_LIST')
+      const {year_from, year_to, month_from, month_to} = this.period_filter
+      const from = `${year_from}-${('0' + month_from).slice(-2)}`
+      const to = `${year_to}-${('0' + month_to).slice(-2)}`
+      this.updatePageByFilters({from, to})
     },
     onDelete() {
-      this.$store.dispatch('DELETE_VIDEO').then(res => {
+      this.$store.dispatch('DELETE_VIDEO').then((res) => {
         this.$store.dispatch('LOAD_VIDEO_LIST')
       })
     },
-    onPaggin(page) {
-      this.setPage(page)
+    onPrivateSelected() {
+      this.changePublicStatus('private')
     },
+    onPublicSelected() {
+      this.changePublicStatus('public')
+    },
+    // onPaggin(page) {
+    //   this.setPage(page)
+    // },
     setPage(num) {
-      this.$store.commit('SET_ACTIVE_VIDEO_PAGE', num)
-      this.$store.dispatch('SAVE_ACTIVE_VIDEO_PAGE')
+      const page = num
+      this.updatePageByFilters({page})
+    },
+    updatePageByFilters(params) {
+      let sendQuery = {...this.$route.query}
+      if (typeof params === 'object') {
+        for (let param in params) {
+          sendQuery[param] = params[param]
+        }
+      } else {
+      }
+      this.toggleAll('deselectAll')
+      this.$router.push({path: '/hub/videos', query: {...sendQuery}})
+    },
+    updateProc(query) {
+      for (const key in query) {
+        switch (key) {
+          case 'publicState':
+            this.public_selected = query[key]
+            break
+          case 'from':
+            const _date_from = query[key].split('-')
+            this.period_filter.year_from = _date_from[0]
+            this.period_filter.month_from = +_date_from[1]
+            break
+          case 'to':
+            const _date_to = query[key].split('-')
+            this.period_filter.year_to = _date_to[0]
+            this.period_filter.month_to = +_date_to[1]
+            break
+          default:
+            break
+        }
+      }
+      this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
+      this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
+      this.$store
+        .dispatch('LOAD_VIDEO_LIST')
+        .then(() => (this.active_video_page = query.page ? query.page : 1))
     }
   },
   components: {
     videoPrev
+  },
+  watch: {
+    video_list(new_val, old_val) {},
+    $route(to, from) {
+      this.updateProc(to.query)
+      if (to.query.page) {
+        this.active_video_page = to.query.page
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -188,10 +288,12 @@ export default {
       'me',
       'isVideosListLoading',
       'isVideosDeleting',
-      'videos_selected',
-      'active_video_page'
+      'videos_selected'
     ]),
-    currentPage(){
+    isUser() {
+      return this.me.profile.irole === 'user'
+    },
+    currentPage() {
       return this.active_video_page
     },
     videos_count() {
@@ -211,18 +313,20 @@ export default {
       return this.me.profile.company_name
     },
     isAdmin() {
-      return this.me.profile.irole === 'admin'
+      return (
+        this.me.profile.irole === 'admin' || this.me.profile.irole === 'super'
+      )
     },
     years_to() {
       const _from = this.period_filter.year_from
-      return this.years.filter(year => year >= _from)
+      return this.years.filter((year) => year >= _from)
     },
     month_to() {
       const _month_from =
         this.period_filter.year_from === this.period_filter.year_to
           ? this.period_filter.month_from
           : 1
-      return this.months.filter(month => month >= _month_from)
+      return this.months.filter((month) => month >= _month_from)
     }
   }
 }
@@ -283,7 +387,6 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   overflow: auto;
-  //align-content: flex-end;
   justify-content: flex-start;
   span {
     position: absolute;
@@ -296,13 +399,20 @@ export default {
   display: flex;
   align-items: center;
   margin-top: 15px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   .admin-mng-panel {
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    .button {
+      margin-right: 10px;
+    }
   }
   .videos-mng-page {
     display: flex;
-    margin-left: auto;
+    //margin-left: auto;
     > * {
       margin-bottom: 0;
     }
@@ -310,5 +420,16 @@ export default {
   a {
     padding: 0 10px;
   }
+}
+.isDisabled {
+  //cursor: not-allowed;
+  opacity: 0.5;
+  cursor: unset;
+}
+.isDisabled > a {
+  color: currentColor;
+  display: inline-block; /* For IE11/ MS Edge bug */
+  pointer-events: none;
+  text-decoration: none;
 }
 </style>

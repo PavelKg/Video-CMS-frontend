@@ -33,13 +33,10 @@
           <span class="star" :class="{selected: data.item.starred}"></span>
         </div>
       </template>
-      <template slot="sender_uid" slot-scope="item">
+      <template slot="cp_uid" slot-scope="item">
         <div class="date-column">
-          {{ item.item.sender_uid }}
+          {{ item.item.cp_uid }}
         </div>
-      </template>
-      <template slot="receiver_uid" slot-scope="item">
-        <div class="date-column">{{ item.item.receiver_uid }} - {{ Type }}</div>
       </template>
       <template slot="created_at" slot-scope="item">
         <div class="date-column">
@@ -64,6 +61,7 @@
       <button
         class="button btn-orange"
         :disabled="messages_selected.length === 0"
+        @click="onDeleteMessages"
       >
         {{ $t('label.delete') }}
       </button>
@@ -85,18 +83,19 @@
     >
       <div class="modal-subject">
         <div class="modal-subj-date">
-          <span>{{ active_message ? active_message.subject : '' }}</span>
-          <span>{{
-            active_message ? mess_date_format(active_message.date) : ''
+          <span class="title">{{ $t('message.subject') }}</span>
+          <span class="b-text" v-html="active_message ? active_message.subject : ''"></span>
+          <span class="b-text">{{
+            active_message ? mess_date_format(active_message.created_at) : ''
           }}</span>
         </div>
         <button class="button btn-grey" @click="replyToSender">
           {{ $t('label.reply') }}
         </button>
       </div>
-      <div class="modal-text">
-        {{ active_message ? active_message.text : '' }}
-      </div>
+      <span class="title">{{ $t('message.text') }}</span>
+      <span class="modal-text" v-html="`<p>${active_message ? active_message.text : ''}`">
+      </span>
     </b-modal>
   </div>
 </template>
@@ -123,6 +122,7 @@ export default {
     Type(newval, oldval) {
       this.sortBy = 'created_at'
       this.sortDesc = false
+      this.messages_selected = []
     }
   },
   methods: {
@@ -146,8 +146,7 @@ export default {
     messageItem() {},
     mess_date_format(item) {
       return item
-        ? new Date(item)
-            .toISOString()
+        ? item
             .slice(0, 19)
             .replace(/\-/gi, '/')
             .replace(/T/gi, ' ')
@@ -158,27 +157,32 @@ export default {
       this.messages_selected =
         action === 'selectAll'
           ? this.messages_on_page
-              .filter(message => !Boolean(message.deleted_at))
-              .map(item => String(item.mid))
+              .filter((message) => !Boolean(message.deleted_at))
+              .map((item) => String(item.mid))
           : []
+    },
+    onDeleteMessages() {
+      const direction = this.Type
+      const deleted_messages = Promise.all(
+        this.messages_selected.map(async (mid) => {
+          return await this.$store.dispatch('MESSAGE_DEL', {direction, mid})
+        })
+      )
+      deleted_messages.then(
+        (res) => {
+          this.messages_selected = []
+          this.$emit('reloadMessages')
+        },
+        (error) => {
+          throw Error(error)
+        }
+      )
     }
   },
   computed: {
-    ...mapGetters(['messages', 'message_box_column', 'active_message', 'me']),
+    ...mapGetters(['messages', 'messages_box_column', 'active_message', 'me']),
     messages_by_types() {
-      let new_list = []
-      const {company_id: cid, uid} = this.me.profile
-      if (this.Type === 'outbox') {
-        new_list = this.messages.filter(
-          message => message.sender_uid === uid && message.sender_cid === cid
-        )
-      } else {
-        new_list = this.messages.filter(
-          message =>
-            message.receiver_uid === uid && message.receiver_cid === cid
-        )
-      }
-      return new_list
+      return this.messages
     },
     messages_count() {
       return this.messages_by_types ? this.messages_by_types.length : 0
@@ -190,7 +194,7 @@ export default {
       return this.messages_by_types.slice(begin, end)
     },
     columns() {
-      return this.message_box_column(this.Type)
+      return this.messages_box_column(this.Type)
     },
     fields() {
       return [
@@ -214,20 +218,10 @@ export default {
           tdClass: this.showColumn
         },
         {
-          key: 'receiver_uid',
+          key: 'cp_uid',
           sortable: true,
-          label: this.$t(`message.to`),
-          thStyle: {'text-align': 'center'},
-          thClass: this.Type === 'inbox' ? 'd-none' : '',
-          tdClass: this.Type === 'inbox' ? 'd-none' : ''
-        },
-        {
-          key: 'sender_uid',
-          sortable: true,
-          label: this.$t(`message.from`),
-          thStyle: {'text-align': 'center'},
-          thClass: this.Type === 'outbox' ? 'd-none' : '',
-          tdClass: this.Type === 'outbox' ? 'd-none' : ''
+          label: this.$t(`message.${this.columns[2]}`),
+          thStyle: {'text-align': 'center'}
         },
         {
           key: `created_at`,
@@ -301,10 +295,18 @@ export default {
   .modal-subj-date {
     display: flex;
     flex-direction: column;
+    .b-text {
+      font-weight: 600;
+    }
   }
 }
-.modal-text {
+span.modal-text {
   padding-top: 5px;
+  white-space: pre-wrap;
+}
+span.title {
+  color: $link;
+  padding-bottom: 3px;
 }
 
 @media screen and (max-width: 875px) {

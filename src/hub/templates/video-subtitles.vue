@@ -50,6 +50,7 @@
         <b-form-textarea
           :placeholder="`${$t('videos.video_description')}`"
           v-model="form.video_description"
+          wrap="hard"
         ></b-form-textarea>
       </div>
       <div class="video-subtitles-buttons">
@@ -82,27 +83,27 @@ export default {
       form: {
         video_uuid: '',
         video_thumbnail: '',
-        //'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=',
         video_title: '',
         video_tag: '',
         video_description: ''
-      }
+      },
+      active_video_uuid: ''
     }
   },
   created() {
+    this.active_video_uuid = this.$route.params.uuid
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
-      .then(res => {
+      .then((res) => {
         this.form = {...this.form, ...res}
         this.$store
           .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
-          .then(res => {
-            this.form = {...this.form, video_thumbnail: res.video_thumbnail}
+          .then((res) => {
+            this.form.video_thumbnail = res.video_thumbnail
           })
       })
   },
   mounted() {
-    console.log('itemprop=', this.itemprop)
     this.dragAndDropCapable = this.determineDragAndDropCapable()
 
     if (this.dragAndDropCapable) {
@@ -150,7 +151,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['active_video_uuid', 'isVideosInfoUpdating']),
+    ...mapGetters(['isVideosInfoUpdating']),
     i_thumbnail() {
       return Boolean(this.form.video_thumbnail)
         ? this.form.video_thumbnail
@@ -175,10 +176,15 @@ export default {
       evt.preventDefault()
       this.$refs.customInput.click()
     },
-    backToCatalog() {
-      this.$emit('contentElementClick', 'root.subItems.home')
+    backToCatalog(evt) {
+      evt.preventDefault()
+      Object.keys(this.form).forEach((key) => {
+        this.form[key] = ''
+      })
+      this.$emit('contentElementClick', '/hub/videos')
     },
-    onButtonReg() {
+    onButtonReg(evt) {
+      evt.preventDefault()
       this.$refs['subtitlesForm'].onSubmit
     },
     onSubmit(evt) {
@@ -198,7 +204,7 @@ export default {
           video_tag,
           video_description
         })
-        .then(res => {
+        .then((res) => {
           this.$store.dispatch('LOAD_VIDEO_LIST')
           this.dataUpdated = true
         })

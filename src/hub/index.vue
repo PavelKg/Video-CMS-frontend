@@ -11,11 +11,20 @@
     >
       <menuArea />
     </div>
-    <div class="body">
+    <div class="contents">
       <div class="content-zone">
-        <component :is="component" v-if="component" />
+        <router-view
+          v-on:contentElementClick="contentElementClick"
+          class="view"
+        />
       </div>
-      <b-modal v-model="modalErrorShow" size="sm" centered ok-only @change="onModalChange">
+      <b-modal
+        :visible="modalErrorShow"
+        size="sm"
+        centered
+        ok-only
+        @change="onModalChange"
+      >
         {{ $t(`${errors_message}`) }} !!!
       </b-modal>
     </div>
@@ -31,46 +40,48 @@ export default {
   name: 'super-page',
   data() {
     return {
-      component: null,
-      modalErrorShow: false
+      component: null
     }
   },
   components: {
     headerArea,
     menuArea
   },
-  watch: {
-    errors_isShow: function(newVal, oldVal) {
-      this.modalErrorShow = newVal
-    }
-  },
   created() {
+    this.$store.dispatch('LOAD_USER_MENU', this.me_irole).then((res) => {
+      this.$store.dispatch('LOAD_MENU_STATE')
+    })
+
     this.$store.commit('INIT_LANG')
   },
   mounted() {
-    this.loader()
-      .then(() => {
-        this.component = () => this.loader()
-      })
-      .catch(() => {
-        this.component = () => import('./templates/iface/user/content')
-      })
+    // this.loader()
+    //   .then(() => {
+    //     this.component = () => this.loader()
+    //   })
+    //   .catch(() => {
+    //     this.component = () => import('./templates/iface/user/content')
+    //   })
   },
   computed: {
     ...mapGetters([
       'windowsRect',
       'me_irole',
+      'userMenu',
       'errors_isShow',
       'errors_message'
     ]),
-    loader() {
-      return () => import(`./templates/iface/${this.me_irole}/content`)
-    },
+    // loader() {
+    //   return () => import(`./templates/iface/${this.me_irole}/content`)
+    // },
     isMenuVisible() {
       return this.$store.getters.userMenuVisible
     },
     isSmallScreen() {
       return this.windowsRect.width < this.windowsRect.tabletMaxWidth
+    },
+    modalErrorShow() {
+      return this.errors_isShow
     }
   },
   methods: {
@@ -78,8 +89,12 @@ export default {
       this.$store.commit('MENU_HIDE')
     },
     onModalChange(isVisible) {
-      if (!isVisible) {this.$store.commit('HIDE_MESSAGE_ERROR')}
-
+      if (!isVisible) {
+        this.$store.commit('HIDE_MESSAGE_ERROR')
+      }
+    },
+    contentElementClick(key) {
+      this.$store.dispatch('MENU_NAVIGATE', key)
     }
   }
 }
@@ -93,7 +108,7 @@ export default {
   position: fixed; /* Stay in place */
   width: 100%;
   height: 50px;
-  z-index: 1; /* Stay on top */
+  z-index: 10; /* Stay on top */
   top: 0; /* Stay at the top */
   left: 0;
 }
@@ -109,17 +124,14 @@ export default {
   padding-top: 10px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
-.body {
-  display: flex;
+.contents {
+  //display: flex;
   margin-left: 180px;
   margin-top: 50px;
-  flex-direction: column;
-  max-width: 930px;
+
   .content-zone {
-    display: flex;
-    //flex-grow: 10;
     overflow: auto;
-    background-color: $gray-lightest;
+    padding: 20px;
   }
 }
 
@@ -127,7 +139,7 @@ export default {
   .menu-zone {
     opacity: 0.95;
   }
-  .body {
+  .contents {
     margin-left: 0px;
   }
 }

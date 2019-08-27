@@ -1,7 +1,7 @@
 import Api from '@/api'
 
 const uuid = () =>
-  ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+  ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
     (
       c ^
       (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
@@ -54,9 +54,9 @@ export default {
           const act_item = JSON.parse(
             localStorage.getItem('vcms-activ-video-page')
           )
-          const _item = act_item ? act_item : ''
-
-          commit('SET_ACTIVE_VIDEO_PAGE', _item)
+          const _item = act_item ? act_item : 1
+          return _item
+          //commit('SET_ACTIVE_VIDEO_PAGE', _item)
         } catch (e) {
           localStorage.removeItem('vcms-activ-video-page')
         }
@@ -64,35 +64,35 @@ export default {
     },
     CLEAR_ACTIVE_VIDEO_PAGE: () =>
       localStorage.removeItem('vcms-activ-video-page'),
-    SAVE_ACTIVE_VIDEO_PAGE: ({state}) => {
+    SAVE_ACTIVE_VIDEO_PAGE: ({state}, num) => {
       localStorage.setItem(
         'vcms-activ-video-page',
-        JSON.stringify(state.active_video_page)
+        JSON.stringify(num)
       )
     },
 
     async UPLOAD_VIDEO_FILES({state, commit, getters}) {
       const cid = getters.me.profile.company_id
-      state.filesForUpload.isUploading = true
 
       const files = state.filesForUpload.list
-        .filter(file => !Boolean(file.uploaded))
-        .map(item => {
+        .filter((file) => !Boolean(file.uploaded) && !Boolean(file.isUploading))
+        .map((item) => {
           const {name, size, type} = item.file
           const {uuid} = item
           return {name, size, type, uuid}
         })
 
       try {
-        files.forEach(file => {
-          Api.getGcsSignedUrl(cid, file).then(res => {
+        files.forEach((file) => {
+          commit('SET_IS_UPLOADING_FILE', file.uuid)
+          Api.getGcsSignedUrl(cid, file).then((res) => {
             const {url, uuid} = res.data
             const {
               progress_handler,
               file: sFile
-            } = state.filesForUpload.list.find(item => item.uuid === uuid)
+            } = state.filesForUpload.list.find((item) => item.uuid === uuid)
             //isUploading = true
-            Api.upload_files(url, sFile, progress_handler).then(ures => {
+            Api.upload_files(url, sFile, progress_handler).then((ures) => {
               console.log('ures=', ures)
               Api.video_update_status({cid, uuid, value: 'uploaded'})
               // this add api to set state = uploaded
@@ -101,16 +101,15 @@ export default {
         })
       } catch (err) {
         console.log('upload_file_error: ', err)
-        state.filesForUpload.isUploading = false
       }
     },
 
     async LOAD_VIDEO_LIST({state, commit, getters}) {
       const cid = getters.me.profile.company_id
       commit('SET_STATUS_VIDEOS_LOADING', true)
-      let filter = `videos.deleted_at[isNull]:,videos.created_at[gt]:'${
+      let filter = `videos.deleted_at[isNull]:,videos.updated_at[gt]:'${
         state.videos.period[0]
-      }'::date,videos.created_at[lt]:'${state.videos.period[1]}'::date`
+      }'::date,videos.updated_at[lt]:'${state.videos.period[1]}'::date`
       filter +=
         state.videos.public === 'all'
           ? ''
@@ -133,7 +132,7 @@ export default {
       }
     },
 
-    async LOAD_VIDEO_INFO_BY_UUID({state, commit, getters}, uuid) {
+    async LOAD_VIDEO_INFO_BY_UUID({getters, dispatch}, uuid) {
       const cid = getters.me.profile.company_id
       try {
         const result = await Api.video_info_by_uuid({cid, uuid})
@@ -143,7 +142,16 @@ export default {
           throw Error(`Error update role, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(err.response.data.message)
+        switch (err.response.data.statusCode) {
+          case 500:
+              throw Error(err.response.data.message)
+            break;
+          default:
+              console.log('videos error not 500 =', err.response)            
+              throw Error(err.response.data.message)
+            break;
+        }
+        
       }
     },
     async LOAD_VIDEO_THUMBNAIL({getters}, uuid) {
@@ -211,7 +219,7 @@ export default {
 
       try {
         await Promise.all(
-          state.videos.selected.map(async uuid => {
+          state.videos.selected.map(async (uuid) => {
             console.log('state.videos.selected=', uuid)
             return await Api.video_delete({cid, uuid})
           })
@@ -231,7 +239,6 @@ export default {
     },
     SET_ACTIVE_VIDEO_PAGE(state, num) {
       state.active_video_page = num
-      console.log('state.active_video_page=', state.active_video_page)
     },
     SET_VIDEO_PERIOD(state, _period) {
       const {month_from, month_to, year_from, year_to} = _period
@@ -268,8 +275,20 @@ export default {
       })
       if (~uploaded_index) {
         state.filesForUpload.list[uploaded_index].uploaded = true
+        state.filesForUpload.list[uploaded_index].isUploading = false
       }
-      console.log('state.filesForUpload.list=', state.filesForUpload.list)
+    },
+    SET_IS_UPLOADING_FILE(state, uuid) {
+      const uploading_index = state.filesForUpload.list.findIndex(function(
+        item
+      ) {
+        if (item.uuid === uuid) {
+          return true
+        }
+      })
+      if (~uploading_index) {
+        state.filesForUpload.list[uploading_index].isUploading = true
+      }
     },
     DEL_UPLOAD_FILE(state, file_name) {
       const del_index = state.filesForUpload.list.findIndex(function(item) {
@@ -296,15 +315,13 @@ export default {
         state.videos.selected.push(uuid)
       }
     },
-    SET_VIDEO_PUBLIC_STATUS(state, {uuid, value}){
-      const ind = state.videos.list.findIndex(function(item){
+    SET_VIDEO_PUBLIC_STATUS(state, {uuid, value}) {
+      const ind = state.videos.list.findIndex(function(item) {
         return item.video_uuid === uuid
       })
       if (ind > -1) {
-        state.videos.list[ind].public = value
-      }      
-
-      console.log('state.videos.list[ind]=', state.videos.list[ind])
+        state.videos.list[ind].video_public = value
+      }
     },
     UNSET_VIDEO_SELECTED(state, uuid) {
       const ind = state.videos.selected.indexOf(uuid)
@@ -328,14 +345,14 @@ export default {
     }
   },
   getters: {
-    video_list: state =>
-      state.videos.list.filter(video => !Boolean(video.deleted_at)),
-    isVideosInfoUpdating: state => state.videos.isInfoUpdating,
-    isVideosListLoading: state => state.videos.isListLoading,
-    isVideosDeleting: state => state.videos.isDeleting,
-    videos_selected: state => state.videos.selected,
-    active_video_uuid: state => state.active_video_uuid,
-    active_video_page: state => state.active_video_page,
-    files_for_upload: state => state.filesForUpload.list
+    video_list: (state) =>
+      state.videos.list.filter((video) => !Boolean(video.deleted_at)),
+    isVideosInfoUpdating: (state) => state.videos.isInfoUpdating,
+    isVideosListLoading: (state) => state.videos.isListLoading,
+    isVideosDeleting: (state) => state.videos.isDeleting,
+    videos_selected: (state) => state.videos.selected,
+    active_video_uuid: (state) => state.active_video_uuid,
+    active_video_page: (state) => state.active_video_page,
+    files_for_upload: (state) => state.filesForUpload.list
   }
 }

@@ -18,6 +18,7 @@
     <div class="messages-tabs">
       <b-tabs
         v-model="tabIndex"
+        @input="changeTab"
         class="mytabs"
         active-tab-class="font-weight-bold text-success"
       >
@@ -27,7 +28,6 @@
           :title="`${tab.text}`"
           title-item-class="w-50"
           :title-link-class="linkClass(ind)"
-          @click="changeTab"
         >
         </b-tab>
       </b-tabs>
@@ -35,6 +35,7 @@
     <tableMessages
       :Type="selectedTabName"
       @addNewMessageByReplay="addNewMessageByReplay"
+      @reloadMessages="reloadMessages"
     />
     <b-modal
       v-model="isShowModalMessageAdd"
@@ -61,12 +62,17 @@
             id="textarea"
             v-model="modalMessData.text"
             :placeholder="$t('message.text')"
+            wrap="hard"
             rows="3"
             max-rows="6"
           ></b-form-textarea>
         </div>
         <div class="modal-buttons-zone">
-          <button class="button btn-blue" @click="onSubmitNewMess">
+          <button
+            class="button btn-blue"
+            @click="onSubmitNewMess"
+            :disabled="!isReadyToSend"
+          >
             {{ $t('label.send') }}
           </button>
           <button class="button btn-braun" @click="hideMessageModal">
@@ -101,12 +107,17 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('LOAD_MESSAGES')
+    this.reloadMessages()
     this.$store.dispatch('LOAD_MESSAGES_RECEIVERS')
   },
   methods: {
+    reloadMessages() {
+      this.$store.dispatch('LOAD_MESSAGES', {
+        direction: this.tabs[this.tabIndex].name
+      })
+    },
     changeTab(evt) {
-      this.$store.dispatch('LOAD_MESSAGES')
+      this.reloadMessages()
     },
     addNewMessage() {
       this.$store.commit('SET_ACTIVE_MESSAGE', null)
@@ -127,10 +138,10 @@ export default {
         imporant
       }
       this.$store.dispatch('MESSAGE_ADD', messData).then(
-        res => {
-          this.$store.dispatch('LOAD_MESSAGES')
+        (res) => {
+          this.reloadMessages()
         },
-        err => {
+        (err) => {
           console.log('err=', err)
         }
       )
@@ -138,8 +149,8 @@ export default {
     },
     showMessageModal() {
       if (this.active_message) {
-        const {receiver_uid, receiver_cid} = this.active_message
-        this.modalMessData.receiver = {uid: receiver_uid, cid: receiver_cid}
+        const {cp_uid, cp_cid} = this.active_message
+        this.modalMessData.receiver = {uid: cp_uid, cid: cp_cid}
       }
       this.isShowModalMessageAdd = true
     },
@@ -174,12 +185,19 @@ export default {
       return this.tabs[this.tabIndex].name
     },
     receivers() {
-      return this.message_receivers.map(receiver => {
+      return this.message_receivers.map((receiver) => {
         return {
           value: {uid: receiver.uid, cid: receiver.cid},
           text: receiver.uid
         }
       })
+    },
+    isReadyToSend() {
+      return (
+        this.modalMessData.subject.trim().length > 0 &&
+        this.modalMessData.text.trim().length > 0 &&
+        Boolean(this.modalMessData.receiver)
+      )
     }
   },
   components: {

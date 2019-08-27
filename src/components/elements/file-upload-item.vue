@@ -1,7 +1,7 @@
 <template>
   <div class="file-listing">
     {{ `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} Mb)` }}
-    <div v-if="!isUploading && value === 0" class="remove-container">
+    <div v-if="value === 0" class="remove-container">
       <a href="#" class="remove" @click="removeMe">{{ $t('label.remove') }}</a>
     </div>
     <b-progress
@@ -50,7 +50,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({isUploading: 'storeFilesIsUploading'})
+    // ...mapGetters({isUploading: 'videoIsUploading'})
   }
 }
 </script>

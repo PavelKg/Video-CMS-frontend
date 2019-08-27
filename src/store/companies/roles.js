@@ -24,11 +24,12 @@ export default {
         commit('SET_ROLES_IS_LOADING', false)
       }
     },
-    async LOAD_ROLE_DATA({commit}, payload) {
+    async LOAD_ROLE_INFO({commit}, payload) {
+      const {cid, rid} = payload
       try {
-        const result = await Api.role_data(payload)
+        const result = await Api.role_info(cid, rid)
         if (result.data && result.status === 200) {
-          commit('SET_ACTIVE_ROLE', result.data)
+          return result.data
         } else {
           throw Error('Error load role data')
         }
@@ -63,9 +64,8 @@ export default {
         throw Error(`Error update role: ${err.response.data.message}`)
       }
     },
-    async ROLE_DEL({commit, getters}, payload) {
+    async ROLE_DEL({commit, getters}, rid) {
       const cid = getters.me.profile.company_id
-      const {rid} = getters.role_selected
       try {
         const result = await Api.role_del({cid, rid})
         if (result.status === 204) {
@@ -90,8 +90,8 @@ export default {
     }
   },
   getters: {
-    roles: state => state.roles.list,
-    role_selected: state => state.roles.selected,
-    roles_is_list_loading: state => state.roles.isListLoading
+    roles: (state) => state.roles.list,
+    role_selected: (state) => state.roles.selected,
+    roles_is_list_loading: (state) => state.roles.isListLoading
   }
 }

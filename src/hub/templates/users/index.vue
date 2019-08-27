@@ -18,7 +18,10 @@
         <img src="@/assets/images/search_black.png" />
       </div>
     </div>
-    <UsersTable @contentElementClick="contentElementClick" @onContentError="onError" />
+    <UsersTable
+      @contentElementClick="contentElementClick"
+      @onContentError="onError"
+    />
   </div>
 </template>
 
@@ -43,8 +46,9 @@ export default {
   created() {
     this.$store
       .dispatch('LOAD_GROUPS', this.me.profile.company_id)
-      .then(res => {
-        const grpo = this.groups.map(item => {
+      .then((res) => {
+        this.$store.commit('SET_GROUPS_IS_LOADING', false)
+        const grpo = this.groups.map((item) => {
           return {value: item.gid, text: item.name}
         })
         this.group_options = [...this.group_options, ...grpo]
@@ -53,7 +57,10 @@ export default {
     this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)
 
     const params = {cid: this.me.profile.company_id}
-    this.$store.dispatch('LOAD_USERS', params)
+
+    this.$store
+      .dispatch('LOAD_USERS', params)
+      .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
   },
   methods: {
     onFilter() {
@@ -61,14 +68,12 @@ export default {
       if (this.selected_groups) {
         params.filter = `group_gid[eq]: '${this.selected_groups}'`
       }
-      this.$store.dispatch('LOAD_USERS', params)
+      this.$store
+        .dispatch('LOAD_USERS', params)
+        .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
     },
     addNewUser() {
-      this.$store.commit('SET_ACTIVE_USER', {
-        company_id: this.me.profile.company_id,
-        uid: null
-      })
-      this.$emit('contentElementClick', 'root.subItems.users.subItems.user_add')
+      this.contentElementClick(`/hub/users_add`)
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)

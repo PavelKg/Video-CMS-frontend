@@ -1,35 +1,38 @@
 <template>
   <div class="comment-row">
-    <div class="comment-data">
-      <div class="comment-top-zone">
+    <template v-if="isDeleted">
+      <span class="deleted_info">{{
+        $t('message.this_comment_has_been_deleted')
+      }}</span>
+    </template>
+    <template v-else>
+      <div class="comment-data">
         <span>{{ `${$t('comments.id')}: ${comment.comment_user_uid}` }}</span>
         <span>{{ created_date(comment.created_at) }}</span>
+        <span class="comment-text">{{ comment.comment_text }}</span>
       </div>
-      <div class="comment-bottom-zone">
-        <span>{{ comment.comment_text }}</span>
-      </div>
-    </div>
 
-    <div class="comment-mng" v-if="commentOwner">
-      <template v-if="!deleted">
-        <b-form-radio-group
-          size="sm"
-          :id="`radio-visible-set-${comment.comment_id}`"
-          :checked="visible_status(comment.comment_visible)"
-          @change="onChangeVisible"
-          :options="options"
-          :name="`radio-visible-set-${comment.comment_id}`"
-          class="radio-group-zone"
-        >
-        </b-form-radio-group>
-        <button @click="onDelete" class="button btn-orange">
-          {{ $t('label.delete') }}
-        </button>
-      </template>
-      <template v-else>
-        <span>{{ $t('comments.deleted') }}</span>
-      </template>
-    </div>
+      <div class="comment-mng">
+        <template v-if="!isUser">
+          <b-form-radio-group
+            size="sm"
+            :id="`radio-visible-set-${comment.comment_id}`"
+            :checked="visible_status(comment.comment_visible)"
+            @change="onChangeVisible"
+            :options="options"
+            stacked
+            :name="`radio-visible-set-${comment.comment_id}`"
+            class="radio-group-zone"
+          >
+          </b-form-radio-group
+        ></template>
+        <template v-if="commentOwner || !isUser">
+          <button @click="onDelete" class="button btn-orange">
+            {{ $t('label.delete') }}
+          </button>
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -39,9 +42,7 @@ import {mapGetters} from 'vuex'
 export default {
   name: 'comment-template',
   props: {comment: Object, video_uuid: String},
-  created() {
-    console.log('created=', this.comment)
-  },
+  created() {},
   data() {
     return {
       options: [
@@ -52,20 +53,22 @@ export default {
   },
   computed: {
     ...mapGetters(['me']),
-    deleted() {
+    isDeleted() {
       return Boolean(this.comment.deleted_at)
     },
     commentOwner() {
-      const {company_id, uid} = this.me.profile
+      const {company_id, uid, irole} = this.me.profile
       return this.comment.comment_user_uid === uid
+    },
+    isUser() {
+      return this.me.profile.irole === 'user'
     }
   },
   methods: {
     created_date(item) {
       return item
-        ? new Date(item)
-            .toISOString()
-            .slice(0, 16)
+        ? item
+            .slice(0, 20)
             .replace(/\-/gi, '/')
             .replace(/T/gi, ' ')
         : ''
@@ -91,26 +94,34 @@ export default {
 <style lang="scss">
 .radio-group-zone {
   .custom-radio {
-    //margin-right: 0;
+    margin-right: 0;
   }
 }
-
+.deleted_info {
+  font-size: 0.9em;
+  margin-right: 15px;
+  opacity: 0.7;
+  font-style: italic;
+}
 .comment-row {
   display: flex;
   flex-direction: row;
   border-bottom: 1px solid #dcdcdc;
   justify-content: flex-start;
   padding: 5px;
+  align-items: stretch;
   .comment-data {
-    .comment-top-zone {
-      span {
-        font-size: 0.9em;
-        margin-right: 15px;
+    display: flex;
+    flex-direction: column;
+    span {
+      font-size: 0.9em;
+      margin-right: 15px;
+      &.comment-text {
+        font-style: italic;
       }
     }
-    .comment-bottom-zone {
-      font-style: italic;
-    }
+
+
   }
   .comment-mng {
     margin-left: auto;

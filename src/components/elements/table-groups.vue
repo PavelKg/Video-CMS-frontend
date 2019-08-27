@@ -31,7 +31,7 @@
             <div class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
-                @click="delGroup(item.item)"
+                @click="delGroup(item.item.gid)"
               /></div
           ></template>
           <template v-else>
@@ -51,13 +51,15 @@
       }}</a>
       <button
         class="button btn-orange"
+        @click="delGroups"
         :disabled="groups_selected.length === 0"
       >
         {{ $t('label.delete') }}
       </button>
       <div class="groups-mng-pag">
         <b-pagination
-          v-model="currentPage"
+          :value="currentPage"
+          @change="setPage"
           :total-rows="groups_count"
           :per-page="perPage"
           align="left"
@@ -93,45 +95,73 @@ export default {
       modal_text: ''
     }
   },
+  watch: {
+    $route(newVal) {
+      this.currentPage = newVal.query.page ? newVal.query.page : 1
+    },
+    groups_is_loading(newVal, oldVal) {
+      if (!newVal) {
+        this.currentPage = this.$route.query.page ? this.$route.query.page : 1
+      }
+    }
+  },
   methods: {
     toggleAll(env) {
       const action = env.target['id']
       this.groups_selected =
         action === 'selectAll'
           ? this.groups_on_page
-              .filter(group => group.deleted_at === '')
-              .map(item => String(item.gid))
+              .filter((group) => group.deleted_at === '')
+              .map((item) => String(item.gid))
           : []
     },
     editGroup(group) {
-      this.$store.commit('SET_ACTIVE_GROUP', group)
-      const params = {
-        cid: this.me.profile.company_id,
-        filter: `group_gid[eq]:'${group.gid}'`
-      }
-      this.$store.dispatch('LOAD_USERS', params)
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.groups.subItems.group_edit'
-      )
+      this.$emit('contentElementClick', `/hub/groups_edit/gid/${group.gid}`)
     },
-    delGroup(group) {
-      this.$store.commit('SET_ACTIVE_GROUP', group)
-      this.$store.dispatch('GROUP_DEL').then(
-        res => {
-          this.$store.dispatch('LOAD_GROUPS', this.me.profile.company_id)
+    delGroup(group_gid) {
+      this.$store.dispatch('GROUP_DEL', group_gid).then(
+        (res) => {
+          this.$store
+            .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+            .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
         },
-        err => {
+        (err) => {
           this.$emit(
             'onContentError',
             `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`
           )
         }
       )
+    },
+    delGroups() {
+      const deleted_groups = this.groups_selected.map(async (group_gid) => {
+        try {
+          await this.$store.dispatch('GROUP_DEL', group_gid)
+          const ind = this.groups_selected.findIndex((gid) => gid === group_gid)
+          if (ind > -1) {
+            this.groups_selected.splice(ind, 1)
+          }
+        } catch (error) {
+          console.log('error')
+          this.$emit(
+            'onContentError',
+            `errors.${error.message.toLowerCase().replace(/\s/gi, '_')}`
+          )
+        }
+      })
+
+      Promise.all(deleted_groups).then(() => {
+        this.$store
+          .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+          .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
+      })
+    },
+    setPage(num) {
+      this.$emit('contentElementClick', `/hub/groups/?page=${num}`)
     }
   },
   computed: {
-    ...mapGetters(['groups', 'me']),
+    ...mapGetters(['groups', 'me', 'groups_is_loading']),
     groups_count() {
       return this.groups ? this.groups.length : 0
     },

@@ -59,28 +59,17 @@ export default {
   props: {gid: String},
   methods: {
     addNewUser() {
-      this.$store.commit('SET_ACTIVE_USER', {
-        company_id: this.me.profile.company_id,
-        uid: null,
-        gid: this.gid
-      })
-      this.$emit('contentElementClick', 'root.subItems.users.subItems.user_add')
+      this.$emit('contentElementClick', `/hub/users_add?gid=${this.gid}`)
     },
-    updUser(item) {
-      this.$store.commit('SET_ACTIVE_USER', {
-        company_id: this.me.profile.company_id,
-        ...item
-      })
-      this.$emit(
-        'contentElementClick',
-        'root.subItems.users.subItems.user_edit'
-      )
+    updUser(userInfo) {
+      const {cid, uid} = userInfo
+      this.$emit('contentElementClick', `/hub/users_edit/uid/${uid}`)
     }
   },
   computed: {
     ...mapGetters(['users_list', 'me']),
     active_users() {
-      return this.users_list.filter(user => !Boolean(user.deleted_at))
+      return this.users_list.filter((user) => !Boolean(user.deleted_at))
     },
     users_count() {
       return this.active_users ? this.active_users.length : 0

@@ -15,11 +15,11 @@ export default {
     }
   },
   actions: {
-    async LOAD_MESSAGES({commit}, payload = {}) {
-      const {filter} = payload
+    async LOAD_MESSAGES({commit}, payload ) {
+      const {direction, filter} = payload
       try {
         commit('SET_MESSAGES_IS_LOADING', true)
-        const result = await Api.messages(filter)
+        const result = await Api.messages(direction, filter)
         if (Array.isArray(result.data) && result.status === 200) {
           commit('SET_MESSAGES', result.data)
           commit('ORDER_MESSAGE', {sortBy: 'created_at', sortDesc: true})
@@ -64,6 +64,18 @@ export default {
         throw Error(`Error add new message: ${err.response.data.message}`)
       }
     },
+    async MESSAGE_DEL({commit, getters}, payload) {
+      try {
+        const result = await Api.message_del(payload)
+        if (result.status === 204) {
+          return Promise.resolve('Message deleted success')
+        } else {
+          throw Error(`Error del message, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(`Error del message: ${err.response.data.message}`)
+      }
+    },    
     async LOAD_MESSAGES_RECEIVERS({commit}, payload = {}) {
       const {filter} = payload
       try {
@@ -122,7 +134,7 @@ export default {
   getters: {
     messages: state => state.messages.list,
     active_message: state => state.messages.selected,
-    message_box_column: state => tab => state.columns_name[tab],
+    messages_box_column: state => tab => state.columns_name[tab],
     isShowModalMessageInfo: state => state.messages.isShowModalMessageInfo,
     message_receivers: state => state.messages.receivers
   }

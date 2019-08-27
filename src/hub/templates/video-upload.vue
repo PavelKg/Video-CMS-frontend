@@ -32,7 +32,10 @@
       <button
         class="button btn-blue"
         @click="submitFiles()"
-        :class="{'btn-disabled': notUploaded.length === 0}"
+        :class="{
+          'btn-disabled':
+            hasUpload.length === 0 || isProcessingUpload.length !== 0
+        }"
       >
         {{ $t('label.upload') }}
       </button>
@@ -56,8 +59,11 @@ export default {
   },
   computed: {
     ...mapGetters(['files_for_upload']),
-    notUploaded(){
-      return this.files_for_upload.filter(file => !Boolean(file.uploaded)&&!Boolean(file.isUploading))
+    hasUpload() {
+      return this.files_for_upload.filter((file) => !Boolean(file.uploaded))
+    },
+    isProcessingUpload() {
+      return this.files_for_upload.filter((file) => Boolean(file.isUploading))
     }
   },
   mounted() {
@@ -89,7 +95,7 @@ export default {
       this.$refs.fileform.addEventListener(
         'drop',
         function(e) {
-          const dropFiles = [...e.dataTransfer.files].filter(item =>
+          const dropFiles = [...e.dataTransfer.files].filter((item) =>
             /^video\/*/.test(item.type)
           )
           if (dropFiles.length) {
@@ -120,21 +126,14 @@ export default {
     },
     backToCatalog() {
       this.$store.commit('CLEAR_UPLOAD_FILES')
-      this.$emit('contentElementClick', 'root.subItems.home')
+      //this.$emit('contentElementClick', '/hub/videos')
+      this.$router.go(-1)
     },
     submitFiles() {
-      // let formData = new FormData()
-      // for (var i = 0; i < this.files.length; i++) {
-      //   let file = this.files[i]
-
-      //   formData.append('files[]', file, "Math.random().avi")
-      // }
-
-      //console.log('formData=', formData.files)
       this.$store
-        .dispatch('UPLOAD_VIDEO_FILES'/*, formData*/)
-        .then(res => {})
-        .catch(err => {})
+        .dispatch('UPLOAD_VIDEO_FILES' /*, formData*/)
+        .then((res) => {})
+        .catch((err) => {})
     }
   },
   components: {

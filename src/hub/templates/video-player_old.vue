@@ -1,38 +1,34 @@
 <template>
-  <div class="preview-video">
-    <template v-if="!videoHasUrl">
-      <div>Loading data from server...</div>
-    </template>
-    <template v-else>
+  <div>
+    <div v-if="!videoHasUrl">Sorry, file not found !!!</div>
+    <div v-else class="video-content">
       <span class="video-title">{{ form.video_title || 'Video Title' }}</span>
       <div class="video-content-zone">
-        <VideoPlayer :videourl="videoUrl" />
-        <div class="video-information">
-          <div>
-            <span class="title">{{ $t('videos.video_information') }}</span>
-            <div class="video-information-row">
-              <span class="sub-title ">{{ $t('videos.last_modified') }}:</span>
-              <span class="value wraped">{{ updated_at }}</span>
-            </div>
+        <div class="player-zone">
+          <video ref="videoPlayer" controls class="player-zone-content"></video>
+          <div class="video-information">
+            <div>
+              <span class="title">{{ $t('videos.video_information') }}</span>
+              <div class="video-information-row">
+                <span class="sub-title">{{ $t('videos.last_modified') }}:</span>
+                <span class="value">{{ updated_at }}</span>
+              </div>
 
-            <div class="video-information-row">
-              <span class="sub-title">{{ $t('videos.tag') }}:</span>
-              <span class="value">{{ form.video_tag }}</span>
-            </div>
+              <div class="video-information-row">
+                <span class="sub-title">{{ $t('videos.tag') }}:</span>
+                <span class="value">{{ form.video_tag }}</span>
+              </div>
 
-            <div class="video-information-row">
-              <span class="sub-title"
-                >{{ $t('videos.video_description') }}:</span
-              >
-              <span class="value">{{ multilineText }}</span>
-            </div>
-            <template v-if="!isUser">
+              <div class="video-information-row">
+                <span class="sub-title"
+                  >{{ $t('videos.video_description') }}:</span
+                >
+                <span class="value">{{ form.video_description }}</span>
+              </div>
               <button @click="onSubtitles" class="button btn-grey">
                 {{ $t('label.edit') }}
               </button>
-            </template>
-          </div>
-          <template v-if="!isUser">
+            </div>
             <div>
               <span class="sub-title">
                 {{ $t('videos.public_settings') }}:
@@ -46,7 +42,7 @@
               >
               </b-form-radio-group>
             </div>
-          </template>
+          </div>
         </div>
       </div>
       <div class="comment-input">
@@ -67,22 +63,21 @@
           :video_uuid="form.video_uuid"
         />
       </div>
-    </template>
+    </div>
   </div>
 </template>
 
 <script>
 import {mapGetters} from 'vuex'
-import VideoPlayer from '@/components/elements/videojs-player'
-//import VideoPlayer  from '@/components/elements/temp_player'
+import Hls from 'hls.js'
 import Comment from '@/components/elements/comment'
 
 export default {
-  name: 'p-video-player',
+  name: 'video-player',
   data() {
     return {
-      active_video_uuid: undefined,
-      videoUrl: '',
+      video: null,
+      hls: null,
       comment_text: '',
       form: {
         video_title: '',
@@ -96,18 +91,22 @@ export default {
         {text: this.$t('label.public'), value: 'public'},
         {text: this.$t('label.private'), value: 'private'}
       ],
-      comment_sending: false,
-      videoHasUrl: false
+      comment_sending: false
     }
   },
   computed: {
-    ...mapGetters(['comment_list', 'me']),
+    ...mapGetters(['active_video_uuid', 'comment_list']),
 
+    videoHasUrl() {
+      return true //this.active_video && this.active_video.hasOwnProperty('url')
+    },
+    isHlsSupported() {
+      return Hls.isSupported()
+    },
     updated_at() {
       return this.form.updated_at
-        ? this.form.updated_at
-            //new Date(this.form.updated_at)
-            //  .toISOString()
+        ? new Date(this.form.updated_at)
+            .toISOString()
             .slice(0, 19)
             .replace(/\-/gi, '/')
             .replace(/T/gi, ' ')
@@ -115,42 +114,35 @@ export default {
     },
     public_status() {
       return this.form.video_public ? 'public' : 'private'
-    },
-    isUser() {
-      return this.me.profile.irole === 'user'
-    },
-    multilineText() {
-      return this.form.video_description
     }
   },
   components: {
-    Comment,
-    VideoPlayer
+    Comment
   },
   created() {
-    const {uuid = null} = this.$route.params
-    this.active_video_uuid = uuid
-    console.log('uuid=', uuid)
+    this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
+  },
+  mounted() {
+    this.video = this.$refs.videoPlayer
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
-      .then(
-        (res) => {
-          this.videoHasUrl = true
-          this.form = {...this.form, ...res}
-          this.videoUrl = res.video_output_file
-          this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
-        },
-        (err) => {
-          this.$store.dispatch('MENU_NAVIGATE', '/hub/pageNotFound')
+      .then((res) => {
+        this.form = {...this.form, ...res}
+        if (Hls.isSupported()) {
+          this.hls = new Hls()
+          this.hls.loadSource(this.form.video_output_file)
+          this.hls.attachMedia(this.video)
+          this.hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {})
         }
-      )
+      })
   },
-  mounted() {},
   methods: {
     onSubtitles() {
+      this.$store.commit('SET_ACTIVE_VIDEO', this.form.video_uuid)
+      this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
       this.$emit(
         'contentElementClick',
-        `/hub/videos_subtitles/uuid/${this.active_video_uuid}`
+        '/hub/videos_subtitles'
       )
     },
     onChangePublic(val) {
@@ -179,20 +171,9 @@ export default {
 <style lang="scss">
 @import '../../assets/styles';
 
-.wraped {
-  padding: 0;
-  flex-grow: 2;
-}
-
 .comment-table {
-  display: flex;
-  min-width: 100%;
-  flex-direction: column;
-  //height: 300px;
-  overflow-y: auto;
-  -webkit-overflow-y: auto;
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
+  height: 300px;
+  overflow: auto;
 }
 
 .video-title {
@@ -203,37 +184,49 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  span.title {
-    font-weight: bold;
-    font-size: 1.3em;
-  }
-  .video-information {
-    width: 20rem;
-    //width: 220px;
+  align-content: stretch;
+  width: 100%;
+  align-items: flex-start;
+  .player-zone {
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    //flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-left: auto;
+    justify-content: space-between;
     flex-wrap: wrap;
-    .video-information-row {
+
+    video {
+      width: 100%;
+      max-width: 670px;
+      height: auto;
+      margin-right: 10px;
+    }
+    span.title {
+      font-weight: bold;
+      font-size: 1.3em;
+    }
+    .video-information {
+      max-width: 180px;
       display: flex;
       flex-direction: column;
-      flex-wrap: wrap;
-      margin-top: 10px;
-      span.sub-title {
-        font-weight: bold;
-        font-size: 1rem;
+      //flex-wrap: wrap;
+      justify-content: flex-startn;
+      .video-information-row {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        span.sub-title {
+          font-weight: bold;
+          font-size: 1rem;
+        }
+        span.value {
+          font-size: 0.9rem;
+          color: $link;
+        }
       }
-      span.value {
-        font-size: 0.9rem;
-        color: $link;
-        white-space: pre-wrap;
+      .button {
+        margin-top: auto;
+        margin: 10px 0;
       }
-    }
-    .button {
-      margin-top: auto;
-      margin: 10px 0;
     }
   }
 }
@@ -255,24 +248,5 @@ export default {
     margin-left: 10px;
   }
 }
-
-@media screen and (max-width: 610px) {
-  .video-content-zone {
-    flex-wrap: wrap;
-  }
-  .video-information {
-    align-self: stretch;
-    min-width: 100%;
-  }
-}
-
-@media screen and (max-width: 875px) and (min-width: 610px) {
-  .video-content-zone {
-    flex-wrap: wrap;
-  }
-  .video-information {
-    align-self: stretch;
-    min-width: 100%;
-  }
-}
+//}
 </style>
