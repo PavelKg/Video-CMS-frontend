@@ -73,6 +73,7 @@ export default {
           this.$store.dispatch('LOAD_ROLES', cid)
         },
         (err) => {
+          console.log('err.message=', err)
           this.$emit(
             'onContentError',
             `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`

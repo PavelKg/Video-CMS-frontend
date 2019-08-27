@@ -74,7 +74,7 @@ export default {
           throw Error(`Error update role, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(err.response.data.message)
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
       }
     }
   },

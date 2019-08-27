@@ -79,7 +79,6 @@ export default {
     },
     async GROUP_DEL({commit, getters}, gid) {
       const cid = getters.me.profile.company_id
-      //const {gid} = getters.group_selected
       try {
         const result = await Api.group_del({cid, gid})
         if (result.status === 204) {
@@ -88,8 +87,7 @@ export default {
           throw Error(`Error update group, status - ${result.status}`)
         }
       } catch (err) {
-        //console.log('err-ror',err.response)
-        throw Error(err.response.data.message)
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
       }
     }
   },
