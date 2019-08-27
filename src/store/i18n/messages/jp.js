@@ -37,7 +37,8 @@ export default {
     sent: '送信日時',
     text: '本文',
     tab_inbox: '受信トレイ',
-    tab_outbox: '送信トレイ'
+    tab_outbox: '送信トレイ',
+    this_comment_has_been_deleted: 'このコメントは削除されました。'
   },
   roles: {
     btn_add: '権限追加',
