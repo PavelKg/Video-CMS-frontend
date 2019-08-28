@@ -147,7 +147,6 @@ export default {
               throw Error(err.response.data.message)
             break;
           default:
-              console.log('videos error not 500 =', err.response)            
               throw Error(err.response.data.message)
             break;
         }

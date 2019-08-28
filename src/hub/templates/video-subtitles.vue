@@ -1,72 +1,81 @@
 <template>
   <div class="video-subtitles">
-    <span>{{ $t('label.edit_video') }}</span>
-    <span>{{ $t('label.thumb_image_upload') }}</span>
-    <form ref="subtitlesForm" @submit.prevent="onSubmit">
-      <div class="video-subtitles-thumbnail">
-        <div class="video-subtitles-thumbnail-left">
-          <b-img
-            v-bind="mainProps"
-            :src="i_thumbnail"
-            blank-color="#fff"
-            thumbnail
-            fluid-grow
-            ref="thumb-img"
-            alt="thumb_image"
-          ></b-img>
-          <div @click="deleteThumb" class="button btn-orange">
-            {{ $t('label.delete') }}
-          </div>
-        </div>
-        <div class="video-subtitles-thumbnail-right">
-          <form ref="fileform">
-            <div class="upload-files-border">
-              <span>{{ $t('label.drop_file_here') }}</span>
-              <span>{{ $t('label.or') }}</span>
-              <button @click="onSelectFile($event)" class="button btn-grey">
-                {{ $t('label.select_file') }}
-              </button>
-              <input
-                type="file"
-                id="file"
-                ref="customInput"
-                class="custom-file-input"
-                accept="image/*"
-                @change="addCustomFiles($event)"
-              />
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="video-subtitles-inputs">
-        <b-form-input
-          :placeholder="`${$t('videos.video_title')}`"
-          v-model="form.video_title"
-        ></b-form-input>
-        <b-form-input
-          :placeholder="`${$t('videos.tag')}`"
-          v-model="form.video_tag"
-        ></b-form-input>
-        <multiselect v-model="value" :options="options"></multiselect>
-        <b-form-textarea
-          :placeholder="`${$t('videos.video_description')}`"
-          v-model="form.video_description"
-          wrap="hard"
-        ></b-form-textarea>
-      </div>
-      <div class="video-subtitles-buttons">
-        <button
-          :disabled="isVideosInfoUpdating || dataUpdated"
-          type="submit"
-          class="button btn-blue"
-        >
-          {{ $t('label.registration') }}
-        </button>
+    <template v-if="videoNotFound">
+      <div class="video-not-found">
+        <span>Sorry. Video is not found!!!</span><br />
         <button @click="backToCatalog" class="button btn-braun">
           {{ dataUpdated ? $t('label.back') : $t('label.cancel') }}
         </button>
       </div>
-    </form>
+    </template>
+    <template v-else>
+      <span>{{ $t('label.edit_video') }}</span>
+      <span>{{ $t('label.thumb_image_upload') }}</span>
+      <form ref="subtitlesForm" @submit.prevent="onSubmit">
+        <div class="video-subtitles-thumbnail">
+          <div class="video-subtitles-thumbnail-left">
+            <b-img
+              v-bind="mainProps"
+              :src="i_thumbnail"
+              blank-color="#fff"
+              thumbnail
+              fluid-grow
+              ref="thumb-img"
+              alt="thumb_image"
+            ></b-img>
+            <div @click="deleteThumb" class="button btn-orange">
+              {{ $t('label.delete') }}
+            </div>
+          </div>
+          <div class="video-subtitles-thumbnail-right">
+            <form ref="fileform">
+              <div class="upload-files-border">
+                <span>{{ $t('label.drop_file_here') }}</span>
+                <span>{{ $t('label.or') }}</span>
+                <button @click="onSelectFile($event)" class="button btn-grey">
+                  {{ $t('label.select_file') }}
+                </button>
+                <input
+                  type="file"
+                  id="file"
+                  ref="customInput"
+                  class="custom-file-input"
+                  accept="image/*"
+                  @change="addCustomFiles($event)"
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="video-subtitles-inputs">
+          <b-form-input
+            :placeholder="`${$t('videos.video_title')}`"
+            v-model="form.video_title"
+          ></b-form-input>
+          <b-form-input
+            :placeholder="`${$t('videos.tag')}`"
+            v-model="form.video_tag"
+          ></b-form-input>
+          <b-form-textarea
+            :placeholder="`${$t('videos.video_description')}`"
+            v-model="form.video_description"
+            wrap="hard"
+          ></b-form-textarea>
+        </div>
+        <div class="video-subtitles-buttons">
+          <button
+            :disabled="isVideosInfoUpdating || dataUpdated"
+            type="submit"
+            class="button btn-blue"
+          >
+            {{ $t('label.registration') }}
+          </button>
+          <button @click="backToCatalog" class="button btn-braun">
+            {{ dataUpdated ? $t('label.back') : $t('label.cancel') }}
+          </button>
+        </div>
+      </form>
+    </template>
   </div>
 </template>
 
@@ -81,8 +90,6 @@ export default {
       dataUpdated: false,
       file: '',
       imagePreview: null,
-      value: null,
-      options: ['list', 'of', 'options'],
       form: {
         video_uuid: '',
         video_thumbnail: '',
@@ -90,21 +97,28 @@ export default {
         video_tag: '',
         video_description: ''
       },
-      active_video_uuid: ''
+      active_video_uuid: '',
+      videoNotFound: false
     }
   },
   created() {
     this.active_video_uuid = this.$route.params.uuid
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
-      .then((res) => {
-        this.form = {...this.form, ...res}
-        this.$store
-          .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
-          .then((res) => {
-            this.form.video_thumbnail = res.video_thumbnail
-          })
-      })
+      .then(
+        (res) => {
+          this.form = {...this.form, ...res}
+          this.$store
+            .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
+            .then((res) => {
+              this.form.video_thumbnail = res.video_thumbnail
+            })
+        },
+        (error) => {
+          this.videoNotFound = true
+          return
+        }
+      )
   },
   mounted() {
     this.dragAndDropCapable = this.determineDragAndDropCapable()
@@ -305,5 +319,14 @@ export default {
       margin-right: 10px;
     }
   }
+}
+
+.video-not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 30px;
+  font-size: 1.2rem;
 }
 </style>

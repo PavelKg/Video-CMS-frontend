@@ -15,16 +15,17 @@
         <b-form-input
           v-model="mnGroup.name"
           :placeholder="`${$t('groups.group_name')}`"
+          :disabled="group_is_deleted"
         ></b-form-input>
         <button
-          :disabled="mnGroup.name === src_name"
+          :disabled="mnGroup.name === src_name || group_is_deleted"
           @click="save_click"
           class="button btn-blue"
         >
           {{ `${$t('label.register')}` }}
         </button>
       </div>
-      <template v-if="oper === 'edit'">
+      <template v-if="oper === 'edit' && !group_is_deleted">
         <TableUsersLite
           :gid="mnGroup.gid"
           @contentElementClick="contentElementClick"
@@ -57,7 +58,8 @@ export default {
       src_name: '',
       mnGroup: {
         name: '',
-        gid: ''
+        gid: '',
+        deleted_at: ''
       },
       groupNotFound: false
     }
@@ -91,7 +93,7 @@ export default {
       this.$store.dispatch('LOAD_GROUP_INFO', {cid, gid}).then(
         (group) => {
           this.src_name = group.name
-          this.mnGroup.name = group.name
+          this.mnGroup = {...this.mnGroup, ...group}
 
           const params = {
             cid,
@@ -112,6 +114,9 @@ export default {
     ...mapGetters(['userMenuActiveItem', 'me']),
     group_title() {
       return `groups.oper_title_${this.oper}`
+    },
+    group_is_deleted() {
+      return Boolean(this.mnGroup.deleted_at)
     }
   }
 }

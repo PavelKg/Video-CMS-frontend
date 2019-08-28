@@ -130,7 +130,6 @@ export default {
   created() {
     const {uuid = null} = this.$route.params
     this.active_video_uuid = uuid
-    console.log('uuid=', uuid)
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then(
