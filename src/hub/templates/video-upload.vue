@@ -27,7 +27,9 @@
       :uuid="up_file.uuid"
       :file="up_file.file"
       :uploaded="up_file.uploaded"
-    />
+      :uploading="up_file.isUploading"
+      >{{ up_file }}</FileUploadItem
+    >
     <div class="video-upload-buttons">
       <button
         class="button btn-blue"
@@ -65,6 +67,9 @@ export default {
     isProcessingUpload() {
       return this.files_for_upload.filter((file) => Boolean(file.isUploading))
     }
+  },
+  created() {
+    this.$store.commit('CLEAR_UPLOAD_FILES')
   },
   mounted() {
     this.dragAndDropCapable = this.determineDragAndDropCapable()
@@ -118,14 +123,19 @@ export default {
     //   this.files.splice(key, 1)
     // },
     addCustomFiles(evt) {
-      this.$store.commit('ADD_UPLOAD_FILE', evt.target.files)
+      const dropFiles = [...evt.target.files].filter((item) =>
+        /^video\/*/.test(item.type)
+      )
+      if (dropFiles.length) {
+        this.$store.commit('ADD_UPLOAD_FILE', dropFiles)
+      }
     },
     selectCustomFiles(evt) {
       evt.preventDefault()
       this.$refs.customInput.click()
     },
     backToCatalog() {
-      this.$store.commit('CLEAR_UPLOAD_FILES')
+      //this.$store.commit('CLEAR_UPLOAD_FILES')
       //this.$emit('contentElementClick', '/hub/videos')
       this.$router.go(-1)
     },

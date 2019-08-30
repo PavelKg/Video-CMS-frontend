@@ -4,20 +4,20 @@
       <div>Loading data from server...</div>
     </template>
     <template v-else>
-      <span class="video-title">{{ form.video_title || 'Video Title' }}</span>
+      <p class="video-title">{{ form.video_title || 'Video Title' }}</p>
       <div class="video-content-zone">
         <VideoPlayer :videourl="videoUrl" />
         <div class="video-information">
-          <div>
-            <span class="title">{{ $t('videos.video_information') }}</span>
+          <div class="video-information-rows">
+            <p class="title">{{ $t('videos.video_information') }}</p>
             <div class="video-information-row">
               <span class="sub-title ">{{ $t('videos.last_modified') }}:</span>
               <span class="value wraped">{{ updated_at }}</span>
             </div>
 
             <div class="video-information-row">
-              <span class="sub-title">{{ $t('videos.tag') }}:</span>
-              <span class="value">{{ form.video_tag }}</span>
+              <p class="sub-title">{{ $t('videos.tag') }}:</p>
+              <p class="value">{{ form.video_tag }}</p>
             </div>
 
             <div class="video-information-row">
@@ -197,12 +197,14 @@ export default {
 .video-title {
   font-size: 1.4em;
   color: $link;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 .video-content-zone {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  span.title {
+  p.title {
     font-weight: bold;
     font-size: 1.3em;
   }
@@ -215,19 +217,26 @@ export default {
     justify-content: flex-start;
     margin-left: auto;
     flex-wrap: wrap;
-    .video-information-row {
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      margin-top: 10px;
-      span.sub-title {
-        font-weight: bold;
-        font-size: 1rem;
-      }
-      span.value {
-        font-size: 0.9rem;
-        color: $link;
+    .video-information-rows {
+      width: 100%;
+      p {
         white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .video-information-row {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        .sub-title {
+          font-weight: bold;
+          font-size: 1rem;
+        }
+        .value {
+          font-size: 0.9rem;
+          color: $link;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+        }
       }
     }
     .button {
