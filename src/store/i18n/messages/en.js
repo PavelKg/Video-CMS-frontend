@@ -106,7 +106,7 @@ export default {
     required: 'Required',
     register: 'Register',
     registration: 'Registration',
-    reply: 'Replay',
+    reply: 'Reply',
     change: 'Change',
     send: 'Send',
     save: 'Save',
