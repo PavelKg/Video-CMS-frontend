@@ -11,7 +11,7 @@
     >
       <template slot="name" slot-scope="row">
         <b-form-checkbox
-          :id="row.item.gid"
+          :id="row.item.gid.toString()"
           :name="`ch-${row.item.gid}`"
           :value="row.item.gid"
           v-model="groups_selected"
@@ -111,9 +111,7 @@ export default {
       const action = env.target['id']
       this.groups_selected =
         action === 'selectAll'
-          ? this.groups_on_page
-              .filter((group) => group.deleted_at === '')
-              .map((item) => String(item.gid))
+          ? this.groups_on_page.filter((group) => group.deleted_at === '')
           : []
     },
     editGroup(group) {

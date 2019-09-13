@@ -4,7 +4,7 @@
       <div>Loading data from server...</div>
     </template>
     <template v-else>
-      <p class="video-title">{{ form.video_title || 'Video Title' }}</p>
+      <p class="video-title">{{ form.video_title || $t('videos.no_title') }}</p>
       <div class="video-content-zone">
         <VideoPlayer :videourl="videoUrl" />
         <div class="video-information">

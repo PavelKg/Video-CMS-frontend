@@ -58,7 +58,7 @@ export default {
       src_name: '',
       mnGroup: {
         name: '',
-        gid: '',
+        gid: null,
         deleted_at: ''
       },
       groupNotFound: false
@@ -86,7 +86,8 @@ export default {
 
   created() {
     const {gid = null} = this.$route.params
-    this.mnGroup.gid = gid
+    
+    this.mnGroup.gid = +gid
     const cid = this.me.profile.company_id
 
     if (this.oper === 'edit') {
@@ -97,7 +98,7 @@ export default {
 
           const params = {
             cid,
-            filter: `group_gid[eq]:'${gid}'`
+            filter: `user_groups[ol]: ARRAY[${gid}]`
           }
           this.$store
             .dispatch('LOAD_USERS', params)

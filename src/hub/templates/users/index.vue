@@ -65,12 +65,13 @@ export default {
   methods: {
     onFilter() {
       let params = {cid: this.me.profile.company_id}
+
       if (this.selected_groups) {
-        params.filter = `group_gid[eq]: '${this.selected_groups}'`
+        params.filter = `user_groups[ol]:ARRAY[${this.selected_groups}]`
       }
-      this.$store
-        .dispatch('LOAD_USERS', params)
-        .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
+      this.$store.dispatch('LOAD_USERS', params).then(() => {
+        this.$store.commit('SET_USERS_IS_LOADING', false)
+      })
     },
     addNewUser() {
       this.contentElementClick(`/hub/users_add`)

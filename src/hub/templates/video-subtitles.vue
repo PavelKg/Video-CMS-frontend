@@ -56,6 +56,12 @@
             :placeholder="`${$t('videos.tag')}`"
             v-model="form.video_tag"
           ></b-form-input>
+          <multiselect
+            v-if="!isLoadingData"
+            v-model="form.video_groups"
+            :items="group_options"
+            :placeholder="`${$t('label.group_is_not_selected')}`"
+          />
           <b-form-textarea
             :placeholder="`${$t('videos.video_description')}`"
             v-model="form.video_description"
@@ -81,6 +87,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import multiselect from '@/components/elements/multiselect'
 
 export default {
   name: 'video-subtitles',
@@ -95,19 +102,35 @@ export default {
         video_thumbnail: '',
         video_title: '',
         video_tag: '',
-        video_description: ''
+        video_description: '',
+        video_groups: []
       },
       active_video_uuid: '',
-      videoNotFound: false
+      videoNotFound: false,
+      group_options: [],
+      isLoadingData: true
     }
   },
   created() {
     this.active_video_uuid = this.$route.params.uuid
     this.$store
+      .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+      .then((res) => {
+        this.$store.commit('SET_GROUPS_IS_LOADING', false)
+        const grpo = this.groups
+          .filter((item) => item.deleted_at === '')
+          .map((item) => {
+            return {value: item.gid, text: item.name}
+          })
+        this.group_options = [...this.group_options, ...grpo]
+      })
+
+    this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then(
         (res) => {
           this.form = {...this.form, ...res}
+          this.isLoadingData = false
           this.$store
             .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
             .then((res) => {
@@ -115,6 +138,7 @@ export default {
             })
         },
         (error) => {
+          this.isLoadingData = false
           this.videoNotFound = true
           return
         }
@@ -167,8 +191,11 @@ export default {
       )
     }
   },
+  components: {
+    multiselect
+  },
   computed: {
-    ...mapGetters(['isVideosInfoUpdating']),
+    ...mapGetters(['isVideosInfoUpdating', 'me', 'groups']),
     i_thumbnail() {
       return Boolean(this.form.video_thumbnail)
         ? this.form.video_thumbnail
@@ -206,25 +233,19 @@ export default {
     },
     onSubmit(evt) {
       evt.preventDefault()
-      const {
-        video_uuid,
-        video_thumbnail,
-        video_title,
-        video_tag,
-        video_description
-      } = this.form
-      this.$store
-        .dispatch('UPDATE_VIDEO_INFO', {
-          video_uuid,
-          video_thumbnail,
-          video_title,
-          video_tag,
-          video_description
-        })
-        .then((res) => {
-          this.$store.dispatch('LOAD_VIDEO_LIST')
-          this.dataUpdated = true
-        })
+      // const {
+      //   video_uuid,
+      //   video_thumbnail,
+      //   video_title,
+      //   video_tag,
+      //   video_description,
+      //   video_groups
+      // } = this.form
+
+      this.$store.dispatch('UPDATE_VIDEO_INFO', this.form).then((res) => {
+        this.$store.dispatch('LOAD_VIDEO_LIST')
+        this.dataUpdated = true
+      })
     },
     addCustomFiles(evt) {
       evt.preventDefault()
@@ -253,7 +274,7 @@ export default {
 .video-subtitles {
   display: flex;
   flex-direction: column;
-  width: 450px;
+  max-width: 450px;
   > span {
     padding: 10px 0;
     font-size: 20px;
@@ -308,7 +329,7 @@ export default {
     flex-direction: column;
     padding: 10px 0;
     input {
-      margin: 10px 0;
+      margin-top: 10px;
       padding-left: 5px;
     }
   }

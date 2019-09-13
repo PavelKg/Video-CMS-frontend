@@ -176,14 +176,16 @@ export default {
         video_thumbnail,
         video_title,
         video_tag,
-        video_description
+        video_description,
+        video_groups
       } = video_info
 
       const info_data = {
         video_thumbnail,
         video_title,
         video_tag,
-        video_description
+        video_description,
+        video_groups
       }
 
       try {

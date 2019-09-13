@@ -56,7 +56,7 @@ export default {
       currentPage: 1
     }
   },
-  props: {gid: String},
+  props: {gid: Number},
   methods: {
     addNewUser() {
       this.$emit('contentElementClick', `/hub/users_add?gid=${this.gid}`)
