@@ -90,7 +90,8 @@ export default {
     video_description: '動画の説明',
     last_modified: '更新日時',
     video_information: '動画情報', 
-    public_settings: '動画公開設定'
+    public_settings: '動画公開設定',
+    no_title: 'タイトルなし'
   },
   comments: {
     id: 'ID',
@@ -138,7 +139,8 @@ export default {
     group: 'グループを選択',
     role: '権限',
     group_is_not_selected: 'グループが選択されていません',
-    role_is_not_selected: '権限が選択されていません'
+    role_is_not_selected: '権限が選択されていません',
+    no_records_found: '条件に一致するものが見つかりません'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:
