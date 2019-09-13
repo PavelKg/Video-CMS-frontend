@@ -111,7 +111,7 @@ export default {
     edit_video: 'Редактировать информацию о ролике',
     thumb_image_upload: 'Загрузить миниатюру',
     select_all: 'Select All',
-    deselect_all: 'Deselect All',
+    deselect_all: 'Unselect All',
     comment_box: 'Comment Box',
     logo_registration: 'Logo Registration',
     in_page: 'In-Page',

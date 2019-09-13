@@ -130,7 +130,7 @@ export default {
   margin-top: 50px;
 
   .content-zone {
-    overflow: auto;
+    //overflow: auto;
     padding: 20px;
   }
 }

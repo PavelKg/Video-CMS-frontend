@@ -90,7 +90,8 @@ export default {
     video_description: 'Video Description',
     last_modified: 'Last modified',
     video_information: 'Video Information', 
-    public_settings: 'Public settings'
+    public_settings: 'Public settings',
+    no_title: 'No Title'
   },
   comments: {
     id: 'ID',
@@ -125,7 +126,7 @@ export default {
     edit_video: 'Edit Video Information',
     thumb_image_upload: 'Thumbnail image upload',
     select_all: 'Select All',
-    deselect_all: 'Deselect All',
+    deselect_all: 'Unselect All',
     comment_box: 'Comment Box',
     logo_registration: 'Logo Registration',
     in_page: 'In-Page',
@@ -138,7 +139,8 @@ export default {
     group: 'Group',
     role: 'Role',
     group_is_not_selected: 'Group Is Not Selected',
-    role_is_not_selected: 'Role Is Not Selected'
+    role_is_not_selected: 'Role Is Not Selected',
+    no_records_found: 'No Records Found'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

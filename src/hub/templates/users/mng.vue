@@ -36,13 +36,12 @@
           ></b-form-input>
         </b-form-group>
         <b-form-group :disabled="isUserDelete" id="input-group-gid">
-          <b-form-select v-model="mnUser.gid" :options="group_options">
-            <template slot="first">
-              <option :value="null"
-                ><b>{{ `${$t('label.group_is_not_selected')}` }}</b></option
-              >
-            </template>
-          </b-form-select>
+          <multiselect
+            v-if="!isUpdatingUserData"
+            v-model="mnUser.gids"
+            :items="group_options"
+            :placeholder="`${$t('label.group_is_not_selected')}`"
+          />
         </b-form-group>
         <b-form-group :disabled="isUserDelete" id="input-group-rid">
           <b-form-select v-model="mnUser.rid" :options="role_options" required>
@@ -91,6 +90,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import multiselect from '@/components/elements/multiselect'
 
 export default {
   name: 'user-mng-form',
@@ -103,6 +103,7 @@ export default {
         uid: '',
         fullname: '',
         gid: null,
+        gids: [],
         rid: null,
         email: '',
         password: null,
@@ -110,8 +111,12 @@ export default {
       },
       group_options: [],
       role_options: [],
-      userNotFound: false
+      userNotFound: false,
+      isUpdatingUserData: true
     }
+  },
+  components: {
+    multiselect
   },
   methods: {
     onCancel(evt) {
@@ -146,10 +151,12 @@ export default {
   created() {
     const {uid = null} = this.$route.params
     const cid = this.me.profile.company_id
-
+    this.isUpdatingUserData = true
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_USER_INFO', {cid, uid}).then(
         (res) => {
+          console.log('res=', res)
+          this.isUpdatingUserData = false
           this.mnUser = {...res}
           if (this.mnUser.gid === '') {
             this.mnUser.gid = null
@@ -200,7 +207,7 @@ export default {
     })
   },
   computed: {
-    ...mapGetters(['groups', 'roles', 'me']),
+    ...mapGetters(['groups', 'roles', 'me', 'groups_is_loading']),
     user_title() {
       return `users.oper_title_${this.oper}`
     },
@@ -213,6 +220,7 @@ export default {
 
 <style lang="scss">
 .user-operation {
+  max-width: 450px;
   display: flex;
   flex-direction: column;
   > span {
@@ -228,18 +236,16 @@ export default {
     font-size: 1.2em;
   }
   input {
-    max-width: 300px;
   }
   select {
-    max-width: 300px;
   }
+
   .button {
     margin: 0 10px;
   }
   .check-admin {
     display: flex;
     justify-content: space-between;
-    max-width: 400px;
 
     > * {
       margin-right: 10px;
@@ -263,6 +269,6 @@ export default {
   justify-content: flex-start;
   align-items: flex-start;
   margin-top: 30px;
-  font-size: 1.2rem
+  font-size: 1.2rem;
 }
 </style>
