@@ -174,17 +174,20 @@ export default {
       if (query) {
         const {gid = null, rid = null} = query
         this.mnUser.rid = rid
-        this.mnUser.gid = gid
+        if (gid) {
+          this.mnUser.gids.push(gid)
+        }
+        this.isUpdatingUserData = false
       }
     }
 
     this.$store.dispatch('LOAD_GROUPS', cid).then((res) => {
-      const isExistGid = this.groups.find((group) => {
-        return group.gid === this.mnUser.gid && !Boolean(group.deleted_at)
-      })
-      if (!isExistGid) {
-        this.mnUser.gid = null
-      }
+      // const isExistGid = this.groups.find((group) => {
+      //   return group.gid === this.mnUser.gid && !Boolean(group.deleted_at)
+      // })
+      // if (!isExistGid) {
+      //   this.mnUser.gid = null
+      // }
       this.$store.commit('SET_GROUPS_IS_LOADING', false)
       this.group_options = this.groups
         .filter((group) => !Boolean(group.deleted_at))
