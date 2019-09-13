@@ -1,47 +1,57 @@
 <template>
   <div class="role-operation">
-    <span>{{ $t(role_title) }}</span>
-    <template v-if="oper === 'edit'">
-      <div class="role-oper-id">
-        <span>{{ `${$t('roles.role_id')}: ${mnRole.rid}` }}</span>
+    <template v-if="roleNotFound">
+      <div class="role-not-found">
+        <span>Sorry. Role is not found!!!</span><br />
+        <button @click="cancel_click" class="button btn-braun">
+          {{ $t('label.back') }}
+        </button>
       </div>
     </template>
-    <template v-else-if="oper === 'add'">
+    <template v-else>
+      <span>{{ $t(role_title) }}</span>
+      <template v-if="oper === 'edit'">
+        <div class="role-oper-id">
+          <span>{{ `${$t('roles.role_id')}: ${mnRole.rid}` }}</span>
+        </div>
+      </template>
+      <template v-else-if="oper === 'add'">
+        <b-form-input
+          v-model="mnRole.rid"
+          :placeholder="`${$t('roles.role_id')}`"
+        ></b-form-input>
+      </template>
       <b-form-input
-        v-model="mnRole.rid"
-        :placeholder="`${$t('roles.role_id')}`"
-      ></b-form-input>
-    </template>
-    <b-form-input
-      v-model="mnRole.name"
-      :placeholder="`${$t('roles.role_name')}`"
-      :disabled="isDeleted"
-    ></b-form-input>
-    <div class="check-admin">
-      <span>{{ $t('roles.administrator') }}:</span>
-      <b-form-checkbox
-        id="check_isAdmin"
-        v-model="mnRole.is_admin"
-        name="check_isAdmin"
+        v-model="mnRole.name"
+        :placeholder="`${$t('roles.role_name')}`"
         :disabled="isDeleted"
-      >
-      </b-form-checkbox>
-      <div>
-        <strong>{{ $t(`label.${is_admin_state}`) }}</strong>
+      ></b-form-input>
+      <div class="check-admin">
+        <span>{{ $t('roles.administrator') }}:</span>
+        <b-form-checkbox
+          id="check_isAdmin"
+          v-model="mnRole.is_admin"
+          name="check_isAdmin"
+          :disabled="isDeleted"
+        >
+        </b-form-checkbox>
+        <div>
+          <strong>{{ $t(`label.${is_admin_state}`) }}</strong>
+        </div>
       </div>
-    </div>
-    <div class="role-operation-button-zone">
-      <button
-        @click="save_click"
-        class="button btn-blue"
-        :disabled="onDisabledSave"
-      >
-        {{ $t('label.save') }}
-      </button>
-      <button @click="cancel_click" class="button btn-braun">
-        {{ $t('label.cancel') }}
-      </button>
-    </div>
+      <div class="role-operation-button-zone">
+        <button
+          @click="save_click"
+          class="button btn-blue"
+          :disabled="onDisabledSave"
+        >
+          {{ $t('label.save') }}
+        </button>
+        <button @click="cancel_click" class="button btn-braun">
+          {{ $t('label.cancel') }}
+        </button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -63,7 +73,8 @@ export default {
       defRole: {
         is_admin: false,
         name: ''
-      }
+      },
+      roleNotFound: false
     }
   },
   methods: {
@@ -88,11 +99,16 @@ export default {
     const cid = this.me.profile.company_id
 
     if (this.oper === 'edit') {
-      this.$store.dispatch('LOAD_ROLE_INFO', {cid, rid}).then((role) => {
-        this.defRole.name = role.name
-        this.defRole.is_admin = role.is_admin
-        this.mnRole = {...role}
-      })
+      this.$store.dispatch('LOAD_ROLE_INFO', {cid, rid}).then(
+        (role) => {
+          this.defRole.name = role.name
+          this.defRole.is_admin = role.is_admin
+          this.mnRole = {...role}
+        },
+        (error) => {
+          this.roleNotFound = true
+        }
+      )
     } else {
       this.mnRole.cid = cid
     }
@@ -159,5 +175,13 @@ export default {
       margin-right: 10px;
     }
   }
+}
+.role-not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 30px;
+  font-size: 1.2rem
 }
 </style>

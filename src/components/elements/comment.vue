@@ -7,9 +7,9 @@
     </template>
     <template v-else>
       <div class="comment-data">
-        <span>{{ `${$t('comments.id')}: ${comment.comment_user_uid}` }}</span>
-        <span>{{ created_date(comment.created_at) }}</span>
-        <span class="comment-text">{{ comment.comment_text }}</span>
+        <p>{{ `${$t('comments.id')}: ${comment.comment_user_uid}` }}</p>
+        <p>{{ created_date(comment.created_at) }}</p>
+        <p class="comment-text">{{ comment.comment_text }}</p>
       </div>
 
       <div class="comment-mng">
@@ -113,15 +113,15 @@ export default {
   .comment-data {
     display: flex;
     flex-direction: column;
-    span {
+    p {
       font-size: 0.9em;
       margin-right: 15px;
+      -ms-word-break: break-all;
+      word-break: break-all;
       &.comment-text {
         font-style: italic;
       }
     }
-
-
   }
   .comment-mng {
     margin-left: auto;

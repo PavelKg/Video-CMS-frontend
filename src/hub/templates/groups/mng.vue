@@ -1,32 +1,43 @@
 <template>
   <div class="group-operation">
-    <span>{{ $t(group_title) }}</span>
-    <div class="group-oper-id">
-      <span v-if="oper === 'edit'">{{ `${$t('groups.name')}` }}:</span>
-      <b-form-input
-        v-model="mnGroup.name"
-        :placeholder="`${$t('groups.group_name')}`"
-      ></b-form-input>
-      <button
-        :disabled="mnGroup.name === src_name"
-        @click="save_click"
-        class="button btn-blue"
-      >
-        {{ `${$t('label.register')}` }}
-      </button>
-    </div>
-    <template v-if="oper === 'edit'">
-      <TableUsersLite
-        :gid="mnGroup.gid"
-        @contentElementClick="contentElementClick"
-      />
+    <template v-if="groupNotFound">
+      <div class="group-not-found">
+        <span>Sorry. Group is not found!!!</span><br />
+        <button @click="cancel_click" class="button btn-braun">
+          {{ $t('label.back') }}
+        </button>
+      </div>
     </template>
-    <template v-else-if="oper === 'add'"> </template>
-    <div class="group-operation-button-zone">
-      <button @click="cancel_click" class="button btn-braun">
-        {{ `${$t('label.cancel')}` }}
-      </button>
-    </div>
+    <template v-else>
+      <span>{{ $t(group_title) }}</span>
+      <div class="group-oper-id">
+        <span v-if="oper === 'edit'">{{ `${$t('groups.name')}` }}:</span>
+        <b-form-input
+          v-model="mnGroup.name"
+          :placeholder="`${$t('groups.group_name')}`"
+          :disabled="group_is_deleted"
+        ></b-form-input>
+        <button
+          :disabled="mnGroup.name === src_name || group_is_deleted"
+          @click="save_click"
+          class="button btn-blue"
+        >
+          {{ `${$t('label.register')}` }}
+        </button>
+      </div>
+      <template v-if="oper === 'edit' && !group_is_deleted">
+        <TableUsersLite
+          :gid="mnGroup.gid"
+          @contentElementClick="contentElementClick"
+        />
+      </template>
+      <template v-else-if="oper === 'add'"> </template>
+      <div class="group-operation-button-zone">
+        <button @click="cancel_click" class="button btn-braun">
+          {{ `${$t('label.cancel')}` }}
+        </button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -47,8 +58,10 @@ export default {
       src_name: '',
       mnGroup: {
         name: '',
-        gid: ''
-      }
+        gid: null,
+        deleted_at: ''
+      },
+      groupNotFound: false
     }
   },
   methods: {
@@ -56,7 +69,7 @@ export default {
       this.$emit('contentElementClick', menu_item)
     },
     cancel_click() {
-      this.$router.go(-1)
+      this.contentElementClick('/hub/groups')
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'GROUP_UPD' : 'GROUP_ADD'
@@ -73,27 +86,38 @@ export default {
 
   created() {
     const {gid = null} = this.$route.params
-    this.mnGroup.gid = gid
+    
+    this.mnGroup.gid = +gid
     const cid = this.me.profile.company_id
 
     if (this.oper === 'edit') {
-      this.$store.dispatch('LOAD_GROUP_INFO', {cid, gid}).then((group) => {
-        this.src_name = group.name
-        this.mnGroup.name = group.name
-      })
-      const params = {
-        cid,
-        filter: `group_gid[eq]:'${gid}'`
-      }
-      this.$store
-        .dispatch('LOAD_USERS', params)
-        .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
+      this.$store.dispatch('LOAD_GROUP_INFO', {cid, gid}).then(
+        (group) => {
+          this.src_name = group.name
+          this.mnGroup = {...this.mnGroup, ...group}
+
+          const params = {
+            cid,
+            filter: `user_groups[ol]: ARRAY[${gid}]`
+          }
+          this.$store
+            .dispatch('LOAD_USERS', params)
+            .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
+        },
+        (error) => {
+          this.groupNotFound = true
+          return
+        }
+      )
     }
   },
   computed: {
     ...mapGetters(['userMenuActiveItem', 'me']),
     group_title() {
       return `groups.oper_title_${this.oper}`
+    },
+    group_is_deleted() {
+      return Boolean(this.mnGroup.deleted_at)
     }
   }
 }
@@ -139,5 +163,13 @@ export default {
       margin-right: 10px;
     }
   }
+}
+.group-not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 30px;
+  font-size: 1.2rem;
 }
 </style>

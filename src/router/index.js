@@ -54,6 +54,36 @@ const ifNotAuthenticated = (to, from, next) => {
   }
 }
 
+const checkAuthAndAccess = async (to, from, next) => {
+  if (store.getters.hasToken) {
+    store.commit('SET_HEADER_AUTH')
+    store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
+    try {
+      if (Object.keys(store.getters.me.profile).length === 0) {
+        await store.dispatch('GET_MY_PROFILE')
+        console.log('ifAuthenticated - ok')
+      }
+      if (to.matched.some((record) => record.meta.notForUser)) {
+        const {irole} = store.getters.me.profile
+        if (irole === 'user') {
+          next('/hub/pageNotFound')
+        } else {
+          //store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
+          next()
+        }
+      } else {
+        //store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
+        next()
+      }
+    } catch {
+      console.log('ifAuthenticated - err')
+      next('/login')
+    }
+  } else {
+    next('/login')
+  }
+}
+
 const ifAuthenticated = (to, from, next) => {
   if (store.getters.hasToken) {
     store.commit('SET_HEADER_AUTH')
@@ -86,69 +116,106 @@ export default new Router({
       path: '/hub',
       name: 'hub',
       component: Hub,
-      beforeEnter: ifAuthenticated,
+      redirect: '/hub/videos',
+      beforeEnter: checkAuthAndAccess,
       children: [
-        {path: 'videos', component: videos, meta: {menuItem: '/hub/videos'}},
+        {
+          path: 'videos',
+          component: videos,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/videos'}
+        },
         {
           path: 'videos_player/uuid/:uuid',
           component: videos_player,
+          beforeEnter: checkAuthAndAccess,
           meta: {menuItem: '/hub/videos'}
         },
         {
           path: 'videos_upload',
           component: videos_upload,
-          meta: {menuItem: '/hub/videos'}
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/videos', notForUser: 'true'}
         },
         {
           path: 'videos_subtitles/uuid/:uuid',
           component: videos_subtitles,
-          meta: {menuItem: '/hub/videos'}
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/videos', notForUser: 'true'}
         },
-        {path: 'users', component: users, meta: {menuItem: '/hub/users'}},
+        {
+          path: 'users',
+          component: users,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/users', notForUser: 'true'},
+          beforeEnter: checkAuthAndAccess
+        },
         {
           path: 'users_add',
           component: users_add,
-          meta: {menuItem: '/hub/users'},
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/users', notForUser: 'true'},
           props: {oper: 'add'}
         },
         {
           path: 'users_edit/uid/:uid',
           component: users_edit,
-          meta: {menuItem: '/hub/users'},
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/users', notForUser: 'true'},
           props: {oper: 'edit'}
         },
-        {path: 'groups', component: groups, meta: {menuItem: '/hub/groups'}},
+        {
+          path: 'groups',
+          component: groups,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/groups', notForUser: 'true'}
+        },
         {
           path: 'groups_add',
           component: groups_add,
-          meta: {menuItem: '/hub/groups'},
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/groups', notForUser: 'true'},
           props: {oper: 'add'}
         },
         {
           path: 'groups_edit/gid/:gid',
           component: groups_edit,
-          meta: {menuItem: '/hub/groups'},
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/groups', notForUser: 'true'},
           props: {oper: 'edit'}
         },
         {
           path: 'messages',
           component: messages,
+          beforeEnter: checkAuthAndAccess,
           meta: {menuItem: '/hub/messages'}
         },
-        {path: 'roles', component: roles, meta: {menuItem: '/hub/roles'}},
+        {
+          path: 'roles',
+          component: roles,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/roles', notForUser: 'true'}
+        },
         {
           path: 'roles_add',
           component: roles_add,
-          meta: {menuItem: '/hub/roles'},
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/roles', notForUser: 'true'},
           props: {oper: 'add'}
         },
         {
           path: 'roles_edit/rid/:rid',
           component: roles_edit,
-          meta: {menuItem: '/hub/roles'},
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/roles', notForUser: 'true'},
           props: {oper: 'edit'}
         },
-        {path: 'screen', component: screen, meta: {menuItem: '/hub/screen'}},
+        {
+          path: 'screen',
+          component: screen,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/screen', notForUser: 'true'}
+        },
         {path: 'pageNotFound', component: NotFoundComponent}
       ]
     },

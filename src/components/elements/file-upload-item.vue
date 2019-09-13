@@ -1,13 +1,13 @@
 <template>
   <div class="file-listing">
     {{ `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} Mb)` }}
-    <div v-if="value === 0" class="remove-container">
+    <div v-if="value === 0 && !uploaded && !uploading" class="remove-container">
       <a href="#" class="remove" @click="removeMe">{{ $t('label.remove') }}</a>
     </div>
     <b-progress
       class="upload-progress"
       v-else
-      :value="value"
+      :value="uploaded ? 100: value"
       :max="max"
       show-progress
       :animated="animate"
@@ -29,9 +29,11 @@ export default {
   props: {
     file: File,
     uuid: String,
-    uploaded: Boolean
+    uploaded: Boolean,
+    uploading: Boolean
   },
   created() {
+    console.log('uploading=', this.uploading)
     this.$store.commit('PROGRESS_UPLOAD_FILE', {
       name: this.file.name,
       progress_handler: this.uplProgress
@@ -39,7 +41,7 @@ export default {
   },
   methods: {
     removeMe() {
-      this.$store.commit('DEL_UPLOAD_FILE', this.file.name)
+      this.$store.commit('DEL_UPLOAD_FILE', this.file.uuid)
     },
     uplProgress(val) {
       if (val===100) {

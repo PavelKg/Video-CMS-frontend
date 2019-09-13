@@ -11,11 +11,12 @@
     >
       <template slot="name" slot-scope="row">
         <b-form-checkbox
-          :id="row.item.gid"
+          :id="row.item.gid.toString()"
           :name="`ch-${row.item.gid}`"
           :value="row.item.gid"
           v-model="groups_selected"
           :disabled="row.item.deleted_at !== ''"
+          class="truncate-text"
           >{{ row.item.name }}
         </b-form-checkbox>
       </template>
@@ -110,9 +111,7 @@ export default {
       const action = env.target['id']
       this.groups_selected =
         action === 'selectAll'
-          ? this.groups_on_page
-              .filter((group) => group.deleted_at === '')
-              .map((item) => String(item.gid))
+          ? this.groups_on_page.filter((group) => group.deleted_at === '')
           : []
     },
     editGroup(group) {
@@ -188,6 +187,12 @@ export default {
 .mng-column {
   display: flex;
   justify-content: space-around;
+}
+
+.truncate-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .groups-mng-panel {

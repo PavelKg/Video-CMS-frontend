@@ -10,9 +10,19 @@
       head-variant="dark"
     >
       <template slot="is_admin" slot-scope="item">
-        <div style="text-align: center">
+        <p style="text-align: center">
           {{ item.item.is_admin ? $t('label.yes') : $t('label.no') }}
-        </div>
+        </p>
+      </template>
+      <template slot="rid" slot-scope="item">
+        <p class="truncate-text">
+          {{ item.item.rid }}
+        </p>
+      </template>
+      <template slot="name" slot-scope="item">
+        <p class="truncate-text">
+          {{ item.item.name }}
+        </p>
       </template>
       <template slot="mng" slot-scope="item">
         <div class="mng-column">
@@ -63,6 +73,7 @@ export default {
           this.$store.dispatch('LOAD_ROLES', cid)
         },
         (err) => {
+          console.log('err.message=', err)
           this.$emit(
             'onContentError',
             `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`
@@ -87,12 +98,12 @@ export default {
         {
           key: 'rid',
           label: this.$t('roles.tbl_header_ID'),
-          thStyle: {'text-align': 'center'}
+          thStyle: {'text-align': 'center', "vertical-align": "middle"}
         },
         {
           key: 'name',
           label: this.$t('roles.tbl_header_name'),
-          thStyle: {'text-align': 'center'},
+          thStyle: {'text-align': 'center', "vertical-align": "middle"},
           thClass: this.showColumn,
           tdClass: this.showColumn
         },
@@ -100,13 +111,13 @@ export default {
           key: 'is_admin',
           label: !this.showColumn
             ? this.$t('roles.tbl_header_auth')
-            : 'Is Admin',
-          thStyle: {'text-align': 'center'}
+            : 'Admin',
+          thStyle: {'text-align': 'center', "max-width": "10rem", "vertical-align": "middle"}
         },
         {
           key: 'mng',
           label: this.$t('roles.tbl_header_mng'),
-          thStyle: {width: '120px !important', 'text-align': 'center'}
+          thStyle: {width: '120px !important', 'text-align': 'center', "vertical-align": "middle"}
         }
       ]
     },
@@ -128,6 +139,12 @@ export default {
 .mng-column {
   display: flex;
   justify-content: space-around;
+}
+
+.truncate-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .roles-mng-panel {

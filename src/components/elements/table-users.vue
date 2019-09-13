@@ -16,17 +16,21 @@
           :value="row.item.uid"
           v-model="users_selected"
           :disabled="row.item.deleted_at !== ''"
+          class="truncate-text"
           >{{ row.item.uid }}
         </b-form-checkbox>
       </template>
       <template slot="last_login" slot-scope="item">
-        <div class="last-login-column">
+        <p class="last-login-column truncate-text">
           {{ last_login_format(item.item.last_login) }}
-        </div>
+        </p>
       </template>
       <template slot="fullname" slot-scope="item"
-        ><div class="name-column">{{ item.item.fullname }}</div>
+        ><p class="truncate-text">{{ item.item.fullname }}</p>
       </template>
+      <template slot="group_name" slot-scope="item"
+        ><p class="truncate-text">{{ item.item.group_name }}</p>
+      </template>      
       <template slot="mng" slot-scope="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">
@@ -217,6 +221,11 @@ export default {
 }
 .last-login-column {
   text-align: center;
+}
+.truncate-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .users-mng-panel {

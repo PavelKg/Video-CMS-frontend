@@ -34,7 +34,7 @@ export default {
           throw Error('Error load role data')
         }
       } catch (err) {
-        console.log('load role-data', err.response)
+        throw Error(err.response.status)
       }
     },
     async ROLE_ADD({commit, getters}, payload) {
@@ -74,7 +74,7 @@ export default {
           throw Error(`Error update role, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(err.response.data.message)
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
       }
     }
   },

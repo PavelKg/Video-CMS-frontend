@@ -26,8 +26,3 @@ new Vue({
   store,
   render: (h) => h(App)
 }).$mount('#app')
-
-router.beforeEach((to, from, next) => {
-  store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
-  next()
-})

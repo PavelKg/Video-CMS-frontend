@@ -65,10 +65,7 @@ export default {
     CLEAR_ACTIVE_VIDEO_PAGE: () =>
       localStorage.removeItem('vcms-activ-video-page'),
     SAVE_ACTIVE_VIDEO_PAGE: ({state}, num) => {
-      localStorage.setItem(
-        'vcms-activ-video-page',
-        JSON.stringify(num)
-      )
+      localStorage.setItem('vcms-activ-video-page', JSON.stringify(num))
     },
 
     async UPLOAD_VIDEO_FILES({state, commit, getters}) {
@@ -93,8 +90,14 @@ export default {
             } = state.filesForUpload.list.find((item) => item.uuid === uuid)
             //isUploading = true
             Api.upload_files(url, sFile, progress_handler).then((ures) => {
-              console.log('ures=', ures)
               Api.video_update_status({cid, uuid, value: 'uploaded'})
+              const f_ind = state.filesForUpload.list.findIndex((file) => {
+                return file.uuid === uuid
+              })
+              if (f_ind > -1) {
+                state.filesForUpload.list.splice(f_ind, 1)
+              }
+
               // this add api to set state = uploaded
             })
           })
@@ -144,14 +147,12 @@ export default {
       } catch (err) {
         switch (err.response.data.statusCode) {
           case 500:
-              throw Error(err.response.data.message)
-            break;
+            throw Error(err.response.data.message)
+            break
           default:
-              console.log('videos error not 500 =', err.response)            
-              throw Error(err.response.data.message)
-            break;
+            throw Error(err.response.data.message)
+            break
         }
-        
       }
     },
     async LOAD_VIDEO_THUMBNAIL({getters}, uuid) {
@@ -175,14 +176,16 @@ export default {
         video_thumbnail,
         video_title,
         video_tag,
-        video_description
+        video_description,
+        video_groups
       } = video_info
 
       const info_data = {
         video_thumbnail,
         video_title,
         video_tag,
-        video_description
+        video_description,
+        video_groups
       }
 
       try {
@@ -220,7 +223,6 @@ export default {
       try {
         await Promise.all(
           state.videos.selected.map(async (uuid) => {
-            console.log('state.videos.selected=', uuid)
             return await Api.video_delete({cid, uuid})
           })
         )
@@ -302,7 +304,15 @@ export default {
     },
     CLEAR_UPLOAD_FILES(state) {
       // need add check for existing file name
-      state.filesForUpload.list = []
+      for (let i = 0; i < state.filesForUpload.list.length; i++) {
+        if (
+          !state.filesForUpload.list[i].uploaded &&
+          !state.filesForUpload.list[i].isUploading
+        ) {
+          state.filesForUpload.list.splice(i, 1)
+          i--
+        }
+      }
     },
     SET_STATUS_INFO_UPDATTING(state, status) {
       state.videos.isInfoUpdating = status
