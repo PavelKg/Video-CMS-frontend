@@ -4,7 +4,7 @@ export default {
   state: {
     users: {
       list: [],
-      isListLoading: false,
+      isListLoading: true,
       selected: null
     }
   },

@@ -9,6 +9,7 @@ import Videos from './videos'
 import Comments from './comments'
 import Messages from './messages'
 import Companies from './companies'
+import History from './history'
 import Errors from './errors'
 
 Vue.use(Vuex)
@@ -17,6 +18,17 @@ export default new Vuex.Store({
   state: {},
   mutations: {},
   actions: {},
-  modules: {i18nStore, Login, Users, MainWindow, Menu, Videos, Comments, Messages, Companies, Errors}
+  modules: {
+    i18nStore,
+    Login,
+    Users,
+    MainWindow,
+    Menu,
+    Videos,
+    Comments,
+    Messages,
+    Companies,
+    Errors,
+    History
+  }
 })
-

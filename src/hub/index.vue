@@ -2,6 +2,7 @@
   <div>
     <div class="header-zone"><headerArea /></div>
     <div
+      id="menu-zone-box"
       class="menu-zone"
       v-if="!isSmallScreen || isMenuVisible"
       v-closable="{

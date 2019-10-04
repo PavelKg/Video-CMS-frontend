@@ -710,5 +710,46 @@ export default {
         ...type_json
       }
     })
+  },
+
+  /* ------------ HISTORY ----------------------------*/
+  /** List of history categories
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of history categories
+   *  ["categoies_name": "string"]
+   */
+  historyCategories({filter, offset = 0, limit}) {
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
+
+    return Api.get(`/history/categories?${setFilter}${setLimit}${setOffset}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  
+  /** List of history category objects
+   * @param {string} filter
+   * @param {string} categories
+   * @returns {Promise<*>} - 200 List of history category objects
+   *  ["object_name": "string"]
+   */
+  historyCategoryObject(payload) {
+    const {filter, offset = 0, limit, categories} = payload
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
+    const setCategories = `&categories=${categories}`
+
+    return Api.get(
+      `/history/categories/objects?${setFilter}${setLimit}${setOffset}${setCategories}`,
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
   }
 }

@@ -1,12 +1,12 @@
-let handleOutsideClick
+const handleOutsideClick = {}
 
 export default {
   bind(el, binding, vnode) {
-    handleOutsideClick = e => {
+    handleOutsideClick[el.id] = (e) => {
       e.stopPropagation()
-      const {handler, exclude} = binding.value
+      let {handler, exclude} = binding.value
       let clickedOnExcludedEl = false
-      exclude.forEach(itemId => {
+      exclude.forEach((itemId) => {
         if (!clickedOnExcludedEl) {
           clickedOnExcludedEl = itemId === e.target.id
         }
@@ -16,11 +16,12 @@ export default {
         vnode.context[handler]()
       }
     }
-    document.addEventListener('click', handleOutsideClick)
-    document.addEventListener('touchstart', handleOutsideClick)
+    document.addEventListener('click', handleOutsideClick[el.id])
+    document.addEventListener('touchstart', handleOutsideClick[el.id])
   },
-  unbind() {
-    document.removeEventListener('click', handleOutsideClick)
-    document.removeEventListener('touchstart', handleOutsideClick)
+  unbind(el) {
+    document.removeEventListener('click', handleOutsideClick[el.id])
+    document.removeEventListener('touchstart', handleOutsideClick[el.id])
+    delete handleOutsideClick[el.id]
   }
 }

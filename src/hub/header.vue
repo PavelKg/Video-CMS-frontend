@@ -18,6 +18,7 @@
       <span v-if="!isSmallScreen">{{ me_login }}</span>
     </div>
     <div
+      id="user_info_block_logo"
       v-if="user_info_block_open"
       @click="user_logout"
       class="user_info_block"

@@ -20,6 +20,7 @@ const screen = () => import('@/hub/templates/screen')
 const videos_player = () => import('@/hub/templates/video-player')
 const videos_upload = () => import('@/hub/templates/video-upload')
 const videos_subtitles = () => import('@/hub/templates/video-subtitles')
+const history_info = () => import('@/hub/templates/history-info')
 
 const NotFoundComponent = () => import('@/hub/templates/NotFoundComponent')
 
@@ -216,6 +217,12 @@ export default new Router({
           beforeEnter: checkAuthAndAccess,
           meta: {menuItem: '/hub/screen', notForUser: 'true'}
         },
+        {
+          path: 'history',
+          component: history_info,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/history', notForUser: 'true'}
+        },        
         {path: 'pageNotFound', component: NotFoundComponent}
       ]
     },

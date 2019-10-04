@@ -7,7 +7,8 @@ export default {
     roles: 'Roles settings',
     users: 'Users',
     groups: 'Groups',
-    screen: 'Screen custom.'
+    screen: 'Screen custom.',
+    history_info: 'History Info'
   },
   message: {
     appHeader: 'Video Contents Management',
@@ -25,7 +26,8 @@ export default {
     We will send you an email with the URL for the change to the email address you have entered.`,
     number_of_registered_users: 'Number of registered users',
     send_complited: 'Send completed.',
-    we_have_sent_email: 'We have sent you an email with the URL for the change to the email address you entered.',
+    we_have_sent_email:
+      'We have sent you an email with the URL for the change to the email address you entered.',
     destination_email_address: 'Destination email Address',
     back_to_login_page: 'Back to login page',
     btn_add: 'Create New',
@@ -89,7 +91,7 @@ export default {
     tag: 'Tag',
     video_description: 'Video Description',
     last_modified: 'Last modified',
-    video_information: 'Video Information', 
+    video_information: 'Video Information',
     public_settings: 'Public settings',
     no_title: 'No Title'
   },
@@ -97,7 +99,19 @@ export default {
     id: 'ID',
     display: 'Display',
     hidden: 'Hidden',
-    deleted: 'Deleted'    
+    deleted: 'Deleted'
+  },
+  history: {
+    history_title: 'History Info',
+    period: 'Period',
+    target_content: 'Target content',
+    user_id: 'User ID',
+    object_type_not_selected: 'Object type not selected',
+    object_name_not_selected: 'Object name not selected',
+    not_selected: 'Not selected',
+    object: 'Object',
+    verbs: 'Verbs',
+    timestamp: 'Timestamp'
   },
   label: {
     delete: 'Delete',
@@ -108,6 +122,8 @@ export default {
     registration: 'Registration',
     reply: 'Reply',
     change: 'Change',
+    reset: 'Reset',
+    extraction: 'Extraction',
     send: 'Send',
     save: 'Save',
     add_new: 'Add new',
@@ -140,7 +156,8 @@ export default {
     role: 'Role',
     group_is_not_selected: 'Group Is Not Selected',
     role_is_not_selected: 'Role Is Not Selected',
-    no_records_found: 'No Records Found'
+    no_records_found: 'No Records Found',
+    csv_download: 'CSV download'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:
