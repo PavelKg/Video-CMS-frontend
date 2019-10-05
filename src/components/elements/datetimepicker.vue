@@ -5,19 +5,19 @@
     v-on:click="calendarClicked($event)"
     v-on:blur="toggleCal"
   >
-    <div class="datetime-picker-input">
+    <div class="datetime-picker-input" @click="toggleCal">
       <input
         type="text"
-        :readonly="readonly"
         id="tj-datetime-input"
         :required="required"
         :value="date"
         :name="name"
+        readonly
         autocomplete="off"
       />
-      <div @click="toggleCal">
+      <div>
         <IconBase class="ms-dr-icon" :icon-color="icon_color">
-          <IconDataRange  />
+          <IconDataRange />
         </IconBase>
       </div>
     </div>

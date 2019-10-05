@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-table
-      :items="[]"
+      :items="history_on_page"
       :fields="fields"
       responsive="sm"
       striped
@@ -11,7 +11,7 @@
     >
     </b-table>
     <div class="history-mng-panel">
-      <button class="button btn-blue">
+      <button class="button btn-blue" @click="onDownloadCsv">
         {{ $t('label.csv_download') }}
       </button>
       <div class="history-mng-pag">
@@ -52,19 +52,61 @@ export default {
           label: this.$t('history.timestamp')
         }
       ],
-      perPage: 8,
-      currentPage: 1,
-      history_count: 0
+      perPage: 15,
+      currentPage: 1
+    }
+  },
+  watch: {
+    $route(newVal) {
+      this.currentPage = newVal.query.page ? newVal.query.page : 1
+    },
+    history_list_is_loading(newVal, oldVal) {
+      if (!newVal) {
+        this.currentPage = this.$route.query.page ? this.$route.query.page : 1
+      }
     }
   },
   computed: {
     ...mapState({
-      // ...
-    })
+      list: (state) => state.History.list,
+      history_list_is_loading: (state) => state.History.isListLoading
+    }),
+    history_count() {
+      return this.list ? this.list.length : 0
+    },
+    history_on_page() {
+      const begin = (this.currentPage - 1) * this.perPage
+      const end = begin + this.perPage
+
+      return this.list.slice(begin, end)
+    }
   },
   methods: {
     setPage(num) {
       this.$emit('contentElementClick', `/hub/history/?page=${num}`)
+    },
+    onDownloadCsv() {
+      const csvHeaders = 'User ID,Object,Verbs,Timestamp\n'
+      const strData = this.list
+        .map((e) => {
+          const row = {
+            uid: e.uid,
+            object: e.object,
+            verbs: e.action,
+            timestamp: e.created_at
+          }
+          return Object.values(row).join(',')
+        })
+        .join('\n')
+      const csvContent = `data:text/csv;charset=utf-8,${csvHeaders}${strData}`
+      const encodedUri = encodeURI(csvContent)
+      const link = document.createElement('a')
+      link.setAttribute('href', encodedUri)
+      link.setAttribute('download', 'data.csv')
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
   }
 }

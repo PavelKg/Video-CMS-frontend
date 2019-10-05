@@ -50,7 +50,6 @@ export default {
       }
     },
     async GROUP_ADD({commit, getters}, payload) {
-      console.log('getters.me.profile=', getters.me.profile)
       const cid = getters.me.profile.company_id
       try {
         const result = await Api.group_add(cid, payload)

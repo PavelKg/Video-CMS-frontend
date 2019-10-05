@@ -8,12 +8,14 @@
       <datetime
         class="datepicker"
         format="YYYY-MM-DD h:i"
+        :readonly="true"
         v-model="date_from"
       ></datetime>
       <p class="row-space">~</p>
       <datetime
         class="datepicker"
         format="YYYY-MM-DD h:i"
+        :readonly="true"
         v-model="date_to"
       ></datetime>
     </div>
@@ -51,7 +53,11 @@
         :placeholder="`${$t('history.not_selected')}`"
       />
       <div class="filter-button">
-        <button class="button btn-blue" :disabled="!onReadyToExtract">
+        <button
+          class="button btn-blue"
+          :disabled="!onReadyToExtract"
+          @click="onExtraction"
+        >
           {{ $t('label.extraction') }}
         </button>
         <button class="button btn-braun" @click="onResetFilter">
@@ -60,7 +66,7 @@
       </div>
     </div>
     <div class="history-table">
-      <tableHistoryInfo />
+      <tableHistoryInfo @contentElementClick="contentElementClick" />
     </div>
   </div>
 </template>
@@ -102,6 +108,17 @@ export default {
     }
   },
   created() {
+    const query = this.$route.query
+    this.updateProc(query)
+    this.$store.dispatch('LOAD_HISTORY_LIST', {
+      constraints: {
+        date_from: this.date_from,
+        date_to: this.date_to,
+        categories: `'${this.categories_selected.join("'\,'")}'`,
+        objects: this.categories_selected.join(','),
+        users: `'${this.users_selected.join("'\,'")}'`
+      }
+    })
     this.$store.dispatch('LOAD_HISTORY_CATEGORIES', {}).then((res) => {
       if (Array.isArray(res)) {
         const items = res
@@ -162,6 +179,50 @@ export default {
     },
     msCleaned(name) {
       this[name] = false
+    },
+    onExtraction() {
+      const categories = this.categories_selected.join(',')
+      const objects = this.objects_selected.join(',')
+      const users = this.users_selected.join(',')
+      const from = this.date_from
+      const to = this.date_to
+      this.updatePageByFilters({categories, objects, users, from, to})
+    },
+    contentElementClick(key) {
+      this.$emit('contentElementClick', key)
+    },
+    updateProc(query) {
+      for (const key in query) {
+        switch (key) {
+          case 'categories':
+            this.categories_selected = query[key].split(',')
+            break
+          case 'objects':
+            this.objects_selected = query[key].split(',')
+            break
+          case 'users':
+            this.users_selected = query[key].split(',')
+            break
+          case 'from':
+            this.date_from = query[key]
+            break
+          case 'to':
+            this.date_to = query[key]
+            break
+          default:
+            break
+        }
+      }
+    },
+    updatePageByFilters(params) {
+      let sendQuery = {...this.$route.query}
+      if (typeof params === 'object') {
+        for (let param in params) {
+          sendQuery[param] = params[param]
+        }
+      } else {
+      }
+      this.$router.push({path: '/hub/history', query: {...sendQuery}})
     }
   },
   computed: {

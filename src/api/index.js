@@ -729,7 +729,7 @@ export default {
       }
     })
   },
-  
+
   /** List of history category objects
    * @param {string} filter
    * @param {string} categories
@@ -751,5 +751,30 @@ export default {
         }
       }
     )
+  },
+
+  /** List of history list
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of history 
+   *  [ {
+        "uid": String,
+        "category": String,
+        "action": String,
+        "object": String,
+        "result": String,
+        "created_at": String
+    }]
+   */
+  history_list(payload) {
+    const {filter, offset = 0, limit} = payload
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
+
+    return Api.get(`/history?${setFilter}${setLimit}${setOffset}`, {
+      headers: {
+        ...type_json
+      }
+    })
   }
 }
