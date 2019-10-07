@@ -3,7 +3,7 @@ import Api from '@/api'
 export default {
   state: {
     list: [],
-    isListLoading: false,
+    isHistoryListLoading: false,
     isCategoriesLoading: false,
     isObjectsLoading: false,
     selected: null
@@ -41,14 +41,16 @@ export default {
     async LOAD_HISTORY_LIST({commit}, payload) {
       const {constraints} = payload
       const {date_from, date_to, categories, objects, users} = constraints
-      const filter = `userhist_user_uid[in]:(${users})`
+      const filter = `userhist_user_uid[in]:(${users}),userhist_category[in]:(${categories}),userhist_object_name[in]:(${objects}),users_history_log.created_at[between]:'${date_from}' and '${date_to}'`
       console.log('filter=', filter)
+      commit('SET_HISTORY_IS_LOADING', true)
+
       try {
         const result = await Api.history_list({filter})
         if (Array.isArray(result.data) && result.status === 200) {
-          commit('SET_HISTORY_IS_LOADING', true)
           commit('SET_HISTORY_LIST_DATA', result.data)
         } else {
+          commit('CLEAR_HISTORY_LIST_DATA')
           throw Error('Error load history category objects list')
         }
       } catch (error) {
@@ -62,12 +64,14 @@ export default {
     SET_CATEGORIES_IS_LOADING(state) {
       state.isCategoriesLoading = state
     },
-    SET_HISTORY_IS_LOADING(state) {
-      state.isListLoading = state
+    SET_HISTORY_IS_LOADING(state, value) {
+      state.isHistoryListLoading = value
     },
     SET_HISTORY_LIST_DATA(state, data) {
       state.list = [...data]
+    },
+    CLEAR_HISTORY_LIST_DATA(state) {
+      state.list = []
     }
-  },
-  getters: {}
+  }
 }

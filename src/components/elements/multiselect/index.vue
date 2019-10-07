@@ -50,19 +50,32 @@
         </div>
         <div class="multiselect-check-all ms-items">
           <template v-if="filteredItems.length">
-            <ItemContent>
-              <template #item-check>
-                <b-form-checkbox
-                  value="selectAll"
-                  v-model="groups_selectAll"
-                  unchecked-value="unSelectAll"
-                  @change="onSelectAll"
-                />
-              </template>
-              <template #item-name>
-                <p>{{ `${$t(selectedAllText)}` }}</p>
-              </template>
-            </ItemContent>
+            <ul>
+              <li
+                @click="
+                  onSelectAll(
+                    groups_selectAll === 'selectAll' &&
+                      groups_selectAll !== false
+                      ? 'unSelectAll'
+                      : 'selectAll'
+                  )
+                "
+              >
+                <ItemContent>
+                  <template #item-check>
+                    <b-form-checkbox
+                      value="selectAll"
+                      v-model="groups_selectAll"
+                      unchecked-value="unSelectAll"
+                      @change="onSelectAll"
+                    />
+                  </template>
+                  <template #item-name>
+                    <p>{{ `${$t(selectedAllText)}` }}</p>
+                  </template>
+                </ItemContent>
+              </li>
+            </ul>
           </template>
           <template v-else>
             <p>{{ $t('label.no_records_found') }}</p>
@@ -174,6 +187,7 @@ export default {
       this.search_string = ''
     },
     onSelectAll(e) {
+      console.log('e=', e)
       const selected = this.filteredItems.map((item) => item.value)
       if (e === 'selectAll') {
         const unicSelected = selected.filter(
@@ -309,6 +323,9 @@ export default {
     }
   }
   .multiselect-check-all {
+    ul {
+      width: 100%;
+    }
     p {
       text-align: center;
       margin-bottom: 0.3rem;

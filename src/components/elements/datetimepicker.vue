@@ -483,7 +483,6 @@ export default {
     }
   },
   created() {
-    console.log('this.value=', this.value)
     if (this.value) {
       try {
         this.timeStamp = this.makeDateObject(this.value)

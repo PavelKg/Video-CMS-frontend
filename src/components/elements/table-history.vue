@@ -3,15 +3,30 @@
     <b-table
       :items="history_on_page"
       :fields="fields"
+      :busy="history_list_is_loading"
       responsive="sm"
       striped
       fixed
       hover
       head-variant="dark"
+      show-empty
     >
+      <template #table-busy>
+        <div class="text-center text-danger my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong> {{ $t('label.loading') }} </strong>
+        </div>
+      </template>
+      <template #empty="scope">
+        <h5 align="center">{{ $t('history.no_data') }}</h5>
+      </template>
     </b-table>
     <div class="history-mng-panel">
-      <button class="button btn-blue" @click="onDownloadCsv">
+      <button
+        class="button btn-blue"
+        @click="onDownloadCsv"
+        :disabled="history_count === 0"
+      >
         {{ $t('label.csv_download') }}
       </button>
       <div class="history-mng-pag">
@@ -49,7 +64,10 @@ export default {
         },
         {
           key: 'created_at',
-          label: this.$t('history.timestamp')
+          label: this.$t('history.timestamp'),
+          formatter: (value, key, item) => {
+            return value.slice(0, 19)
+          }
         }
       ],
       perPage: 15,
@@ -69,7 +87,7 @@ export default {
   computed: {
     ...mapState({
       list: (state) => state.History.list,
-      history_list_is_loading: (state) => state.History.isListLoading
+      history_list_is_loading: (state) => state.History.isHistoryListLoading
     }),
     history_count() {
       return this.list ? this.list.length : 0

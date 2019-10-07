@@ -111,7 +111,8 @@ export default {
     not_selected: 'Not selected',
     object: 'Object',
     verbs: 'Verbs',
-    timestamp: 'Timestamp'
+    timestamp: 'Timestamp',
+    no_data: 'No Data'
   },
   label: {
     delete: 'Delete',
@@ -157,7 +158,8 @@ export default {
     group_is_not_selected: 'Group Is Not Selected',
     role_is_not_selected: 'Role Is Not Selected',
     no_records_found: 'No Records Found',
-    csv_download: 'CSV download'
+    csv_download: 'CSV download',
+    loading:'Loading...'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

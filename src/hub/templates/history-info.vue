@@ -103,22 +103,21 @@ export default {
     }
   },
   watch: {
+    $route(newVal, oldVal) {
+      if (newVal.query !== oldVal.query) {
+        console.log('newVal.query=', newVal.query)
+        this.updateProc(newVal.query)
+      }
+    },
     categories_selected(newVal) {
       this.updateCategoryObjectsList()
     }
   },
+
   created() {
     const query = this.$route.query
     this.updateProc(query)
-    this.$store.dispatch('LOAD_HISTORY_LIST', {
-      constraints: {
-        date_from: this.date_from,
-        date_to: this.date_to,
-        categories: `'${this.categories_selected.join("'\,'")}'`,
-        objects: this.categories_selected.join(','),
-        users: `'${this.users_selected.join("'\,'")}'`
-      }
-    })
+
     this.$store.dispatch('LOAD_HISTORY_CATEGORIES', {}).then((res) => {
       if (Array.isArray(res)) {
         const items = res
@@ -176,6 +175,8 @@ export default {
     onResetFilter() {
       this.cleanSelectedCategories = true
       this.cleanSelectedUsers = true
+
+      this.$router.push({path: this.$route.path})
     },
     msCleaned(name) {
       this[name] = false
@@ -192,6 +193,10 @@ export default {
       this.$emit('contentElementClick', key)
     },
     updateProc(query) {
+      this.categories_selected = []
+      this.objects_selected = []
+      this.users_selected = []
+
       for (const key in query) {
         switch (key) {
           case 'categories':
@@ -213,6 +218,24 @@ export default {
             break
         }
       }
+
+      if (
+        this.categories_selected.length > 0 &&
+        this.objects_selected.length > 0 &&
+        this.users_selected.length > 0
+      ) {
+        this.$store.dispatch('LOAD_HISTORY_LIST', {
+          constraints: {
+            date_from: this.date_from,
+            date_to: this.date_to,
+            categories: `'${this.categories_selected.join("'\\,'")}'`,
+            objects: `'${this.objects_selected.join("'\\,'")}'`,
+            users: `'${this.users_selected.join("'\\,'")}'`
+          }
+        })
+      } else {
+        this.$store.commit('CLEAR_HISTORY_LIST_DATA')
+      }
     },
     updatePageByFilters(params) {
       let sendQuery = {...this.$route.query}
@@ -222,7 +245,8 @@ export default {
         }
       } else {
       }
-      this.$router.push({path: '/hub/history', query: {...sendQuery}})
+      sendQuery['page'] = 1
+      this.$router.push({path: this.$route.path, query: {...sendQuery}})
     }
   },
   computed: {
