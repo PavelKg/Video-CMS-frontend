@@ -32,6 +32,10 @@ export default {
     })
   },
 
+  logout() {
+    return Api.post(`/users/logout`)
+  },
+
   my_profile() {
     return Api.get(`/users/me`, {
       headers: {

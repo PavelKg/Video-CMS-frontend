@@ -80,14 +80,8 @@ import tableHistoryInfo from '@/components/elements/table-history'
 export default {
   data() {
     return {
-      date_from: new Date()
-        .toISOString()
-        .slice(0, 16)
-        .replace('T', ' '),
-      date_to: new Date()
-        .toISOString()
-        .slice(0, 16)
-        .replace('T', ' '),
+      date_from: new Date().toLocalDateString().slice(0, 16),
+      date_to: new Date().toLocalDateString().slice(0, 16),
       categories_list: [],
       categories_selected: [],
       isCategoriesLoading: true,
@@ -105,7 +99,6 @@ export default {
   watch: {
     $route(newVal, oldVal) {
       if (newVal.query !== oldVal.query) {
-        console.log('newVal.query=', newVal.query)
         this.updateProc(newVal.query)
       }
     },

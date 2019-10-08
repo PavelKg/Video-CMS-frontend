@@ -9,6 +9,10 @@
       fixed
       hover
       head-variant="dark"
+      no-local-sorting
+      @sort-changed="sortingChanged"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
       show-empty
     >
       <template #table-busy>
@@ -31,7 +35,8 @@
       </button>
       <div class="history-mng-pag">
         <b-pagination
-          :value="currentPage"
+          v-if="!history_list_is_loading"
+          v-model="currentPage"
           @change="setPage"
           :total-rows="history_count"
           :per-page="perPage"
@@ -52,24 +57,30 @@ export default {
         {
           key: 'uid',
           label: this.$t('history.user_id'),
+          sortable: true,
           thStyle: {'text-align': 'center'}
         },
         {
           key: 'object',
+          sortable: true,
           label: this.$t('history.object')
         },
         {
           key: 'action',
+          sortable: true,
           label: this.$t('history.verbs')
         },
         {
           key: 'created_at',
+          sortable: true,
           label: this.$t('history.timestamp'),
           formatter: (value, key, item) => {
             return value.slice(0, 19)
           }
         }
       ],
+      sortBy: 'created_at',
+      sortDesc: false,
       perPage: 15,
       currentPage: 1
     }
@@ -100,8 +111,15 @@ export default {
     }
   },
   methods: {
+    sortingChanged(ctx) {
+      const {sortBy, sortDesc} = ctx
+      this.$store.commit('ORDER_HISTORY', {sortBy, sortDesc})
+    },
     setPage(num) {
-      this.$emit('contentElementClick', `/hub/history/?page=${num}`)
+      const {path, query} = this.$route
+      this.$router.push({path: this.$route.path, query: {...query, page: num}})
+      //this.$router.push({path, query: {...query}})
+      //this.$emit('contentElementClick', `/hub/history/?page=${num}`)
     },
     onDownloadCsv() {
       const csvHeaders = 'User ID,Object,Verbs,Timestamp\n'
@@ -116,15 +134,36 @@ export default {
           return Object.values(row).join(',')
         })
         .join('\n')
-      const csvContent = `data:text/csv;charset=utf-8,${csvHeaders}${strData}`
-      const encodedUri = encodeURI(csvContent)
-      const link = document.createElement('a')
-      link.setAttribute('href', encodedUri)
-      link.setAttribute('download', 'data.csv')
-      link.style.visibility = 'hidden'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      const exportedFilenmae = 'export.csv'
+      const csv = `${csvHeaders}${strData}`
+
+      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'})
+      if (navigator.msSaveBlob) {
+        // IE 10+
+        navigator.msSaveBlob(blob, exportedFilenmae)
+      } else {
+        var link = document.createElement('a')
+        if (link.download !== undefined) {
+          // feature detection
+          // Browsers that support HTML5 download attribute
+          var url = URL.createObjectURL(blob)
+          link.setAttribute('href', url)
+          link.setAttribute('download', exportedFilenmae)
+          link.style.visibility = 'hidden'
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        }
+      }
+
+      // const encodedUri = encodeURI(csvContent)
+      // const link = document.createElement('a')
+      // link.setAttribute('href', encodedUri)
+      // link.setAttribute('download', 'data.csv')
+      // link.style.visibility = 'hidden'
+      // document.body.appendChild(link)
+      // link.click()
+      // document.body.removeChild(link)
     }
   }
 }

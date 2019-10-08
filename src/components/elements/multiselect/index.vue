@@ -52,7 +52,7 @@
           <template v-if="filteredItems.length">
             <ul>
               <li
-                @click="
+                @click.prevent="
                   onSelectAll(
                     groups_selectAll === 'selectAll' &&
                       groups_selectAll !== false
@@ -67,7 +67,7 @@
                       value="selectAll"
                       v-model="groups_selectAll"
                       unchecked-value="unSelectAll"
-                      @change="onSelectAll"
+                      @change.prevent="onSelectAll"
                     />
                   </template>
                   <template #item-name>
@@ -187,7 +187,6 @@ export default {
       this.search_string = ''
     },
     onSelectAll(e) {
-      console.log('e=', e)
       const selected = this.filteredItems.map((item) => item.value)
       if (e === 'selectAll') {
         const unicSelected = selected.filter(

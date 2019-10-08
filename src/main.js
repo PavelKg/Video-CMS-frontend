@@ -20,6 +20,35 @@ require('es6-promise').polyfill()
 
 Vue.config.productionTip = false
 
+if (!Date.prototype.toLocalDateString) {
+  ;(function() {
+    function pad(number) {
+      if (number < 10) {
+        return '0' + number
+      }
+      return number
+    }
+
+    Date.prototype.toLocalDateString = function() {
+      return (
+        this.getFullYear() +
+        '-' +
+        pad(this.getMonth() + 1) +
+        '-' +
+        pad(this.getDate()) +
+        ' ' +
+        pad(this.getHours()) +
+        ':' +
+        pad(this.getMinutes()) +
+        ':' +
+        pad(this.getSeconds()) +
+        '.' +
+        (this.getMilliseconds() / 1000).toFixed(3).slice(2, 5)
+      )
+    }
+  })()
+}
+
 new Vue({
   i18n,
   router,

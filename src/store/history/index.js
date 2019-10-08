@@ -42,7 +42,6 @@ export default {
       const {constraints} = payload
       const {date_from, date_to, categories, objects, users} = constraints
       const filter = `userhist_user_uid[in]:(${users}),userhist_category[in]:(${categories}),userhist_object_name[in]:(${objects}),users_history_log.created_at[between]:'${date_from}' and '${date_to}'`
-      console.log('filter=', filter)
       commit('SET_HISTORY_IS_LOADING', true)
 
       try {
@@ -72,6 +71,19 @@ export default {
     },
     CLEAR_HISTORY_LIST_DATA(state) {
       state.list = []
+    },
+    ORDER_HISTORY(state, payload) {
+      const {sortBy, sortDesc} = payload
+      state.list.sort(function(a, b) {
+        if (a[sortBy] > b[sortBy]) {
+          return sortDesc ? -1 : 1
+        }
+        if (a[sortBy] < b[sortBy]) {
+          return sortDesc ? 1 : -1
+        }
+        // a eq b
+        return 0
+      })
     }
   }
 }

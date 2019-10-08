@@ -34,7 +34,8 @@ export default {
     async LOGOUT({commit, dispatch}) {
       localStorage.removeItem('vcms-token')
       localStorage.removeItem('vcms-user')
-      Api.delHeaderAuth()
+      await Api.logout()
+      await Api.delHeaderAuth()
       dispatch('CLEAR_MENU_STATE')
       commit('AUTH_LOGOUT')
     },
