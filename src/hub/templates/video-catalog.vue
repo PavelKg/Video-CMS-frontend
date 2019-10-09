@@ -128,7 +128,7 @@ export default {
   data() {
     return {
       years: [2019, 2018, 2017, 2016],
-      months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12],
+      months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       public_options: [
         {text: this.$t('label.all'), value: 'all'},
         {text: this.$t('label.public'), value: 'public'},

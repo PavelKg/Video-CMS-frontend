@@ -21,7 +21,6 @@
             :value="row.item.mid"
             v-model="messages_selected"
             :disabled="Boolean(row.item.deleted_at)"
-            class="truncate-text"
           >
           </b-form-checkbox>
         </div>
@@ -249,6 +248,11 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/styles';
+
+.custom-control{
+  padding-left: 3rem;
+}
+
 .date-column {
   text-align: right;
 }
