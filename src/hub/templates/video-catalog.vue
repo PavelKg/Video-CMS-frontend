@@ -22,6 +22,7 @@
           :options="years"
           @change="onPeriodState"
         ></b-form-select>
+
         <b-form-select
           size="sm"
           v-model="period_filter.month_from"
@@ -158,15 +159,6 @@ export default {
     //     ? this.$route.query.page
     //     : 1
     // })
-
-    let curr = new Date()
-
-    this.period_filter.year_to = curr.getFullYear()
-    this.period_filter.month_to = curr.getMonth() + 1
-    curr.setMonth(curr.getMonth() - 1)
-
-    this.period_filter.year_from = curr.getFullYear()
-    this.period_filter.month_from = curr.getMonth() + 1
   },
   mounted() {},
   methods: {
@@ -244,6 +236,8 @@ export default {
       this.$router.push({path: '/hub/videos', query: {...sendQuery}})
     },
     updateProc(query) {
+      let curr = new Date()
+
       for (const key in query) {
         switch (key) {
           case 'publicState':
@@ -263,6 +257,23 @@ export default {
             break
         }
       }
+
+      if (!query.to) {
+        this.period_filter.year_to = curr.getFullYear()
+        this.period_filter.month_to = curr.getMonth() + 1
+      }
+
+      if (!query.from) {
+        curr.setMonth(curr.getMonth() - 1)
+        this.period_filter.year_from = curr.getFullYear()
+        this.period_filter.month_from = curr.getMonth() + 1
+        // this.$store.dispatch('GET_MY_COMPANY_INFO').then((res) => {
+        //   const created = new Date(res.created_at)
+        //   this.period_filter.year_from = created.getFullYear()
+        //   this.period_filter.month_from = created.getMonth() + 1
+        // })
+      }
+
       this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
       this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
       this.$store

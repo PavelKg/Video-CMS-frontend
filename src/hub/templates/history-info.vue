@@ -80,7 +80,7 @@ import tableHistoryInfo from '@/components/elements/table-history'
 export default {
   data() {
     return {
-      date_from: new Date().toLocalDateString().slice(0, 16),
+      date_from: '',
       date_to: new Date().toLocalDateString().slice(0, 16),
       categories_list: [],
       categories_selected: [],
@@ -210,6 +210,15 @@ export default {
           default:
             break
         }
+      }
+
+      if (!query.date_from) {
+        this.$store.dispatch('GET_MY_COMPANY_INFO').then((res) => {
+          const created = new Date(res.created_at)
+            .toLocalDateString()
+            .slice(0, 16)
+          this.date_from = created
+        })
       }
 
       if (

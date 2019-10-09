@@ -44,6 +44,14 @@ export default {
     })
   },
 
+  my_company_info(){
+    return Api.get(`/users/company`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** Password recovery
    * @param {string} email - user's email
    * @param {string} locale - user locale

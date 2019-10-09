@@ -49,6 +49,15 @@ export default {
         throw Error('Getting profile error')
       }
     },
+
+    async GET_MY_COMPANY_INFO({commit}) {
+      try {
+        const result = await Api.my_company_info()
+        return result.data
+      } catch (e) {
+        throw Error('Getting my company info error')
+      }
+    },
     async PASSWORD_RECOVERY({commit}, payload) {
       const {email, locale} = payload
       try {
