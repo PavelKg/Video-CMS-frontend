@@ -61,14 +61,22 @@ export default {
           thStyle: {'text-align': 'center'}
         },
         {
+          key: 'category',
+          sortable: true,
+          label: this.$t('history.category'),
+          thStyle: {'text-align': 'center'}
+        },
+        {
           key: 'object',
           sortable: true,
-          label: this.$t('history.object')
+          label: this.$t('history.object'),
+          thStyle: {'text-align': 'center'}
         },
         {
           key: 'action',
           sortable: true,
-          label: this.$t('history.verbs')
+          label: this.$t('history.verbs'),
+          thStyle: {'text-align': 'center'}
         },
         {
           key: 'created_at',
@@ -76,7 +84,8 @@ export default {
           label: this.$t('history.timestamp'),
           formatter: (value, key, item) => {
             return value.slice(0, 19)
-          }
+          },
+          thStyle: {'text-align': 'center'}
         }
       ],
       sortBy: 'created_at',
@@ -122,11 +131,12 @@ export default {
       //this.$emit('contentElementClick', `/hub/history/?page=${num}`)
     },
     onDownloadCsv() {
-      const csvHeaders = 'User ID,Object,Verbs,Timestamp\n'
+      const csvHeaders = 'User ID,Category,Object,Verbs,Timestamp\n'
       const strData = this.list
         .map((e) => {
           const row = {
             uid: e.uid,
+            category: e.category,
             object: e.object,
             verbs: e.action,
             timestamp: e.created_at
@@ -155,15 +165,6 @@ export default {
           document.body.removeChild(link)
         }
       }
-
-      // const encodedUri = encodeURI(csvContent)
-      // const link = document.createElement('a')
-      // link.setAttribute('href', encodedUri)
-      // link.setAttribute('download', 'data.csv')
-      // link.style.visibility = 'hidden'
-      // document.body.appendChild(link)
-      // link.click()
-      // document.body.removeChild(link)
     }
   }
 }

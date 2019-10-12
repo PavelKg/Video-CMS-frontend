@@ -80,7 +80,8 @@ export default {
     group_name: 'Group Name',
     oper_title_edit: 'Group Information',
     oper_title_add: 'Add New Group',
-    in_page: 'In page'
+    in_page: 'In page',
+    id: 'ID'
   },
   screen: {
     display: 'Display',
@@ -93,7 +94,8 @@ export default {
     last_modified: 'Last modified',
     video_information: 'Video Information',
     public_settings: 'Public settings',
-    no_title: 'No Title'
+    no_title: 'No Title',
+    id: 'ID'
   },
   comments: {
     id: 'ID',
@@ -106,6 +108,7 @@ export default {
     period: 'Period',
     target_content: 'Target content',
     user_id: 'User ID',
+    category: 'Category',
     object_type_not_selected: 'Object type not selected',
     object_name_not_selected: 'Object name not selected',
     not_selected: 'Not selected',
