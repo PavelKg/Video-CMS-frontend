@@ -1,14 +1,17 @@
 <template>
   <div
+    :id="`datetime-picker-${ucode}`"
     :style="{width: width}"
     class="datetime-picker"
-    v-on:click="calendarClicked($event)"
-    v-on:blur="toggleCal"
   >
-    <div class="datetime-picker-input" @click="toggleCal">
+    <div
+      class="datetime-picker-input"
+      @click="toggleCal"
+      :id="`datetime-picker-div-input-${ucode}`"
+    >
       <input
         type="text"
-        id="tj-datetime-input"
+        :id="`tj-datetime-input-${ucode}`"
         :required="required"
         :value="date"
         :name="name"
@@ -16,13 +19,30 @@
         autocomplete="off"
       />
       <div>
-        <IconBase class="ms-dr-icon" :icon-color="icon_color">
+        <IconBase
+          class="ms-dr-icon"
+          :icon-color="icon_color"
+          icon-name="Select"
+        >
           <IconDataRange />
         </IconBase>
       </div>
     </div>
 
-    <div class="calender-div" :class="{noDisplay: hideCal}">
+    <div
+      class="calender-div"
+      :id="`calender-div-${ucode}`"
+      v-show="!hideCal"
+      v-closable="{
+        exclude: [
+          `datetime-picker-${ucode}`,
+          `tj-datetime-input-${ucode}`,
+          `datetime-picker-div-input-${ucode}`,
+          `calender-div-${ucode}`
+        ],
+        handler: 'onHideCal'
+      }"
+    >
       <div :class="{noDisplay: hideDate}">
         <div class="year-month-wrapper">
           <div class="month-setter">
@@ -208,10 +228,17 @@ export default {
       minuteSelectorVisible: false,
       hourSelectorVisible: false,
       period: AM,
-      periodStyle: 12
+      periodStyle: 12,
+      ucode: ''
     }
   },
   methods: {
+    getUcode() {
+      return Math.random()
+        .toString(36)
+        .replace(/[^a-z]+/g, '')
+        .substr(0, 10)
+    },
     leftMonth() {
       let index = this.months.indexOf(this.month)
       if (index === 0) {
@@ -367,11 +394,15 @@ export default {
       }
     },
     documentClicked(event) {
-      if (event.target.id !== 'tj-datetime-input') {
-        this.hideCal = true
+      if (event.target.id !== `tj-datetime-input-${this.ucode}`) {
+        this.onHideCal()
       }
     },
+    onHideCal() {
+      this.hideCal = true
+    },
     toggleCal() {
+      console.log('toggleCal=', this.hideCal)
       this.hideCal = !this.hideCal
     },
     setPeriodStyle() {
@@ -511,9 +542,10 @@ export default {
       this.days[(idx - this.normalizedFirstDayOfWeek + 7) % 7] = day
     })
     document.addEventListener('keydown', this.keyIsDown)
-    document.addEventListener('click', this.documentClicked)
+    //document.addEventListener('click', this.documentClicked)
     // this.setDate()
     this.setPeriodStyle()
+    this.ucode = this.getUcode()
   },
   watch: {
     value(newVal, oldVal) {
@@ -539,7 +571,7 @@ export default {
   },
   destroyed: function() {
     document.removeEventListener('keydown', this.keyIsDown)
-    document.removeEventListener('click', this.documentClicked)
+    //document.removeEventListener('click', this.documentClicked)
   },
   components: {
     IconDataRange,

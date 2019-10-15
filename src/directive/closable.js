@@ -11,7 +11,6 @@ export default {
           clickedOnExcludedEl = itemId === e.target.id
         }
       })
-
       if (!el.contains(e.target) && !clickedOnExcludedEl) {
         vnode.context[handler]()
       }

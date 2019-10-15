@@ -175,9 +175,10 @@ export default {
         const {gid = null, rid = null} = query
         this.mnUser.rid = rid
         if (gid) {
-          this.mnUser.gids.push(gid)
+          this.mnUser.gids.push(+gid)
         }
         this.isUpdatingUserData = false
+
       }
     }
 
@@ -194,6 +195,8 @@ export default {
         .map((item) => {
           return {value: item.gid, text: item.name}
         })
+
+        console.log('this.group_options=', this.group_options)
     })
     this.$store.dispatch('LOAD_ROLES', cid).then((res) => {
       this.role_options = this.roles
