@@ -28,6 +28,7 @@ export default {
       let rect = {}
       rect.width = window.innerWidth
       rect.height = window.innerHeight
+      console.log('handleResize', rect)
       this.$store.commit('windowsResize', rect)
       const tabletWidth = this.$store.getters.windowsRect.tabletMaxWidth
       if (rect.width < tabletWidth) this.$store.commit('MENU_HIDE')
