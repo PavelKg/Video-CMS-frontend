@@ -44,18 +44,18 @@
         </p>
       </template>
       <template slot="subject" slot-scope="item">
-        <a href="#" @click="showMessageModal(item.item)">
+        <a href="#" @click.prevent="showMessageModal(item.item)">
           <p class="truncate-text">{{ item.item.subject }}</p>
         </a>
       </template>
     </b-table>
     <div class="messages-mng-panel">
       <span>{{ $t('groups.in_page') }}:</span>
-      <a href="#" id="selectAll" @click="toggleAll">{{
+      <a href="#" id="selectAll" @click.prevent="toggleAll">{{
         $t('label.select_all')
       }}</a>
       <span>|</span>
-      <a href="#" id="deselectAll" @click="toggleAll">{{
+      <a href="#" id="deselectAll" @click.prevent="toggleAll">{{
         $t('label.deselect_all')
       }}</a>
       <button
@@ -85,9 +85,11 @@
         <div class="modal-subj-date">
           <div class="subject-title-row">
             <span class="title">{{ $t('message.subject') }}</span>
-            <button class="button btn-grey" @click="replyToSender">
-              {{ $t('label.reply') }}
-            </button>
+            <template v-if="active_message && !active_message.cp_deleted_at">
+              <button class="button btn-grey" @click="replyToSender">
+                {{ $t('label.reply') }}
+              </button>
+            </template>
           </div>
 
           <p
@@ -249,7 +251,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/styles';
 
-.custom-control{
+.custom-control {
   padding-left: 3rem;
 }
 

@@ -71,14 +71,14 @@
     <div class="videos-mng-panel">
       <div class="admin-mng-panel" v-if="isAdmin">
         <span>{{ $t('label.in_page') }}:</span>
-        <a href="#" id="selectAll" @click="toggleAll('selectAll')">{{
+        <a href="#" id="selectAll" @click.prevent="toggleAll('selectAll')">{{
           $t('label.select_all')
         }}</a>
         <span>|</span>
         <a
           href="#"
           id="deselectAll"
-          @click="toggleAll('deselectAll')"
+          @click.prevent="toggleAll('deselectAll')"
           :class="{isDisabled: videos_selected.length === 0}"
           >{{ $t('label.deselect_all') }}</a
         >

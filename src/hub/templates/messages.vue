@@ -47,11 +47,7 @@
     >
       <div class="modal-zone">
         <div class="modal-data-zone">
-          <b-form-select
-            v-model="modalMessData.receiver"
-            :options="receivers"
-            :disabled="!isReceiverExist"
-          >
+          <b-form-select v-model="modalMessData.receiver" :options="receivers">
             <template slot="first">
               <option :value="null">To</option>
             </template>

@@ -43,11 +43,11 @@
     </b-table>
     <div class="groups-mng-panel">
       <span>{{ $t('groups.in_page') }}:</span>
-      <a href="#" id="selectAll" @click="toggleAll">{{
+      <a href="#" id="selectAll" @click.prevent="toggleAll">{{
         $t('label.select_all')
       }}</a>
       <span>|</span>
-      <a href="#" id="deselectAll" @click="toggleAll">{{
+      <a href="#" id="deselectAll" @click.prevent="toggleAll">{{
         $t('label.deselect_all')
       }}</a>
       <button
