@@ -129,7 +129,7 @@ export default {
   //display: flex;
   margin-left: 180px;
   margin-top: 50px;
-  overflow: hidden;
+  //overflow: hidden;
 
   .content-zone {
     //overflow: auto;

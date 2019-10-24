@@ -6,8 +6,8 @@
   >
     <div
       class="datetime-picker-input"
-      @click="toggleCal"
       :id="`datetime-picker-div-input-${ucode}`"
+      @click="toggleCal"
     >
       <input
         type="text"
@@ -21,6 +21,7 @@
       <div>
         <IconBase
           class="ms-dr-icon"
+          :id="`button-datetime-input-${ucode}`"
           :icon-color="icon_color"
           icon-name="Select"
         >
@@ -38,7 +39,8 @@
           `datetime-picker-${ucode}`,
           `tj-datetime-input-${ucode}`,
           `datetime-picker-div-input-${ucode}`,
-          `calender-div-${ucode}`
+          `calender-div-${ucode}`,
+          `button-datetime-input-${ucode}`
         ],
         handler: 'onHideCal'
       }"
@@ -402,7 +404,6 @@ export default {
       this.hideCal = true
     },
     toggleCal() {
-      console.log('toggleCal=', this.hideCal)
       this.hideCal = !this.hideCal
     },
     setPeriodStyle() {

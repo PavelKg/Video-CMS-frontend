@@ -38,7 +38,7 @@ export default {
 }
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 @import './assets/styles';
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -49,5 +49,6 @@ export default {
 
 body {
   background-color: $gray-lightest;
+  overflow: overlay;
 }
 </style>

@@ -79,6 +79,12 @@ export default {
           thStyle: {'text-align': 'center'}
         },
         {
+          key: 'details',
+          sortable: true,
+          label: this.$t('history.details'),
+          thStyle: {'text-align': 'center'}
+        },
+        {
           key: 'created_at',
           sortable: true,
           label: this.$t('history.timestamp'),
@@ -131,7 +137,7 @@ export default {
       //this.$emit('contentElementClick', `/hub/history/?page=${num}`)
     },
     onDownloadCsv() {
-      const csvHeaders = 'User ID,Category,Object,Verbs,Timestamp\n'
+      const csvHeaders = 'User ID,Category,Object,Verbs,Details,Timestamp\n'
       const strData = this.list
         .map((e) => {
           const row = {
@@ -139,6 +145,7 @@ export default {
             category: e.category,
             object: e.object,
             verbs: e.action,
+            details: e.details,
             timestamp: e.created_at
           }
           return Object.values(row).join(',')

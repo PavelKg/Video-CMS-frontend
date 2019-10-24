@@ -115,7 +115,8 @@ export default {
     object: 'Object',
     verbs: 'Verbs',
     timestamp: 'Timestamp',
-    no_data: 'No Data'
+    no_data: 'No Data',
+    details: 'Details'
   },
   label: {
     delete: 'Delete',
