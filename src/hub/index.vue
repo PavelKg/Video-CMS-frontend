@@ -2,6 +2,7 @@
   <div>
     <div class="header-zone"><headerArea /></div>
     <div
+      id="menu-zone-box"
       class="menu-zone"
       v-if="!isSmallScreen || isMenuVisible"
       v-closable="{
@@ -128,6 +129,7 @@ export default {
   //display: flex;
   margin-left: 180px;
   margin-top: 50px;
+  //overflow: hidden;
 
   .content-zone {
     //overflow: auto;

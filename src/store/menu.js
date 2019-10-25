@@ -242,7 +242,12 @@ const menuStructure = {
             caption: 'menu.role_add'
           }
         }
-      }
+      },
+      history: {
+        caption: 'menu.history_info',
+        type: 'history.list',
+        visible: true
+      },
     }
   },
 

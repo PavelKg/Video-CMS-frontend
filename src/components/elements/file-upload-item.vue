@@ -2,12 +2,12 @@
   <div class="file-listing">
     {{ `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} Mb)` }}
     <div v-if="value === 0 && !uploaded && !uploading" class="remove-container">
-      <a href="#" class="remove" @click="removeMe">{{ $t('label.remove') }}</a>
+      <a href="#" class="remove" @click.prevent="removeMe">{{ $t('label.remove') }}</a>
     </div>
     <b-progress
       class="upload-progress"
       v-else
-      :value="uploaded ? 100: value"
+      :value="uploaded ? 100 : value"
       :max="max"
       show-progress
       :animated="animate"
@@ -23,7 +23,7 @@ export default {
     return {
       value: 0,
       max: 100,
-      animate:true
+      animate: true
     }
   },
   props: {
@@ -33,7 +33,6 @@ export default {
     uploading: Boolean
   },
   created() {
-    console.log('uploading=', this.uploading)
     this.$store.commit('PROGRESS_UPLOAD_FILE', {
       name: this.file.name,
       progress_handler: this.uplProgress
@@ -41,10 +40,10 @@ export default {
   },
   methods: {
     removeMe() {
-      this.$store.commit('DEL_UPLOAD_FILE', this.file.uuid)
+      this.$store.commit('DEL_UPLOAD_FILE', this.file.name)
     },
     uplProgress(val) {
-      if (val===100) {
+      if (val === 100) {
         this.$store.commit('SET_UPLOADED_FILE', this.uuid)
         this.animate = false
       }

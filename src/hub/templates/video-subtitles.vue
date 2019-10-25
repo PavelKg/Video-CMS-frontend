@@ -48,6 +48,10 @@
           </div>
         </div>
         <div class="video-subtitles-inputs">
+          <div class="video-subtitles-inputs-id">
+            <p>{{$t('videos.id')}}:</p>
+            <p>{{ form.video_id }}</p>
+          </div>
           <b-form-input
             :placeholder="`${$t('videos.video_title')}`"
             v-model="form.video_title"
@@ -57,6 +61,7 @@
             v-model="form.video_tag"
           ></b-form-input>
           <multiselect
+            class="multiselect"
             v-if="!isLoadingData"
             v-model="form.video_groups"
             :items="group_options"
@@ -328,9 +333,19 @@ export default {
     display: flex;
     flex-direction: column;
     padding: 10px 0;
+    .video-subtitles-inputs-id {
+      display: flex;
+      p {
+        min-width: 30px;
+        font-weight: 600;
+      }
+    }
     input {
-      margin-top: 10px;
+      margin-bottom: 10px;
       padding-left: 5px;
+    }
+    .multiselect {
+      padding-bottom: 10px;
     }
   }
   .video-subtitles-buttons {

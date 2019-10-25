@@ -1,7 +1,7 @@
 <template>
   <div class="export-block">
     <div>
-      <a href="#" @click="toggleModal" class="password-recovery">{{
+      <a href="#" @click.prevent="toggleModal" class="password-recovery">{{
         $t('message.lnkPassRec')
       }}</a>
     </div>
@@ -43,7 +43,7 @@
           <span>{{
             `${$t('message.destination_email_address')}: ${exportEmail}`
           }}</span>
-          <b-link href="#" @click="hideModal" class="mess-home-link">{{
+          <b-link href="#" @click.prevent="hideModal" class="mess-home-link">{{
             $t('message.back_to_login_page')
           }}</b-link>
         </div>

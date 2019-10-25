@@ -190,7 +190,7 @@ export default {
   //height: 300px;
   overflow-y: auto;
   -webkit-overflow-y: auto;
-  overflow: scroll;
+  //overflow: scroll;
   -webkit-overflow-scrolling: touch;
 }
 

@@ -34,7 +34,8 @@ export default {
     async LOGOUT({commit, dispatch}) {
       localStorage.removeItem('vcms-token')
       localStorage.removeItem('vcms-user')
-      Api.delHeaderAuth()
+      await Api.logout()
+      await Api.delHeaderAuth()
       dispatch('CLEAR_MENU_STATE')
       commit('AUTH_LOGOUT')
     },
@@ -46,6 +47,15 @@ export default {
       } catch (e) {
         dispatch('LOGOUT')
         throw Error('Getting profile error')
+      }
+    },
+
+    async GET_MY_COMPANY_INFO({commit}) {
+      try {
+        const result = await Api.my_company_info()
+        return result.data
+      } catch (e) {
+        throw Error('Getting my company info error')
       }
     },
     async PASSWORD_RECOVERY({commit}, payload) {

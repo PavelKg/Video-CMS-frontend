@@ -19,7 +19,7 @@
       head-variant="dark"
     >
       <template slot="uid" slot-scope="item"
-        ><a @click="updUser(item.item)" href="#" ><p class="truncate-text">{{ item.item.uid }}</p></a>
+        ><a @click.prevent="updUser(item.item)" href="#" ><p class="truncate-text">{{ item.item.uid }}</p></a>
       </template>
       <template slot="fullname" slot-scope="item"
         ><p class="truncate-text">{{ item.item.fullname }}</p>

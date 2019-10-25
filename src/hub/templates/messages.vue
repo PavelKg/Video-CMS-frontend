@@ -192,11 +192,22 @@ export default {
         }
       })
     },
+    isReceiverExist() {
+      let recName = undefined
+      if (this.modalMessData.receiver !== null) {
+        recName = this.message_receivers.find(
+          (receiver) => receiver.uid === this.modalMessData.receiver.uid
+        )
+      }
+      return recName
+    },
     isReadyToSend() {
       return (
+        Boolean(this.isReceiverExist) &&
         this.modalMessData.subject.trim().length > 0 &&
-        this.modalMessData.text.trim().length > 0 &&
-        Boolean(this.modalMessData.receiver)
+        this.modalMessData.text.trim().length > 0
+        // &&
+        // Boolean(this.modalMessData.receiver)
       )
     }
   },

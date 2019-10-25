@@ -9,21 +9,27 @@
       </div>
     </template>
     <template v-else>
-      <span>{{ $t(group_title) }}</span>
+      <p>{{ $t(group_title) }}</p>
       <div class="group-oper-id">
-        <span v-if="oper === 'edit'">{{ `${$t('groups.name')}` }}:</span>
-        <b-form-input
-          v-model="mnGroup.name"
-          :placeholder="`${$t('groups.group_name')}`"
-          :disabled="group_is_deleted"
-        ></b-form-input>
-        <button
-          :disabled="mnGroup.name === src_name || group_is_deleted"
-          @click="save_click"
-          class="button btn-blue"
-        >
-          {{ `${$t('label.register')}` }}
-        </button>
+        <div class="group-oper-id-data">
+          <p>{{$t('groups.id')}}:</p>
+          <p>{{ `g_${mnGroup.gid}` }}</p>
+        </div>
+        <div class="group-oper-id-data">
+          <p v-if="oper === 'edit'">{{ `${$t('groups.name')}` }}:</p>
+          <b-form-input
+            v-model="mnGroup.name"
+            :placeholder="`${$t('groups.group_name')}`"
+            :disabled="group_is_deleted"
+          ></b-form-input>
+          <button
+            :disabled="mnGroup.name === src_name || group_is_deleted"
+            @click="save_click"
+            class="button btn-blue"
+          >
+            {{ `${$t('label.register')}` }}
+          </button>
+        </div>
       </div>
       <template v-if="oper === 'edit' && !group_is_deleted">
         <TableUsersLite
@@ -86,7 +92,7 @@ export default {
 
   created() {
     const {gid = null} = this.$route.params
-    
+
     this.mnGroup.gid = +gid
     const cid = this.me.profile.company_id
 
@@ -127,7 +133,7 @@ export default {
 .group-operation {
   display: flex;
   flex-direction: column;
-  > span {
+  > p {
     font-size: 1.8em;
     font-weight: 600;
   }
@@ -136,11 +142,20 @@ export default {
   }
   .group-oper-id {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     font-size: 1.2em;
+    p {
+      min-width: 90px;
+    }
+    .group-oper-id-data {
+      display: flex;
+      justify-content: center;
+      font-size: 1.2em;
+    }
   }
   input {
-    margin: 0 10px;
+    margin-right: 10px;
     max-width: 400px;
   }
   .check-admin {

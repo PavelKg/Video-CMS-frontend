@@ -22,6 +22,7 @@
           :options="years"
           @change="onPeriodState"
         ></b-form-select>
+
         <b-form-select
           size="sm"
           v-model="period_filter.month_from"
@@ -70,14 +71,14 @@
     <div class="videos-mng-panel">
       <div class="admin-mng-panel" v-if="isAdmin">
         <span>{{ $t('label.in_page') }}:</span>
-        <a href="#" id="selectAll" @click="toggleAll('selectAll')">{{
+        <a href="#" id="selectAll" @click.prevent="toggleAll('selectAll')">{{
           $t('label.select_all')
         }}</a>
         <span>|</span>
         <a
           href="#"
           id="deselectAll"
-          @click="toggleAll('deselectAll')"
+          @click.prevent="toggleAll('deselectAll')"
           :class="{isDisabled: videos_selected.length === 0}"
           >{{ $t('label.deselect_all') }}</a
         >
@@ -128,7 +129,7 @@ export default {
   data() {
     return {
       years: [2019, 2018, 2017, 2016],
-      months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12],
+      months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       public_options: [
         {text: this.$t('label.all'), value: 'all'},
         {text: this.$t('label.public'), value: 'public'},
@@ -158,15 +159,6 @@ export default {
     //     ? this.$route.query.page
     //     : 1
     // })
-
-    let curr = new Date()
-
-    this.period_filter.year_to = curr.getFullYear()
-    this.period_filter.month_to = curr.getMonth() + 1
-    curr.setMonth(curr.getMonth() - 1)
-
-    this.period_filter.year_from = curr.getFullYear()
-    this.period_filter.month_from = curr.getMonth() + 1
   },
   mounted() {},
   methods: {
@@ -244,6 +236,8 @@ export default {
       this.$router.push({path: '/hub/videos', query: {...sendQuery}})
     },
     updateProc(query) {
+      let curr = new Date()
+
       for (const key in query) {
         switch (key) {
           case 'publicState':
@@ -263,6 +257,23 @@ export default {
             break
         }
       }
+
+      if (!query.to) {
+        this.period_filter.year_to = curr.getFullYear()
+        this.period_filter.month_to = curr.getMonth() + 1
+      }
+
+      if (!query.from) {
+        curr.setMonth(curr.getMonth() - 1)
+        this.period_filter.year_from = curr.getFullYear()
+        this.period_filter.month_from = curr.getMonth() + 1
+        // this.$store.dispatch('GET_MY_COMPANY_INFO').then((res) => {
+        //   const created = new Date(res.created_at)
+        //   this.period_filter.year_from = created.getFullYear()
+        //   this.period_filter.month_from = created.getMonth() + 1
+        // })
+      }
+
       this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
       this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
       this.$store

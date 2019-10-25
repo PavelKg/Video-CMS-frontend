@@ -293,6 +293,7 @@ export default {
       }
     },
     DEL_UPLOAD_FILE(state, file_name) {
+      console.log('file_name=', file_name)
       const del_index = state.filesForUpload.list.findIndex(function(item) {
         if (item.file.name === file_name) {
           return true
@@ -301,6 +302,7 @@ export default {
       if (~del_index) {
         state.filesForUpload.list.splice(del_index, 1)
       }
+      console.log('del_index=', del_index)
     },
     CLEAR_UPLOAD_FILES(state) {
       // need add check for existing file name

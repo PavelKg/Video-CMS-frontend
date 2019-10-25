@@ -1,14 +1,19 @@
 <template>
   <div class="multiselect">
     <div
-      id="multiselect-tablo"
+      :id="`multiselect-tablo-${ucode}`"
       class="multiselect-tablo elem-borders"
       @click="onOpenMultiselect"
     >
-      <p id="placeholder" v-if="selected.length === 0" style="opacity:0.5">
-        {{ placeholder }}
-      </p>
-      <p id="selectedList" v-else v-html="selectedList"></p>
+      <template v-if="selected.length === 0">
+        <p :id="`ms-placeholder-${ucode}`" style="opacity:0.5">
+          {{ placeholder }}
+        </p>
+      </template>
+      <template v-else>
+        <p :id="`ms-selected-${ucode}`" v-html="selectedList"></p>
+      </template>
+
       <IconBase
         class="ms-dd-icon rotating"
         :class="{'rotating-opened': selectIsOpen}"
@@ -17,69 +22,88 @@
         <IconChevron />
       </IconBase>
     </div>
-
-    <div
-      id="list"
-      v-if="selectIsOpen"
-      class="multiselect-list elem-borders"
-      :class="{'multiselect-list-open': selectIsOpen}"
-      v-closable="{
-        exclude: ['multiselect-tablo', 'placeholder', 'selectedList'],
-        handler: 'onHideList'
-      }"
-    >
-      <div class="multiselect-search ms-items">
-        <input
-          :value="search_string"
-          @input="search_string = $event.target.value"
-          :placeholder="`${$t('label.keyword_search')}`"
-        />
-        <span v-show="search_string.length > 0" @click="onClearSearch">
-          X
-        </span>
+    <template v-if="selectIsOpen">
+      <div
+        :id="`ms-list-${ucode}`"
+        key="username-input"
+        v-closable="{
+          exclude: [
+            `multiselect-tablo-${ucode}`,
+            `ms-list-${ucode}`,
+            `ms-placeholder-${ucode}`,
+            `ms-selected-${ucode}`
+          ],
+          handler: 'onHideList'
+        }"
+        class="multiselect-list elem-borders"
+        :class="{'multiselect-list-open': selectIsOpen}"
+      >
+        <div class="multiselect-search ms-items">
+          <input
+            :value="search_string"
+            @input="search_string = $event.target.value"
+            :placeholder="`${$t('label.keyword_search')}`"
+          />
+          <span v-show="search_string.length > 0" @click="onClearSearch">
+            X
+          </span>
+        </div>
+        <div class="multiselect-check-all ms-items">
+          <template v-if="filteredItems.length">
+            <ul>
+              <li
+                @click.prevent="
+                  onSelectAll(
+                    groups_selectAll === 'selectAll' &&
+                      groups_selectAll !== false
+                      ? 'unSelectAll'
+                      : 'selectAll'
+                  )
+                "
+              >
+                <ItemContent>
+                  <template #item-check>
+                    <b-form-checkbox
+                      value="selectAll"
+                      v-model="groups_selectAll"
+                      unchecked-value="unSelectAll"
+                      @change.prevent="onSelectAll"
+                    />
+                  </template>
+                  <template #item-name>
+                    <p>{{ `${$t(selectedAllText)}` }}</p>
+                  </template>
+                </ItemContent>
+              </li>
+            </ul>
+          </template>
+          <template v-else>
+            <p>{{ $t('label.no_records_found') }}</p>
+          </template>
+        </div>
+        <ul>
+          <li
+            v-for="item in filteredItems"
+            :key="item.value"
+            class="ms-items"
+            @click.prevent="onClickCheck(item.value)"
+          >
+            <ItemContent>
+              <template #item-check>
+                <b-form-checkbox
+                  :ref="`cbx-${item.value}`"
+                  :value="item.value"
+                  v-model="selected"
+                />
+              </template>
+              <template #item-name>
+                <p>{{ item.text }}</p>
+              </template>
+            </ItemContent>
+          </li>
+        </ul>
       </div>
-      <div class="multiselect-check-all ms-items">
-        <template v-if="filteredItems.length">
-          <ItemContent>
-            <template #item-check>
-              <b-form-checkbox
-                value="selectAll"
-                v-model="groups_selectAll"
-                unchecked-value="unSelectAll"
-                @change="onSelectAll"
-              />
-            </template>
-            <template #item-name>
-              <p>{{ `${$t(selectedAllText)}` }}</p>
-            </template>
-          </ItemContent>
-        </template>
-        <template v-else>
-          <p>{{ $t('label.no_records_found') }}</p>
-        </template>
-      </div>
-      <ul>
-        <li
-          v-for="item in filteredItems"
-          :key="item.value"
-          class="ms-items"
-          @click.prevent="onClickCheck(item.value)"
-        >
-          <ItemContent>
-            <template #item-check>
-              <b-form-checkbox
-                :ref="`cbx-${item.value}`"
-                :value="item.value"
-                v-model="selected"
-              />
-            </template>
-            <template #item-name>
-              <p>{{ item.text }}</p>
-            </template>
-          </ItemContent>
-        </li>
-      </ul>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -99,17 +123,38 @@ export default {
     },
     isSelectedAll(newVal) {
       this.groups_selectAll = newVal ? 'selectAll' : 'unSelectAll'
+    },
+    items(newVal) {
+      const newsel = []
+      this.selected.forEach((sel) => {
+        const ind = newVal.findIndex((item) => item.value === sel)
+        if (ind > -1) {
+          newsel.push(sel)
+        }
+      })
+      this.selected = [...newsel]
+    },
+    cleanSelected(newVal) {
+      if (newVal) {
+        this.selected = []
+        this.$emit('cleaned')
+      }
     }
   },
-  props: {items_selected: Array, items: Array, placeholder: String},
+  props: {
+    items_selected: Array,
+    items: Array,
+    placeholder: String,
+    cleanSelected: Boolean
+  },
   data() {
     return {
       icon_color: '#495057',
       selectIsOpen: false,
-      //selectedText: [],
       selected: this.items_selected,
       groups_selectAll: false,
-      search_string: ''
+      search_string: '',
+      ucode: ''
     }
   },
   components: {
@@ -117,7 +162,9 @@ export default {
     IconChevron,
     ItemContent
   },
-  created() {},
+  created() {
+    this.ucode = this.getUcode()
+  },
   methods: {
     onOpenMultiselect() {
       const gSelected = this.selected
@@ -133,6 +180,7 @@ export default {
         })
       }
       this.selectIsOpen = !this.selectIsOpen
+      this.$emit('onListState', this.selectIsOpen ? 'opened' : 'closed')
     },
     onHideList() {
       this.selectIsOpen = false
@@ -151,6 +199,12 @@ export default {
         )
         this.selected = [...updatedArr]
       }
+    },
+    getUcode() {
+      return Math.random()
+        .toString(36)
+        .replace(/[^a-z]+/g, '')
+        .substr(0, 10)
     },
     onClearSearch() {
       this.search_string = ''
@@ -180,7 +234,9 @@ export default {
     },
     filteredItems() {
       let re = new RegExp(`${this.search_string}`, 'i')
-      return this.items.filter((item) => item.text.match(re))
+      return this.items.length > 0
+        ? this.items.filter((item) => item.text.match(re))
+        : []
     },
     filteredItemsSelected() {
       return this.filteredItems.filter((item) =>
@@ -191,9 +247,9 @@ export default {
       const tempSelected = []
 
       this.selected.forEach((elem) => {
-        const founded = this.items.find((item) => item.value === elem)
-        if (founded) {
-          tempSelected.push(founded.text)
+        const found = this.items.find((item) => item.value === elem)
+        if (found) {
+          tempSelected.push(found.text)
         }
       })
       return tempSelected
@@ -208,7 +264,7 @@ export default {
   position: relative;
   .multiselect-tablo {
     display: flex;
-    margin: 10px 0;
+    //margin: 10px 0;
     padding-left: 5px;
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
@@ -242,9 +298,9 @@ export default {
     max-height: 0px;
     background: $white;
     position: absolute;
-    top: 50px;
     transition: max-height 0.15s ease-out;
     list-style-type: none;
+    z-index: 10;
     .multiselect-search {
       display: flex;
       align-items: center;
@@ -266,6 +322,9 @@ export default {
     }
   }
   .multiselect-check-all {
+    ul {
+      width: 100%;
+    }
     p {
       text-align: center;
       margin-bottom: 0.3rem;

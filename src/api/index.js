@@ -32,8 +32,20 @@ export default {
     })
   },
 
+  logout() {
+    return Api.post(`/users/logout`)
+  },
+
   my_profile() {
     return Api.get(`/users/me`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  my_company_info(){
+    return Api.get(`/users/company`, {
       headers: {
         ...type_json
       }
@@ -706,6 +718,72 @@ export default {
   del_comment(payment) {
     const {cid, uuid, comid} = payment
     return Api.delete(`/companies/${cid}/videos/${uuid}/comments/${comid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ------------ HISTORY ----------------------------*/
+  /** List of history categories
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of history categories
+   *  ["categoies_name": "string"]
+   */
+  historyCategories({filter, offset = 0, limit}) {
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
+
+    return Api.get(`/history/categories?${setFilter}${setLimit}${setOffset}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** List of history category objects
+   * @param {string} filter
+   * @param {string} categories
+   * @returns {Promise<*>} - 200 List of history category objects
+   *  ["object_name": "string"]
+   */
+  historyCategoryObject(payload) {
+    const {filter, offset = 0, limit, categories} = payload
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
+    const setCategories = `&categories=${categories}`
+
+    return Api.get(
+      `/history/categories/objects?${setFilter}${setLimit}${setOffset}${setCategories}`,
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
+  /** List of history list
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of history 
+   *  [ {
+        "uid": String,
+        "category": String,
+        "action": String,
+        "object": String,
+        "result": String,
+        "created_at": String
+    }]
+   */
+  history_list(payload) {
+    const {filter, offset = 0, limit} = payload
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
+
+    return Api.get(`/history?${setFilter}${setLimit}${setOffset}`, {
       headers: {
         ...type_json
       }
