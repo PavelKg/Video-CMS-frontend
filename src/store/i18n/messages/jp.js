@@ -7,7 +7,8 @@ export default {
     roles: '権限設定',
     users: 'ユーザー管理',
     groups: 'グループ管理',
-    screen: '画面カスタマイズ'
+    screen: '画面カスタマイズ',
+    history_info: '履歴情報'
   },
   message: {
     appHeader: '視聴管理システム',
@@ -78,7 +79,8 @@ export default {
     group_name: 'グループ名',
     oper_title_edit: 'グループ情報',
     oper_title_add: 'グループ新規追加',
-    in_page: 'ページ内選択'
+    in_page: 'ページ内選択',
+    id: 'ID'
   },
   screen: {
     display: '表示する',
@@ -91,13 +93,29 @@ export default {
     last_modified: '更新日時',
     video_information: '動画情報', 
     public_settings: '動画公開設定',
-    no_title: 'タイトルなし'
+    no_title: 'タイトルなし',
+    id: 'ID'
   },
   comments: {
     id: 'ID',
     display: '公開',
     hidden: '非公開',
     deleted: '削除'    
+  },
+  history: {
+    history_title: '履歴情報',
+    period: '期間',
+    target_content: '対象コンテンツ',
+    user_id: 'ユーザーID',
+    category: 'カテゴリ',
+    object_type_not_selected: 'カテゴリを選択してください',
+    object_name_not_selected: 'オブジェクト名を選択してください',
+    not_selected: '選択してください',
+    object: 'オブジェクト',
+    verbs: '操作',
+    timestamp: '日時',
+    no_data: 'No Data',
+    details: '詳細'
   },
   label: {
     delete: '削除',
@@ -108,6 +126,8 @@ export default {
     registration: '登録',
     reply: '返信',
     change: '変更',
+    reset: 'リセット',
+    extraction: '抽出',
     send: '送信',
     save: '保存',
     add_new: '新規追加',
@@ -140,7 +160,9 @@ export default {
     role: '権限',
     group_is_not_selected: 'グループが選択されていません',
     role_is_not_selected: '権限が選択されていません',
-    no_records_found: '条件に一致するものが見つかりません'
+    no_records_found: '条件に一致するものが見つかりません',
+    csv_download: 'CSVダウンロード',
+    loading:'Loading...'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:
