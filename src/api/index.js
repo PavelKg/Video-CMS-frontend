@@ -44,7 +44,7 @@ export default {
     })
   },
 
-  my_company_info(){
+  my_company_info() {
     return Api.get(`/users/company`, {
       headers: {
         ...type_json
@@ -620,6 +620,32 @@ export default {
     return Api.put(
       `/companies/${cid}/videos/${uuid}/public`,
       {value},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
+  /** add video player event to log
+   * @param {number} - cid
+   * @param {UUID} - uuid
+   * @param {string} - value 
+   * {
+        "event_action":"suspended",
+        "event_data":{"type":"pause", "time":"33sec"},
+        "event_result":"s",
+        "event_details":"Pause (00:00:33)"
+      }
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+
+  video_add_player_event({cid, uuid, event_data}) {
+    return Api.post(
+      `/companies/${cid}/videos/${uuid}/player-event`,
+      {...event_data},
       {
         headers: {
           ...type_json

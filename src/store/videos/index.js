@@ -230,6 +230,22 @@ export default {
       } finally {
         state.videos.isDeleting = false
       }
+    },
+
+    async ADD_PLAYER_EVENT({getters}, {uuid, event_data}) {
+      const cid = getters.me.profile.company_id
+      try {
+        const result = await Api.video_add_player_event({
+          cid,
+          uuid,
+          event_data
+        })
+        if (result.status !== 204) {
+          throw Error(`Error add video player event - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      }
     }
   },
   mutations: {

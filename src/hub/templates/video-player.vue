@@ -6,7 +6,7 @@
     <template v-else>
       <p class="video-title">{{ form.video_title || $t('videos.no_title') }}</p>
       <div class="video-content-zone">
-        <VideoPlayer :videourl="videoUrl" />
+        <VideoPlayer :videourl="videoUrl" @onPlayerEvent="onPlayerEvent" />
         <div class="video-information">
           <div class="video-information-rows">
             <p class="title">{{ $t('videos.video_information') }}</p>
@@ -170,6 +170,12 @@ export default {
           this.comment_text = ''
           this.comment_sending = false
         })
+    },
+    onPlayerEvent(_event) {
+      this.$store.dispatch('ADD_PLAYER_EVENT', {
+        uuid: this.form.video_uuid,
+        event_data: _event
+      })
     }
   }
 }
