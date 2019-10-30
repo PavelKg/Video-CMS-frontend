@@ -25,12 +25,12 @@
           {{ last_login_format(item.item.last_login) }}
         </p>
       </template>
-      <template slot="fullname" slot-scope="item"
-        ><p class="truncate-text">{{ item.item.fullname }}</p>
+      <template slot="fullname" slot-scope="item">
+        <p class="truncate-text">{{`aaaaaa`}}{{ item.item.fullname }}</p>
       </template>
       <template slot="group_name" slot-scope="item"
         ><p class="truncate-text">{{ item.item.group_name }}</p>
-      </template>      
+      </template>
       <template slot="mng" slot-scope="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">

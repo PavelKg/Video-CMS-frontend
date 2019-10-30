@@ -11,6 +11,7 @@
     >
       <input
         type="text"
+        :class="{'input-disabled': disabled}"
         :id="`tj-datetime-input-${ucode}`"
         :required="required"
         :value="date"
@@ -555,7 +556,6 @@ export default {
   },
   watch: {
     value(newVal, oldVal) {
-      console.log('newVal, oldVal=', newVal, oldVal)
       if (newVal) {
         this.value = newVal
         try {
@@ -735,6 +735,9 @@ export default {
     .ms-dd-icon {
       float: right;
       pointer-events: none;
+    }
+    .input-disabled {
+      color: gray;
     }
     input {
       //min-width: 226px;

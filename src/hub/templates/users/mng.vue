@@ -146,7 +146,8 @@ export default {
       role_options: [],
       enabledActivityPeriod: false,
       userNotFound: false,
-      isUpdatingUserData: true
+      isUpdatingUserData: true,
+      defaultUserActivityStart: new Date().toLocalDateString().slice(0, 10)
     }
   },
   components: {
@@ -182,9 +183,9 @@ export default {
       )
     },
     onEnableActivity(evt) {
-      console.log(evt)
       if (!evt) {
         this.mnUser.date_to = ''
+        this.mnUser.date_from = this.defaultUserActivityStart
       }
     }
   },
@@ -221,7 +222,7 @@ export default {
         this.isUpdatingUserData = false
       }
     }
-
+    this.mnUser.date_from = this.defaultUserActivityStart
     this.$store.dispatch('LOAD_GROUPS', cid).then((res) => {
       // const isExistGid = this.groups.find((group) => {
       //   return group.gid === this.mnUser.gid && !Boolean(group.deleted_at)
