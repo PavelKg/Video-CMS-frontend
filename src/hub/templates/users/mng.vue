@@ -75,6 +75,36 @@
             :required="oper === 'add' && mnUser.password !== ''"
           ></b-form-input>
         </b-form-group>
+        <b-form-group :disabled="isUserDelete" id="input-group-activity-period">
+          <div class="row-group-activity-period">
+            <b-form-checkbox
+              v-model="enabledActivityPeriod"
+              name="check-button"
+              switch
+              @change="onEnableActivity"
+            >
+              Usage Period
+            </b-form-checkbox>
+          </div>
+          <div class="row-group-activity-period">
+            <datetime
+              class="datepicker"
+              format="YYYY-MM-DD"
+              :readonly="true"
+              v-model="mnUser.date_from"
+              :disabled="!enabledActivityPeriod"
+            ></datetime>
+            <p class="row-space">~</p>
+            {{ mnUser.date_to }}
+            <datetime
+              class="datepicker"
+              format="YYYY-MM-DD"
+              :readonly="true"
+              v-model="mnUser.date_to"
+              :disabled="!enabledActivityPeriod"
+            ></datetime>
+          </div>
+        </b-form-group>
         <div class="user-operation-button-zone">
           <button v-if="!isUserDelete" type="submit" class="button btn-blue">
             {{ `${$t('label.save')}` }}
@@ -91,6 +121,7 @@
 <script>
 import {mapGetters} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
+import datetime from '@/components/elements/datetimepicker'
 
 export default {
   name: 'user-mng-form',
@@ -107,16 +138,20 @@ export default {
         rid: null,
         email: '',
         password: null,
-        deleted_at: ''
+        deleted_at: '',
+        date_from: '',
+        date_to: ''
       },
       group_options: [],
       role_options: [],
+      enabledActivityPeriod: false,
       userNotFound: false,
       isUpdatingUserData: true
     }
   },
   components: {
-    multiselect
+    multiselect,
+    datetime
   },
   methods: {
     onCancel(evt) {
@@ -145,6 +180,12 @@ export default {
           console.log('err=', err)
         }
       )
+    },
+    onEnableActivity(evt) {
+      console.log(evt)
+      if (!evt) {
+        this.mnUser.date_to = ''
+      }
     }
   },
 
@@ -178,7 +219,6 @@ export default {
           this.mnUser.gids.push(+gid)
         }
         this.isUpdatingUserData = false
-
       }
     }
 
@@ -196,7 +236,7 @@ export default {
           return {value: item.gid, text: item.name}
         })
 
-        console.log('this.group_options=', this.group_options)
+      console.log('this.group_options=', this.group_options)
     })
     this.$store.dispatch('LOAD_ROLES', cid).then((res) => {
       this.role_options = this.roles
@@ -225,6 +265,21 @@ export default {
 </script>
 
 <style lang="scss">
+.datepicker {
+  height: 40px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+p.row-space {
+  padding: 0 10px;
+}
+
+.row-group-activity-period {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
 .user-operation {
   max-width: 450px;
   display: flex;
