@@ -9,7 +9,7 @@
       hover
       head-variant="dark"
     >
-      <template slot="name" slot-scope="row">
+      <template #cell(name)="row">
         <b-form-checkbox
           :id="row.item.gid.toString()"
           :name="`ch-${row.item.gid}`"
@@ -20,7 +20,7 @@
           >{{ row.item.name }}
         </b-form-checkbox>
       </template>
-      <template slot="mng" slot-scope="item">
+      <template #cell(mng)="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">
             <div class="icon-button">

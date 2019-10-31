@@ -9,22 +9,22 @@
       hover
       head-variant="dark"
     >
-      <template slot="is_admin" slot-scope="item">
+      <template #cell(is_admin)="item">
         <p style="text-align: center">
           {{ item.item.is_admin ? $t('label.yes') : $t('label.no') }}
         </p>
       </template>
-      <template slot="rid" slot-scope="item">
+      <template #cell(rid)="item">
         <p class="truncate-text">
           {{ item.item.rid }}
         </p>
       </template>
-      <template slot="name" slot-scope="item">
+      <template #cell(name)="item">
         <p class="truncate-text">
           {{ item.item.name }}
         </p>
       </template>
-      <template slot="mng" slot-scope="item">
+      <template #cell(mng)="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">
             <div class="icon-button">
@@ -98,26 +98,32 @@ export default {
         {
           key: 'rid',
           label: this.$t('roles.tbl_header_ID'),
-          thStyle: {'text-align': 'center', "vertical-align": "middle"}
+          thStyle: {'text-align': 'center', 'vertical-align': 'middle'}
         },
         {
           key: 'name',
           label: this.$t('roles.tbl_header_name'),
-          thStyle: {'text-align': 'center', "vertical-align": "middle"},
+          thStyle: {'text-align': 'center', 'vertical-align': 'middle'},
           thClass: this.showColumn,
           tdClass: this.showColumn
         },
         {
           key: 'is_admin',
-          label: !this.showColumn
-            ? this.$t('roles.tbl_header_auth')
-            : 'Admin',
-          thStyle: {'text-align': 'center', "max-width": "10rem", "vertical-align": "middle"}
+          label: !this.showColumn ? this.$t('roles.tbl_header_auth') : 'Admin',
+          thStyle: {
+            'text-align': 'center',
+            'max-width': '10rem',
+            'vertical-align': 'middle'
+          }
         },
         {
           key: 'mng',
           label: this.$t('roles.tbl_header_mng'),
-          thStyle: {width: '120px !important', 'text-align': 'center', "vertical-align": "middle"}
+          thStyle: {
+            width: '120px !important',
+            'text-align': 'center',
+            'vertical-align': 'middle'
+          }
         }
       ]
     },
