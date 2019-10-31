@@ -54,11 +54,28 @@ export default {
     },
     async USER_UPD({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
-      const {uid, fullname, gids, rid, email, password} = payload
+      const {
+        uid,
+        fullname,
+        gids,
+        rid,
+        email,
+        password,
+        activity_start,
+        activity_finish
+      } = payload
       try {
         const result = await Api.user_upd(
           {cid, uid},
-          {fullname, gids, rid, email, password}
+          {
+            fullname,
+            gids,
+            rid,
+            email,
+            password,
+            activity_start,
+            activity_finish
+          }
         )
         if (result.status === 200) {
           return Promise.resolve('User updated success')

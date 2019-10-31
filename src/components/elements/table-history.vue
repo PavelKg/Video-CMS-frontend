@@ -191,8 +191,5 @@ export default {
       margin-bottom: 0;
     }
   }
-  a {
-    //padding: 0 10px;
-  }
 }
 </style>

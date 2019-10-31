@@ -91,16 +91,15 @@
               class="datepicker"
               format="YYYY-MM-DD"
               :readonly="true"
-              v-model="mnUser.date_from"
+              v-model="mnUser.activity_start"
               :disabled="!enabledActivityPeriod"
             ></datetime>
             <p class="row-space">~</p>
-            {{ mnUser.date_to }}
             <datetime
               class="datepicker"
               format="YYYY-MM-DD"
               :readonly="true"
-              v-model="mnUser.date_to"
+              v-model="mnUser.activity_finish"
               :disabled="!enabledActivityPeriod"
             ></datetime>
           </div>
@@ -139,15 +138,16 @@ export default {
         email: '',
         password: null,
         deleted_at: '',
-        date_from: '',
-        date_to: ''
+        activity_start: '',
+        activity_finish: ''
       },
       group_options: [],
       role_options: [],
       enabledActivityPeriod: false,
       userNotFound: false,
       isUpdatingUserData: true,
-      defaultUserActivityStart: new Date().toLocalDateString().slice(0, 10)
+      defaultUserActivityStart: new Date().toLocalDateString().slice(0, 10),
+      defaultUserActivityFinish: ''
     }
   },
   components: {
@@ -184,8 +184,10 @@ export default {
     },
     onEnableActivity(evt) {
       if (!evt) {
-        this.mnUser.date_to = ''
-        this.mnUser.date_from = this.defaultUserActivityStart
+        this.mnUser.activity_finish = ''
+        this.mnUser.activity_start = this.defaultUserActivityStart
+      } else {
+        this.mnUser.activity_finish = this.defaultUserActivityFinish
       }
     }
   },
@@ -197,7 +199,6 @@ export default {
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_USER_INFO', {cid, uid}).then(
         (res) => {
-          console.log('res=', res)
           this.isUpdatingUserData = false
           this.mnUser = {...res}
           if (this.mnUser.gid === '') {
@@ -206,6 +207,12 @@ export default {
           if (this.mnUser.rid === '') {
             this.mnUser.rid = null
           }
+
+          this.defaultUserActivityStart = this.mnUser.activity_start
+          this.defaultUserActivityFinish = this.mnUser.activity_finish
+
+          this.enabledActivityPeriod =
+            this.mnUser.activity_finish !== '' ? true : false
         },
         (error) => {
           this.userNotFound = true
@@ -222,7 +229,9 @@ export default {
         this.isUpdatingUserData = false
       }
     }
-    this.mnUser.date_from = this.defaultUserActivityStart
+    //this.mnUser.activity_start = this.defaultUserActivityStart
+    //this.mnUser.activity_finish = this.defaultUserActivityFinish
+
     this.$store.dispatch('LOAD_GROUPS', cid).then((res) => {
       // const isExistGid = this.groups.find((group) => {
       //   return group.gid === this.mnUser.gid && !Boolean(group.deleted_at)
@@ -236,8 +245,6 @@ export default {
         .map((item) => {
           return {value: item.gid, text: item.name}
         })
-
-      console.log('this.group_options=', this.group_options)
     })
     this.$store.dispatch('LOAD_ROLES', cid).then((res) => {
       this.role_options = this.roles
