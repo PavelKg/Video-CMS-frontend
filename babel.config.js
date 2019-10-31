@@ -12,5 +12,9 @@ module.exports = {
       }
     ]
   ],
-  plugins: ['syntax-dynamic-import']
+  plugins: [
+    'syntax-dynamic-import',
+    '@babel/transform-runtime',
+    '@babel/transform-async-to-generator'
+  ]
 }
