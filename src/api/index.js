@@ -80,7 +80,6 @@ export default {
    */
 
   save_req_pass(token, password) {
-    console.log('payload=', token, password)
     return axios.put(
       `${API_ROOT}/users/password`,
       {password, token},
@@ -93,6 +92,36 @@ export default {
     )
   },
 
+  /*  ---------  COMPANIES MANAGEMENT  ---------------------*/
+  /** */
+  /** get Company CommentBox State
+   * @param {string} cid - Company ID
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  getCompanyCommentBoxState(cid) {
+    return Api.get(`/companies/${cid}/mng/commentbox`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** update Company CommentBox State
+   * @param {string} cid - Company ID
+   * @param {string} state - new state
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  updCompanyCommentBoxState(cid, state) {
+    return Api.put(`/companies/${cid}/mng/commentbox/${state}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ---------  ROLES MANAGEMENT  ---------------------*/
   /** Roles management
    *
    */

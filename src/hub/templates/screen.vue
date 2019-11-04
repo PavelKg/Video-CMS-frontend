@@ -6,7 +6,9 @@
         <b-form-radio-group
           v-model="cbox_selected"
           :options="cbox_options"
+          @change="onCboxState"
           name="cbox-plain-inline"
+          :disabled="isLoadingCboxState"
         ></b-form-radio-group>
       </div>
     </div>
@@ -14,40 +16,76 @@
       <span>{{ $t('label.logo_registration') }}</span>
       <img src="@/assets/images/video-icon.png" />
       <div class="screen-logo-path">
-        <input id="logoFilePath" placeholder="" />
+        <input
+          type="file"
+          id="file"
+          ref="customInput"
+          class="custom-file-input"
+          multiple
+          accept="image/*"
+          @change="addCustomFiles($event)"
+        />
         <button class="button btn-grey" @click="selectLogoFile">
           {{ $t('label.select_file') }}
         </button>
       </div>
       <div>
-      <button class="button btn-blue" @click="uploadLogoFile">
-        {{ $t('label.upload') }}
-      </button>
+        <button class="button btn-blue" @click="uploadLogoFile">
+          {{ $t('label.upload') }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import {mapState} from 'vuex'
+
 export default {
   name: 'screen',
   data() {
     return {
+      isLoadingCboxState: true,
       cbox_selected: 'display',
       cbox_options: [
         {text: this.$t('screen.display'), value: 'display'},
-        {text: this.$t('screen.hidden'), value: 'hidden'}
+        {text: this.$t('screen.hidden'), value: 'hide'}
       ]
     }
   },
+  created() {
+    this.isLoadingCboxState = true
+    this.$store.dispatch('LOAD_COMMENTBOX_STATE', this.cid).then((res) => {
+      this.cbox_selected = res.visible ? 'display' : 'hide'
+      this.isLoadingCboxState = false
+    })
+  },
+  computed: mapState({
+    cid: (state) => state.Login.me.profile.company_id
+  }),
   methods: {
-    selectLogoFile() {},
+    onCboxState(newState) {
+      const cid = this.cid
+      this.isLoadingCboxState = true
+
+      this.$store
+        .dispatch('UPDATE_COMMENTBOX_STATE', {cid, newState})
+        .then((res) => {
+          this.isLoadingCboxState = false
+        })
+    },
+    selectLogoFile(evt) {
+      evt.preventDefault()
+      this.$refs.customInput.click()
+    },
     uploadLogoFile() {}
   }
 }
 </script>
 
 <style lang="scss">
+@import '../../assets/styles';
+
 .screen-zone {
   .screen-comment-mng {
     > span {
@@ -61,21 +99,22 @@ export default {
   .screen-logo-mng {
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
+    padding-top: 20px;
     > span {
       font-size: 1.4em;
       font-weight: 600;
     }
     img {
-      height: 6rem;
-      width: 6rem;
+      height: 8rem;
+      width: 8rem;
       margin: 20px 0;
+      border: 1px solid $gray-lighter;
     }
-    .screen-logo-path{
-      display:flex;
-      margin: 20px 0;
-      input{
-        margin-right: 10px;
+    .screen-logo-path {
+      display: flex;
+      margin-bottom: 20px;
+      .custom-file-input {
+        display: none;
       }
     }
   }
