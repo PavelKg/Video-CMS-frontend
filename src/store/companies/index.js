@@ -6,7 +6,8 @@ export default {
   modules: {Groups, Roles},
   state: {
     companies: [],
-    active_company_id: null
+    active_company_id: null,
+    company_logo: ''
   },
   actions: {
     async LOAD_COMMENTBOX_STATE({commit}, cid) {
@@ -34,9 +35,39 @@ export default {
         throw Error(`Error update commentbox state from server: ${err}`)
       } finally {
       }
+    },
+    async LOAD_LOGO({commit}, cid) {
+      try {
+        const result = await Api.getCompanyLogo(cid)
+        const {data} = result.data
+        if (typeof result.data === 'object' && result.status === 200) {
+          commit('SET_COMPANY_LOGO', data)
+        } else {
+          throw Error('Error load company logo')
+        }
+      } catch (err) {
+        throw Error(`Error request logo from server: ${err}`)
+      } finally {
+      }
+    },
+    async SAVE_LOGO({commit}, {cid, logo_data}) {
+      try {
+        const result = await Api.updCompanyLogo(cid, {data: logo_data})
+        if (result.status === 204) {
+          commit('SET_COMPANY_LOGO', logo_data)
+        } else {
+          throw Error('Error save company logo')
+        }
+      } catch (err) {
+        throw Error(`Error save logo on server: ${err}`)
+      } finally {
+      }
     }
   },
   mutations: {
+    SET_COMPANY_LOGO(state, data) {
+      state.company_logo = data
+    }
     // CREATE_COMPANY_LIST(state) {
     //   state.companies = []
     //   for (let i = 0; i < count; i += 1) {

@@ -14,7 +14,7 @@
     </div>
     <div class="screen-logo-mng">
       <span>{{ $t('label.logo_registration') }}</span>
-      <img src="@/assets/images/video-icon.png" />
+      <img :src="img_path" :class="{'logo-loading': isLogoLoading}" />
       <div class="screen-logo-path">
         <input
           type="file"
@@ -45,6 +45,9 @@ export default {
   name: 'screen',
   data() {
     return {
+      isLogoLoading: true,
+      file: '',
+      logo_img: '',
       isLoadingCboxState: true,
       cbox_selected: 'display',
       cbox_options: [
@@ -59,10 +62,26 @@ export default {
       this.cbox_selected = res.visible ? 'display' : 'hide'
       this.isLoadingCboxState = false
     })
+    this.isLogoLoading = true
+    this.$store.dispatch('LOAD_LOGO', this.cid).then(
+      (res) => {
+        this.logo_img = this.company_logo
+        this.isLogoLoading = false
+      },
+      (error) => {}
+    )
   },
-  computed: mapState({
-    cid: (state) => state.Login.me.profile.company_id
-  }),
+  computed: {
+    ...mapState({
+      cid: (state) => state.Login.me.profile.company_id,
+      company_logo: (state) => state.Companies.company_logo
+    }),
+    img_path() {
+      return this.logo_img !== ''
+        ? this.logo_img
+        : require('@/assets/images/p-streamCMS-s.png')
+    }
+  },
   methods: {
     onCboxState(newState) {
       const cid = this.cid
@@ -78,14 +97,39 @@ export default {
       evt.preventDefault()
       this.$refs.customInput.click()
     },
-    uploadLogoFile() {}
+    uploadLogoFile() {
+      this.$store
+        .dispatch('SAVE_LOGO', {cid: this.cid, logo_data: this.logo_img})
+        .then((res) => {}, (error) => {})
+    },
+    addCustomFiles(evt) {
+      evt.preventDefault()
+
+      this.file = event.target.files[0]
+      if (this.file) {
+        if (/\.(jpe?g|png|gif)$/i.test(this.file.name)) {
+          let reader = new FileReader()
+
+          reader.addEventListener(
+            'load',
+            function() {
+              this.logo_img = reader.result
+            }.bind(this),
+            false
+          )
+          reader.readAsDataURL(this.file)
+        }
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss">
 @import '../../assets/styles';
-
+.logo-loading {
+  opacity: 0.2;
+}
 .screen-zone {
   .screen-comment-mng {
     > span {
@@ -105,9 +149,10 @@ export default {
       font-weight: 600;
     }
     img {
-      height: 8rem;
-      width: 8rem;
+      height: 10rem;
+      width: 10rem;
       margin: 20px 0;
+      padding: 1rem;
       border: 1px solid $gray-lighter;
     }
     .screen-logo-path {

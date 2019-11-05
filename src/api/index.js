@@ -121,6 +121,33 @@ export default {
     })
   },
 
+  /** get Company Logo
+   * @param {string} cid - Company ID
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  getCompanyLogo(cid) {
+    return Api.get(`/companies/${cid}/mng/logo`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /** update Company Logo
+   * @param {string} cid - Company ID
+   * @param {string} data - Logo data
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  updCompanyLogo(cid, data) {
+    console.log('data=', data)
+    return Api.put(`/companies/${cid}/mng/logo`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /* ---------  ROLES MANAGEMENT  ---------------------*/
   /** Roles management
    *
