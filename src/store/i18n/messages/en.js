@@ -7,6 +7,7 @@ export default {
     roles: 'Roles settings',
     users: 'Users',
     groups: 'Groups',
+    series: 'Series',
     screen: 'Screen custom.',
     history_info: 'History Info'
   },
@@ -117,6 +118,18 @@ export default {
     timestamp: 'Timestamp',
     no_data: 'No Data',
     details: 'Details'
+  },
+  series: {
+    btn_add: 'Add New Series',
+    tbl_header_name: 'Series',
+    tbl_header_mgn: 'Mng',
+    tbl_deleted: 'Deleted',
+    name: 'Name',
+    series_name: 'Series Name',
+    oper_title_edit: 'Series Information',
+    oper_title_add: 'Add New Series',
+    in_page: 'In page',
+    id: 'ID'
   },
   label: {
     delete: 'Delete',

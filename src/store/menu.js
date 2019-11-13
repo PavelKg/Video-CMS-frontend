@@ -243,6 +243,21 @@ const menuStructure = {
           }
         }
       },
+      series: {
+        caption: 'menu.series',
+        type: 'series.list',
+        visible: true,
+        subItems: {
+          edit: {
+            type: 'series.edit',
+            caption: 'menu.series_edit'
+          },
+          add: {
+            type: 'series.add',
+            caption: 'menu.series_add'
+          }
+        }
+      },      
       history: {
         caption: 'menu.history_info',
         type: 'history.list',

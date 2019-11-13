@@ -12,7 +12,7 @@
         :placeholder="`${$t('label.keyword_search')}`"
         @input="handleInput('search', $event.target.value)"
       />
-      <img src="@/assets/images/search_black.png" />
+      <img src="@/assets/images/search_black.png" @click="onKeywordSearch"/>
     </div>
     <div class="video-data-filter">
       <div>
@@ -162,6 +162,9 @@ export default {
   },
   mounted() {},
   methods: {
+    onKeywordSearch(){
+      
+    },
     changePublicStatus(val) {
       const value = val
       const chanded = this.videos_selected.map(async (video_uuid) => {
@@ -267,11 +270,6 @@ export default {
         curr.setMonth(curr.getMonth() - 1)
         this.period_filter.year_from = curr.getFullYear()
         this.period_filter.month_from = curr.getMonth() + 1
-        // this.$store.dispatch('GET_MY_COMPANY_INFO').then((res) => {
-        //   const created = new Date(res.created_at)
-        //   this.period_filter.year_from = created.getFullYear()
-        //   this.period_filter.month_from = created.getMonth() + 1
-        // })
       }
 
       this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
@@ -359,6 +357,7 @@ export default {
   padding: 10px 0;
   display: flex;
   flex-direction: row;
+  align-items: center;
   input {
     padding: 0 10px;
     margin: 0 5px;
@@ -366,6 +365,11 @@ export default {
   img {
     width: 24px;
     height: 24px;
+    cursor: pointer;
+    &:hover {
+      width: 26px;
+      height: 26px;
+    }
   }
 }
 .video-data-filter {
