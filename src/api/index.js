@@ -222,8 +222,9 @@ export default {
     "deleted_at": "string"
   }]
  */
-  groups(cid) {
-    return Api.get(`/companies/${cid}/groups`, {
+  groups(cid, filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/groups${setFilter}`, {
       headers: {
         ...type_json
       }
@@ -287,6 +288,100 @@ export default {
   group_del(target) {
     const {cid, gid} = target
     return Api.delete(`/companies/${cid}/groups/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ---------  SERIES MANAGEMENT  ---------------------*/
+  /** List of series
+   * @param {*} cid 
+   * @returns {Promise<*>} - 200 List of series
+   * [{
+    "sid": 0,
+    "name": "string",
+    "deleted_at": "string"
+    }]
+ */
+  series(cid) {
+    return Api.get(`/companies/${cid}/series`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Series Info
+ * @param {number} cid 
+ * @param {string} sid 
+ * @returns {Promise<*>} - 200 series object
+ * {
+    "sid": 0,
+    "cid": "string",
+    "name": "string",
+    "deleted_at": "string",
+    "period_type": "string",
+    "activity_start": "string",
+    "activity_finish": "string"
+    }
+*/
+  series_info(cid, sid) {
+    return Api.get(`/companies/${cid}/series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Add new series
+   * @param {string} cid - Company ID
+   * @param {object} data -
+   * {
+   * "name": "string",
+   * "period_type": "string",
+   * "activity_start": "string",
+   * "activity_finish": "string"
+   * }
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  series_add(cid, data) {
+    return Api.post(`/companies/${cid}/series/`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Upd group
+   * @param {string} target - {cid, gid}
+   * @param {object} data - {
+   * "name": "string",
+   * "period_type": "string",
+   * "activity_start": "string",
+   * "activity_finish": "string"
+   * }
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  series_upd(target, data) {
+    const {cid, sid} = target
+    return Api.put(`/companies/${cid}/series/${sid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del series
+   * @param {string} target - {cid, sid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  series_del(target) {
+    const {cid, sid} = target
+    return Api.delete(`/companies/${cid}/series/${sid}`, {
       headers: {
         ...type_json
       }

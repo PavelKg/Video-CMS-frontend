@@ -2,17 +2,16 @@ import Api from '@/api'
 
 export default {
   state: {
-    groups: {
-      list: [],
-      isListLoading: false,
-      selected: null
-    }
+    list: [],
+    isListLoading: false,
+    selected: null
   },
   actions: {
-    async LOAD_GROUPS({commit}, _cid) {
+    async LOAD_GROUPS({commit}, payload) {
+      const {cid, filter} = payload
       try {
         commit('SET_GROUPS_IS_LOADING', true)
-        const result = await Api.groups(_cid)
+        const result = await Api.groups(cid, filter)
         if (Array.isArray(result.data) && result.status === 200) {
           commit('SET_GROUPS', result.data)
         } else {
@@ -37,18 +36,18 @@ export default {
       } finally {
       }
     },
-    async LOAD_GROUP_DATA({commit}, payload) {
-      try {
-        const result = await Api.group_data(payload)
-        if (result.data && result.status === 200) {
-          commit('SET_ACTIVE_GROUP', result.data)
-        } else {
-          throw Error('Error load group data')
-        }
-      } catch (err) {
-        console.log('load group-data', err.response)
-      }
-    },
+    // async LOAD_GROUP_DATA({commit}, payload) {
+    //   try {
+    //     const result = await Api.group_data(payload)
+    //     if (result.data && result.status === 200) {
+    //       commit('SET_ACTIVE_GROUP', result.data)
+    //     } else {
+    //       throw Error('Error load group data')
+    //     }
+    //   } catch (err) {
+    //     console.log('load group-data', err.response)
+    //   }
+    // },
     async GROUP_ADD({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
       try {
@@ -92,18 +91,18 @@ export default {
   },
   mutations: {
     SET_GROUPS: (state, groups) => {
-      state.groups.list = [...groups]
+      state.list = [...groups]
     },
     SET_ACTIVE_GROUP(state, group) {
-      state.groups.selected = group
+      state.selected = group
     },
     SET_GROUPS_IS_LOADING(state, isload) {
-      state.groups.isListLoading = isload
+      state.isListLoading = isload
     }
   },
   getters: {
-    groups: (state) => state.groups.list,
-    group_selected: (state) => state.groups.selected,
-    groups_is_loading: (state) => state.groups.isListLoading
+    groups: (state) => state.list,
+    group_selected: (state) => state.selected,
+    groups_is_loading: (state) => state.isListLoading
   }
 }

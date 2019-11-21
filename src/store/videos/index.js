@@ -135,6 +135,27 @@ export default {
       }
     },
 
+    async LOAD_VIDEOS_BY_SERIES({state, commit, getters}, params) {
+      const {cid, filter} = params
+      commit('SET_STATUS_VIDEOS_LOADING', true)
+      let offset = 0
+      let limit = 0
+
+      try {
+        const result = await Api.videos_catalog({cid}, {filter, offset, limit})
+        if (result.status === 200) {
+          console.log('result.data=', result.data)
+          commit('SET_VIDEO_LIST', result.data)
+        } else {
+          throw Error(`Error load video list, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      } finally {
+        commit('SET_STATUS_VIDEOS_LOADING', false)
+      }
+    },
+
     async LOAD_VIDEO_INFO_BY_UUID({getters, dispatch}, uuid) {
       const cid = getters.me.profile.company_id
       try {

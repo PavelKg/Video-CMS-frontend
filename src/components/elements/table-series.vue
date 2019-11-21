@@ -11,9 +11,9 @@
     >
       <template #cell(name)="row">
         <b-form-checkbox
-          :id="row.item.gid.toString()"
-          :name="`ch-${row.item.gid}`"
-          :value="row.item.gid"
+          :id="row.item.sid.toString()"
+          :name="`ch-${row.item.sid}`"
+          :value="row.item.sid"
           v-model="series_selected"
           :disabled="row.item.deleted_at !== ''"
           class="truncate-text"
@@ -26,13 +26,13 @@
             <div class="icon-button">
               <img
                 src="@/assets/images/edit_black.png"
-                @click="editGroup(item.item)"
+                @click="editSeries(item.item)"
               />
             </div>
             <div class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
-                @click="delGroup(item.item.gid)"
+                @click="delOneSeries(item.item.sid)"
               /></div
           ></template>
           <template v-else>
@@ -52,7 +52,7 @@
       }}</a>
       <button
         class="button btn-orange"
-        @click="delGroups"
+        @click="delGroupSeries"
         :disabled="series_selected.length === 0"
       >
         {{ $t('label.delete') }}
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
 
 export default {
   name: 'table-series',
@@ -111,17 +111,18 @@ export default {
       const action = env.target['id']
       this.series_selected =
         action === 'selectAll'
-          ? this.series_on_page.filter((series) => series.deleted_at === '')
+          ? this.series_on_page.filter((series) => series.deleted_at === '').map(series => series.sid)
           : []
+      console.log('this.series_selected=', this.series_selected)
     },
-    editGroup(series) {
-      this.$emit('contentElementClick', `/hub/series_edit/gid/${series.gid}`)
+    editSeries(series) {
+      this.$emit('contentElementClick', `/hub/series_edit/sid/${series.sid}`)
     },
-    delGroup(series_gid) {
-      this.$store.dispatch('SERIES_DEL', series_gid).then(
+    delOneSeries(series_sid) {
+      this.$store.dispatch('SERIES_DEL', series_sid).then(
         (res) => {
           this.$store
-            .dispatch('LOAD_SERIES', this.me.profile.company_id)
+            .dispatch('LOAD_SERIES', this.cid)
             .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
         },
         (err) => {
@@ -132,11 +133,13 @@ export default {
         }
       )
     },
-    delGroups() {
-      const deleted_series = this.series_selected.map(async (series_gid) => {
+    delGroupSeries() {
+      const deleted_series = this.series_selected.map(async (series_sid) => {
         try {
-          await this.$store.dispatch('SERIES_DEL', series_gid)
-          const ind = this.series_selected.findIndex((gid) => gid === series_gid)
+          await this.$store.dispatch('SERIES_DEL', series_sid)
+          const ind = this.series_selected.findIndex(
+            (sid) => sid === series_sid
+          )
           if (ind > -1) {
             this.series_selected.splice(ind, 1)
           }
@@ -151,7 +154,7 @@ export default {
 
       Promise.all(deleted_series).then(() => {
         this.$store
-          .dispatch('LOAD_SERIES', this.me.profile.company_id)
+          .dispatch('LOAD_SERIES', this.cid)
           .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
       })
     },
@@ -160,7 +163,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['series', 'me', 'series_is_loading']),
+    ...mapState({
+      series: (state) => state.Companies.Series.list,
+      cid: (state) => state.Login.me.profile.company_id,
+      series_is_loading: (state) => state.Companies.Series.isListLoading
+    }),
     series_count() {
       return this.series ? this.series.length : 0
     },

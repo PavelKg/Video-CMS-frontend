@@ -1,9 +1,10 @@
 import Api from '@/api'
 import Groups from './groups'
+import Series from './series'
 import Roles from './roles'
 
 export default {
-  modules: {Groups, Roles},
+  modules: {Groups, Roles, Series},
   state: {
     companies: [],
     active_company_id: null,

@@ -41,7 +41,8 @@ export default {
     text: 'Text',
     tab_inbox: 'Inbox',
     tab_outbox: 'Outbox',
-    this_comment_has_been_deleted: 'This comment has been deleted.'
+    this_comment_has_been_deleted: 'This comment has been deleted.',
+    number_of_registered_groups: 'Number of registered groups'
   },
   roles: {
     btn_add: 'Add Role',
@@ -75,6 +76,7 @@ export default {
   groups: {
     btn_add: 'Add New Group',
     tbl_header_name: 'Group',
+    tbl_header_id: 'ID',
     tbl_header_mgn: 'Mng',
     tbl_deleted: 'Deleted',
     name: 'Name',
@@ -129,7 +131,14 @@ export default {
     oper_title_edit: 'Series Information',
     oper_title_add: 'Add New Series',
     in_page: 'In page',
-    id: 'ID'
+    id: 'ID',
+    view_period: 'View period',
+    no_limit: 'No limit',
+    specify_period: 'Specify period',
+    start_users_accounts: "Start user's accounts",
+    view_start:'View start',
+    view_end:'View end',
+    for_registration_date:'for registration date'
   },
   label: {
     delete: 'Delete',
@@ -171,12 +180,13 @@ export default {
     public: 'Public',
     private: 'Private',
     group: 'Group',
+    groups: 'groups',
     role: 'Role',
     group_is_not_selected: 'Group Is Not Selected',
     role_is_not_selected: 'Role Is Not Selected',
     no_records_found: 'No Records Found',
     csv_download: 'CSV download',
-    loading:'Loading...'
+    loading: 'Loading...'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

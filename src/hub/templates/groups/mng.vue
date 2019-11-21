@@ -11,8 +11,8 @@
     <template v-else>
       <p>{{ $t(group_title) }}</p>
       <div class="group-oper-id">
-        <div class="group-oper-id-data">
-          <p>{{$t('groups.id')}}:</p>
+        <div class="group-oper-id-data" v-if="oper === 'edit'">
+          <p>{{ $t('groups.id') }}:</p>
           <p>{{ `g_${mnGroup.gid}` }}</p>
         </div>
         <div class="group-oper-id-data">
