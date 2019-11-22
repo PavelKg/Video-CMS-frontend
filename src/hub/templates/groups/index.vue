@@ -18,7 +18,7 @@ export default {
   name: 'groups-mng',
   created() {
     this.$store
-      .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+      .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
       .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
   },
   methods: {

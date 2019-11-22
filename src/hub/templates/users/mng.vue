@@ -232,7 +232,7 @@ export default {
     //this.mnUser.activity_start = this.defaultUserActivityStart
     //this.mnUser.activity_finish = this.defaultUserActivityFinish
 
-    this.$store.dispatch('LOAD_GROUPS', cid).then((res) => {
+    this.$store.dispatch('LOAD_GROUPS', {cid}).then((res) => {
       // const isExistGid = this.groups.find((group) => {
       //   return group.gid === this.mnUser.gid && !Boolean(group.deleted_at)
       // })

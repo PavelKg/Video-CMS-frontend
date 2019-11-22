@@ -253,6 +253,21 @@ export default {
       }
     },
 
+    async DEL_VIDEOS_SERIES({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {uuid, sid} = payload
+      try {
+        const result = await Api.video_series_del({cid, uuid, sid})
+        if (result.status === 204) {
+          return Promise.resolve('Video series updated success')
+        } else {
+          throw Error(`Error update video series, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
+      }
+    },    
+
     async ADD_PLAYER_EVENT({getters}, {uuid, event_data}) {
       const cid = getters.me.profile.company_id
       try {

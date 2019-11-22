@@ -42,7 +42,8 @@ export default {
     tab_inbox: 'Inbox',
     tab_outbox: 'Outbox',
     this_comment_has_been_deleted: 'This comment has been deleted.',
-    number_of_registered_groups: 'Number of registered groups'
+    number_of_registered_groups: 'Number of registered groups',
+    number_of_registered_videos: 'Number of registered videos'
   },
   roles: {
     btn_add: 'Add Role',
@@ -98,7 +99,10 @@ export default {
     video_information: 'Video Information',
     public_settings: 'Public settings',
     no_title: 'No Title',
-    id: 'ID'
+    id: 'ID',
+    tbl_header_id: 'ID',
+    tbl_header_name: 'Name',
+    tbl_header_mgn: 'Mng'
   },
   comments: {
     id: 'ID',
@@ -136,9 +140,9 @@ export default {
     no_limit: 'No limit',
     specify_period: 'Specify period',
     start_users_accounts: "Start user's accounts",
-    view_start:'View start',
-    view_end:'View end',
-    for_registration_date:'for registration date'
+    view_start: 'View start',
+    view_end: 'View end',
+    for_registration_date: 'for registration date'
   },
   label: {
     delete: 'Delete',
@@ -186,7 +190,8 @@ export default {
     role_is_not_selected: 'Role Is Not Selected',
     no_records_found: 'No Records Found',
     csv_download: 'CSV download',
-    loading: 'Loading...'
+    loading: 'Loading...',
+    videos: 'videos'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

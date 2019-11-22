@@ -123,7 +123,7 @@ export default {
       this.$store.dispatch('GROUP_DEL', group_gid).then(
         (res) => {
           this.$store
-            .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+            .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
             .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
         },
         (err) => {
@@ -153,7 +153,7 @@ export default {
 
       Promise.all(deleted_groups).then(() => {
         this.$store
-          .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+          .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
           .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
       })
     },

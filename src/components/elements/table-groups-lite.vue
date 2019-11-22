@@ -21,7 +21,9 @@
           v-model="groups_selected"
           :disabled="row.item.deleted_at !== ''"
           class="truncate-text"
-          ><a href="#">{{ `g_${row.item.gid}` }}</a>
+          ><a href="#" @click.prevent="onOpenGroupDetails(row.item.gid)">{{
+            `g_${row.item.gid}`
+          }}</a>
         </b-form-checkbox>
       </template>
       <template #cell(name)="row">
@@ -99,6 +101,9 @@ export default {
     }
   },
   methods: {
+    onOpenGroupDetails(group) {
+      this.$emit('contentElementClick', `/hub/groups_edit/gid/${group}`)
+    },
     delGroup(group_gid) {},
 
     setPage(num) {

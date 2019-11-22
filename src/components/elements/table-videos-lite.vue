@@ -21,7 +21,7 @@
           v-model="videos_selected"
           :disabled="row.item.deleted_at !== ''"
           class="truncate-text"
-          ><a href="#">{{ `g_${row.item.video_id}` }}</a>
+          ><a href="#" @click="onOpenVideoDetails(row.item.video_uuid)">{{ `${row.item.video_id}` }}</a>
         </b-form-checkbox>
       </template>
       <template #cell(name)="row">
@@ -99,14 +99,17 @@ export default {
     }
   },
   methods: {
+    onOpenVideoDetails(uuid) {
+      this.$emit('contentElementClick', `/hub/videos_subtitles/uuid/${uuid}`)
+    },
     delVideo(video_id) {},
 
     setPage(num) {
       this.$emit('contentElementClick', `/hub/videos/?page=${num}`)
     }
   },
-  created(){
-    console.log('this.videos=',this.videos)
+  created() {
+    console.log('this.videos=', this.videos)
   },
   computed: {
     ...mapState({

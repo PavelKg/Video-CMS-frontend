@@ -255,6 +255,9 @@ p.row-space {
       > p {
         min-width: 90px;
       }
+      button{
+        margin-left: 10px;
+      }
     }
   }
   input {

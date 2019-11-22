@@ -49,7 +49,7 @@
         </div>
         <div class="video-subtitles-inputs">
           <div class="video-subtitles-inputs-id">
-            <p>{{$t('videos.id')}}:</p>
+            <p>{{ $t('videos.id') }}:</p>
             <p>{{ form.video_id }}</p>
           </div>
           <b-form-input
@@ -119,7 +119,7 @@ export default {
   created() {
     this.active_video_uuid = this.$route.params.uuid
     this.$store
-      .dispatch('LOAD_GROUPS', this.me.profile.company_id)
+      .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
       .then((res) => {
         this.$store.commit('SET_GROUPS_IS_LOADING', false)
         const grpo = this.groups

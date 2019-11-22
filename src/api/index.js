@@ -294,6 +294,20 @@ export default {
     })
   },
 
+  /** Del group series
+   * @param {integer, integer, integer} target - {cid, gid, sid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  group_series_del(target) {
+    const {cid, gid, sid} = target
+    return Api.put(`/companies/${cid}/groups/${gid}/delete-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /* ---------  SERIES MANAGEMENT  ---------------------*/
   /** List of series
    * @param {*} cid 
@@ -733,6 +747,20 @@ export default {
   video_delete({cid, uuid}) {
     console.log('{cid, uuid}=', {cid, uuid})
     return Api.delete(`/companies/${cid}/videos/${uuid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del video series
+   * @param {integer, integer, integer} target - {cid, uuid, sid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  video_series_del(target) {
+    const {cid, uuid, sid} = target
+    return Api.put(`/companies/${cid}/videos/${uuid}/delete-series/${sid}`, {
       headers: {
         ...type_json
       }

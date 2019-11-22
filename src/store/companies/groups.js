@@ -87,7 +87,21 @@ export default {
       } catch (err) {
         throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
       }
-    }
+    },
+    async GROUP_SERIES_DEL({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {gid, sid} = payload
+      try {
+        const result = await Api.group_series_del({cid, gid, sid})
+        if (result.status === 204) {
+          return Promise.resolve('Group series updated success')
+        } else {
+          throw Error(`Error update group series, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
+      }
+    }    
   },
   mutations: {
     SET_GROUPS: (state, groups) => {
