@@ -23,7 +23,7 @@
             :disabled="series_is_deleted"
           ></b-form-input>
           <button
-            :disabled="mnSeries.name === src_name || series_is_deleted"
+            :disabled="notChanged || series_is_deleted"
             @click="save_click"
             class="button btn-blue"
           >
@@ -33,56 +33,77 @@
         <div class="series-oper-id-data">
           <b-form-group :label="`${$t('series.view_period')}:`">
             <b-form-radio
-              v-model="view_period_selected"
+              v-model="mnSeries.period_type"
               name="some-radios"
-              value="no_limit"
+              value="null"
               size="lg"
             >
               {{ $t('series.no_limit') }}
             </b-form-radio>
             <div class="row-series-activity-period"></div>
             <b-form-radio
-              v-model="view_period_selected"
+              v-model="mnSeries.period_type"
               name="some-radios"
-              value="specify_period"
+              value="spec_period"
               size="lg"
             >
               {{ $t('series.specify_period') }}
             </b-form-radio>
-            <div class="row-series-activity-period">
+            <div
+              class="row-series-activity-period"
+              :class="mnSeries.period_type !== 'spec_period' ? 'disabled' : ''"
+            >
               <datetime
                 class="datepicker"
                 format="YYYY-MM-DD"
                 :readonly="true"
                 v-model="spec_period_activity_start"
-                :disabled="!spec_period_activity"
+                :disabled="mnSeries.period_type !== 'spec_period'"
               ></datetime>
-              <p class="row-space">~</p>
+              <p class="row-space">
+                ~
+              </p>
               <datetime
                 class="datepicker"
                 format="YYYY-MM-DD"
                 :readonly="true"
                 v-model="spec_period_activity_finish"
-                :disabled="!spec_period_activity"
+                :disabled="mnSeries.period_type !== 'spec_period'"
               ></datetime>
             </div>
             <b-form-radio
-              v-model="view_period_selected"
+              v-model="mnSeries.period_type"
               name="some-radios"
-              value="users_accounts"
+              value="user_reg"
               size="lg"
             >
               {{ $t('series.start_users_accounts') }}
             </b-form-radio>
-            <div class="row-series-activity-period">
-              <label>{{ $t('series.view_start') }}:</label>
-              <b-form-input :id="`type-number`" :type="'number'"></b-form-input>
-              <label>{{ $t('series.for_registration_date') }}</label>
+            <div
+              class="row-series-activity-period"
+              :class="mnSeries.period_type !== 'user_reg' ? 'disabled' : ''"
+            >
+              <p>{{ $t('series.view_start') }}:</p>
+              <b-form-input
+                :id="`type-number`"
+                :type="'number'"
+                :disabled="mnSeries.period_type !== 'user_reg'"
+                v-model="user_period_activity_start"
+              ></b-form-input>
+              <p>{{ $t('series.for_registration_date') }}</p>
             </div>
-            <div class="row-series-activity-period">
-              <label>{{ $t('series.view_end') }}:</label>
-              <b-form-input :id="`type-number`" :type="'number'"></b-form-input>
-              <label>{{ $t('series.for_registration_date') }}</label>
+            <div
+              class="row-series-activity-period"
+              :class="mnSeries.period_type !== 'user_reg' ? 'disabled' : ''"
+            >
+              <p>{{ $t('series.view_end') }}:</p>
+              <b-form-input
+                :id="`type-number`"
+                :type="'number'"
+                :disabled="mnSeries.period_type !== 'user_reg'"
+                v-model="user_period_activity_finish"
+              ></b-form-input>
+              <p>{{ $t('series.for_registration_date') }}</p>
             </div>
           </b-form-group>
         </div>
@@ -91,10 +112,12 @@
         <TableGroupsLite
           :sid="mnSeries.sid"
           @contentElementClick="contentElementClick"
+          @deleteGroupSeries="deleteGroupSeries"
         />
         <TableVideosLite
           :sid="mnSeries.sid"
           @contentElementClick="contentElementClick"
+          @deleteVideoSeries="deleteVideoSeries"
         />
       </template>
       <template v-else-if="oper === 'add'"> </template>
@@ -108,7 +131,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import TableGroupsLite from '@/components/elements/table-groups-lite'
 import TableVideosLite from '@/components/elements/table-videos-lite'
 import datetime from '@/components/elements/datetimepicker'
@@ -125,18 +148,22 @@ export default {
   },
   data() {
     return {
-      src_name: '',
-      spec_period_activity: false,
+      src: {
+        name: '',
+        period_type: null,
+        activity_start: '',
+        activity_finish: ''
+      },
       spec_period_activity_start: '',
       spec_period_activity_finish: '',
-      user_period_activity: false,
       user_period_activity_start: '',
       user_period_activity_finish: '',
-      view_period_selected: 'no_limit',
+
       mnSeries: {
         name: '',
         sid: null,
-        deleted_at: ''
+        deleted_at: '',
+        period_type: null
       },
       seriesNotFound: false
     }
@@ -145,11 +172,42 @@ export default {
     contentElementClick(menu_item) {
       this.$emit('contentElementClick', menu_item)
     },
+    deleteVideoSeries(uuid) {
+      const {sid} = this.mnSeries
+      this.$store.dispatch('VIDEO_SERIES_DEL', {uuid, sid}).then(() => {
+        this.updateVideosLiteTable()
+      })
+    },
+    deleteGroupSeries(gid) {
+      const {sid} = this.mnSeries
+      this.$store.dispatch('GROUP_SERIES_DEL', {gid, sid}).then(() => {
+        this.updateGroupsLiteTable()
+      })
+    },
     cancel_click() {
       this.contentElementClick('/hub/series')
     },
     save_click() {
       const oper_type = this.oper === 'edit' ? 'SERIES_UPD' : 'SERIES_ADD'
+
+      this.mnSeries.period_type =
+        this.mnSeries.period_type === 'null' ? null : this.mnSeries.period_type
+      const per_type = this.mnSeries.period_type
+
+      this.mnSeries.activity_start =
+        per_type === null
+          ? null
+          : per_type === 'spec_period'
+          ? this.makeNull(this.spec_period_activity_start)
+          : this.makeNull(this.user_period_activity_start)
+
+      this.mnSeries.activity_finish =
+        per_type === null
+          ? null
+          : per_type === 'spec_period'
+          ? this.makeNull(this.spec_period_activity_finish)
+          : this.makeNull(this.user_period_activity_finish)
+
       this.$store.dispatch(oper_type, this.mnSeries).then(
         (res) => {
           this.contentElementClick('/hub/series')
@@ -158,6 +216,31 @@ export default {
           console.log('err=', err)
         }
       )
+    },
+    makeNull(val) {
+      return val === '' ? null : val
+    },
+    updateVideosLiteTable() {
+      const cid = this.cid
+      const {sid} = this.mnSeries
+      const vparams = {
+        cid,
+        filter: `video_series[ol]: ARRAY[${sid}]`
+      }
+      this.$store
+        .dispatch('LOAD_VIDEOS_BY_SERIES', vparams)
+        .then(() => this.$store.commit('SET_STATUS_VIDEOS_LOADING', false))
+    },
+    updateGroupsLiteTable() {
+      const cid = this.cid
+      const {sid} = this.mnSeries
+      const params = {
+        cid,
+        filter: `group_series[ol]: ARRAY[${sid}]`
+      }
+      this.$store
+        .dispatch('LOAD_GROUPS', params)
+        .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
     }
   },
 
@@ -165,29 +248,33 @@ export default {
     const {sid = null} = this.$route.params
 
     this.mnSeries.sid = +sid
-    const cid = this.me.profile.company_id
+    const cid = this.cid
 
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_SERIES_INFO', {cid, sid}).then(
         (series) => {
-          this.src_name = series.name
+          this.src = {
+            name: series.name,
+            period_type: series.period_type,
+            activity_start: series.activity_start,
+            activity_finish: series.activity_finish
+          }
           this.mnSeries = {...this.mnSeries, ...series}
 
-          const params = {
-            cid,
-            filter: `group_series[ol]: ARRAY[${sid}]`
+          switch (this.mnSeries.period_type) {
+            case 'spec_period':
+              this.spec_period_activity_start = this.mnSeries.activity_start
+              this.spec_period_activity_finish = this.mnSeries.activity_finish
+              break
+            case 'user_reg':
+              this.user_period_activity_start = this.mnSeries.activity_start
+              this.user_period_activity_finish = this.mnSeries.activity_finish
+              break
+            default:
+              break
           }
-          this.$store
-            .dispatch('LOAD_GROUPS', params)
-            .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
-
-          const vparams = {
-            cid,
-            filter: `video_series[ol]: ARRAY[${sid}]`
-          }
-          this.$store
-            .dispatch('LOAD_VIDEOS_BY_SERIES', vparams)
-            .then(() => this.$store.commit('SET_STATUS_VIDEOS_LOADING', false))            
+          this.updateGroupsLiteTable()
+          this.updateVideosLiteTable()
         },
         (error) => {
           this.seriesNotFound = true
@@ -197,32 +284,58 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userMenuActiveItem', 'me']),
+    ...mapState({cid: (store) => store.Login.me.profile.company_id}),
     series_title() {
       return `series.oper_title_${this.oper}`
     },
     series_is_deleted() {
       return Boolean(this.mnSeries.deleted_at)
+    },
+    notChanged() {
+      const {name, period_type} = this.mnSeries
+      const activity_start =
+        period_type === 'no_limit'
+          ? ''
+          : period_type === 'spec_period'
+          ? this.spec_period_activity_start
+          : this.user_period_activity_start
+      const activity_finish =
+        period_type === 'no_limit'
+          ? ''
+          : period_type === 'spec_period'
+          ? this.spec_period_activity_finish
+          : this.user_period_activity_finish
+      const curr = {name, period_type, activity_start, activity_finish}
+
+      return JSON.stringify(this.src) === JSON.stringify(curr)
     }
   }
 }
 </script>
 
 <style lang="scss">
+@import '../../../assets/styles';
+
 .row-series-activity-period {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   margin: 10px 0;
+  margin-left: 10px;
 
-  input {
+  > input {
     width: 80px;
-    margin-left: 10px;
+    margin: 0 10px;
   }
-  label {
-    margin-left: 10px;
+  p {
+    min-width: 82px;
     font-size: 1.1rem;
     margin-bottom: 0px;
+  }
+  &.disabled {
+    p {
+      color: $text-disabled;
+    }
   }
 }
 .datepicker {
@@ -232,6 +345,7 @@ export default {
 }
 p.row-space {
   padding: 0 10px;
+  min-width: 0;
 }
 .series-operation {
   display: flex;
@@ -255,7 +369,7 @@ p.row-space {
       > p {
         min-width: 90px;
       }
-      button{
+      button {
         margin-left: 10px;
       }
     }

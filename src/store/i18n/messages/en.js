@@ -102,7 +102,8 @@ export default {
     id: 'ID',
     tbl_header_id: 'ID',
     tbl_header_name: 'Name',
-    tbl_header_mgn: 'Mng'
+    tbl_header_mgn: 'Mng',
+    tbl_deleted: 'Deleted'
   },
   comments: {
     id: 'ID',
@@ -188,6 +189,7 @@ export default {
     role: 'Role',
     group_is_not_selected: 'Group Is Not Selected',
     role_is_not_selected: 'Role Is Not Selected',
+    series_is_not_selected: 'Series Is Not Selected',
     no_records_found: 'No Records Found',
     csv_download: 'CSV download',
     loading: 'Loading...',

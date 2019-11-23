@@ -15,6 +15,7 @@
           <p>{{ $t('groups.id') }}:</p>
           <p>{{ `g_${mnGroup.gid}` }}</p>
         </div>
+
         <div class="group-oper-id-data">
           <p v-if="oper === 'edit'">{{ `${$t('groups.name')}` }}:</p>
           <b-form-input
@@ -29,6 +30,15 @@
           >
             {{ `${$t('label.register')}` }}
           </button>
+        </div>
+        <div class="group-oper-id-data">
+          <multiselect
+            class="multiselect"
+            v-if="isLoadingData"
+            v-model="mnGroup.group_series"
+            :items="series_options"
+            :placeholder="`${$t('label.group_is_not_selected')}`"
+          />
         </div>
       </div>
       <template v-if="oper === 'edit' && !group_is_deleted">
@@ -49,12 +59,14 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import multiselect from '@/components/elements/multiselect'
 import TableUsersLite from '@/components/elements/table-users-lite'
 
 export default {
   name: 'group-mng-form',
   components: {
-    TableUsersLite
+    TableUsersLite,
+    multiselect
   },
   props: {
     oper: String
@@ -65,9 +77,12 @@ export default {
       mnGroup: {
         name: '',
         gid: null,
-        deleted_at: ''
+        deleted_at: '',
+        group_series: null
       },
-      groupNotFound: false
+      groupNotFound: false,
+      isLoadingData: true,
+      series_options: []
     }
   },
   methods: {

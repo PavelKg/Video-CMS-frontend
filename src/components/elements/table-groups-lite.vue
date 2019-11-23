@@ -22,7 +22,7 @@
           :disabled="row.item.deleted_at !== ''"
           class="truncate-text"
           ><a href="#" @click.prevent="onOpenGroupDetails(row.item.gid)">{{
-            `g_${row.item.gid}`
+            `g_${row.item.gid}${row.item.deleted_at !== '' ? ' (deleted)' : ''}`
           }}</a>
         </b-form-checkbox>
       </template>
@@ -31,16 +31,13 @@
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
-          <template v-if="item.item.deleted_at === ''">
+          <template>
             <div class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
-                @click="delGroup(item.item.gid)"
+                @click="delGroupSeries(item.item.gid)"
               /></div
           ></template>
-          <template v-else>
-            {{ $t('groups.tbl_deleted') }}
-          </template>
         </div>
       </template>
     </b-table>
@@ -104,7 +101,9 @@ export default {
     onOpenGroupDetails(group) {
       this.$emit('contentElementClick', `/hub/groups_edit/gid/${group}`)
     },
-    delGroup(group_gid) {},
+    delGroupSeries(gid) {
+      this.$emit('deleteGroupSeries', gid)
+    },
 
     setPage(num) {
       this.$emit('contentElementClick', `/hub/groups/?page=${num}`)

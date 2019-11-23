@@ -21,24 +21,29 @@
           v-model="videos_selected"
           :disabled="row.item.deleted_at !== ''"
           class="truncate-text"
-          ><a href="#" @click="onOpenVideoDetails(row.item.video_uuid)">{{ `${row.item.video_id}` }}</a>
+          ><a
+            href="#"
+            @click.prevent="onOpenVideoDetails(row.item.video_uuid)"
+            >{{
+              `${row.item.video_id} ${
+                row.item.deleted_at !== '' ? ' (deleted)' : ''
+              }`
+            }}</a
+          >
         </b-form-checkbox>
       </template>
-      <template #cell(name)="row">
-        <p class="truncate-text">{{ row.item.name }}</p>
+      <template #cell(video_title)="row">
+        <p class="truncate-text">{{ row.item.video_title }}</p>
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
-          <template v-if="item.item.deleted_at === ''">
+          <template>
             <div class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
-                @click="delVideo(item.item.gid)"
+                @click="delVideoSeries(item.item.video_uuid)"
               /></div
           ></template>
-          <template v-else>
-            {{ $t('videos.tbl_deleted') }}
-          </template>
         </div>
       </template>
     </b-table>
@@ -71,7 +76,7 @@ export default {
           thStyle: {'text-align': 'center'}
         },
         {
-          key: 'name',
+          key: 'video_title',
           label: this.$t('videos.tbl_header_name'),
           thStyle: {'text-align': 'center'}
         },
@@ -102,15 +107,15 @@ export default {
     onOpenVideoDetails(uuid) {
       this.$emit('contentElementClick', `/hub/videos_subtitles/uuid/${uuid}`)
     },
-    delVideo(video_id) {},
+    delVideoSeries(uuid) {
+      this.$emit('deleteVideoSeries', uuid)
+    },
 
     setPage(num) {
       this.$emit('contentElementClick', `/hub/videos/?page=${num}`)
     }
   },
-  created() {
-    console.log('this.videos=', this.videos)
-  },
+
   computed: {
     ...mapState({
       videos: (state) => state.Videos.videos.list,

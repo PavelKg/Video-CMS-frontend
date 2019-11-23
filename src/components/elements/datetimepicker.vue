@@ -7,6 +7,7 @@
     <div
       class="datetime-picker-input"
       :id="`datetime-picker-div-input-${ucode}`"
+      :class="{disabled: disabled}"
       @click="toggleCal"
     >
       <input
@@ -732,6 +733,12 @@ export default {
     font-weight: 400;
     line-height: 1.5;
     cursor: pointer;
+    &.disabled {
+      background: none;
+      input {
+        background: none;
+      }
+    }
     .ms-dd-icon {
       float: right;
       pointer-events: none;

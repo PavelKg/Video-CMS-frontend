@@ -102,7 +102,7 @@ export default {
   computed: {
     ...mapGetters(['locales', 'authStatus', 'me', 'me_irole']),
     activeLocale() {
-      return Object.Keys(this.$i18n.locale)
+      return Object.keys(this.$i18n.locale)
     }
   }
 }

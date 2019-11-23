@@ -67,6 +67,13 @@
             :items="group_options"
             :placeholder="`${$t('label.group_is_not_selected')}`"
           />
+          <multiselect
+            class="multiselect"
+            v-if="!isLoadingData"
+            v-model="form.video_series"
+            :items="series_options"
+            :placeholder="`${$t('label.series_is_not_selected')}`"
+          />
           <b-form-textarea
             :placeholder="`${$t('videos.video_description')}`"
             v-model="form.video_description"
@@ -91,7 +98,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
 
 export default {
@@ -108,27 +115,38 @@ export default {
         video_title: '',
         video_tag: '',
         video_description: '',
-        video_groups: []
+        video_groups: [],
+        video_series: []
       },
       active_video_uuid: '',
       videoNotFound: false,
       group_options: [],
-      isLoadingData: true
+      isLoadingData: true,
+      series_options: []
     }
   },
   created() {
+    const cid = this.cid
     this.active_video_uuid = this.$route.params.uuid
-    this.$store
-      .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
-      .then((res) => {
-        this.$store.commit('SET_GROUPS_IS_LOADING', false)
-        const grpo = this.groups
-          .filter((item) => item.deleted_at === '')
-          .map((item) => {
-            return {value: item.gid, text: item.name}
-          })
-        this.group_options = [...this.group_options, ...grpo]
-      })
+    this.$store.dispatch('LOAD_GROUPS', {cid}).then((res) => {
+      this.$store.commit('SET_GROUPS_IS_LOADING', false)
+      const grpo = this.groups
+        .filter((item) => item.deleted_at === '')
+        .map((item) => {
+          return {value: item.gid, text: item.name}
+        })
+      this.group_options = [...this.group_options, ...grpo]
+    })
+
+    this.$store.dispatch('LOAD_SERIES', cid).then((res) => {
+      this.$store.commit('SET_SERIES_IS_LOADING', false)
+      const srso = this.series
+        .filter((item) => item.deleted_at === '')
+        .map((item) => {
+          return {value: item.sid, text: item.name}
+        })
+      this.series_options = [...this.series_options, ...srso]
+    })
 
     this.$store
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
@@ -200,7 +218,14 @@ export default {
     multiselect
   },
   computed: {
-    ...mapGetters(['isVideosInfoUpdating', 'me', 'groups']),
+    //...mapGetters(['isVideosInfoUpdating', 'me', 'groups']),
+    ...mapState({
+      groups: (state) => state.Companies.Groups.list,
+      series: (state) => state.Companies.Series.list,
+      cid: (state) => state.Login.me.profile.company_id,
+      isVideosInfoUpdating: (state) => state.Videos.videos.isVideosInfoUpdating
+    }),
+
     i_thumbnail() {
       return Boolean(this.form.video_thumbnail)
         ? this.form.video_thumbnail

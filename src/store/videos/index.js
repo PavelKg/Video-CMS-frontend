@@ -144,7 +144,6 @@ export default {
       try {
         const result = await Api.videos_catalog({cid}, {filter, offset, limit})
         if (result.status === 200) {
-          console.log('result.data=', result.data)
           commit('SET_VIDEO_LIST', result.data)
         } else {
           throw Error(`Error load video list, status - ${result.status}`)
@@ -198,7 +197,8 @@ export default {
         video_title,
         video_tag,
         video_description,
-        video_groups
+        video_groups,
+        video_series
       } = video_info
 
       const info_data = {
@@ -206,7 +206,8 @@ export default {
         video_title,
         video_tag,
         video_description,
-        video_groups
+        video_groups,
+        video_series
       }
 
       try {
@@ -253,7 +254,7 @@ export default {
       }
     },
 
-    async DEL_VIDEOS_SERIES({commit, getters}, payload) {
+    async VIDEO_SERIES_DEL({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
       const {uuid, sid} = payload
       try {
@@ -266,7 +267,7 @@ export default {
       } catch (err) {
         throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
       }
-    },    
+    },
 
     async ADD_PLAYER_EVENT({getters}, {uuid, event_data}) {
       const cid = getters.me.profile.company_id
