@@ -63,9 +63,9 @@ export default {
     },
     async GROUP_UPD({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
-      const {gid, name} = payload
+      const {gid, name, group_series} = payload
       try {
-        const result = await Api.group_upd({cid, gid}, {name})
+        const result = await Api.group_upd({cid, gid}, {name, group_series})
         if (result.status === 200) {
           return Promise.resolve('Group updated success')
         } else {

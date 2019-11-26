@@ -24,7 +24,7 @@
             :disabled="group_is_deleted"
           ></b-form-input>
           <button
-            :disabled="mnGroup.name === src_name || group_is_deleted"
+            :disabled="dataNotChanged || group_is_deleted"
             @click="save_click"
             class="button btn-blue"
           >
@@ -32,9 +32,10 @@
           </button>
         </div>
         <div class="group-oper-id-data">
+          <p v-if="oper === 'edit'">{{ `${$t('groups.series')}` }}:</p>
           <multiselect
             class="multiselect"
-            v-if="isLoadingData"
+            v-if="!isLoadingData"
             v-model="mnGroup.group_series"
             :items="series_options"
             :placeholder="`${$t('label.group_is_not_selected')}`"
@@ -58,7 +59,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
 import TableUsersLite from '@/components/elements/table-users-lite'
 
@@ -73,12 +74,12 @@ export default {
   },
   data() {
     return {
-      src_name: '',
+      src: {name: '', series: []},
       mnGroup: {
         name: '',
         gid: null,
-        deleted_at: '',
-        group_series: null
+        group_series: [],
+        deleted_at: ''
       },
       groupNotFound: false,
       isLoadingData: true,
@@ -109,13 +110,26 @@ export default {
     const {gid = null} = this.$route.params
 
     this.mnGroup.gid = +gid
-    const cid = this.me.profile.company_id
+    const cid = this.cid
 
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_GROUP_INFO', {cid, gid}).then(
         (group) => {
-          this.src_name = group.name
+          this.src.name = group.name
+          this.src.series = [...group.group_series]
+
           this.mnGroup = {...this.mnGroup, ...group}
+
+          this.$store.dispatch('LOAD_SERIES', cid).then((res) => {
+            this.$store.commit('SET_SERIES_IS_LOADING', false)
+            const srso = this.series
+              .filter((item) => item.deleted_at === '')
+              .map((item) => {
+                return {value: item.sid, text: item.name}
+              })
+            this.series_options = [...this.series_options, ...srso]
+            this.isLoadingData = false
+          })
 
           const params = {
             cid,
@@ -133,9 +147,23 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userMenuActiveItem', 'me']),
+    ...mapState({
+      cid: (store) => store.Login.me.profile.company_id,
+      series: (store) => store.Companies.Series.list
+    }),
     group_title() {
       return `groups.oper_title_${this.oper}`
+    },
+    dataNotChanged() {
+      const {series} = this.src
+      const {group_series} = this.mnGroup
+      return (
+        this.src.name === this.mnGroup.name &&
+        series.length === group_series.length &&
+        series.sort().every(function(value, index) {
+          return value === group_series.sort()[index]
+        })
+      )
     },
     group_is_deleted() {
       return Boolean(this.mnGroup.deleted_at)
@@ -145,6 +173,10 @@ export default {
 </script>
 
 <style lang="scss">
+.multiselect {
+  width: 100%;
+  font-size: 0.8em;
+}
 .group-operation {
   display: flex;
   flex-direction: column;
@@ -152,9 +184,7 @@ export default {
     font-size: 1.8em;
     font-weight: 600;
   }
-  > * {
-    margin-bottom: 20px;
-  }
+
   .group-oper-id {
     display: flex;
     flex-direction: column;
@@ -165,8 +195,10 @@ export default {
     }
     .group-oper-id-data {
       display: flex;
-      justify-content: center;
-      font-size: 1.2em;
+      justify-content: flex-start;
+      //font-size: 1.2em;
+      min-width: 450px;
+      padding-bottom: 10px;
     }
   }
   input {

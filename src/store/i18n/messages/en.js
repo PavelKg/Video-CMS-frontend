@@ -85,7 +85,8 @@ export default {
     oper_title_edit: 'Group Information',
     oper_title_add: 'Add New Group',
     in_page: 'In page',
-    id: 'ID'
+    id: 'ID',
+    series: 'Series'
   },
   screen: {
     display: 'Display',
