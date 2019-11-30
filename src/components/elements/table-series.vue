@@ -1,5 +1,7 @@
 <template>
   <div class="series-table">
+    {{ showColumn }}
+
     <b-table
       :items="series_on_page"
       :fields="fields"
@@ -9,7 +11,7 @@
       hover
       head-variant="dark"
     >
-      <template #cell(name)="row">
+      <template #cell(sid)="row">
         <b-form-checkbox
           :id="row.item.sid.toString()"
           :name="`ch-${row.item.sid}`"
@@ -17,8 +19,48 @@
           v-model="series_selected"
           :disabled="row.item.deleted_at !== ''"
           class="truncate-text"
-          >{{ row.item.name }}
+          >{{ `S${row.item.sid}` }}
         </b-form-checkbox>
+      </template>
+      <template #cell(is_private)="row">{{
+        $t(`series.${row.item.is_private ? 'private' : 'public'}`)
+      }}</template>
+      <template #cell(period_type)="row">
+        <div v-if="row.item.period_type" class="period-type">
+          <span>
+            {{
+              $t(
+                `series.${
+                  row.item.period_type === 'spec_period'
+                    ? 'specify_period'
+                    : 'start_users_accounts'
+                }`
+              )
+            }}
+          </span>
+          <div>
+            {{
+              `${
+                row.item.period_type === 'spec_period'
+                  ? ''
+                  : $t('series.view_start') + ': '
+              }
+                  ${
+                    row.item.activity_start !== null
+                      ? row.item.activity_start
+                      : ''
+                  } ~ ${
+                row.item.period_type === 'spec_period'
+                  ? ''
+                  : $t('series.view_end') + ': '
+              }${
+                row.item.activity_finish !== null
+                  ? row.item.activity_finish
+                  : ''
+              }`
+            }}
+          </div>
+        </div>
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
@@ -71,24 +113,12 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 
 export default {
   name: 'table-series',
   data() {
     return {
-      fields: [
-        {
-          key: 'name',
-          label: this.$t('series.tbl_header_name'),
-          thStyle: {'text-align': 'center'}
-        },
-        {
-          key: 'mng',
-          label: this.$t('series.tbl_header_mgn'),
-          thStyle: {width: '120px !important', 'text-align': 'center'}
-        }
-      ],
       perPage: 8,
       currentPage: 1,
       series_selected: [],
@@ -111,9 +141,10 @@ export default {
       const action = env.target['id']
       this.series_selected =
         action === 'selectAll'
-          ? this.series_on_page.filter((series) => series.deleted_at === '').map(series => series.sid)
+          ? this.series_on_page
+              .filter((series) => series.deleted_at === '')
+              .map((series) => series.sid)
           : []
-      console.log('this.series_selected=', this.series_selected)
     },
     editSeries(series) {
       this.$emit('contentElementClick', `/hub/series_edit/sid/${series.sid}`)
@@ -168,6 +199,41 @@ export default {
       cid: (state) => state.Login.me.profile.company_id,
       series_is_loading: (state) => state.Companies.Series.isListLoading
     }),
+    ...mapGetters(['is_mobile_width']),
+
+    fields() {
+      return [
+        {
+          key: 'sid',
+          label: this.$t('series.tbl_header_id'),
+          thStyle: {'text-align': 'center'}
+        },
+        {
+          key: 'name',
+          label: this.$t('series.tbl_header_name'),
+          thStyle: {'text-align': 'center'}
+        },
+        {
+          key: 'period_type',
+          label: this.$t('series.tbl_header_viewing_period'),
+          thStyle: {'text-align': 'center'},
+          thClass: this.showColumn,
+          tdClass: this.showColumn
+        },
+        {
+          key: 'is_private',
+          label: this.$t('series.tbl_header_publish'),
+          thStyle: {'text-align': 'center'},
+          thClass: this.showColumn,
+          tdClass: this.showColumn
+        },
+        {
+          key: 'mng',
+          label: this.$t('series.tbl_header_mgn'),
+          thStyle: {width: '120px !important', 'text-align': 'center'}
+        }
+      ]
+    },
     series_count() {
       return this.series ? this.series.length : 0
     },
@@ -176,6 +242,9 @@ export default {
       const end = begin + this.perPage
 
       return this.series.slice(begin, end)
+    },
+    showColumn() {
+      return this.is_mobile_width ? 'd-none' : ''
     }
   }
 }
@@ -183,6 +252,10 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/styles';
+.period-type {
+  display: flex;
+  flex-direction: column;
+}
 .series-table {
   padding: 10px 0;
 }
@@ -219,6 +292,7 @@ export default {
   .series-mng-panel {
     button {
       margin-top: 15px;
+      margin-left: 10px;
     }
     .series-mng-pag {
       margin-top: 15px;

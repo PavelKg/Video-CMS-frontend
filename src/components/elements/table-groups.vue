@@ -214,6 +214,7 @@ export default {
   .groups-mng-panel {
     button {
       margin-top: 15px;
+      margin-left: 10px;
     }
     .groups-mng-pag {
       margin-top: 15px;

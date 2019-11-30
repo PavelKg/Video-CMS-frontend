@@ -93,7 +93,7 @@ export default {
       users_selected: []
     }
   },
-  created() {},
+
   watch: {
     $route(newVal) {
       this.currentPage = newVal.query.page ? newVal.query.page : 1
@@ -248,6 +248,7 @@ export default {
   .users-mng-panel {
     button {
       margin-top: 15px;
+      margin-left: 10px;
     }
     .users-mng-pag {
       margin-top: 15px;

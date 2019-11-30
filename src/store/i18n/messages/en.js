@@ -129,8 +129,11 @@ export default {
   },
   series: {
     btn_add: 'Add New Series',
-    tbl_header_name: 'Series',
+    tbl_header_name: 'Series name',
     tbl_header_mgn: 'Mng',
+    tbl_header_publish: 'Publishing settings',
+    tbl_header_id: 'Series ID',
+    tbl_header_viewing_period: 'Viewing period',
     tbl_deleted: 'Deleted',
     name: 'Name',
     series_name: 'Series Name',
@@ -144,7 +147,9 @@ export default {
     start_users_accounts: "Start user's accounts",
     view_start: 'View start',
     view_end: 'View end',
-    for_registration_date: 'for registration date'
+    for_registration_date: 'for registration date',
+    private: 'Private',
+    public: 'Public'
   },
   label: {
     delete: 'Delete',
