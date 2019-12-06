@@ -10,15 +10,13 @@ const uuid = () =>
 
 export default {
   state: {
-    videos: {
-      list: [],
-      public: 'all',
-      period: ['1900-01-01', '2100-12-31'],
-      isInfoUpdating: false,
-      isListLoading: false,
-      isDeleting: false,
-      selected: []
-    },
+    list: [],
+    public: 'all',
+    period: ['1900-01-01', '2100-12-31'],
+    isInfoUpdating: false,
+    isListLoading: false,
+    isDeleting: false,
+    selected: [],
     active_video_uuid: '',
     active_video_page: 1,
     filesForUpload: {
@@ -107,16 +105,45 @@ export default {
       }
     },
 
+    async LOAD_VIDEOS({state, commit}, payload) {
+      // video list for binding func
+      const {cid, filter = ''} = payload
+      commit('SET_STATUS_VIDEOS_LOADING', true)
+      let lfilter = `${filter} videos.deleted_at[isNull]:,videos.updated_at[gt]:'${
+        state.period[0]
+      }'::date,videos.updated_at[lt]:'${state.period[1]}'::date`
+      lfilter +=
+        state.public === 'all'
+          ? ''
+          : `,video_public[eq]:${Boolean(state.public === 'public')}`
+
+      let offset = 0
+      let limit = 0
+
+      try {
+        const result = await Api.videos_catalog({cid}, {lfilter, offset, limit})
+        if (result.status === 200) {
+          commit('SET_VIDEO_LIST', result.data)
+        } else {
+          throw Error(`Error update role, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      } finally {
+        commit('SET_STATUS_VIDEOS_LOADING', false)
+      }
+    },
+
     async LOAD_VIDEO_LIST({state, commit, getters}) {
       const cid = getters.me.profile.company_id
       commit('SET_STATUS_VIDEOS_LOADING', true)
       let filter = `videos.deleted_at[isNull]:,videos.updated_at[gt]:'${
-        state.videos.period[0]
-      }'::date,videos.updated_at[lt]:'${state.videos.period[1]}'::date`
+        state.period[0]
+      }'::date,videos.updated_at[lt]:'${state.period[1]}'::date`
       filter +=
-        state.videos.public === 'all'
+        state.public === 'all'
           ? ''
-          : `,video_public[eq]:${Boolean(state.videos.public === 'public')}`
+          : `,video_public[eq]:${Boolean(state.public === 'public')}`
 
       let offset = 0
       let limit = 0
@@ -240,17 +267,17 @@ export default {
 
     async DELETE_VIDEO({state, getters}) {
       const cid = getters.me.profile.company_id
-      state.videos.isDeleting = true
+      state.isDeleting = true
 
       try {
         await Promise.all(
-          state.videos.selected.map(async (uuid) => {
+          state.selected.map(async (uuid) => {
             return await Api.video_delete({cid, uuid})
           })
         )
       } catch (error) {
       } finally {
-        state.videos.isDeleting = false
+        state.isDeleting = false
       }
     },
 
@@ -287,7 +314,7 @@ export default {
   },
   mutations: {
     SET_VIDEO_LIST(state, _list) {
-      state.videos.list = [..._list]
+      state.list = [..._list]
     },
     SET_ACTIVE_VIDEO(state, uuid) {
       state.active_video_uuid = uuid
@@ -302,10 +329,10 @@ export default {
         .slice(0, 10)
       const to = new Date(year_to, month_to, 1).toISOString().slice(0, 10)
 
-      state.videos.period = [from, to]
+      state.period = [from, to]
     },
     SET_VIDEO_PUBLIC(state, _public) {
-      state.videos.public = _public
+      state.public = _public
     },
     ADD_UPLOAD_FILE(state, _files) {
       // need add check for existing file name
@@ -370,32 +397,32 @@ export default {
       }
     },
     SET_STATUS_INFO_UPDATTING(state, status) {
-      state.videos.isInfoUpdating = status
+      state.isInfoUpdating = status
     },
     SET_STATUS_VIDEOS_LOADING(state, status) {
-      state.videos.isListLoading = status
+      state.isListLoading = status
     },
     SET_VIDEO_SELECTED(state, uuid) {
-      if (state.videos.selected.indexOf(uuid) === -1) {
-        state.videos.selected.push(uuid)
+      if (state.selected.indexOf(uuid) === -1) {
+        state.selected.push(uuid)
       }
     },
     SET_VIDEO_PUBLIC_STATUS(state, {uuid, value}) {
-      const ind = state.videos.list.findIndex(function(item) {
+      const ind = state.list.findIndex(function(item) {
         return item.video_uuid === uuid
       })
       if (ind > -1) {
-        state.videos.list[ind].video_public = value
+        state.list[ind].video_public = value
       }
     },
     UNSET_VIDEO_SELECTED(state, uuid) {
-      const ind = state.videos.selected.indexOf(uuid)
+      const ind = state.selected.indexOf(uuid)
       if (ind > -1) {
-        state.videos.selected.splice(ind, 1)
+        state.selected.splice(ind, 1)
       }
     },
     CLEAR_VIDEO_SELECTED(state) {
-      state.videos.selected = []
+      state.selected = []
     },
     PROGRESS_UPLOAD_FILE(state, payload) {
       const {name, progress_handler} = payload
@@ -411,11 +438,11 @@ export default {
   },
   getters: {
     video_list: (state) =>
-      state.videos.list.filter((video) => !Boolean(video.deleted_at)),
-    isVideosInfoUpdating: (state) => state.videos.isInfoUpdating,
-    isVideosListLoading: (state) => state.videos.isListLoading,
-    isVideosDeleting: (state) => state.videos.isDeleting,
-    videos_selected: (state) => state.videos.selected,
+      state.list.filter((video) => !Boolean(video.deleted_at)),
+    isVideosInfoUpdating: (state) => state.isInfoUpdating,
+    isVideosListLoading: (state) => state.isListLoading,
+    isVideosDeleting: (state) => state.isDeleting,
+    videos_selected: (state) => state.selected,
     active_video_uuid: (state) => state.active_video_uuid,
     active_video_page: (state) => state.active_video_page,
     files_for_upload: (state) => state.filesForUpload.list

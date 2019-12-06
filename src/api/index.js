@@ -100,7 +100,7 @@ export default {
    * @throws Error
    */
   getCompanyCommentBoxState(cid) {
-    return Api.get(`/companies/${cid}/mng/commentbox`, {
+    return Api.get(`planning/works`, {
       headers: {
         ...type_json
       }
@@ -310,7 +310,8 @@ export default {
 
   /* ---------  SERIES MANAGEMENT  ---------------------*/
   /** List of series
-   * @param {*} cid 
+   * @param {integer} cid
+   * @param {string} filter
    * @returns {Promise<*>} - 200 List of series
    * [{
     "sid": 0,
@@ -318,8 +319,9 @@ export default {
     "deleted_at": "string"
     }]
  */
-  series(cid) {
-    return Api.get(`/companies/${cid}/series`, {
+  series(cid, filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/series${setFilter}`, {
       headers: {
         ...type_json
       }

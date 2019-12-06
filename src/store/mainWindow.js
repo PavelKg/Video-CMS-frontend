@@ -3,7 +3,7 @@ export default {
     mainWindowRect: {
       width: 0,
       height: 0,
-      tabletMaxWidth: 768,
+      tabletMaxWidth: 769,
       mobileMaxWidth: 450
     }
   },
@@ -18,7 +18,7 @@ export default {
     windowsRect(state) {
       return state.mainWindowRect
     },
-    is_mobile_width: state =>
+    is_mobile_width: (state) =>
       state.mainWindowRect.width <= state.mainWindowRect.mobileMaxWidth
   }
 }

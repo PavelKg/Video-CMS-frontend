@@ -16,6 +16,7 @@ const groups_edit = () => import('@/hub/templates/groups/mng')
 const series = () => import('@/hub/templates/series')
 const series_add = () => import('@/hub/templates/series/mng')
 const series_edit = () => import('@/hub/templates/series/mng')
+const binding = () => import('@/hub/templates/binding')
 const roles = () => import('@/hub/templates/roles/')
 const roles_add = () => import('@/hub/templates/roles/mng')
 const roles_edit = () => import('@/hub/templates/roles/mng')
@@ -193,6 +194,12 @@ export default new Router({
           component: series,
           beforeEnter: checkAuthAndAccess,
           meta: {menuItem: '/hub/series', notForUser: 'true'}
+        },
+        {
+          path: 'binding',
+          component: binding,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/binding', notForUser: 'true'}
         },
         {
           path: 'series_add',

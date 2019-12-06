@@ -153,7 +153,7 @@ export default {
       this.$store.dispatch('SERIES_DEL', series_sid).then(
         (res) => {
           this.$store
-            .dispatch('LOAD_SERIES', this.cid)
+            .dispatch('LOAD_SERIES', {cid: this.cid})
             .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
         },
         (err) => {
@@ -185,7 +185,7 @@ export default {
 
       Promise.all(deleted_series).then(() => {
         this.$store
-          .dispatch('LOAD_SERIES', this.cid)
+          .dispatch('LOAD_SERIES', {cid: this.cid})
           .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
       })
     },

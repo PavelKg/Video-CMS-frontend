@@ -18,7 +18,7 @@ export default {
   name: 'series-mng',
   created() {
     this.$store
-      .dispatch('LOAD_SERIES', this.me.profile.company_id)
+      .dispatch('LOAD_SERIES', {cid: this.me.profile.company_id})
       .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
   },
   methods: {

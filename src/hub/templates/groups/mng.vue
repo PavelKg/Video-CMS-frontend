@@ -120,7 +120,7 @@ export default {
 
           this.mnGroup = {...this.mnGroup, ...group}
 
-          this.$store.dispatch('LOAD_SERIES', cid).then((res) => {
+          this.$store.dispatch('LOAD_SERIES', {cid}).then((res) => {
             this.$store.commit('SET_SERIES_IS_LOADING', false)
             const srso = this.series
               .filter((item) => item.deleted_at === '')

@@ -138,7 +138,7 @@ export default {
       this.group_options = [...this.group_options, ...grpo]
     })
 
-    this.$store.dispatch('LOAD_SERIES', cid).then((res) => {
+    this.$store.dispatch('LOAD_SERIES', {cid}).then((res) => {
       this.$store.commit('SET_SERIES_IS_LOADING', false)
       const srso = this.series
         .filter((item) => item.deleted_at === '')
@@ -223,7 +223,7 @@ export default {
       groups: (state) => state.Companies.Groups.list,
       series: (state) => state.Companies.Series.list,
       cid: (state) => state.Login.me.profile.company_id,
-      isVideosInfoUpdating: (state) => state.Videos.videos.isVideosInfoUpdating
+      isVideosInfoUpdating: (state) => state.Videos.isVideosInfoUpdating
     }),
 
     i_thumbnail() {

@@ -7,10 +7,12 @@ export default {
     selected: null
   },
   actions: {
-    async LOAD_SERIES({commit}, cid) {
+    async LOAD_SERIES({commit}, payload) {
+      const {cid, filter = ''} = payload
+
       try {
         commit('SET_SERIES_IS_LOADING', true)
-        const result = await Api.series(cid)
+        const result = await Api.series(cid, filter)
         if (Array.isArray(result.data) && result.status === 200) {
           commit('SET_SERIES', result.data)
         } else {

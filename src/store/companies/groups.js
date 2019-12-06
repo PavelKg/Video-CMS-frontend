@@ -8,7 +8,7 @@ export default {
   },
   actions: {
     async LOAD_GROUPS({commit}, payload) {
-      const {cid, filter} = payload
+      const {cid, filter = ''} = payload
       try {
         commit('SET_GROUPS_IS_LOADING', true)
         const result = await Api.groups(cid, filter)
@@ -101,7 +101,7 @@ export default {
       } catch (err) {
         throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
       }
-    }    
+    }
   },
   mutations: {
     SET_GROUPS: (state, groups) => {

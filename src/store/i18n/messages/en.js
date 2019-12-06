@@ -9,7 +9,8 @@ export default {
     groups: 'Groups',
     series: 'Series',
     screen: 'Screen custom.',
-    history_info: 'History Info'
+    history_info: 'History Info',
+    binding: 'Binding'
   },
   message: {
     appHeader: 'Video Contents Management',
@@ -150,6 +151,17 @@ export default {
     for_registration_date: 'for registration date',
     private: 'Private',
     public: 'Public'
+  },
+  binding: {
+    binding_settings: 'Binding settings',
+    target: 'Target',
+    id_name: 'ID/Name',
+    btn_bind: 'Bind',
+    groups: 'Groups',
+    series: 'Series',
+    videos: 'Videos',
+    please_select_a_target: 'Please select a target',
+    please_select_id_name: 'Please select ID/Name'
   },
   label: {
     delete: 'Delete',
