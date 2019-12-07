@@ -118,9 +118,9 @@ export default {
 
   computed: {
     ...mapState({
-      videos: (state) => state.Videos.videos.list,
+      videos: (state) => state.Videos.list,
       //cid: (state) => state.Login.me.profile.cid,
-      videos_is_loading: (state) => state.Videos.videos.isListLoading
+      videos_is_loading: (state) => state.Videos.isListLoading
     }),
     videos_count() {
       return this.videos ? this.videos.length : 0
