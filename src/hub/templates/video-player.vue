@@ -6,7 +6,7 @@
     <template v-else>
       <p class="video-title">{{ form.video_title || $t('videos.no_title') }}</p>
       <div class="video-content-zone">
-        <VideoPlayer :videourl="videoUrl" />
+        <VideoPlayer :videourl="videoUrl" @onPlayerEvent="onPlayerEvent" />
         <div class="video-information">
           <div class="video-information-rows">
             <p class="title">{{ $t('videos.video_information') }}</p>
@@ -49,24 +49,26 @@
           </template>
         </div>
       </div>
-      <div class="comment-input">
-        <input v-model="comment_text" />
-        <button
-          :disabled="comment_sending"
-          @click="addComment"
-          class="button btn-blue"
-        >
-          {{ $t('label.send') }}
-        </button>
-      </div>
-      <div class="comment-table">
-        <Comment
-          v-for="comment in comment_list"
-          :comment="comment"
-          :key="comment.comment_id"
-          :video_uuid="form.video_uuid"
-        />
-      </div>
+      <template v-if="form.commentbox_visible">
+        <div class="comment-input">
+          <input v-model="comment_text" />
+          <button
+            :disabled="comment_sending"
+            @click="addComment"
+            class="button btn-blue"
+          >
+            {{ $t('label.send') }}
+          </button>
+        </div>
+        <div class="comment-table">
+          <Comment
+            v-for="comment in comment_list"
+            :comment="comment"
+            :key="comment.comment_id"
+            :video_uuid="form.video_uuid"
+          />
+        </div>
+      </template>
     </template>
   </div>
 </template>
@@ -90,7 +92,8 @@ export default {
         video_tag: '',
         video_descrioption: '',
         video_output_file: '',
-        video_public: true
+        video_public: true,
+        commentbox_visible: true
       },
       options: [
         {text: this.$t('label.public'), value: 'public'},
@@ -170,6 +173,12 @@ export default {
           this.comment_text = ''
           this.comment_sending = false
         })
+    },
+    onPlayerEvent(_event) {
+      this.$store.dispatch('ADD_PLAYER_EVENT', {
+        uuid: this.form.video_uuid,
+        event_data: _event
+      })
     }
   }
 }

@@ -3,5 +3,6 @@
   "semi": false,
   "trailingComma": "none",
   "bracketSpacing": false,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "vueBracketSameLine": "true"
 }

@@ -18,10 +18,12 @@
       hover
       head-variant="dark"
     >
-      <template slot="uid" slot-scope="item"
-        ><a @click.prevent="updUser(item.item)" href="#" ><p class="truncate-text">{{ item.item.uid }}</p></a>
+      <template #cell(uid)="item"
+        ><a @click.prevent="updUser(item.item)" href="#"
+          ><p class="truncate-text">{{ item.item.uid }}</p></a
+        >
       </template>
-      <template slot="fullname" slot-scope="item"
+      <template #cell(fullname)="item"
         ><p class="truncate-text">{{ item.item.fullname }}</p>
       </template>
     </b-table>

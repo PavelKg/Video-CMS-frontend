@@ -1,5 +1,9 @@
 <template>
   <div class="groups-table">
+    <span>
+      {{ $t('message.number_of_registered_groups') }}: {{ groups_count }}
+      {{ $t('label.groups') }}
+    </span>
     <b-table
       :items="groups_on_page"
       :fields="fields"
@@ -9,7 +13,7 @@
       hover
       head-variant="dark"
     >
-      <template #cell(name)="row">
+      <template #cell(gid)="row">
         <b-form-checkbox
           :id="row.item.gid.toString()"
           :name="`ch-${row.item.gid}`"
@@ -17,46 +21,27 @@
           v-model="groups_selected"
           :disabled="row.item.deleted_at !== ''"
           class="truncate-text"
-          >{{ row.item.name }}
+          ><a href="#" @click.prevent="onOpenGroupDetails(row.item.gid)">{{
+            `g_${row.item.gid}${row.item.deleted_at !== '' ? ' (deleted)' : ''}`
+          }}</a>
         </b-form-checkbox>
+      </template>
+      <template #cell(name)="row">
+        <p class="truncate-text">{{ row.item.name }}</p>
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
-          <template v-if="item.item.deleted_at === ''">
-            <div class="icon-button">
-              <img
-                src="@/assets/images/edit_black.png"
-                @click="editGroup(item.item)"
-              />
-            </div>
+          <template>
             <div class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
-                @click="delGroup(item.item.gid)"
+                @click="delGroupSeries(item.item.gid)"
               /></div
           ></template>
-          <template v-else>
-            {{ $t('groups.tbl_deleted') }}
-          </template>
         </div>
       </template>
     </b-table>
     <div class="groups-mng-panel">
-      <span>{{ $t('groups.in_page') }}:</span>
-      <a href="#" id="selectAll" @click.prevent="toggleAll">{{
-        $t('label.select_all')
-      }}</a>
-      <span>|</span>
-      <a href="#" id="deselectAll" @click.prevent="toggleAll">{{
-        $t('label.deselect_all')
-      }}</a>
-      <button
-        class="button btn-orange"
-        @click="delGroups"
-        :disabled="groups_selected.length === 0"
-      >
-        {{ $t('label.delete') }}
-      </button>
       <div class="groups-mng-pag">
         <b-pagination
           :value="currentPage"
@@ -71,13 +56,19 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
 
 export default {
-  name: 'table-groups',
+  name: 'table-groups-lite',
+  props: {sid: Number},
   data() {
     return {
       fields: [
+        {
+          key: 'gid',
+          label: this.$t('groups.tbl_header_id'),
+          thStyle: {'text-align': 'center'}
+        },
         {
           key: 'name',
           label: this.$t('groups.tbl_header_name'),
@@ -91,9 +82,9 @@ export default {
       ],
       perPage: 8,
       currentPage: 1,
-      groups_selected: [],
       modalShow: false,
-      modal_text: ''
+      modal_text: '',
+      groups_selected: ''
     }
   },
   watch: {
@@ -107,62 +98,23 @@ export default {
     }
   },
   methods: {
-    toggleAll(env) {
-      const action = env.target['id']
-      this.groups_selected =
-        action === 'selectAll'
-          ? this.groups_on_page
-              .filter((group) => group.deleted_at === '')
-              .map((group) => group.gid)
-          : []
+    onOpenGroupDetails(group) {
+      this.$emit('contentElementClick', `/hub/groups_edit/gid/${group}`)
     },
-    editGroup(group) {
-      this.$emit('contentElementClick', `/hub/groups_edit/gid/${group.gid}`)
+    delGroupSeries(gid) {
+      this.$emit('deleteGroupSeries', gid)
     },
-    delGroup(group_gid) {
-      this.$store.dispatch('GROUP_DEL', group_gid).then(
-        (res) => {
-          this.$store
-            .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
-            .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
-        },
-        (err) => {
-          this.$emit(
-            'onContentError',
-            `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`
-          )
-        }
-      )
-    },
-    delGroups() {
-      const deleted_groups = this.groups_selected.map(async (group_gid) => {
-        try {
-          await this.$store.dispatch('GROUP_DEL', group_gid)
-          const ind = this.groups_selected.findIndex((gid) => gid === group_gid)
-          if (ind > -1) {
-            this.groups_selected.splice(ind, 1)
-          }
-        } catch (error) {
-          console.log('error')
-          this.$emit(
-            'onContentError',
-            `errors.${error.message.toLowerCase().replace(/\s/gi, '_')}`
-          )
-        }
-      })
 
-      Promise.all(deleted_groups).then(() => {
-        this.$store
-          .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
-          .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
-      })
-    },
     setPage(num) {
       this.$emit('contentElementClick', `/hub/groups/?page=${num}`)
     }
   },
   computed: {
-    ...mapGetters(['groups', 'me', 'groups_is_loading']),
+    ...mapState({
+      groups: (state) => state.Companies.Groups.list,
+      //cid: (state) => state.Login.me.profile.cid,
+      groups_is_loading: (state) => state.Companies.Groups.isListLoading
+    }),
     groups_count() {
       return this.groups ? this.groups.length : 0
     },
@@ -200,7 +152,7 @@ export default {
 .groups-mng-panel {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: flex-end;
   flex-wrap: wrap;
   .groups-mng-pag {
     display: flex;
@@ -214,7 +166,6 @@ export default {
   .groups-mng-panel {
     button {
       margin-top: 15px;
-      margin-left: 10px;
     }
     .groups-mng-pag {
       margin-top: 15px;

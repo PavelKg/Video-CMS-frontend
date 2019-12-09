@@ -7,10 +7,12 @@
     <div
       class="datetime-picker-input"
       :id="`datetime-picker-div-input-${ucode}`"
+      :class="{disabled: disabled}"
       @click="toggleCal"
     >
       <input
         type="text"
+        :class="{'input-disabled': disabled}"
         :id="`tj-datetime-input-${ucode}`"
         :required="required"
         :value="date"
@@ -22,7 +24,7 @@
         <IconBase
           class="ms-dr-icon"
           :id="`button-datetime-input-${ucode}`"
-          :icon-color="icon_color"
+          :icon-color="disabled ? icon_color_disabled : icon_color"
           icon-name="Select"
         >
           <IconDataRange />
@@ -33,7 +35,7 @@
     <div
       class="calender-div"
       :id="`calender-div-${ucode}`"
-      v-show="!hideCal"
+      v-show="!hideCal && !disabled"
       v-closable="{
         exclude: [
           `datetime-picker-${ucode}`,
@@ -195,11 +197,16 @@ export default {
         }
       },
       message: 'Only 0 (Sunday) and 1 (Monday) are supported.'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       icon_color: '#495057',
+      icon_color_disabled: 'gray',
       date: this.value,
       hideCal: true,
       activePort: null,
@@ -567,6 +574,8 @@ export default {
         this.minute = this.minute < 10 ? '0' + this.minute : '' + this.minute
         this.updateCalendar()
         this.setDate()
+      } else {
+        this.date = ''
       }
     }
   },
@@ -724,9 +733,18 @@ export default {
     font-weight: 400;
     line-height: 1.5;
     cursor: pointer;
+    &.disabled {
+      background: none;
+      input {
+        background: none;
+      }
+    }
     .ms-dd-icon {
       float: right;
       pointer-events: none;
+    }
+    .input-disabled {
+      color: gray;
     }
     input {
       //min-width: 226px;

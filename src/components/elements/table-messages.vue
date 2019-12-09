@@ -13,7 +13,7 @@
       :sort-desc.sync="sortDesc"
       head-variant="dark"
     >
-      <template slot="mid" slot-scope="row">
+      <template #cell(mid)="row">
         <div class="check-row">
           <b-form-checkbox
             :id="String(row.item.mid)"
@@ -25,7 +25,7 @@
           </b-form-checkbox>
         </div>
       </template>
-      <template slot="starred" slot-scope="data">
+      <template #cell(starred)="data">
         <div
           class="star-place"
           @click="onStarred({mid: data.item.mid, state: data.item.starred})"
@@ -33,17 +33,17 @@
           <span class="star" :class="{selected: data.item.starred}"></span>
         </div>
       </template>
-      <template slot="cp_uid" slot-scope="item">
+      <template #cell(cp_uid)="item">
         <p class="date-column truncate-text">
           {{ item.item.cp_uid }}
         </p>
       </template>
-      <template slot="created_at" slot-scope="item">
+      <template #cell(created_at)="item">
         <p class="date-column truncate-text">
           {{ mess_date_format(item.item.created_at) }}
         </p>
       </template>
-      <template slot="subject" slot-scope="item">
+      <template #cell(subject)="item">
         <a href="#" @click.prevent="showMessageModal(item.item)">
           <p class="truncate-text">{{ item.item.subject }}</p>
         </a>

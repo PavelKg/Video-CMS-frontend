@@ -9,7 +9,7 @@
       hover
       head-variant="dark"
     >
-      <template slot="uid" slot-scope="row">
+      <template #cell(uid)="row">
         <b-form-checkbox
           :id="row.item.uid"
           :name="`ch-${row.item.uid}`"
@@ -20,18 +20,18 @@
           >{{ row.item.uid }}
         </b-form-checkbox>
       </template>
-      <template slot="last_login" slot-scope="item">
+      <template #cell(last_login)="item">
         <p class="last-login-column truncate-text">
           {{ last_login_format(item.item.last_login) }}
         </p>
       </template>
-      <template slot="fullname" slot-scope="item"
-        ><p class="truncate-text">{{ item.item.fullname }}</p>
+      <template #cell(fullname)="item">
+        <p class="truncate-text">{{ item.item.fullname }}</p>
       </template>
-      <template slot="group_name" slot-scope="item"
+      <template #cell(group_name)="item"
         ><p class="truncate-text">{{ item.item.group_name }}</p>
-      </template>      
-      <template slot="mng" slot-scope="item">
+      </template>
+      <template #cell(mng)="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">
             <div class="icon-button">
@@ -93,7 +93,7 @@ export default {
       users_selected: []
     }
   },
-  created() {},
+
   watch: {
     $route(newVal) {
       this.currentPage = newVal.query.page ? newVal.query.page : 1
@@ -248,6 +248,7 @@ export default {
   .users-mng-panel {
     button {
       margin-top: 15px;
+      margin-left: 10px;
     }
     .users-mng-pag {
       margin-top: 15px;

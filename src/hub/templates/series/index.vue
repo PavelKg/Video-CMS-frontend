@@ -1,9 +1,9 @@
 <template>
-  <div class="groups-mng">
-    <button class="button btn-blue" @click="addNewGroup">
-      {{ $t('groups.btn_add') }}
+  <div class="series-mng">
+    <button class="button btn-blue" @click="addNewSeries">
+      {{ $t('series.btn_add') }}
     </button>
-    <groupsTable
+    <seriesTable
       @contentElementClick="contentElementClick"
       @onContentError="onError"
     />
@@ -12,18 +12,18 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import groupsTable from '@/components/elements/table-groups'
+import seriesTable from '@/components/elements/table-series'
 
 export default {
-  name: 'groups-mng',
+  name: 'series-mng',
   created() {
     this.$store
-      .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
-      .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
+      .dispatch('LOAD_SERIES', {cid: this.me.profile.company_id})
+      .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
   },
   methods: {
-    addNewGroup() {
-      this.contentElementClick('/hub/groups_add')
+    addNewSeries() {
+      this.contentElementClick('/hub/series_add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)
@@ -33,7 +33,7 @@ export default {
     }
   },
   components: {
-    groupsTable
+    seriesTable
   },
   computed: {
     ...mapGetters(['me'])

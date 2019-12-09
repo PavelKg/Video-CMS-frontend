@@ -13,6 +13,10 @@ const users_edit = () => import('@/hub/templates/users/mng')
 const groups = () => import('@/hub/templates/groups')
 const groups_add = () => import('@/hub/templates/groups/mng')
 const groups_edit = () => import('@/hub/templates/groups/mng')
+const series = () => import('@/hub/templates/series')
+const series_add = () => import('@/hub/templates/series/mng')
+const series_edit = () => import('@/hub/templates/series/mng')
+const binding = () => import('@/hub/templates/binding')
 const roles = () => import('@/hub/templates/roles/')
 const roles_add = () => import('@/hub/templates/roles/mng')
 const roles_edit = () => import('@/hub/templates/roles/mng')
@@ -186,6 +190,32 @@ export default new Router({
           props: {oper: 'edit'}
         },
         {
+          path: 'series',
+          component: series,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/series', notForUser: 'true'}
+        },
+        {
+          path: 'binding',
+          component: binding,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/binding', notForUser: 'true'}
+        },
+        {
+          path: 'series_add',
+          component: series_add,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/series', notForUser: 'true'},
+          props: {oper: 'add'}
+        },
+        {
+          path: 'series_edit/sid/:sid',
+          component: series_edit,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/series', notForUser: 'true'},
+          props: {oper: 'edit'}
+        },
+        {
           path: 'messages',
           component: messages,
           beforeEnter: checkAuthAndAccess,
@@ -222,7 +252,7 @@ export default new Router({
           component: history_info,
           beforeEnter: checkAuthAndAccess,
           meta: {menuItem: '/hub/history', notForUser: 'true'}
-        },        
+        },
         {path: 'pageNotFound', component: NotFoundComponent}
       ]
     },

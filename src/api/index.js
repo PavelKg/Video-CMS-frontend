@@ -44,7 +44,7 @@ export default {
     })
   },
 
-  my_company_info(){
+  my_company_info() {
     return Api.get(`/users/company`, {
       headers: {
         ...type_json
@@ -80,7 +80,6 @@ export default {
    */
 
   save_req_pass(token, password) {
-    console.log('payload=', token, password)
     return axios.put(
       `${API_ROOT}/users/password`,
       {password, token},
@@ -93,6 +92,63 @@ export default {
     )
   },
 
+  /*  ---------  COMPANIES MANAGEMENT  ---------------------*/
+  /** */
+  /** get Company CommentBox State
+   * @param {string} cid - Company ID
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  getCompanyCommentBoxState(cid) {
+    return Api.get(`planning/works`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** update Company CommentBox State
+   * @param {string} cid - Company ID
+   * @param {string} state - new state
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  updCompanyCommentBoxState(cid, state) {
+    return Api.put(`/companies/${cid}/mng/commentbox/${state}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** get Company Logo
+   * @param {string} cid - Company ID
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  getCompanyLogo(cid) {
+    return Api.get(`/companies/${cid}/mng/logo`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /** update Company Logo
+   * @param {string} cid - Company ID
+   * @param {string} data - Logo data
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  updCompanyLogo(cid, data) {
+    console.log('data=', data)
+    return Api.put(`/companies/${cid}/mng/logo`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ---------  ROLES MANAGEMENT  ---------------------*/
   /** Roles management
    *
    */
@@ -166,8 +222,9 @@ export default {
     "deleted_at": "string"
   }]
  */
-  groups(cid) {
-    return Api.get(`/companies/${cid}/groups`, {
+  groups(cid, filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/groups${setFilter}`, {
       headers: {
         ...type_json
       }
@@ -231,6 +288,116 @@ export default {
   group_del(target) {
     const {cid, gid} = target
     return Api.delete(`/companies/${cid}/groups/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del group series
+   * @param {integer, integer, integer} target - {cid, gid, sid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  group_series_del(target) {
+    const {cid, gid, sid} = target
+    return Api.put(`/companies/${cid}/groups/${gid}/delete-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ---------  SERIES MANAGEMENT  ---------------------*/
+  /** List of series
+   * @param {integer} cid
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of series
+   * [{
+    "sid": 0,
+    "name": "string",
+    "deleted_at": "string"
+    }]
+ */
+  series(cid, filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/series${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Series Info
+ * @param {number} cid 
+ * @param {string} sid 
+ * @returns {Promise<*>} - 200 series object
+ * {
+    "sid": 0,
+    "cid": "string",
+    "name": "string",
+    "deleted_at": "string",
+    "period_type": "string",
+    "activity_start": "string",
+    "activity_finish": "string"
+    }
+*/
+  series_info(cid, sid) {
+    return Api.get(`/companies/${cid}/series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Add new series
+   * @param {string} cid - Company ID
+   * @param {object} data -
+   * {
+   * "name": "string",
+   * "period_type": "string",
+   * "activity_start": "string",
+   * "activity_finish": "string"
+   * }
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  series_add(cid, data) {
+    return Api.post(`/companies/${cid}/series/`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Upd group
+   * @param {string} target - {cid, gid}
+   * @param {object} data - {
+   * "name": "string",
+   * "period_type": "string",
+   * "activity_start": "string",
+   * "activity_finish": "string"
+   * }
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  series_upd(target, data) {
+    const {cid, sid} = target
+    return Api.put(`/companies/${cid}/series/${sid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del series
+   * @param {string} target - {cid, sid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  series_del(target) {
+    const {cid, sid} = target
+    return Api.delete(`/companies/${cid}/series/${sid}`, {
       headers: {
         ...type_json
       }
@@ -588,6 +755,20 @@ export default {
     })
   },
 
+  /** Del video series
+   * @param {integer, integer, integer} target - {cid, uuid, sid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  video_series_del(target) {
+    const {cid, uuid, sid} = target
+    return Api.put(`/companies/${cid}/videos/${uuid}/delete-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** update video status
    * @param {number} - cid
    * @param {UUID} - uuid
@@ -620,6 +801,32 @@ export default {
     return Api.put(
       `/companies/${cid}/videos/${uuid}/public`,
       {value},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
+  /** add video player event to log
+   * @param {number} - cid
+   * @param {UUID} - uuid
+   * @param {string} - value 
+   * {
+        "event_action":"suspended",
+        "event_data":{"type":"pause", "time":"33sec"},
+        "event_result":"s",
+        "event_details":"Pause (00:00:33)"
+      }
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+
+  video_add_player_event({cid, uuid, event_data}) {
+    return Api.post(
+      `/companies/${cid}/videos/${uuid}/player-event`,
+      {...event_data},
       {
         headers: {
           ...type_json

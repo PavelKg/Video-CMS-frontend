@@ -1,4 +1,4 @@
-import '@babel/polyfill'
+//import '@babel/polyfill'
 //import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App.vue'
@@ -20,7 +20,7 @@ require('es6-promise').polyfill()
 
 Vue.config.productionTip = false
 
-Vue.config.errorHandler = function (err, vm, info) {
+Vue.config.errorHandler = function(err, vm, info) {
   // Обработка ошибки. В `info` подробности Vue-специфичной ошибки,
   // например, в каком хуке жизненного цикла произошла ошибка.
   // Доступно только в версиях 2.2.0+
@@ -62,5 +62,3 @@ new Vue({
   store,
   render: (h) => h(App)
 }).$mount('#app')
-
-

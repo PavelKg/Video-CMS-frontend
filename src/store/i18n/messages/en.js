@@ -7,8 +7,10 @@ export default {
     roles: 'Roles settings',
     users: 'Users',
     groups: 'Groups',
+    series: 'Series',
     screen: 'Screen custom.',
-    history_info: 'History Info'
+    history_info: 'History Info',
+    binding: 'Binding'
   },
   message: {
     appHeader: 'Video Contents Management',
@@ -40,7 +42,9 @@ export default {
     text: 'Text',
     tab_inbox: 'Inbox',
     tab_outbox: 'Outbox',
-    this_comment_has_been_deleted: 'This comment has been deleted.'
+    this_comment_has_been_deleted: 'This comment has been deleted.',
+    number_of_registered_groups: 'Number of registered groups',
+    number_of_registered_videos: 'Number of registered videos'
   },
   roles: {
     btn_add: 'Add Role',
@@ -74,6 +78,7 @@ export default {
   groups: {
     btn_add: 'Add New Group',
     tbl_header_name: 'Group',
+    tbl_header_id: 'ID',
     tbl_header_mgn: 'Mng',
     tbl_deleted: 'Deleted',
     name: 'Name',
@@ -81,7 +86,8 @@ export default {
     oper_title_edit: 'Group Information',
     oper_title_add: 'Add New Group',
     in_page: 'In page',
-    id: 'ID'
+    id: 'ID',
+    series: 'Series'
   },
   screen: {
     display: 'Display',
@@ -95,7 +101,11 @@ export default {
     video_information: 'Video Information',
     public_settings: 'Public settings',
     no_title: 'No Title',
-    id: 'ID'
+    id: 'ID',
+    tbl_header_id: 'ID',
+    tbl_header_name: 'Name',
+    tbl_header_mgn: 'Mng',
+    tbl_deleted: 'Deleted'
   },
   comments: {
     id: 'ID',
@@ -117,6 +127,41 @@ export default {
     timestamp: 'Timestamp',
     no_data: 'No Data',
     details: 'Details'
+  },
+  series: {
+    btn_add: 'Add New Series',
+    tbl_header_name: 'Series name',
+    tbl_header_mgn: 'Mng',
+    tbl_header_publish: 'Publishing settings',
+    tbl_header_id: 'Series ID',
+    tbl_header_viewing_period: 'Viewing period',
+    tbl_deleted: 'Deleted',
+    name: 'Name',
+    series_name: 'Series Name',
+    oper_title_edit: 'Series Information',
+    oper_title_add: 'Add New Series',
+    in_page: 'In page',
+    id: 'ID',
+    view_period: 'View period',
+    no_limit: 'No limit',
+    specify_period: 'Specify period',
+    start_users_accounts: "Start user's accounts",
+    view_start: 'View start',
+    view_end: 'View end',
+    for_registration_date: 'for registration date',
+    private: 'Private',
+    public: 'Public'
+  },
+  binding: {
+    binding_settings: 'Binding settings',
+    target: 'Target',
+    id_name: 'ID/Name',
+    btn_bind: 'Bind',
+    groups: 'Groups',
+    series: 'Series',
+    videos: 'Videos',
+    please_select_a_target: 'Please select a target',
+    please_select_id_name: 'Please select ID/Name'
   },
   label: {
     delete: 'Delete',
@@ -158,12 +203,15 @@ export default {
     public: 'Public',
     private: 'Private',
     group: 'Group',
+    groups: 'groups',
     role: 'Role',
     group_is_not_selected: 'Group Is Not Selected',
     role_is_not_selected: 'Role Is Not Selected',
+    series_is_not_selected: 'Series Is Not Selected',
     no_records_found: 'No Records Found',
     csv_download: 'CSV download',
-    loading:'Loading...'
+    loading: 'Loading...',
+    videos: 'videos'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

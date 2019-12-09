@@ -243,11 +243,31 @@ const menuStructure = {
           }
         }
       },
+      series: {
+        caption: 'menu.series',
+        type: 'series.list',
+        visible: true,
+        subItems: {
+          edit: {
+            type: 'series.edit',
+            caption: 'menu.series_edit'
+          },
+          add: {
+            type: 'series.add',
+            caption: 'menu.series_add'
+          }
+        }
+      },
+      binding: {
+        caption: 'menu.binding',
+        type: 'binding.list',
+        visible: true
+      },
       history: {
         caption: 'menu.history_info',
         type: 'history.list',
         visible: true
-      },
+      }
     }
   },
 
@@ -308,15 +328,14 @@ export default {
     },
     MENU_NAVIGATE: ({commit, dispatch}, navTo) => {
       //const {path: navFrom, meta} = router.currentRoute
-      // if (navTo === navFrom) 
+      // if (navTo === navFrom)
       // {
       //   commit('ITEM_STATE', navTo)
       //   dispatch('SAVE_MENU_STATE')
       // }
 
-      //commit('ITEM_STATE', navTo)      
+      //commit('ITEM_STATE', navTo)
       router.push({path: navTo})
-
     }
   },
   mutations: {

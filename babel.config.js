@@ -1,12 +1,20 @@
 module.exports = {
   presets: [
-    '@vue/app',
+    '@vue/cli-plugin-babel/preset',
     [
-      "@babel/preset-env",
+      '@babel/preset-env',
       {
-        "useBuiltIns": "entry"
+        useBuiltIns: 'entry',
+        corejs: {
+          version: 3,
+          proposals: true
+        }
       }
     ]
   ],
-  plugins: ['syntax-dynamic-import']
+  plugins: [
+    'syntax-dynamic-import',
+    '@babel/transform-runtime',
+    '@babel/transform-async-to-generator'
+  ]
 }
