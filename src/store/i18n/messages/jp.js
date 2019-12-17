@@ -7,8 +7,10 @@ export default {
     roles: '権限設定',
     users: 'ユーザー管理',
     groups: 'グループ管理',
+    series: 'シリーズ管理',
     screen: '画面カスタマイズ',
-    history_info: '履歴情報'
+    history_info: '履歴情報',
+    binding: 'バインド設定'
   },
   message: {
     appHeader: '視聴管理システム',
@@ -39,7 +41,9 @@ export default {
     text: '本文',
     tab_inbox: '受信トレイ',
     tab_outbox: '送信トレイ',
-    this_comment_has_been_deleted: 'このコメントは削除されました。'
+    this_comment_has_been_deleted: 'このコメントは削除されました。',
+    number_of_registered_groups: 'グループ登録数',
+    number_of_registered_videos: '動画登録数'
   },
   roles: {
     btn_add: '権限追加',
@@ -73,6 +77,7 @@ export default {
   groups: {
     btn_add: 'グループ新規追加',
     tbl_header_name: 'グループ名',
+    tbl_header_id: 'ID',
     tbl_header_mgn: '管理',
     tbl_deleted: '削除済',
     name: '名前',
@@ -80,7 +85,8 @@ export default {
     oper_title_edit: 'グループ情報',
     oper_title_add: 'グループ新規追加',
     in_page: 'ページ内選択',
-    id: 'ID'
+    id: 'ID',
+    series: '所属シリーズ'
   },
   screen: {
     display: '表示する',
@@ -94,7 +100,11 @@ export default {
     video_information: '動画情報', 
     public_settings: '動画公開設定',
     no_title: 'タイトルなし',
-    id: 'ID'
+    id: 'ID',
+    tbl_header_id: 'ID',
+    tbl_header_name: '動画タイトル',
+    tbl_header_mgn: '管理',
+    tbl_deleted: 'Deleted'
   },
   comments: {
     id: 'ID',
@@ -116,6 +126,41 @@ export default {
     timestamp: '日時',
     no_data: 'No Data',
     details: '詳細'
+  },
+  series: {
+    btn_add: 'シリーズ追加',
+    tbl_header_name: 'シリーズ名',
+    tbl_header_mgn: '管理',
+    tbl_header_publish: '公開設定',
+    tbl_header_id: 'シリーズID',
+    tbl_header_viewing_period: '視聴期間',
+    tbl_deleted: '削除済',
+    name: 'Name',
+    series_name: 'シリーズ名',
+    oper_title_edit: 'シリーズ情報',
+    oper_title_add: 'シリーズ追加',
+    in_page: 'ページ内',
+    id: 'ID',
+    view_period: '視聴期間',
+    no_limit: '制限なし',
+    specify_period: '視聴期間設定（カレンダー基準）',
+    start_users_accounts: "視聴期間設定（登録日基準）",
+    view_start: '視聴開始日（登録日から）',
+    view_end: '視聴終了日（登録から）',
+    for_registration_date: '',
+    private: '非公開',
+    public: '公開'
+  },
+  binding: {
+    binding_settings: 'バインド設定',
+    target: '対象',
+    id_name: 'ID/タイトル',
+    btn_bind: 'バインド',
+    groups: 'グループ',
+    series: 'シリーズ',
+    videos: '動画',
+    please_select_a_target: '対象を選択してください',
+    please_select_id_name: 'ID/タイトルを選択してください'
   },
   label: {
     delete: '削除',
@@ -157,12 +202,15 @@ export default {
     public: '公開',
     private: '非公開',
     group: 'グループを選択',
+    groups: 'グループ',
     role: '権限',
     group_is_not_selected: 'グループが選択されていません',
     role_is_not_selected: '権限が選択されていません',
+    series_is_not_selected: 'シリーズが選択されていません',
     no_records_found: '条件に一致するものが見つかりません',
     csv_download: 'CSVダウンロード',
-    loading:'Loading...'
+    loading:'Loading...',
+    videos: '動画'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:
