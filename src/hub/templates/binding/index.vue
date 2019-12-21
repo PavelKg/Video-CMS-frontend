@@ -28,46 +28,7 @@
           </button>
         </b-col>
       </b-row>
-      <b-row align-v="center">
-        <b-col cols="5" sm class="mb-2 ">
-          <div class="scroll-table">
-            <b-table
-              responsive
-              :items="source_table_items"
-              :fields="table_fields"
-              selectable
-              @row-selected="onSourceRowSelected"
-              ><template v-slot:cell(name)="row">
-                <p class="truncate-text">{{ row.item.name }}</p>
-              </template>
-            </b-table>
-          </div>
-        </b-col>
-        <b-col cols="2" class="p-1 justify-content-md-center buttom-column">
-          <b-button
-            class="m-1"
-            variant="outline-secondary"
-            v-html="'>'"
-          ></b-button>
-          <b-button
-            class="m-1"
-            variant="outline-secondary"
-            v-html="'<'"
-          ></b-button
-        ></b-col>
-        <b-col cols="5" sm class="mb-2 ">
-          <div class="scroll-table">
-            <b-table
-              responsive
-              :items="target_table_items"
-              :fields="table_fields"
-              ><template v-slot:cell(name)="row">
-                <p class="truncate-text">{{ row.name }}</p>
-              </template>
-            </b-table>
-          </div>
-        </b-col>
-      </b-row>
+      <BindingTable :binding_data="binding_data"></BindingTable>
       <b-row class="justify-content-md-left">
         <b-col cols="auto">
           <button class="button btn-blue" :disabled="!selected_id">
@@ -85,9 +46,14 @@
 
 <script>
 import {mapState} from 'vuex'
-import {Promise} from 'q'
+//import {Promise} from 'q'
+import BindingTable from '@/components/elements/table-binding'
+
 export default {
   name: 'binding-page',
+  components: {
+    BindingTable
+  },
   data() {
     return {
       target_text: this.$t('binding.target'),
@@ -99,17 +65,6 @@ export default {
         disabled: true
       },
       id_options: [],
-      subTables: {
-        series: [
-          {entity: 'groups', fields: ['gid', 'name']},
-          {entity: 'videos', fields: ['video_id', 'video_title']}
-        ],
-        videos: [{entity: 'groups', fields: ['gid', 'name']}],
-        groups: [
-          {entity: 'series', fields: ['sid', 'name']},
-          {entity: 'videos', fields: ['video_id', 'video_title']}
-        ]
-      },
 
       targets: [
         {
@@ -121,9 +76,7 @@ export default {
         {value: 'series', text: this.$t('binding.series')},
         {value: 'videos', text: this.$t('binding.videos')}
       ],
-      source_table_items: [],
-      table_fields: ['id', 'name'],
-      target_table_items: []
+      binding_data: []
     }
   },
   mounted() {
@@ -181,35 +134,6 @@ export default {
     },
     onLoadBindingData() {
       console.log('selected_id=', this.selected_id)
-      this.onLoadTablesData(this.selected_category, this.selected_id)
-    },
-    onLoadTablesData(category, id) {
-      const cid = this.cid
-      this.source_table_items = []
-      const mixData = []
-      const promiseSourceArray = []
-      this.subTables[category].forEach((item) => {
-        promiseSourceArray.push[
-          this.$store.dispatch(`LOAD_${item.entity.toUpperCase()}`, {cid})
-        ]
-      })
-      Promise.all(promiseSourceArray).then(() =>
-        this.subTables[category].forEach((item) => {
-          this.source_table_items.push(
-            ...this[item.entity].map((elem) => {
-              console.log('elem=', elem)
-              return {
-                id: elem[item.fields[0]],
-                name: elem[item.fields[1]],
-                category: item.entity
-              }
-            })
-          )
-        })
-      )
-    },
-    onSourceRowSelected(evt) {
-      console.log('evt=', evt)
     }
   },
   computed: {
@@ -225,11 +149,8 @@ export default {
 </script>
 
 <style lang="scss">
-#select-id {
-  background: black;
-}
 .truncate-text {
-  max-width: 300px;
+  max-width: 700px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -240,19 +161,11 @@ export default {
     font-size: 1.4em;
     font-weight: 600;
   }
-  .binding-mng {
-    display: flex;
-    align-items: center;
-  }
-}
-
-.scroll-table {
-  height: 300px;
-  overflow: auto;
 }
 
 .buttom-column {
   display: flex;
   flex-direction: column;
+  max-width: 60px;
 }
 </style>

@@ -1,7 +1,5 @@
 <template>
   <div class="series-table">
-    {{ showColumn }}
-
     <b-table
       :items="series_on_page"
       :fields="fields"

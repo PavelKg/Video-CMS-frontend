@@ -88,15 +88,51 @@ export default {
         throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
       }
     },
-    async GROUP_SERIES_DEL({commit, getters}, payload) {
+    async GROUP_SERIES_MULTI_OPER({dispatch}, payload) {
+      const {gid_list = [], sid, oper} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+      const res_oper = Promise.all(
+        gid_list.map((gid) => {
+          dispatch(`GROUP_SERIES_OPER`, {gid, sid, oper: lOper})
+        })
+      )
+      res_oper.then(()=>{
+        return Promise.resolve('Group series operation finished')
+      })
+    },
+
+    async GROUP_SERIES_OPER({getters}, payload) {
       const cid = getters.me.profile.company_id
-      const {gid, sid} = payload
+      const {gid, sid, oper} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
       try {
-        const result = await Api.group_series_del({cid, gid, sid})
+        const result = await Api[`group_series_${lOper}`]({cid, gid, sid})
         if (result.status === 204) {
           return Promise.resolve('Group series updated success')
         } else {
           throw Error(`Error update group series, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
+      }
+    },
+    async GROUP_BIND_SERIES({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {sid} = payload
+      try {
+        const result = await Api.group_bind_series({cid, sid})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw Error(
+            `Error get group list binding series, status - ${result.status}`
+          )
         }
       } catch (err) {
         throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))

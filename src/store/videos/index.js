@@ -281,15 +281,72 @@ export default {
       }
     },
 
-    async VIDEO_SERIES_DEL({commit, getters}, payload) {
+    async VIDEO_SERIES_MULTI_OPER({dispatch}, payload) {
+      const {uuid_list = [], sid, oper = ''} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+      const oper_res = Promise.all(
+        uuid_list.map((uuid) => {
+          dispatch(`VIDEO_SERIES_OPER`, {uuid, sid, oper: lOper})
+        })
+      )
+      oper_res.then(() => {
+        Promise.resolve('Video series operate finished')
+      })
+    },
+
+    async VIDEO_SERIES_OPER({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
-      const {uuid, sid} = payload
+      const {uuid, sid, oper = ''} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+
       try {
-        const result = await Api.video_series_del({cid, uuid, sid})
+        const result = await Api[`video_series_${lOper}`]({cid, uuid, sid})
         if (result.status === 204) {
           return Promise.resolve('Video series updated success')
         } else {
           throw Error(`Error update video series, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
+      }
+    },
+
+    async VIDEO_GROUP_MULTI_OPER({dispatch}, payload) {
+      const {uuid_list = [], gid, oper = ''} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+      const resOper = Promise.all(
+        uuid_list.map((uuid) => {
+          dispatch(`VIDEO_GROUP_OPER`, {uuid, gid, oper: lOper})
+        })
+      )
+      resOper.then(() => {
+        return Promise.resolve('Video groups operation finished')
+      })
+    },
+
+    async VIDEO_GROUP_OPER({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {uuid, gid, oper = ''} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+
+      try {
+        const result = await Api[`video_group_${lOper}`]({cid, uuid, gid})
+        if (result.status === 204) {
+          return Promise.resolve('Video groups updated success')
+        } else {
+          throw Error(`Error update video groups, status - ${result.status}`)
         }
       } catch (err) {
         throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
@@ -309,6 +366,39 @@ export default {
         }
       } catch (err) {
         throw Error(err.response.data.message)
+      }
+    },
+
+    async VIDEO_BIND_SERIES({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {sid} = payload
+      try {
+        const result = await Api.video_bind_series({cid, sid})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw Error(
+            `Error get video list binding series, status - ${result.status}`
+          )
+        }
+      } catch (err) {
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
+      }
+    },
+    async VIDEO_BIND_GROUP({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {gid} = payload
+      try {
+        const result = await Api.video_bind_group({cid, gid})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw Error(
+            `Error get video list binding group, status - ${result.status}`
+          )
+        }
+      } catch (err) {
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
       }
     }
   },

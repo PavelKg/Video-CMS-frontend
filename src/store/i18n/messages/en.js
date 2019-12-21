@@ -150,7 +150,10 @@ export default {
     view_end: 'View end',
     for_registration_date: 'for registration date',
     private: 'Private',
-    public: 'Public'
+    public: 'Public',
+    modal_title_groups_list: 'Groups list',
+    tag: 'Tag',
+    description: 'Description'
   },
   binding: {
     binding_settings: 'Binding settings',
@@ -211,7 +214,9 @@ export default {
     no_records_found: 'No Records Found',
     csv_download: 'CSV download',
     loading: 'Loading...',
-    videos: 'videos'
+    videos: 'videos',
+    add_new_groups: 'Add New Groups',
+    enter_series_description: 'Enter series description'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

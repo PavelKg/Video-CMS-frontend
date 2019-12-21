@@ -1,59 +1,61 @@
 <template>
-  <div id="login-form">
-    <div class="logo-container">
-      <img src="../assets/images/demo-logo.png" class="avatar" />
-    </div>
-    <div class="locales-container">
-      <div
-        class="locale"
-        v-for="(locale, index) in locales"
-        :key="locale.code"
-        @click="switchLocale(locale.code)"
-      >
-        <span v-if="index !== 0">|</span>
-        <span
-          class="locale-item"
-          :class="{active: locale.code === activeLocale}"
-          >{{ locale.code }}</span
+  <div class="login-container">
+    <div id="login-form">
+      <div class="logo-container">
+        <img src="../assets/images/demo-logo.png" class="avatar" />
+      </div>
+      <div class="locales-container">
+        <div
+          class="locale"
+          v-for="(locale, index) in locales"
+          :key="locale.code"
+          @click="switchLocale(locale.code)"
         >
-      </div>
-    </div>
-    <div class="login-app-title">
-      <span class="app-title-name">{{ $t('message.app_name') }}</span>
-    </div>
-    <form class="login" @submit.prevent="login">
-      <div class="field-container">
-        <div id="user_id" class="field-row">
-          <span>{{ $t('message.personal_id') }}:</span>
-          <input
-            id="personal_id"
-            required
-            :placeholder="`${$t('message.enter_you_personal_id')}`"
-            @input="handleInput('personalId', $event.target.value)"
-          />
-        </div>
-        <div id="password" class="field-row">
-          <span>{{ $t('message.password') }}:</span>
-          <input
-            id="password"
-            type="password"
-            required
-            :placeholder="`${$t('message.enter_you_password')}`"
-            :value="password"
-            @input="handleInput('password', $event.target.value)"
-          />
+          <span v-if="index !== 0">|</span>
+          <span
+            class="locale-item"
+            :class="{active: locale.code === activeLocale}"
+            >{{ locale.code }}</span
+          >
         </div>
       </div>
-      <div class="errMess">
-        <span>{{ $t(errMessage) }}</span>
+      <div class="login-app-title">
+        <span class="app-title-name">{{ $t('message.app_name') }}</span>
       </div>
-      <div class="button-container">
-        <button type="submit" class="button btn-blue">
-          {{ $t('message.btnLogin') }}
-        </button>
-      </div>
-    </form>
-    <PassRec />
+      <form class="login" @submit.prevent="login">
+        <div class="field-container">
+          <div id="user_id" class="field-row">
+            <span>{{ $t('message.personal_id') }}:</span>
+            <input
+              id="personal_id"
+              required
+              :placeholder="`${$t('message.enter_you_personal_id')}`"
+              @input="handleInput('personalId', $event.target.value)"
+            />
+          </div>
+          <div id="password" class="field-row">
+            <span>{{ $t('message.password') }}:</span>
+            <input
+              id="password"
+              type="password"
+              required
+              :placeholder="`${$t('message.enter_you_password')}`"
+              :value="password"
+              @input="handleInput('password', $event.target.value)"
+            />
+          </div>
+        </div>
+        <div class="errMess">
+          <span>{{ $t(errMessage) }}</span>
+        </div>
+        <div class="button-container">
+          <button type="submit" class="button btn-blue">
+            {{ $t('message.btnLogin') }}
+          </button>
+        </div>
+      </form>
+      <PassRec />
+    </div>
   </div>
 </template>
 
@@ -115,13 +117,19 @@ export default {
   //width: 330px;
   //height: 137px;
 }
-#login-form {
+.login-container {
+  #login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    padding: 20px 0px;
+    width: 330px;
+  }
+  min-height: 100vh;
+  height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin: 0 auto;
-  padding: 20px 0px;
-  width: 330px;
 }
 .logo-container {
   display: flex;

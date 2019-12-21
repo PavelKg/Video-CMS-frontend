@@ -294,6 +294,20 @@ export default {
     })
   },
 
+  /** Add group series
+   * @param {integer, integer, integer} target - {cid, gid, sid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  group_series_add(target) {
+    const {cid, gid, sid} = target
+    return Api.put(`/companies/${cid}/groups/${gid}/add-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** Del group series
    * @param {integer, integer, integer} target - {cid, gid, sid}
    * @return {Promise<*>} - 204	Default Response
@@ -302,6 +316,20 @@ export default {
   group_series_del(target) {
     const {cid, gid, sid} = target
     return Api.put(`/companies/${cid}/groups/${gid}/delete-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Groups list with binding series
+   * @param {integer, integer} target - {cid, sid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  group_bind_series(target) {
+    const {cid, sid} = target
+    return Api.get(`/companies/${cid}/groups/bind-series/${sid}`, {
       headers: {
         ...type_json
       }
@@ -370,7 +398,7 @@ export default {
     })
   },
 
-  /** Upd group
+  /** Upd series
    * @param {string} target - {cid, gid}
    * @param {object} data - {
    * "name": "string",
@@ -383,6 +411,7 @@ export default {
    */
   series_upd(target, data) {
     const {cid, sid} = target
+    console.log('data=', data)
     return Api.put(`/companies/${cid}/series/${sid}`, data, {
       headers: {
         ...type_json
@@ -755,6 +784,20 @@ export default {
     })
   },
 
+  /** Add video series
+   * @param {integer, integer, integer} target - {cid, uuid, sid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  video_series_add(target) {
+    const {cid, uuid, sid} = target
+    return Api.put(`/companies/${cid}/videos/${uuid}/add-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** Del video series
    * @param {integer, integer, integer} target - {cid, uuid, sid}
    * @return {Promise<*>} - 204	Default Response
@@ -763,6 +806,34 @@ export default {
   video_series_del(target) {
     const {cid, uuid, sid} = target
     return Api.put(`/companies/${cid}/videos/${uuid}/delete-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Add video group
+   * @param {integer, integer, integer} target - {cid, uuid, gid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  video_group_add(target) {
+    const {cid, uuid, gid} = target
+    return Api.put(`/companies/${cid}/videos/${uuid}/add-group/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del video group
+   * @param {integer, integer, integer} target - {cid, uuid, gid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  video_group_del(target) {
+    const {cid, uuid, gid} = target
+    return Api.put(`/companies/${cid}/videos/${uuid}/delete-group/${gid}`, {
       headers: {
         ...type_json
       }
@@ -835,6 +906,33 @@ export default {
     )
   },
 
+  /** Video list with binding series
+   * @param {integer, integer} target - {cid, sid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  video_bind_series(target) {
+    const {cid, sid} = target
+    return Api.get(`/companies/${cid}/videos/bind-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Videos list with binding group
+   * @param {integer, integer} target - {cid, gid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  video_bind_group(target) {
+    const {cid, gid} = target
+    return Api.get(`/companies/${cid}/videos/bind-group/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
   /* ------------ COMMENTS ----------------------------*/
   /** List of comments
    * @param {number} cid

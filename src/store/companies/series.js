@@ -64,12 +64,29 @@ export default {
     },
     async SERIES_UPD({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
-      const {sid, name, period_type, activity_start, activity_finish} = payload
+      const {
+        sid,
+        name,
+        period_type,
+        activity_start,
+        activity_finish,
+        is_private,
+        description,
+        tags
+      } = payload
 
       try {
         const result = await Api.series_upd(
           {cid, sid},
-          {name, period_type, activity_start, activity_finish}
+          {
+            name,
+            period_type,
+            activity_start,
+            activity_finish,
+            is_private,
+            description,
+            tags
+          }
         )
         if (result.status === 204) {
           return Promise.resolve('Series updated success')
