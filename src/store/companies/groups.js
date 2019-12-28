@@ -94,14 +94,12 @@ export default {
       if (lOper !== 'del' && lOper !== 'add') {
         throw Error(`Incorect operation type`)
       }
-      const res_oper = Promise.all(
+      await Promise.all(
         gid_list.map((gid) => {
           dispatch(`GROUP_SERIES_OPER`, {gid, sid, oper: lOper})
         })
       )
-      res_oper.then(() => {
-        return Promise.resolve('Group series operation finished')
-      })
+      return Promise.resolve('Group series operation finished')
     },
 
     async GROUP_SERIES_OPER({getters}, payload) {

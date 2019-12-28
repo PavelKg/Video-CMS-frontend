@@ -288,14 +288,12 @@ export default {
       if (lOper !== 'del' && lOper !== 'add') {
         throw Error(`Incorect operation type`)
       }
-      const oper_res = Promise.all(
+      await Promise.all(
         uuid_list.map((uuid) => {
           dispatch(`VIDEO_SERIES_OPER`, {uuid, sid, oper: lOper})
         })
       )
-      oper_res.then(() => {
-        Promise.resolve('Video series operate finished')
-      })
+      return Promise.resolve('Video series operate finished')
     },
 
     async VIDEO_SERIES_OPER({commit, getters}, payload) {
