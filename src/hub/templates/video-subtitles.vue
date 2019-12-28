@@ -263,14 +263,6 @@ export default {
     },
     onSubmit(evt) {
       evt.preventDefault()
-      // const {
-      //   video_uuid,
-      //   video_thumbnail,
-      //   video_title,
-      //   video_tag,
-      //   video_description,
-      //   video_groups
-      // } = this.form
 
       this.$store.dispatch('UPDATE_VIDEO_INFO', this.form).then((res) => {
         this.$store.dispatch('LOAD_VIDEO_LIST')

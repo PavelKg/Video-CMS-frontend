@@ -32,7 +32,6 @@ Vue.use(Router)
 
 const ifNotTokenRecovery = (to, from, next) => {
   const {token} = to.query
-  console.log('token=', token)
   if (token) {
     next()
   } else {

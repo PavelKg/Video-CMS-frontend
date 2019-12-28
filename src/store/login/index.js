@@ -85,7 +85,6 @@ export default {
     },
     AUTH_SUCCESS: (state, token) => {
       state.token = token
-      console.log(token)
       state.authStatus = 'success'
     },
     AUTH_ERROR: (state) => {

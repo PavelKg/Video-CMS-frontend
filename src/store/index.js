@@ -8,6 +8,7 @@ import Menu from './menu'
 import Videos from './videos'
 import Comments from './comments'
 import Messages from './messages'
+import Binding from './binding'
 import Companies from './companies'
 import History from './history'
 import Errors from './errors'
@@ -27,6 +28,7 @@ export default new Vuex.Store({
     Videos,
     Comments,
     Messages,
+    Binding,
     Companies,
     Errors,
     History

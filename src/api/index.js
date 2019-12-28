@@ -140,7 +140,6 @@ export default {
    * @throws Error
    */
   updCompanyLogo(cid, data) {
-    console.log('data=', data)
     return Api.put(`/companies/${cid}/mng/logo`, data, {
       headers: {
         ...type_json
@@ -257,7 +256,6 @@ export default {
    * @throws Error
    */
   group_add(cid, data) {
-    console.log('cid=', cid, data)
     return Api.post(`/companies/${cid}/groups/`, data, {
       headers: {
         ...type_json
@@ -411,7 +409,6 @@ export default {
    */
   series_upd(target, data) {
     const {cid, sid} = target
-    console.log('data=', data)
     return Api.put(`/companies/${cid}/series/${sid}`, data, {
       headers: {
         ...type_json
@@ -776,7 +773,6 @@ export default {
    */
 
   video_delete({cid, uuid}) {
-    console.log('{cid, uuid}=', {cid, uuid})
     return Api.delete(`/companies/${cid}/videos/${uuid}`, {
       headers: {
         ...type_json

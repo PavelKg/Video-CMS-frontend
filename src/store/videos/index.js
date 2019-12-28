@@ -162,25 +162,25 @@ export default {
       }
     },
 
-    async LOAD_VIDEOS_BY_SERIES({state, commit, getters}, params) {
-      const {cid, filter} = params
-      commit('SET_STATUS_VIDEOS_LOADING', true)
-      let offset = 0
-      let limit = 0
+    // async LOAD_VIDEOS_BY_SERIES({state, commit, getters}, params) {
+    //   const {cid, filter} = params
+    //   commit('SET_STATUS_VIDEOS_LOADING', true)
+    //   let offset = 0
+    //   let limit = 0
 
-      try {
-        const result = await Api.videos_catalog({cid}, {filter, offset, limit})
-        if (result.status === 200) {
-          commit('SET_VIDEO_LIST', result.data)
-        } else {
-          throw Error(`Error load video list, status - ${result.status}`)
-        }
-      } catch (err) {
-        throw Error(err.response.data.message)
-      } finally {
-        commit('SET_STATUS_VIDEOS_LOADING', false)
-      }
-    },
+    //   try {
+    //     const result = await Api.videos_catalog({cid}, {filter, offset, limit})
+    //     if (result.status === 200) {
+    //       commit('SET_VIDEO_LIST', result.data)
+    //     } else {
+    //       throw Error(`Error load video list, status - ${result.status}`)
+    //     }
+    //   } catch (err) {
+    //     throw Error(err.response.data.message)
+    //   } finally {
+    //     commit('SET_STATUS_VIDEOS_LOADING', false)
+    //   }
+    // },
 
     async LOAD_VIDEO_INFO_BY_UUID({getters, dispatch}, uuid) {
       const cid = getters.me.profile.company_id
@@ -228,14 +228,15 @@ export default {
         video_series
       } = video_info
 
-      const info_data = {
-        video_thumbnail,
-        video_title,
-        video_tag,
-        video_description,
-        video_groups,
-        video_series
-      }
+      const info_data = Object.assign(
+        {},
+        video_thumbnail && {video_thumbnail},
+        video_title && {video_title},
+        video_tag && {video_tag},
+        video_description && {video_description},
+        video_groups && {video_groups},
+        video_series && {video_series}
+      )
 
       try {
         const result = await Api.video_update_info({cid, uuid, info_data})
@@ -317,7 +318,7 @@ export default {
       }
     },
 
-    async VIDEO_GROUP_MULTI_OPER({dispatch}, payload) {
+    async VIDEO_GROUPS_MULTI_OPER({dispatch}, payload) {
       const {uuid_list = [], gid, oper = ''} = payload
       const lOper = oper.toLowerCase()
       if (lOper !== 'del' && lOper !== 'add') {
@@ -325,7 +326,7 @@ export default {
       }
       const resOper = Promise.all(
         uuid_list.map((uuid) => {
-          dispatch(`VIDEO_GROUP_OPER`, {uuid, gid, oper: lOper})
+          dispatch(`VIDEO_GROUPS_OPER`, {uuid, gid, oper: lOper})
         })
       )
       resOper.then(() => {
@@ -333,7 +334,7 @@ export default {
       })
     },
 
-    async VIDEO_GROUP_OPER({commit, getters}, payload) {
+    async VIDEO_GROUPS_OPER({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
       const {uuid, gid, oper = ''} = payload
       const lOper = oper.toLowerCase()
@@ -463,7 +464,6 @@ export default {
       }
     },
     DEL_UPLOAD_FILE(state, file_name) {
-      console.log('file_name=', file_name)
       const del_index = state.filesForUpload.list.findIndex(function(item) {
         if (item.file.name === file_name) {
           return true
@@ -472,7 +472,6 @@ export default {
       if (~del_index) {
         state.filesForUpload.list.splice(del_index, 1)
       }
-      console.log('del_index=', del_index)
     },
     CLEAR_UPLOAD_FILES(state) {
       // need add check for existing file name

@@ -16,7 +16,14 @@
             :sort-by.sync="sortNoMemBy"
             :sort-desc.sync="sortNoMemDesc"
             tbody-tr-class="tr-drag-and-drop"
+            :busy="isSourceBusy"
           >
+            <template v-slot:table-busy>
+              <div class="text-center text-danger my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>{{ `${$t('label.loading')}...` }}</strong>
+              </div>
+            </template>
             <template v-slot:cell(id)="row">
               <div
                 :class="{'mem-removed bg-danger text-light': row.item.binded}"
@@ -56,7 +63,14 @@
             :sort-desc.sync="sortMemDesc"
             @row-selected="onTargetRowSelected"
             class="scroll-table"
+            :busy="isTargetBusy"
           >
+            <template v-slot:table-busy>
+              <div class="text-center text-danger my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>{{ `${$t('label.loading')}...` }}</strong>
+              </div>
+            </template>
             <template v-slot:cell(id)="row">
               <div
                 :class="{'mem-added bg-success text-light': !row.item.binded}"
@@ -82,11 +96,16 @@ export default {
   },
   props: {
     binding_data: Array,
+    isLoadingData: Boolean,
     value: {
       type: Array
     }
   },
   watch: {
+    isLoadingData(newVal) {
+      this.isSourceBusy = newVal
+      this.isTargetBusy = newVal
+    },
     binding_data(newVal) {
       if (Array.isArray(newVal) && newVal.length > 0) {
         newVal.forEach((element) => {
@@ -127,7 +146,9 @@ export default {
       sortMemBy: 'id',
       sortMemDesc: false,
       noMembersSelected: [],
-      membersSelected: []
+      membersSelected: [],
+      isSourceBusy: false,
+      isTargetBusy: false
     }
   },
   methods: {
