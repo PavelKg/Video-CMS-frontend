@@ -301,12 +301,14 @@ export default {
         .map((group) => {
           return group.uid
         })
-      send_data.gid_list = [...forRemove]
 
-      await this.$store.dispatch(
-        `GROUP_${category.toUpperCase()}_MULTI_OPER`,
-        send_data
-      )
+      if (forRemove.length > 0) {
+        send_data.gid_list = [...forRemove]
+        await this.$store.dispatch(
+          `GROUP_${category.toUpperCase()}_MULTI_OPER`,
+          send_data
+        )
+      }
 
       const forAdd = this.bindingMembersState
         .filter(
@@ -316,13 +318,16 @@ export default {
           return group.uid
         })
 
-      send_data.gid_list = [...forAdd]
-      send_data.oper = 'add'
+      if (forAdd.length > 0) {
+        send_data.gid_list = [...forAdd]
+        send_data.oper = 'add'
 
-      await this.$store.dispatch(
-        `GROUP_${category.toUpperCase()}_MULTI_OPER`,
-        send_data
-      )
+        await this.$store.dispatch(
+          `GROUP_${category.toUpperCase()}_MULTI_OPER`,
+          send_data
+        )
+      }
+
       return Promise.resolve('finished')
     }
   },

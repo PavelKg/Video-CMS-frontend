@@ -95,8 +95,8 @@ export default {
         throw Error(`Incorect operation type`)
       }
       await Promise.all(
-        gid_list.map((gid) => {
-          dispatch(`GROUP_SERIES_OPER`, {gid, sid, oper: lOper})
+        gid_list.map(async (gid) => {
+          await dispatch(`GROUP_SERIES_OPER`, {gid, sid, oper: lOper})
         })
       )
       return Promise.resolve('Group series operation finished')
@@ -111,6 +111,7 @@ export default {
       }
       try {
         const result = await Api[`group_series_${lOper}`]({cid, gid, sid})
+
         if (result.status === 204) {
           return Promise.resolve('Group series updated success')
         } else {

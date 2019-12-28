@@ -289,8 +289,8 @@ export default {
         throw Error(`Incorect operation type`)
       }
       await Promise.all(
-        uuid_list.map((uuid) => {
-          dispatch(`VIDEO_SERIES_OPER`, {uuid, sid, oper: lOper})
+        uuid_list.map(async (uuid) => {
+          await dispatch(`VIDEO_SERIES_OPER`, {uuid, sid, oper: lOper})
         })
       )
       return Promise.resolve('Video series operate finished')
