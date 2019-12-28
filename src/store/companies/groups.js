@@ -99,7 +99,7 @@ export default {
           dispatch(`GROUP_SERIES_OPER`, {gid, sid, oper: lOper})
         })
       )
-      res_oper.then(()=>{
+      res_oper.then(() => {
         return Promise.resolve('Group series operation finished')
       })
     },

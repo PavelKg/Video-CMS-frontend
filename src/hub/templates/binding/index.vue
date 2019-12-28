@@ -192,13 +192,18 @@ export default {
 
           send_data = Object.assign(
             {cid, video_uuid: id},
-            video_groups.length > 0 ? {video_groups} : null,
-            video_series.length > 0 ? {video_series} : null
+            {video_groups},
+            {video_series}
           )
 
-          this.$store.dispatch('UPDATE_VIDEO_INFO', send_data).then((res) => {
-            this.onLoadBindingData()
-          })
+          this.$store.dispatch('UPDATE_VIDEO_INFO', send_data).then(
+            (res) => {
+              this.onLoadBindingData()
+            },
+            (error) => {
+              console.log('videos-update-error=', error)
+            }
+          )
           break
         case 'groups':
           const group_series = this.bindingMembersList
@@ -212,24 +217,31 @@ export default {
             {cid},
             {gid: id},
             {name},
-            group_series.length > 0 ? {group_series} : null
+            {group_series}
           )
-          const grpPromise =
-            group_series.length > 0
-              ? this.$store.dispatch('GROUP_UPD', send_data)
-              : Promise.resolve()
+          const grpPromise = this.$store.dispatch('GROUP_UPD', send_data)
 
           const vidPromise = this.videosModify(category, id)
-          Promise.all([grpPromise, vidPromise]).then(() => {
-            this.onLoadBindingData()
-          })
+          Promise.all([grpPromise, vidPromise]).then(
+            () => {
+              this.onLoadBindingData()
+            },
+            (error) => {
+              console.log('groups-promise-error=', error)
+            }
+          )
           break
         case 'series':
           const videoPromise = this.videosModify(category, id)
           const groupPromise = this.groupsModify(category, id)
-          Promise.all([groupPromise, videoPromise]).then(() => {
-            this.onLoadBindingData()
-          })
+          Promise.all([groupPromise, videoPromise]).then(
+            () => {
+              this.onLoadBindingData()
+            },
+            (error) => {
+              console.log('series-promise-error=', error)
+            }
+          )
           break
         default:
           break
