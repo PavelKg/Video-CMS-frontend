@@ -14,7 +14,7 @@ module.exports = {
   ],
   plugins: [
     'syntax-dynamic-import',
-    //'@babel/transform-runtime',
+    '@babel/transform-runtime',
     '@babel/plugin-transform-async-to-generator'
   ]
 }
