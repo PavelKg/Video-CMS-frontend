@@ -29,7 +29,7 @@
         <p class="truncate-text">{{ item.item.fullname }}</p>
       </template>
       <template #cell(group_name)="item"
-        ><p class="truncate-text">{{ item.item.group_name }}</p>
+        ><p class="truncate-text">{{ item.item.groups_name.join(', ') }}</p>
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
@@ -86,11 +86,15 @@ import {mapGetters} from 'vuex'
 
 export default {
   name: 'table-users',
+  props: {
+    searchVal: String
+  },
   data() {
     return {
       perPage: 8,
       currentPage: 1,
-      users_selected: []
+      users_selected: [],
+      searchReg: undefined
     }
   },
 
@@ -100,8 +104,15 @@ export default {
     },
     users_is_loading(newVal, oldVal) {
       if (!newVal) {
-        this.currentPage = this.$route.query.page ? this.$route.query.page : 1
+        this.currentPage =
+          this.$route.query.page &&
+          this.queriedUsers.length / this.perPage >= this.$route.query.page
+            ? this.$route.query.page
+            : 1
       }
+    },
+    searchVal(newVal) {
+      this.searchReg = newVal !== '' ? new RegExp(`${newVal}`, 'ig') : undefined
     }
   },
   methods: {
@@ -155,13 +166,24 @@ export default {
   computed: {
     ...mapGetters(['users_list', 'me', 'is_mobile_width', 'users_is_loading']),
     users_count() {
-      return this.users_list ? this.users_list.length : 0
+      return this.queriedUsers ? this.queriedUsers.length : 0
     },
     users_on_page() {
       const begin = (this.currentPage - 1) * this.perPage
       const end = begin + this.perPage
 
-      return this.users_list.slice(begin, end)
+      return this.queriedUsers.slice(begin, end)
+    },
+    queriedUsers() {
+      return Boolean(this.searchReg)
+        ? this.users_list.filter(
+            (item) =>
+              item.uid.search(this.searchReg) !== -1 ||
+              item.fullname.search(this.searchReg) !== -1 ||
+              item.last_login.search(this.searchReg) !== -1 ||
+              item.groups_name.join().search(this.searchReg) !== -1
+          )
+        : this.users_list
     },
     fields() {
       return [

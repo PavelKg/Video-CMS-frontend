@@ -7,7 +7,7 @@
       <b-form-input
         id="keywword_search"
         :placeholder="`${$t('label.keyword_search')}`"
-        @input="handleInput('search', $event.target.value)"
+        v-model="inputSearch"
       />
       <b-form-select v-model="selected_groups" :options="group_options">
         <template slot="first">
@@ -21,6 +21,7 @@
     <UsersTable
       @contentElementClick="contentElementClick"
       @onContentError="onError"
+      :searchVal="searchVal"
     />
   </div>
 </template>
@@ -34,7 +35,9 @@ export default {
   data() {
     return {
       group_options: [],
-      selected_groups: null
+      selected_groups: null,
+      searchVal: '',
+      inputSearch: ''
     }
   },
   components: {
@@ -64,6 +67,7 @@ export default {
   },
   methods: {
     onFilter() {
+      this.searchVal = this.inputSearch
       let params = {cid: this.me.profile.company_id}
 
       if (this.selected_groups) {

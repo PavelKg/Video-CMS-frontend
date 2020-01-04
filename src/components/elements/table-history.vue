@@ -21,7 +21,7 @@
           <strong> {{ $t('label.loading') }} </strong>
         </div>
       </template>
-      <template #empty="scope">
+      <template #empty>
         <h5 align="center">{{ $t('history.no_data') }}</h5>
       </template>
     </b-table>
@@ -177,7 +177,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../../assets/styles';
 
 .history-mng-panel {

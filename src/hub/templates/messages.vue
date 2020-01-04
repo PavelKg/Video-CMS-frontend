@@ -8,7 +8,7 @@
         <b-form-input
           id="keywword_search"
           :placeholder="`${$t('label.keyword_search')}`"
-          @input="handleInput('search', $event.target.value)"
+          v-model="inputSearch"
         />
         <div class="icon-button" @click="onFilter">
           <img src="@/assets/images/search_black.png" />
@@ -36,6 +36,7 @@
       :Type="selectedTabName"
       @addNewMessageByReplay="addNewMessageByReplay"
       @reloadMessages="reloadMessages"
+      :searchVal="searchVal"
     />
     <b-modal
       v-model="isShowModalMessageAdd"
@@ -103,7 +104,9 @@ export default {
         subject: '',
         text: '',
         imporant: false
-      }
+      },
+      searchVal: '',
+      inputSearch: ''
     }
   },
   mounted() {
@@ -126,7 +129,9 @@ export default {
     addNewMessageByReplay() {
       this.showMessageModal()
     },
-    onFilter() {},
+    onFilter() {
+      this.searchVal = this.inputSearch
+    },
 
     onSubmitNewMess() {
       const {receiver, subject, text, imporant} = this.modalMessData

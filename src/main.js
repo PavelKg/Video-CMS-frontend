@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from './router/'
 import store from './store/'
 import i18n from './i18n'
-import dirClickOutside from './directive/click-outside.js'
+//import dirClickOutside from './directive/click-outside.js'
 import closable from './directive/closable.js'
 import BootstrapVue from 'bootstrap-vue'
 

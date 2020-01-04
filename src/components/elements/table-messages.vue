@@ -125,17 +125,22 @@ export default {
       currentPage: 1,
       messages_selected: [],
       sortBy: 'created_at',
-      sortDesc: false
+      sortDesc: false,
+      searchReg: undefined
     }
   },
   props: {
-    Type: String
+    Type: String,
+    searchVal: String
   },
   watch: {
     Type(newval, oldval) {
       this.sortBy = 'created_at'
       this.sortDesc = false
       this.messages_selected = []
+    },
+    searchVal(newVal) {
+      this.searchReg = newVal !== '' ? new RegExp(`${newVal}`, 'ig') : undefined
     }
   },
   methods: {
@@ -194,17 +199,24 @@ export default {
   },
   computed: {
     ...mapGetters(['messages', 'messages_box_column', 'active_message', 'me']),
-    messages_by_types() {
-      return this.messages
+    queriedMessages() {
+      return Boolean(this.searchReg)
+        ? this.messages.filter(
+            (item) =>
+              item.cp_cname.search(this.searchReg) !== -1 ||
+              item.subject.search(this.searchReg) !== -1
+          )
+        : this.messages
     },
+
     messages_count() {
-      return this.messages_by_types ? this.messages_by_types.length : 0
+      return this.queriedMessages ? this.queriedMessages.length : 0
     },
     messages_on_page() {
       const begin = (this.currentPage - 1) * this.perPage
       const end = begin + this.perPage
 
-      return this.messages_by_types.slice(begin, end)
+      return this.queriedMessages.slice(begin, end)
     },
     columns() {
       return this.messages_box_column(this.Type)

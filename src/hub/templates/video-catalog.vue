@@ -10,9 +10,9 @@
       <input
         id="keywword_search"
         :placeholder="`${$t('label.keyword_search')}`"
-        @input="handleInput('search', $event.target.value)"
+        v-model="inputSearch"
       />
-      <img src="@/assets/images/search_black.png" @click="onKeywordSearch"/>
+      <img src="@/assets/images/search_black.png" @click="onKeywordSearch" />
     </div>
     <div class="video-data-filter">
       <div>
@@ -128,7 +128,7 @@ export default {
   name: 'video-catalog',
   data() {
     return {
-      years: [2019, 2018, 2017, 2016],
+      years: [2020, 2019, 2018, 2017, 2016],
       months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       public_options: [
         {text: this.$t('label.all'), value: 'all'},
@@ -139,11 +139,13 @@ export default {
       perPage: 8,
       period_filter: {
         year_from: 2016,
-        year_to: 2019,
+        year_to: new Date().getFullYear(),
         month_from: 1,
         month_to: 12
       },
-      active_video_page: 1
+      active_video_page: 1,
+      searchReg: undefined,
+      inputSearch: ''
     }
   },
   created() {
@@ -162,8 +164,8 @@ export default {
   },
   mounted() {},
   methods: {
-    onKeywordSearch(){
-      
+    onKeywordSearch() {
+      this.searchReg = new RegExp(`${this.inputSearch}`, 'ig')
     },
     changePublicStatus(val) {
       const value = val
@@ -229,6 +231,7 @@ export default {
     },
     updatePageByFilters(params) {
       let sendQuery = {...this.$route.query}
+
       if (typeof params === 'object') {
         for (let param in params) {
           sendQuery[param] = params[param]
@@ -283,7 +286,6 @@ export default {
     videoPrev
   },
   watch: {
-    video_list(new_val, old_val) {},
     $route(to, from) {
       this.updateProc(to.query)
       if (to.query.page) {
@@ -293,7 +295,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'video_list',
+      `video_list`,
       'me',
       'isVideosListLoading',
       'isVideosDeleting',
@@ -306,15 +308,23 @@ export default {
       return this.active_video_page
     },
     videos_count() {
-      return this.video_list ? this.video_list.length : 0
+      return this.queriedVideos ? this.queriedVideos.length : 0
     },
     videos_on_page() {
       const begin = (this.currentPage - 1) * this.perPage
       const end = begin + this.perPage
 
-      return this.video_list.slice(begin, end)
+      return this.queriedVideos.slice(begin, end)
     },
-
+    queriedVideos() {
+      return Boolean(this.searchReg)
+        ? this.video_list.filter(
+            (item) =>
+              item.video_title.search(this.searchReg) !== -1 ||
+              item.updated_at.search(this.searchReg) !== -1
+          )
+        : this.video_list
+    },
     hasSelected() {
       return Boolean(this.videos_selected.length)
     },

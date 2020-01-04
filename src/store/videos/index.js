@@ -109,9 +109,7 @@ export default {
       // video list for binding func
       const {cid, filter = ''} = payload
       commit('SET_STATUS_VIDEOS_LOADING', true)
-      let lfilter = `${filter} videos.deleted_at[isNull]:,videos.updated_at[gt]:'${
-        state.period[0]
-      }'::date,videos.updated_at[lt]:'${state.period[1]}'::date`
+      let lfilter = `${filter} videos.deleted_at[isNull]:,videos.updated_at[gt]:'${state.period[0]}'::date,videos.updated_at[lt]:'${state.period[1]}'::date`
       lfilter +=
         state.public === 'all'
           ? ''
@@ -137,9 +135,7 @@ export default {
     async LOAD_VIDEO_LIST({state, commit, getters}) {
       const cid = getters.me.profile.company_id
       commit('SET_STATUS_VIDEOS_LOADING', true)
-      let filter = `videos.deleted_at[isNull]:,videos.updated_at[gt]:'${
-        state.period[0]
-      }'::date,videos.updated_at[lt]:'${state.period[1]}'::date`
+      let filter = `videos.deleted_at[isNull]:,videos.updated_at[gt]:'${state.period[0]}'::date,videos.updated_at[lt]:'${state.period[1]}'::date`
       filter +=
         state.public === 'all'
           ? ''
