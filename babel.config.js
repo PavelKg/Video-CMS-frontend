@@ -13,8 +13,14 @@ module.exports = {
     ]
   ],
   plugins: [
-    'syntax-dynamic-import',
-    '@babel/transform-runtime',
+    '@babel/syntax-dynamic-import',
+    [
+      '@babel/plugin-transform-runtime',
+      {
+        helpers: false,
+        regenerator: true
+      }
+    ],
     '@babel/plugin-transform-async-to-generator'
   ]
 }
