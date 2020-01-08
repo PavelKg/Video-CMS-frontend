@@ -57,7 +57,8 @@ export default {
     oper_title_add: 'Add New Role',
     role_id: 'ID',
     role_name: 'Role Name',
-    administrator: 'Administrator'
+    administrator: 'Administrator',
+    in_page: 'In-Page'
   },
   users: {
     btn_add: 'Add New User',

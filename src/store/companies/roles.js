@@ -2,17 +2,16 @@ import Api from '@/api'
 
 export default {
   state: {
-    roles: {
-      list: [],
-      isListLoading: false,
-      selected: null
-    }
+    list: [],
+    isListLoading: false,
+    selected: null
   },
   actions: {
-    async LOAD_ROLES({commit}, _cid) {
+    async LOAD_ROLES({commit}, payload) {
+      const {cid} = payload
       try {
         commit('SET_ROLES_IS_LOADING', true)
-        const result = await Api.roles(_cid)
+        const result = await Api.roles(cid)
         if (Array.isArray(result.data) && result.status === 200) {
           commit('SET_ROLES', result.data)
         } else {
@@ -21,7 +20,7 @@ export default {
       } catch (err) {
         throw Error('Error request roles from server')
       } finally {
-        commit('SET_ROLES_IS_LOADING', false)
+        //commit('SET_ROLES_IS_LOADING', false)
       }
     },
     async LOAD_ROLE_INFO({commit}, payload) {
@@ -80,18 +79,18 @@ export default {
   },
   mutations: {
     SET_ROLES: (state, roles) => {
-      state.roles.list = [...roles]
+      state.list = [...roles]
     },
     SET_ACTIVE_ROLE(state, role) {
-      state.roles.selected = role
+      state.selected = role
     },
     SET_ROLES_IS_LOADING(state, isload) {
-      state.roles.isListLoading = isload
+      state.isListLoading = isload
     }
   },
   getters: {
-    roles: (state) => state.roles.list,
-    role_selected: (state) => state.roles.selected,
-    roles_is_list_loading: (state) => state.roles.isListLoading
+    roles: (state) => state.list,
+    role_selected: (state) => state.selected,
+    roles_is_loading: (state) => state.isListLoading
   }
 }

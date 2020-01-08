@@ -100,7 +100,7 @@ export default {
    * @throws Error
    */
   getCompanyCommentBoxState(cid) {
-    return Api.get(`planning/works`, {
+    return Api.get(`/companies/${cid}/mng/commentbox`, {
       headers: {
         ...type_json
       }

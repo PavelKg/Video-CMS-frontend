@@ -246,7 +246,7 @@ export default {
           return {value: item.gid, text: item.name}
         })
     })
-    this.$store.dispatch('LOAD_ROLES', cid).then((res) => {
+    this.$store.dispatch('LOAD_ROLES', {cid}).then((res) => {
       this.role_options = this.roles
         .filter((role) => !Boolean(role.deleted_at))
         .map((item) => {
