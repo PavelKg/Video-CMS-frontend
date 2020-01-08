@@ -57,7 +57,7 @@ export default {
         this.group_options = [...this.group_options, ...grpo]
       })
 
-    this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)
+    this.$store.dispatch('LOAD_ROLES', {cid: this.me.profile.company_id})
 
     const params = {cid: this.me.profile.company_id}
 

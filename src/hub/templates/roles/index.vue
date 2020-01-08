@@ -27,7 +27,9 @@ export default {
     TableRoles
   },
   created() {
-    this.$store.dispatch('LOAD_ROLES', this.me.profile.company_id)
+    this.$store
+      .dispatch('LOAD_ROLES', {cid: this.me.profile.company_id})
+      .then(() => this.$store.commit('SET_ROLES_IS_LOADING', false))
   },
   computed: {
     ...mapGetters(['me'])

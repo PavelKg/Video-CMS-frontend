@@ -1,7 +1,7 @@
 <template>
   <div class="table-roles">
     <b-table
-      :items="roles"
+      :items="roles_on_page"
       :fields="fields"
       responsive="sm"
       striped
@@ -15,9 +15,16 @@
         </p>
       </template>
       <template #cell(rid)="item">
-        <p class="truncate-text">
+        <b-form-checkbox
+          :id="item.item.rid.toString()"
+          :name="`ch-${item.item.rid}`"
+          :value="item.item.rid"
+          v-model="roles_selected"
+          :disabled="item.item.deleted_at !== ''"
+          class="truncate-text"
+        >
           {{ item.item.rid }}
-        </p>
+        </b-form-checkbox>
       </template>
       <template #cell(name)="item">
         <p class="truncate-text">
@@ -45,6 +52,32 @@
         </div>
       </template>
     </b-table>
+    <div class="roles-mng-panel">
+      <span>{{ $t('roles.in_page') }}:</span>
+      <a href="#" id="selectAll" @click.prevent="toggleAll">{{
+        $t('label.select_all')
+      }}</a>
+      <span>|</span>
+      <a href="#" id="deselectAll" @click.prevent="toggleAll">{{
+        $t('label.deselect_all')
+      }}</a>
+      <button
+        class="button btn-orange"
+        @click="delRoles"
+        :disabled="roles_selected.length === 0"
+      >
+        {{ $t('label.delete') }}
+      </button>
+      <div class="roles-mng-pag">
+        <b-pagination
+          :value="currentPage"
+          @change="setPage"
+          :total-rows="roles_count"
+          :per-page="perPage"
+          align="left"
+        ></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -55,9 +88,21 @@ export default {
   name: 'table-roles',
   data() {
     return {
-      perPage: 4,
+      perPage: 8,
       currentPage: 1,
       roles_selected: []
+    }
+  },
+  watch: {
+    $route(newVal) {
+      const page = +newVal.query.page
+      this.currentPage = page ? page : 1
+    },
+    roles_is_loading(newVal, oldVal) {
+      const page = +this.$route.query.page
+      if (!newVal) {
+        this.currentPage = page ? page : 1
+      }
     }
   },
   methods: {
@@ -70,7 +115,7 @@ export default {
       const cid = this.me.profile.company_id
       this.$store.dispatch('ROLE_DEL', rid).then(
         (res) => {
-          this.$store.dispatch('LOAD_ROLES', cid)
+          this.$store.dispatch('LOAD_ROLES', {cid})
         },
         (err) => {
           console.log('err.message=', err)
@@ -80,10 +125,48 @@ export default {
           )
         }
       )
+    },
+    delRoles() {
+      const deleted_roles = this.roles_selected.map(async (role_rid) => {
+        try {
+          await this.$store.dispatch('ROLE_DEL', role_rid)
+          const ind = this.roles_selected.findIndex((rid) => rid === role_rid)
+          if (ind > -1) {
+            this.roles_selected.splice(ind, 1)
+          }
+        } catch (error) {
+          this.$emit(
+            'onContentError',
+            `errors.${error.message.toLowerCase().replace(/\s/gi, '_')}`
+          )
+        }
+      })
+
+      Promise.all(deleted_roles).then(() => {
+        this.$store
+          .dispatch('LOAD_ROLES', {cid: this.me.profile.company_id})
+          .then(() => this.$store.commit('SET_ROLES_IS_LOADING', false))
+      })
+    },
+    setPage(num) {
+      if (num === this.currentPage) {
+        return
+      } else {
+        this.$emit('contentElementClick', `/hub/roles/?page=${num}`)
+      }
+    },
+    toggleAll(env) {
+      const action = env.target['id']
+      this.roles_selected =
+        action === 'selectAll'
+          ? this.roles_on_page
+              .filter((role) => role.deleted_at === '')
+              .map((role) => role.rid)
+          : []
     }
   },
   computed: {
-    ...mapGetters(['roles', 'roles_is_list_loading', 'me', 'is_mobile_width']),
+    ...mapGetters(['roles', 'roles_is_loading', 'me', 'is_mobile_width']),
     roles_count() {
       return this.roles ? this.roles.length : 0
     },
@@ -163,9 +246,6 @@ export default {
     > * {
       margin-bottom: 0;
     }
-  }
-  a {
-    padding: 0 10px;
   }
 }
 

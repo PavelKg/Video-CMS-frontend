@@ -91,9 +91,7 @@ export default {
       ],
       perPage: 8,
       currentPage: 1,
-      groups_selected: [],
-      modalShow: false,
-      modal_text: ''
+      groups_selected: []
     }
   },
   watch: {
