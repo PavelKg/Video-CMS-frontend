@@ -106,7 +106,9 @@ export default {
     tbl_header_id: 'ID',
     tbl_header_name: 'Name',
     tbl_header_mgn: 'Mng',
-    tbl_deleted: 'Deleted'
+    tbl_deleted: 'Deleted',
+    act_in_create: 'Uploading',
+    act_in_uploaded: 'Encoding'
   },
   comments: {
     id: 'ID',

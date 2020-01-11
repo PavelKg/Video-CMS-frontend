@@ -1,13 +1,18 @@
 <template>
   <div class="file-listing">
     {{ `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} Mb)` }}
-    <div v-if="value === 0 && !uploaded && !uploading" class="remove-container">
-      <a href="#" class="remove" @click.prevent="removeMe">{{ $t('label.remove') }}</a>
+    <div
+      v-if="upPercent === 0 && !uploaded && !uploading"
+      class="remove-container"
+    >
+      <a href="#" class="remove" @click.prevent="removeMe">{{
+        $t('label.remove')
+      }}</a>
     </div>
     <b-progress
       class="upload-progress"
       v-else
-      :value="uploaded ? 100 : value"
+      :value="uploaded ? 100 : upPercent"
       :max="max"
       show-progress
       :animated="animate"
@@ -16,12 +21,10 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
-
 export default {
   data() {
     return {
-      value: 0,
+      progress: {percent: 0},
       max: 100,
       animate: true
     }
@@ -30,28 +33,27 @@ export default {
     file: File,
     uuid: String,
     uploaded: Boolean,
-    uploading: Boolean
+    uploading: Boolean,
+    upProgress: Object
   },
-  created() {
-    this.$store.commit('PROGRESS_UPLOAD_FILE', {
-      name: this.file.name,
-      progress_handler: this.uplProgress
-    })
-  },
-  methods: {
-    removeMe() {
-      this.$store.commit('DEL_UPLOAD_FILE', this.file.name)
-    },
-    uplProgress(val) {
-      if (val === 100) {
+  watch: {
+    upPercent(newVal) {
+      if (newVal === 100) {
         this.$store.commit('SET_UPLOADED_FILE', this.uuid)
         this.animate = false
       }
-      this.value = val
+    }
+  },
+  created() {},
+  methods: {
+    removeMe() {
+      this.$store.commit('DEL_UPLOAD_FILE', this.file.name)
     }
   },
   computed: {
-    // ...mapGetters({isUploading: 'videoIsUploading'})
+    upPercent() {
+      return this.upProgress.percent
+    }
   }
 }
 </script>

@@ -82,12 +82,11 @@ export default {
           commit('SET_IS_UPLOADING_FILE', file.uuid)
           Api.getGcsSignedUrl(cid, file).then((res) => {
             const {url, uuid} = res.data
-            const {
-              progress_handler,
-              file: sFile
-            } = state.filesForUpload.list.find((item) => item.uuid === uuid)
-            //isUploading = true
-            Api.upload_files(url, sFile, progress_handler).then((ures) => {
+            const {file: sFile, progress} = state.filesForUpload.list.find(
+              (item) => item.uuid === uuid
+            )
+
+            Api.upload_files(url, sFile, progress).then((ures) => {
               Api.video_update_status({cid, uuid, value: 'uploaded'})
               const f_ind = state.filesForUpload.list.findIndex((file) => {
                 return file.uuid === uuid
@@ -427,7 +426,8 @@ export default {
           file: file,
           uuid: uuid(),
           uploaded: false,
-          isUploading: false
+          isUploading: false,
+          progress: {percent: 0}
         })
       })
       //state.filesForUpload.list = [...state.filesForUpload.list, ...files]
@@ -455,6 +455,7 @@ export default {
       })
       if (~uploading_index) {
         state.filesForUpload.list[uploading_index].isUploading = true
+        state.filesForUpload.list[uploading_index].progress.percent = 0
       }
     },
     DEL_UPLOAD_FILE(state, file_name) {
@@ -506,18 +507,18 @@ export default {
     },
     CLEAR_VIDEO_SELECTED(state) {
       state.selected = []
-    },
-    PROGRESS_UPLOAD_FILE(state, payload) {
-      const {name, progress_handler} = payload
-      const upd_index = state.filesForUpload.list.findIndex(function(item) {
-        if (item.file.name === name) {
-          return true
-        }
-      })
-      if (~upd_index) {
-        state.filesForUpload.list[upd_index].progress_handler = progress_handler
-      }
     }
+    // PROGRESS_UPLOAD_FILE(state, payload) {
+    //   const {name, progress} = payload
+    //   const upd_index = state.filesForUpload.list.findIndex(function(item) {
+    //     if (item.file.name === name) {
+    //       return true
+    //     }
+    //   })
+    //   if (~upd_index) {
+    //     state.filesForUpload.list[upd_index].progress = progress
+    //   }
+    // }
   },
   getters: {
     video_list: (state) =>

@@ -28,8 +28,8 @@
       :file="up_file.file"
       :uploaded="up_file.uploaded"
       :uploading="up_file.isUploading"
-      >{{ up_file }}</FileUploadItem
-    >
+      :upProgress="up_file.progress"
+    ></FileUploadItem>
     <div class="video-upload-buttons">
       <button
         class="button btn-blue"

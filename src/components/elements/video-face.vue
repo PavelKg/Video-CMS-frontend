@@ -2,9 +2,25 @@
   <div class="video-box-item">
     <div
       class="video-box-item-content"
-      :class="{gray: videoitem.video_thumbnail == undefined}"
+      :class="[
+        videoitem.video_thumbnail == undefined ? 'gray' : '',
+        !videoIsReady ? 'not-active' : 'active'
+      ]"
       @click="playVideo"
     >
+      <template v-if="!videoIsReady && videoitem.video_status">
+        <b-container class="video-progress">
+          <b-row class="justify-content-md-center" align-h="center">
+            <b-col cols="10" class="progress-text" align-self="center">
+              <b-spinner variant="success"></b-spinner>
+
+              <span>
+                {{ $t(`videos.act_in_${videoitem.video_status}`) }} ...</span
+              >
+            </b-col>
+          </b-row>
+        </b-container>
+      </template>
       <img :src="img_path" />
       <IconBase
         class="video_status"
@@ -64,6 +80,7 @@ export default {
         video_title: '',
         video_description: '',
         video_public: '',
+        video_status: undefined,
         updated_at: ''
       }
     }
@@ -94,18 +111,14 @@ export default {
   updated() {},
   methods: {
     playVideo() {
-      // this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
-      // this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
-
-      this.$emit(
-        'activateContent',
-        `/hub/videos_player/uuid/${this.videoitem.video_uuid}`
-      )
+      if (this.videoitem.video_status === 'ready') {
+        this.$emit(
+          'activateContent',
+          `/hub/videos_player/uuid/${this.videoitem.video_uuid}`
+        )
+      }
     },
     onSubtitles() {
-      // this.$store.commit('SET_ACTIVE_VIDEO', this.videoitem.video_uuid)
-      // this.$store.dispatch('SAVE_ACTIVE_VIDEO_UUID')
-
       this.$emit(
         'activateContent',
         `/hub/videos_subtitles/uuid/${this.videoitem.video_uuid}`
@@ -118,6 +131,9 @@ export default {
   },
   computed: {
     ...mapGetters(['me', 'videos_selected']),
+    videoIsReady() {
+      return this.videoitem.video_status === 'ready'
+    },
     description() {
       return this.videoitem.video_description
     },
@@ -164,6 +180,19 @@ export default {
   background: $gray;
 }
 
+.not-active {
+  img {
+    opacity: 0.1;
+    cursor: default;
+  }
+}
+
+.active {
+  img {
+    cursor: pointer;
+  }
+}
+
 .video-box-item {
   display: flex;
   flex-direction: column;
@@ -174,6 +203,7 @@ export default {
     border-radius: 4px;
     display: flex;
     justify-content: center;
+    align-items: center;
     height: 140px;
     width: 200px;
     box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.07);
@@ -182,9 +212,6 @@ export default {
       padding: 5px;
       max-width: 200px;
       max-height: 140px;
-      cursor: pointer;
-
-      //border: 1px solid $gray-lighter;
     }
     svg {
       width: 24px;
@@ -193,6 +220,16 @@ export default {
       top: 20px;
 
       right: 20px;
+    }
+
+    .video-progress {
+      position: absolute;
+      .progress-text {
+        text-align: center;
+        span {
+          vertical-align: middle;
+        }
+      }
     }
   }
   .video-box-mng-panel {

@@ -652,8 +652,10 @@ export default {
     )
   },
 
-  upload_files(url, file, progress_handler) {
-    progress_handler(0)
+  upload_files(url, file, progress) {
+    console.log('file=', file)
+    //progress_handler(0)
+    progress.percent = 0
     return axiosGcs({
       method: 'PUT',
       url: url,
@@ -661,11 +663,12 @@ export default {
         'Content-Type': file.type
       },
       onUploadProgress: function(progressEvent) {
-        progress_handler(
-          parseInt(
-            Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          )
+        console.log('progress=', progress.percent)
+        // progress_handler(
+        progress.percent = parseInt(
+          Math.round((progressEvent.loaded * 100) / progressEvent.total)
         )
+        // )
       },
       data: file
     })
