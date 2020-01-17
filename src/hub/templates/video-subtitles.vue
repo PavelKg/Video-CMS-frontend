@@ -12,6 +12,42 @@
       <span>{{ $t('label.edit_video') }}</span>
       <span>{{ $t('label.thumb_image_upload') }}</span>
       <form ref="subtitlesForm" @submit.prevent="onSubmit">
+        <b-container fluid class="pb-2 px-0 bg-default">
+          <b-row align-v="center">
+            <b-col>
+              <b-img
+                v-bind="thDefProps"
+                thumbnail
+                fluid
+                id="thum-first"
+                :src="getThumDefault1"
+                alt="Image 1"
+                @click="onClickThumDef($event)"
+              ></b-img>
+            </b-col>
+            <b-col>
+              <b-img
+                v-bind="thDefProps"
+                thumbnail
+                id="thum-second"
+                :src="getThumDefault2"
+                @click="onClickThumDef($event)"
+                alt="Image 2"
+              ></b-img>
+            </b-col>
+            <b-col>
+              <b-img
+                v-bind="thDefProps"
+                thumbnail
+                fluid
+                id="thum-third"
+                :src="getThumDefault3"
+                alt="Image 3"
+                @click="onClickThumDef($event)"
+              ></b-img>
+            </b-col>
+          </b-row>
+        </b-container>
         <div class="video-subtitles-thumbnail">
           <div class="video-subtitles-thumbnail-left">
             <b-img
@@ -108,9 +144,9 @@ export default {
       mainProps: {width: 75, height: 75, class: 'm1'},
       dataUpdated: false,
       file: '',
-      imagePreview: null,
       form: {
         video_uuid: '',
+        video_output_file: '',
         video_thumbnail: '',
         video_title: '',
         video_tag: '',
@@ -122,7 +158,24 @@ export default {
       videoNotFound: false,
       group_options: [],
       isLoadingData: true,
-      series_options: []
+      series_options: [],
+      thDefProps: {
+        center: true,
+        fluidGrow: true,
+        blank: this.isLoadingData,
+        width: 75,
+        height: 120,
+        blankSrc: null,
+        blankColor: '#ededed',
+        blankWidth: 75,
+        blankHeight: 75
+      },
+      thumbnailsDef: {
+        first: undefined,
+        second: undefined,
+        third: undefined
+      },
+      emptyImg: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D'
     }
   },
   created() {
@@ -154,6 +207,17 @@ export default {
         (res) => {
           this.form = {...this.form, ...res}
           this.isLoadingData = false
+
+          Object.keys(this.thumbnailsDef).map(async (item, index) => {
+            this.thumbnailsDef[item] = undefined
+            try {
+              const url = this.getThumDefault(index)
+              const img = await this.loadThumbnailImage(url)
+
+              this.thumbnailsDef[item] = img
+            } catch (error) {}
+          })
+
           this.$store
             .dispatch('LOAD_VIDEO_THUMBNAIL', this.active_video_uuid)
             .then((res) => {
@@ -219,6 +283,9 @@ export default {
   },
   computed: {
     //...mapGetters(['isVideosInfoUpdating', 'me', 'groups']),
+    fileStorePath() {
+      return this.form.video_output_file.match(/([a-z\d:].*\/|$)/gi)[0]
+    },
     ...mapState({
       groups: (state) => state.Companies.Groups.list,
       series: (state) => state.Companies.Series.list,
@@ -230,9 +297,60 @@ export default {
       return Boolean(this.form.video_thumbnail)
         ? this.form.video_thumbnail
         : require('@/assets/images/p-streamCMS-s.png')
+    },
+    getThumDefault1() {
+      return !this.thumbnailsDef.first
+        ? this.emptyImg
+        : this.thumbnailsDef.first
+    },
+    getThumDefault2() {
+      return !this.thumbnailsDef.second
+        ? this.emptyImg
+        : this.thumbnailsDef.second
+    },
+    getThumDefault3() {
+      return !this.thumbnailsDef.third
+        ? this.emptyImg
+        : this.thumbnailsDef.third
     }
   },
   methods: {
+    onClickThumDef(evt) {
+      const target = evt.target.id.split('-')[1]
+      if (this.thumbnailsDef[target]) {
+        this.form.video_thumbnail = this.thumbnailsDef[target]
+      } else {
+        return
+      }
+    },
+    loadThumbnailImage(url) {
+      return new Promise(function imgPromise(resolve, reject) {
+        const imgElement = new Image()
+        imgElement.crossOrigin = 'anonymous'
+        imgElement.addEventListener('load', function imgOnLoad() {
+          let canvas = document.createElement('canvas')
+          canvas.width = this.width
+          canvas.height = this.height
+
+          let ctx = canvas.getContext('2d')
+          ctx.drawImage(this, 0, 0)
+          const dataURL = canvas.toDataURL('image/png')
+          resolve(dataURL)
+        })
+        imgElement.addEventListener('error', function imgOnError() {
+          reject()
+        })
+        imgElement.src = url
+      })
+    },
+    errorLoadImage() {
+      //console.log('error load image')
+    },
+    getThumDefault(num) {
+      const timeset = [1, 5, 10]
+      //return null
+      return `${this.fileStorePath}thumbnails/thumbnail-${timeset[num]}_0.png` //require('@/assets/images/p-streamCMS-s.png')
+    },
     determineDragAndDropCapable() {
       var div = document.createElement('div')
       return (
