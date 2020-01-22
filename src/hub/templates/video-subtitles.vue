@@ -348,8 +348,7 @@ export default {
     },
     getThumDefault(num) {
       const timeset = [1, 5, 10]
-      //return null
-      return `${this.fileStorePath}thumbnails/thumbnail-${timeset[num]}_0.png` //require('@/assets/images/p-streamCMS-s.png')
+      return `${this.fileStorePath}thumbnails/thumbnail-${timeset[num]}_0.png`
     },
     determineDragAndDropCapable() {
       var div = document.createElement('div')
