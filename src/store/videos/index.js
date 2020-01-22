@@ -225,13 +225,14 @@ export default {
 
       const info_data = Object.assign(
         {},
-        video_thumbnail && {video_thumbnail},
         video_title && {video_title},
         video_tag && {video_tag},
         video_description && {video_description},
         video_groups && {video_groups},
         video_series && {video_series}
       )
+
+      info_data.video_thumbnail = video_thumbnail
 
       try {
         const result = await Api.video_update_info({cid, uuid, info_data})
