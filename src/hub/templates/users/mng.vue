@@ -10,108 +10,160 @@
     </template>
     <template v-else>
       <span>{{ $t(user_title) }}</span>
-      <b-form @submit="onSubmit">
-        <b-form-group id="input-group-id">
-          <div class="user-oper-id">
-            <template v-if="oper === 'edit'">
-              <span>{{ `${$t('users.user_id')}` }} : {{ mnUser.uid }} </span>
-            </template>
-            <template v-if="oper === 'add'">
-              <b-form-input
-                v-model="mnUser.uid"
-                :placeholder="`${$t('users.user_id')}`"
-                required
-              ></b-form-input>
-              <button class="button btn-grey" @click="genUserId">
-                {{ `${$t('label.auto')}` }}
-              </button>
-            </template>
-          </div>
-        </b-form-group>
-        <b-form-group :disabled="isUserDelete" id="input-group-fullname">
-          <b-form-input
-            v-model="mnUser.fullname"
-            :placeholder="`${$t('users.user_fullname')}`"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group :disabled="isUserDelete" id="input-group-gid">
-          <multiselect
-            v-if="!isUpdatingUserData"
-            v-model="mnUser.gids"
-            :items="group_options"
-            :placeholder="`${$t('label.group_is_not_selected')}`"
-          />
-        </b-form-group>
-        <b-form-group :disabled="isUserDelete" id="input-group-rid">
-          <b-form-select v-model="mnUser.rid" :options="role_options" required>
-            <template slot="first">
-              <option :value="null" disabled>{{
-                `${$t('label.role_is_not_selected')}`
-              }}</option>
-            </template>
-          </b-form-select>
-        </b-form-group>
-        <b-form-group :disabled="isUserDelete" id="input-group-email">
-          <b-form-input
-            v-model="mnUser.email"
-            :placeholder="`${$t('users.user_email')}`"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group :disabled="isUserDelete" id="input-group-password">
-          <b-form-input
-            v-model="mnUser.password"
-            type="password"
-            :placeholder="`${$t('users.password')}`"
-            :required="oper === 'add'"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group :disabled="isUserDelete" id="input-group-conf-password">
-          <b-form-input
-            v-model="mnUser.confPassword"
-            type="password"
-            :placeholder="`${$t('users.conf_password')}`"
-            :required="oper === 'add' && mnUser.password !== ''"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group :disabled="isUserDelete" id="input-group-activity-period">
-          <div class="row-group-activity-period">
-            <b-form-checkbox
-              v-model="enabledActivityPeriod"
-              name="check-button"
-              switch
-              @change="onEnableActivity"
+      <b-form @submit.stop.prevent="onSubmit">
+        <b-container class="px-0 my-3">
+          <b-form-group id="input-group-id">
+            <b-row ml="0" align-v="start" align-h="around">
+              <template v-if="oper === 'edit'">
+                <b-col>
+                  <span
+                    >{{ `${$t('users.user_id')}` }} : {{ mnUser.uid }}
+                  </span>
+                </b-col>
+              </template>
+              <template v-if="oper === 'add'">
+                <b-col cols="8" class="px=0">
+                  <b-form-input
+                    v-model="mnUser.uid"
+                    :placeholder="`${$t('users.user_id')}`"
+                    :state="validateState('uid')"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="input-1-live-feedback"
+                    >This is a required field and must be at least 3
+                    characters.</b-form-invalid-feedback
+                  >
+                </b-col>
+                <b-col cols="4" class="px-0">
+                  <button
+                    class="button btn-grey"
+                    @click.stop.prevent="genUserId"
+                  >
+                    {{ `${$t('label.auto')}` }}
+                  </button></b-col
+                >
+              </template>
+            </b-row>
+          </b-form-group>
+
+          <b-form-group :disabled="isUserDelete" id="input-group-fullname">
+            <b-row>
+              <b-col>
+                <b-form-input
+                  v-model="mnUser.fullname"
+                  :placeholder="`${$t('users.user_fullname')}`"
+                  :state="validateState('fullname')"
+                ></b-form-input>
+              </b-col>
+            </b-row>
+          </b-form-group>
+          <b-form-group :disabled="isUserDelete" id="input-group-gid">
+            <b-row>
+              <b-col>
+                <multiselect
+                  v-if="!isUpdatingUserData"
+                  v-model="mnUser.gids"
+                  :items="group_options"
+                  :placeholder="`${$t('label.group_is_not_selected')}`"
+                  :state="validateState('gids')"
+                /> </b-col
+            ></b-row>
+          </b-form-group>
+          <b-form-group :disabled="isUserDelete" id="input-group-rid">
+            <b-row>
+              <b-col>
+                <b-form-select
+                  v-model="mnUser.rid"
+                  :options="role_options"
+                  :state="validateState('rid')"
+                >
+                  <template slot="first">
+                    <option :value="null" disabled>{{
+                      `${$t('label.role_is_not_selected')}`
+                    }}</option>
+                  </template>
+                </b-form-select>
+              </b-col></b-row
             >
-              Usage Period
-            </b-form-checkbox>
+          </b-form-group>
+          <b-form-group :disabled="isUserDelete" id="input-group-email">
+            <b-row>
+              <b-col>
+                <b-form-input
+                  v-model="mnUser.email"
+                  :placeholder="`${$t('users.user_email')}`"
+                  :state="validateState('email')"
+                ></b-form-input> </b-col
+            ></b-row>
+          </b-form-group>
+
+          <b-form-group :disabled="isUserDelete" id="input-group-password">
+            <b-row>
+              <b-col>
+                <b-form-input
+                  v-model="mnUser.password"
+                  type="password"
+                  :placeholder="`${$t('users.password')}`"
+                  :required="oper === 'add'"
+                  :state="validateState('password')"
+                ></b-form-input> </b-col
+            ></b-row>
+          </b-form-group>
+          <b-form-group :disabled="isUserDelete" id="input-group-conf-password">
+            <b-row>
+              <b-col>
+                <b-form-input
+                  v-model="mnUser.confPassword"
+                  type="password"
+                  :placeholder="`${$t('users.conf_password')}`"
+                  :required="oper === 'add' && mnUser.password !== ''"
+                ></b-form-input> </b-col
+            ></b-row>
+          </b-form-group>
+          <b-form-group
+            :disabled="isUserDelete"
+            id="input-group-activity-period"
+          >
+            <b-row>
+              <b-col>
+                <b-form-checkbox
+                  v-model="enabledActivityPeriod"
+                  name="check-button"
+                  switch
+                  @change="onEnableActivity"
+                >
+                  {{ $t('users.usage_period') }}
+                </b-form-checkbox>
+              </b-col></b-row
+            >
+            <b-row>
+              <b-col>
+                <datetime
+                  class="datepicker"
+                  format="YYYY-MM-DD"
+                  :readonly="true"
+                  v-model="mnUser.activity_start"
+                  :disabled="!enabledActivityPeriod"
+                ></datetime
+              ></b-col>
+              <b-col>
+                <datetime
+                  class="datepicker"
+                  format="YYYY-MM-DD"
+                  :readonly="true"
+                  v-model="mnUser.activity_finish"
+                  :disabled="!enabledActivityPeriod"
+                ></datetime> </b-col
+            ></b-row>
+          </b-form-group>
+          <div class="user-operation-button-zone">
+            <button v-if="!isUserDelete" type="submit" class="button btn-blue">
+              {{ `${$t('label.save')}` }}
+            </button>
+            <button @click="onCancel" class="button btn-braun">
+              {{ `${$t('label.back')}` }}
+            </button>
           </div>
-          <div class="row-group-activity-period">
-            <datetime
-              class="datepicker"
-              format="YYYY-MM-DD"
-              :readonly="true"
-              v-model="mnUser.activity_start"
-              :disabled="!enabledActivityPeriod"
-            ></datetime>
-            <p class="row-space">~</p>
-            <datetime
-              class="datepicker"
-              format="YYYY-MM-DD"
-              :readonly="true"
-              v-model="mnUser.activity_finish"
-              :disabled="!enabledActivityPeriod"
-            ></datetime>
-          </div>
-        </b-form-group>
-        <div class="user-operation-button-zone">
-          <button v-if="!isUserDelete" type="submit" class="button btn-blue">
-            {{ `${$t('label.save')}` }}
-          </button>
-          <button @click="onCancel" class="button btn-braun">
-            {{ `${$t('label.back')}` }}
-          </button>
-        </div>
+        </b-container>
       </b-form>
     </template>
   </div>
@@ -121,6 +173,7 @@
 import {mapGetters} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
 import datetime from '@/components/elements/datetimepicker'
+import {required, minLength, between} from 'vuelidate/lib/validators'
 
 export default {
   name: 'user-mng-form',
@@ -154,7 +207,37 @@ export default {
     multiselect,
     datetime
   },
+  validations: {
+    mnUser: {
+      uid: {
+        required
+      },
+      fullname: {
+        required,
+        minLength: minLength(3)
+      },
+      gids: {
+        required
+      },
+      rid: {
+        required
+      },
+      email: {
+        required
+      },
+      password: {
+        required
+      },
+      confPassword: {
+        required
+      }
+    }
+  },
   methods: {
+    validateState(name) {
+      const {$dirty, $error} = this.$v.mnUser[name]
+      return $dirty ? !$error : null
+    },
     onCancel(evt) {
       evt.preventDefault()
       //this.$router.go(-1)
@@ -162,11 +245,16 @@ export default {
     },
     save_click() {},
     genUserId(evt) {
-      evt.preventDefault()
+      //evt.preventDefault()
       console.log('gen user ID')
     },
     onSubmit(evt) {
-      evt.preventDefault()
+      //evt.preventDefault()
+      this.$v.mnUser.$touch()
+      if (this.$v.mnUser.$anyError) {
+        console.log('field error')
+        return
+      }
 
       const oper_type = this.oper === 'edit' ? 'USER_UPD' : 'USER_ADD'
       this.$store.dispatch(oper_type, this.mnUser).then(
@@ -289,37 +377,28 @@ p.row-space {
   margin-bottom: 10px;
 }
 .user-operation {
-  max-width: 450px;
+  max-width: 550px;
   display: flex;
   flex-direction: column;
   > span {
     font-size: 1.8em;
     font-weight: 600;
   }
-  > * {
-    margin-bottom: 20px;
-  }
-  .user-oper-id {
-    display: flex;
-    align-items: center;
-    font-size: 1.2em;
-  }
-  input {
-  }
-  select {
-  }
+  // > * {
+  //   margin-bottom: 20px;
+  // }
 
-  .button {
-    margin: 0 10px;
-  }
-  .check-admin {
-    display: flex;
-    justify-content: space-between;
+  // .button {
+  //   margin: 0 10px;
+  // }
+  // .check-admin {
+  //   display: flex;
+  //   justify-content: space-between;
 
-    > * {
-      margin-right: 10px;
-    }
-  }
+  //   > * {
+  //     margin-right: 10px;
+  //   }
+  // }
   .user-operation-button-zone {
     display: flex;
     flex-direction: row;

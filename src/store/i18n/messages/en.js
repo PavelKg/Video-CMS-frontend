@@ -74,7 +74,8 @@ export default {
     user_fullname: 'Full Name',
     user_email: 'E-Mail',
     password: 'Password',
-    conf_password: 'Confirm Password'
+    conf_password: 'Confirm Password',
+    usage_period: 'Usage period'
   },
   groups: {
     btn_add: 'Add New Group',
