@@ -12,26 +12,35 @@
       <span>{{ $t(user_title) }}</span>
       <b-form @submit.stop.prevent="onSubmit">
         <b-container class="px-0 my-3">
-          <b-form-group id="input-group-id">
+          <b-form-group
+            id="input-group-id"
+            :invalid-feedback="validateErrorMessage('uid')"
+            :state="validateState('uid')"
+          >
             <b-row ml="0" align-v="start" align-h="around">
               <template v-if="oper === 'edit'">
                 <b-col>
-                  <span
-                    >{{ `${$t('users.user_id')}` }} : {{ mnUser.uid }}
-                  </span>
+                  <span>{{ `${$t('users.user_id')}` }}: {{ mnUser.uid }} </span>
                 </b-col>
               </template>
               <template v-if="oper === 'add'">
-                <b-col cols="8" class="px=0">
+                <b-col cols="8" >
                   <b-form-input
-                    v-model="mnUser.uid"
+                    type="text"
+                    :maxLength="limit.uid.max_length"
+                    :value="mnUser.uid"
                     :placeholder="`${$t('users.user_id')}`"
                     :state="validateState('uid')"
-                  ></b-form-input>
-                  <b-form-invalid-feedback id="input-1-live-feedback"
-                    >This is a required field and must be at least 3
-                    characters.</b-form-invalid-feedback
-                  >
+                    @input.native="
+                      (e) => {
+                        e.target.value = e.target.value.substring(
+                          0,
+                          limit.uid.max_length
+                        )
+                        mnUser.uid = e.target.value
+                      }
+                    "
+                  />
                 </b-col>
                 <b-col cols="4" class="px-0">
                   <button
@@ -45,13 +54,23 @@
             </b-row>
           </b-form-group>
 
-          <b-form-group :disabled="isUserDelete" id="input-group-fullname">
+          <b-form-group
+            :disabled="isUserDelete"
+            id="input-group-fullname"
+            :invalid-feedback="validateErrorMessage('fullname')"
+            :state="validateState('fullname')"
+          >
             <b-row>
               <b-col>
                 <b-form-input
-                  v-model="mnUser.fullname"
+                  :value="mnUser.fullname"
                   :placeholder="`${$t('users.user_fullname')}`"
                   :state="validateState('fullname')"
+                  @input.native="
+                    (e) => {
+                      mnUser.fullname = e.target.value
+                    }
+                  "
                 ></b-form-input>
               </b-col>
             </b-row>
@@ -68,7 +87,12 @@
                 /> </b-col
             ></b-row>
           </b-form-group>
-          <b-form-group :disabled="isUserDelete" id="input-group-rid">
+          <b-form-group
+            :disabled="isUserDelete"
+            id="input-group-rid"
+            :invalid-feedback="validateErrorMessage('rid')"
+            :state="validateState('rid')"
+          >
             <b-row>
               <b-col>
                 <b-form-select
@@ -85,37 +109,54 @@
               </b-col></b-row
             >
           </b-form-group>
-          <b-form-group :disabled="isUserDelete" id="input-group-email">
+          <b-form-group
+            :disabled="isUserDelete"
+            id="input-group-email"
+            :invalid-feedback="validateErrorMessage('email')"
+            :state="validateState('email')"
+          >
             <b-row>
               <b-col>
                 <b-form-input
-                  v-model="mnUser.email"
+                  :value="mnUser.email"
                   :placeholder="`${$t('users.user_email')}`"
                   :state="validateState('email')"
+                  @input.native="(e) => (mnUser.email = e.target.value)"
                 ></b-form-input> </b-col
             ></b-row>
           </b-form-group>
 
-          <b-form-group :disabled="isUserDelete" id="input-group-password">
+          <b-form-group
+            :disabled="isUserDelete"
+            id="input-group-password"
+            :invalid-feedback="validateErrorMessage('password')"
+            :state="validateState('password')"
+          >
             <b-row>
               <b-col>
                 <b-form-input
-                  v-model="mnUser.password"
+                  :value="mnUser.password"
                   type="password"
                   :placeholder="`${$t('users.password')}`"
-                  :required="oper === 'add'"
                   :state="validateState('password')"
+                  @input.native="(e) => (mnUser.password = e.target.value)"
                 ></b-form-input> </b-col
             ></b-row>
           </b-form-group>
-          <b-form-group :disabled="isUserDelete" id="input-group-conf-password">
+          <b-form-group
+            :disabled="isUserDelete"
+            id="input-group-conf-password"
+            :invalid-feedback="validateErrorMessage('confPassword')"
+            :state="validateState('confPassword')"
+          >
             <b-row>
               <b-col>
                 <b-form-input
-                  v-model="mnUser.confPassword"
+                  :value="mnUser.confPassword"
                   type="password"
                   :placeholder="`${$t('users.conf_password')}`"
-                  :required="oper === 'add' && mnUser.password !== ''"
+                  :state="validateState('confPassword')"
+                  @input.native="(e) => (mnUser.confPassword = e.target.value)"
                 ></b-form-input> </b-col
             ></b-row>
           </b-form-group>
@@ -173,7 +214,16 @@
 import {mapGetters} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
 import datetime from '@/components/elements/datetimepicker'
-import {required, minLength, between} from 'vuelidate/lib/validators'
+import {
+  required,
+  minLength,
+  maxLength,
+  between,
+  sameAs,
+  email,
+  requiredIf
+} from 'vuelidate/lib/validators'
+import {withParams} from 'vuelidate/lib/validators/common'
 
 export default {
   name: 'user-mng-form',
@@ -182,6 +232,8 @@ export default {
   },
   data() {
     return {
+      uidUniqError: '',
+      emailUniqError: '',
       mnUser: {
         uid: '',
         fullname: '',
@@ -189,11 +241,46 @@ export default {
         gids: [],
         rid: null,
         email: '',
-        password: null,
+        password: '',
         deleted_at: '',
         activity_start: '',
-        activity_finish: ''
+        activity_finish: '',
+        confPassword: ''
       },
+      limit: {uid: {min_length: 5, max_length: 10}, fullname: {min_length: 3}},
+
+      req_templ: () => {
+        return withParams({msg: this.$t('validation.required_field')}, required)
+      },
+
+      isUniqTempl: (param) =>
+        withParams({msg: this.$t('validation.is_not_unique')}, (val) => {
+          if (val === '') return true
+          return param === ''
+        }),
+
+      min_len_templ: function(length) {
+        return withParams(
+          {
+            msg: this.$t('validation.min_length', {
+              cnt: length
+            })
+          },
+          minLength(length)
+        )
+      },
+
+      max_len_templ: function(length) {
+        return withParams(
+          {
+            msg: this.$t('validation.max_length', {
+              cnt: length
+            })
+          },
+          maxLength(length)
+        )
+      },
+
       group_options: [],
       role_options: [],
       enabledActivityPeriod: false,
@@ -207,36 +294,74 @@ export default {
     multiselect,
     datetime
   },
-  validations: {
-    mnUser: {
-      uid: {
-        required
-      },
-      fullname: {
-        required,
-        minLength: minLength(3)
-      },
-      gids: {
-        required
-      },
-      rid: {
-        required
-      },
-      email: {
-        required
-      },
-      password: {
-        required
-      },
-      confPassword: {
-        required
+  watch: {
+    ['mnUser.uid'](newVal) {
+      if (this.uidUniqError !== '') {
+        this.uidUniqError = ''
+      }
+    },
+    ['mnUser.email'](newVal) {
+      if (this.emailUniqError !== '') {
+        this.emailUniqError = ''
+      }
+    }
+  },
+  validations() {
+    return {
+      mnUser: {
+        uid: {
+          required: this.req_templ(),
+          minLength:
+            this.oper === 'add'
+              ? this.min_len_templ(this.limit.uid.min_length)
+              : '',
+          maxLength:
+            this.oper === 'add'
+              ? this.max_len_templ(this.limit.uid.max_length)
+              : '',
+          isUnique: this.isUniqTempl(this.uidUniqError)
+        },
+        fullname: {
+          required: this.req_templ(),
+          minLength: this.min_len_templ(this.limit.fullname.min_length)
+        },
+        gids: {},
+        rid: {
+          required: this.req_templ()
+        },
+        email: {
+          required: this.req_templ(),
+          email: withParams({msg: this.$t('validation.email')}, email),
+          isUnique: this.isUniqTempl(this.emailUniqError)
+        },
+        password: {
+          requered: this.oper === 'add' ? this.req_templ() : '',
+          minLength: this.min_len_templ(8)
+        },
+        confPassword: {
+          sameAsPassword: withParams(
+            {msg: this.$t('validation.same_as_password')},
+            sameAs('password')
+          )
+        }
       }
     }
   },
   methods: {
     validateState(name) {
       const {$dirty, $error} = this.$v.mnUser[name]
-      return $dirty ? !$error : null
+      return $dirty ? ($error ? !$error : null) : null
+    },
+    validateErrorMessage(name) {
+      let message = ''
+      const {$params} = this.$v.mnUser[name]
+
+      Object.keys($params).forEach((param) => {
+        if (!this.$v.mnUser[name][param]) {
+          message += this.$v.mnUser[name].$params[param].msg
+        }
+      })
+      return message
     },
     onCancel(evt) {
       evt.preventDefault()
@@ -252,7 +377,6 @@ export default {
       //evt.preventDefault()
       this.$v.mnUser.$touch()
       if (this.$v.mnUser.$anyError) {
-        console.log('field error')
         return
       }
 
@@ -266,7 +390,18 @@ export default {
           }
         },
         (err) => {
-          console.log('err=', err)
+          const errMess = err.message.replace('Error: ', '')
+          switch (errMess) {
+            case 'THIS_UID_IS_NOT_ALLOWED':
+              this.uidUniqError = errMess
+              break
+            case 'THIS_EMAIL_IS_NOT_ALLOWED':
+              this.emailUniqError = errMess
+              break
+            default:
+              console.log('error=', errMess)
+              break
+          }
         }
       )
     },
@@ -288,7 +423,7 @@ export default {
       this.$store.dispatch('LOAD_USER_INFO', {cid, uid}).then(
         (res) => {
           this.isUpdatingUserData = false
-          this.mnUser = {...res}
+          this.mnUser = {...this.mnUser, ...res}
           if (this.mnUser.gid === '') {
             this.mnUser.gid = null
           }
@@ -384,21 +519,7 @@ p.row-space {
     font-size: 1.8em;
     font-weight: 600;
   }
-  // > * {
-  //   margin-bottom: 20px;
-  // }
 
-  // .button {
-  //   margin: 0 10px;
-  // }
-  // .check-admin {
-  //   display: flex;
-  //   justify-content: space-between;
-
-  //   > * {
-  //     margin-right: 10px;
-  //   }
-  // }
   .user-operation-button-zone {
     display: flex;
     flex-direction: row;

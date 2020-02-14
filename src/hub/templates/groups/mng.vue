@@ -9,51 +9,93 @@
       </div>
     </template>
     <template v-else>
-      <p>{{ $t(group_title) }}</p>
-      <div class="group-oper-id">
-        <div class="group-oper-id-data" v-if="oper === 'edit'">
-          <p>{{ $t('groups.id') }}:</p>
-          <p>{{ `g_${mnGroup.gid}` }}</p>
-        </div>
+      <span>{{ $t(group_title) }}</span>
+      <b-form @submit.stop.prevent="onSubmit">
+        <b-container class="px-0 my-3">
+          <template v-if="oper === 'edit'">
+            <b-form-group id="input-group-id">
+              <b-row ml="0" align-v="start" align-h="around">
+                <b-col>
+                  <span>{{ $t('groups.id') }}: {{ `g_${mnGroup.gid}` }}</span>
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </template>
 
-        <div class="group-oper-id-data">
-          <p v-if="oper === 'edit'">{{ `${$t('groups.name')}` }}:</p>
-          <b-form-input
-            v-model="mnGroup.name"
-            :placeholder="`${$t('groups.group_name')}`"
-            :disabled="group_is_deleted"
-          ></b-form-input>
-          <button
-            :disabled="dataNotChanged || group_is_deleted"
-            @click="save_click"
-            class="button btn-blue"
+          <b-form-group
+            id="input-group-name"
+            :maxLength="limit.name.max_length"
+            :label="`${$t('groups.name')}:`"
+            label-cols-sm="2"
+            label-cols-lg="2"
+            label-for="group-name"
+            :invalid-feedback="validateErrorMessage('name')"
+            :state="validateState('name')"
           >
-            {{ `${$t('label.register')}` }}
-          </button>
-        </div>
-        <div class="group-oper-id-data">
-          <p v-if="oper === 'edit'">{{ `${$t('groups.series')}` }}:</p>
-          <multiselect
-            class="multiselect"
-            v-if="!isLoadingData"
-            v-model="mnGroup.group_series"
-            :items="series_options"
-            :placeholder="`${$t('label.group_is_not_selected')}`"
-          />
-        </div>
-      </div>
-      <template v-if="oper === 'edit' && !group_is_deleted">
-        <TableUsersLite
-          :gid="mnGroup.gid"
-          @contentElementClick="contentElementClick"
-        />
-      </template>
-      <template v-else-if="oper === 'add'"> </template>
-      <div class="group-operation-button-zone">
-        <button @click="cancel_click" class="button btn-braun">
-          {{ `${$t('label.cancel')}` }}
-        </button>
-      </div>
+            <b-row
+              ><b-col>
+                <b-form-input
+                  id="group-name"
+                  :value="mnGroup.name"
+                  :placeholder="`${$t('groups.group_name')}`"
+                  :disabled="group_is_deleted"
+                  :state="validateState('name')"
+                  @input.native="
+                    (e) => {
+                      e.target.value = e.target.value.substring(
+                        0,
+                        limit.name.max_length
+                      )
+                      mnGroup.name = e.target.value
+                    }
+                  "
+                ></b-form-input></b-col
+            ></b-row>
+          </b-form-group>
+          <template v-if="oper === 'edit'">
+            <b-form-group
+              id="input-group-series"
+              :label="`${$t('groups.series')}:`"
+              label-cols-sm="2"
+              label-cols-lg="2"
+              label-for="group-name"
+              ><b-row>
+                <b-col>
+                  <multiselect
+                    class="multiselect"
+                    v-if="!isLoadingData"
+                    v-model="mnGroup.group_series"
+                    :items="series_options"
+                    :placeholder="`${$t('label.series_is_not_selected')}`"
+                  />
+                </b-col>
+              </b-row>
+            </b-form-group>
+          </template>
+          <template v-if="oper === 'edit' && !group_is_deleted">
+            <b-row
+              ><b-col>
+                <TableUsersLite
+                  :gid="mnGroup.gid"
+                  @contentElementClick="contentElementClick"/></b-col
+            ></b-row>
+          </template>
+
+          <div class="group-operation-button-zone">
+            <button
+              :disabled="dataNotChanged || group_is_deleted"
+              type="submit"
+              class="button btn-blue"
+            >
+              {{ `${$t('label.register')}` }}
+            </button>
+
+            <button @click="cancel_click" class="button btn-braun">
+              {{ `${$t('label.cancel')}` }}
+            </button>
+          </div>
+        </b-container>
+      </b-form>
     </template>
   </div>
 </template>
@@ -62,6 +104,9 @@
 import {mapState} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
 import TableUsersLite from '@/components/elements/table-users-lite'
+
+import {required, minLength, maxLength} from 'vuelidate/lib/validators'
+import {withParams} from 'vuelidate/lib/validators/common'
 
 export default {
   name: 'group-mng-form',
@@ -74,6 +119,7 @@ export default {
   },
   data() {
     return {
+      nameUniqError: '',
       src: {name: '', series: []},
       mnGroup: {
         name: '',
@@ -83,24 +129,104 @@ export default {
       },
       groupNotFound: false,
       isLoadingData: true,
-      series_options: []
+      series_options: [],
+
+      limit: {name: {max_length: 20, min_length: 3}},
+
+      req_templ: () => {
+        return withParams({msg: this.$t('validation.required_field')}, required)
+      },
+      min_len_templ: function(length) {
+        return withParams(
+          {
+            msg: this.$t('validation.min_length', {
+              cnt: length
+            })
+          },
+          minLength(length)
+        )
+      },
+
+      max_len_templ: function(length) {
+        return withParams(
+          {
+            msg: this.$t('validation.max_length', {
+              cnt: length
+            })
+          },
+          maxLength(length)
+        )
+      },
+      isUniqTempl: (param) =>
+        withParams({msg: this.$t('validation.is_not_unique')}, (val) => {
+          if (val === '') return true
+          return param === ''
+        })
+    }
+  },
+  validations() {
+    return {
+      mnGroup: {
+        name: {
+          required: this.req_templ(),
+          minLength: this.min_len_templ(this.limit.name.min_length),
+          maxLength: this.max_len_templ(this.limit.name.max_length),
+          isUnique: this.isUniqTempl(this.nameUniqError)
+        }
+      }
+    }
+  },
+  watch: {
+    ['mnGroup.name'](newVal) {
+      if (this.nameUniqError !== '') {
+        this.nameUniqError = ''
+      }
     }
   },
   methods: {
+    validateState(name) {
+      const {$dirty, $error} = this.$v.mnGroup[name]
+      return $dirty ? ($error ? !$error : null) : null
+    },
+    validateErrorMessage(name) {
+      let message = ''
+      const {$params} = this.$v.mnGroup[name]
+
+      Object.keys($params).forEach((param) => {
+        if (!this.$v.mnGroup[name][param]) {
+          message += this.$v.mnGroup[name].$params[param].msg
+        }
+      })
+      return message
+    },
     contentElementClick(menu_item) {
       this.$emit('contentElementClick', menu_item)
     },
     cancel_click() {
       this.contentElementClick('/hub/groups')
     },
-    save_click() {
+
+    onSubmit() {
+      this.$v.mnGroup.$touch()
+      if (this.$v.mnGroup.$anyError) {
+        return
+      }
+
       const oper_type = this.oper === 'edit' ? 'GROUP_UPD' : 'GROUP_ADD'
       this.$store.dispatch(oper_type, this.mnGroup).then(
         (res) => {
           this.contentElementClick('/hub/groups')
         },
         (err) => {
-          console.log('err=', err)
+          const errMess = err.message.replace('Error: ', '')
+          switch (errMess) {
+            case 'THIS_GROUP_NAME_IS_NOT_ALLOWED':
+              this.nameUniqError = errMess
+              break
+            default:
+              console.log('error=', errMess)
+              break
+          }
         }
       )
     }
@@ -178,42 +304,14 @@ export default {
   font-size: 0.8em;
 }
 .group-operation {
+  max-width: 550px;
   display: flex;
   flex-direction: column;
-  > p {
+  > span {
     font-size: 1.8em;
     font-weight: 600;
   }
 
-  .group-oper-id {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    font-size: 1.2em;
-    p {
-      min-width: 90px;
-    }
-    .group-oper-id-data {
-      display: flex;
-      justify-content: flex-start;
-      //font-size: 1.2em;
-      min-width: 450px;
-      padding-bottom: 10px;
-    }
-  }
-  input {
-    margin-right: 10px;
-    max-width: 400px;
-  }
-  .check-admin {
-    display: flex;
-    justify-content: space-between;
-    max-width: 400px;
-
-    > * {
-      margin-right: 10px;
-    }
-  }
   .group-operation-button-zone {
     display: flex;
     flex-direction: row;

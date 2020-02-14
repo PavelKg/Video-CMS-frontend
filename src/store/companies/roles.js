@@ -46,7 +46,7 @@ export default {
           throw Error(`Error add role, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error add new role: ${err.response.data.message}`)
+        throw err.response.data
       }
     },
     async ROLE_UPD({commit, getters}, payload) {
@@ -60,7 +60,7 @@ export default {
           throw Error(`Error update role, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error update role: ${err.response.data.message}`)
+        throw err.response.data
       }
     },
     async ROLE_DEL({commit, getters}, rid) {

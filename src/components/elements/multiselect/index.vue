@@ -270,7 +270,7 @@ export default {
     border-radius: 0.25rem;
     width: 100%;
     height: calc(1.5em + 0.75rem + 2px);
-    padding: 0.375rem 0.75rem;
+    padding: 0.375rem 0.20rem 0.375rem 0.75rem;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;

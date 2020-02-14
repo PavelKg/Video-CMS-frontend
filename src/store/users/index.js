@@ -41,15 +41,36 @@ export default {
     },
     async USER_ADD({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
+
+      const {
+        uid,
+        fullname,
+        rid,
+        email,
+        password,
+        gids,
+        activity_start,
+        activity_finish
+      } = payload
+
       try {
-        const result = await Api.user_add(cid, payload)
+        const result = await Api.user_add(cid, {
+          uid,
+          fullname,
+          rid,
+          email,
+          password,
+          gids,
+          activity_start,
+          activity_finish
+        })
         if (result.status === 201) {
           return Promise.resolve('User added success')
         } else {
           throw Error(`Error add user, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error add new user: ${err.response.data.message}`)
+        throw err.response.data
       }
     },
     async USER_UPD({commit, getters}, payload) {
@@ -83,7 +104,7 @@ export default {
           throw Error(`Error update user, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error update user: ${err.response.data.message}`)
+        throw err.response.data
       }
     },
     async USER_DEL({commit, getters}, uid) {

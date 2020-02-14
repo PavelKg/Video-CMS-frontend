@@ -227,5 +227,13 @@ export default {
       'Cannot delete a group with existing users',
     cannot_delete_a_role_with_existing_users:
       'Cannot delete a role with existing users'
+  },
+  validation: {
+    required_field: 'This is a required field',
+    min_length: 'This field must be at least {cnt} characters',
+    max_length: 'This field must not exceed {cnt} characters',
+    same_as_password:'Passwords do not match',
+    email:'This is not a valid email format',
+    is_not_unique: 'Value is not unique'
   }
 }
