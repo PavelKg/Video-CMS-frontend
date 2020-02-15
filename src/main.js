@@ -8,6 +8,7 @@ import i18n from './i18n'
 //import dirClickOutside from './directive/click-outside.js'
 import closable from './directive/closable.js'
 import BootstrapVue from 'bootstrap-vue'
+import Vuelidate from 'vuelidate'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -15,6 +16,7 @@ import 'video.js/dist/video-js.css'
 
 Vue.directive('closable', closable)
 Vue.use(BootstrapVue)
+Vue.use(Vuelidate)
 
 require('es6-promise').polyfill()
 

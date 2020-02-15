@@ -58,7 +58,7 @@ export default {
           throw Error(`Error add group, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error add new group: ${err.response.data.message}`)
+        throw err.response.data
       }
     },
     async GROUP_UPD({commit, getters}, payload) {
@@ -72,7 +72,7 @@ export default {
           throw Error(`Error update group, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error update group: ${err.response.data.message}`)
+        throw err.response.data
       }
     },
     async GROUP_DEL({commit, getters}, gid) {

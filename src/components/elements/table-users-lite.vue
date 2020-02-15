@@ -5,7 +5,7 @@
         {{ $t('message.number_of_registered_users') }}: {{ users_count }}
         {{ $t('label.people') }}
       </span>
-      <button class="button btn-blue add-user" @click="addNewUser">
+      <button class="button btn-blue add-user" @click="addNewUser" @keyup="()=>{console.log('into comp')}">
         {{ $t('users.btn_add') }}
       </button>
     </div>

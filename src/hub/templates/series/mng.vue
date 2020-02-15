@@ -9,208 +9,239 @@
       </div>
     </template>
     <template v-else>
-      <b-container fluid>
-        <h3 class="pb-1 ml-n2 pl-3 ">{{ $t(series_title) }}</h3>
-        <div class="series-oper-id">
-          <b-row
+      <span>{{ $t(series_title) }}</span>
+      <b-form @submit.stop.prevent="onSubmit">
+        <b-container class="px-0 my-3">
+          <b-form-group
             v-if="oper === 'edit'"
-            align-v="center"
-            align-h="start"
-            class="pb-1 ml-n2"
+            id="input-series-id"
+            :label="`${$t('series.id')}:`"
+            label-cols="2"
+            label-cols-sm="3"
+            label-cols-lg="3"
           >
-            <b-col cols="3" md="1">
-              <h5>{{ $t('series.id') }}:</h5>
-            </b-col>
-            <b-col cols="9">
-              <h5>{{ `s_${mnSeries.sid}` }}</h5>
-            </b-col>
-          </b-row>
-          <b-row align-v="center" align-h="start" class="pb-1 ml-n2">
-            <b-col v-if="oper === 'edit'" cols="3" md="1">
-              <h5>{{ `${$t('series.name')}` }}:</h5>
-            </b-col>
-            <b-col cols="9"
-              ><b-form-input
-                v-model="mnSeries.name"
-                :placeholder="`${$t('series.series_name')}`"
-                :disabled="series_is_deleted"
-              ></b-form-input>
-              <b-form-checkbox
-                class="chechbox-private"
-                id="checkbox-private"
-                v-model="mnSeries.is_private"
-                name="checkbox-private"
-                value="true"
-                unchecked-value="false"
-              >
-                {{ $t('series.private') }}
-              </b-form-checkbox></b-col
-            >
-          </b-row>
-          <b-row align-v="center" align-h="start" class="pb-1 ml-n2 ">
-            <b-col cols="4" md="1" v-if="oper === 'edit'">
-              <h5>{{ `${$t('series.description')}` }}:</h5></b-col
-            >
-            <b-col cols="12" md="3"
-              ><b-form-textarea
-                id="textarea"
-                v-model="mnSeries.description"
-                :placeholder="$t('label.enter_series_description')"
-              ></b-form-textarea></b-col
-          ></b-row>
-          <b-row align-v="center" align-h="start" class="pb-1 ml-n2">
-            <b-col cols="3" md="1" v-if="oper === 'edit'">
-              <h5>{{ `${$t('series.tag')}` }}:</h5>
-            </b-col>
-            <b-col cols="9"
-              ><b-form-input
-                v-model="mnSeries.tags"
-                :placeholder="`${$t('series.tag')}`"
-                :disabled="series_is_deleted"
-              ></b-form-input
-            ></b-col>
-          </b-row>
-          <b-row>
-            <b-form-group>
-              <h5>{{ $t('series.view_period') }}:</h5>
-              <b-form-radio
-                v-model="mnSeries.period_type"
-                name="some-radios"
-                value="null"
-                size="lg"
-              >
-                {{ $t('series.no_limit') }}
-              </b-form-radio>
-              <div class="row-series-activity-period"></div>
-              <b-form-radio
-                v-model="mnSeries.period_type"
-                name="some-radios"
-                value="spec_period"
-                size="lg"
-              >
-                {{ $t('series.specify_period') }}
-              </b-form-radio>
-              <div
-                class="row-series-activity-period"
-                :class="
-                  mnSeries.period_type !== 'spec_period' ? 'disabled' : ''
-                "
-              >
-                <datetime
-                  class="datepicker"
-                  format="YYYY-MM-DD"
-                  :readonly="true"
-                  v-model="spec_period_activity_start"
-                  :disabled="mnSeries.period_type !== 'spec_period'"
-                ></datetime>
-                <p class="row-space">
-                  ~
-                </p>
-                <datetime
-                  class="datepicker"
-                  format="YYYY-MM-DD"
-                  :readonly="true"
-                  v-model="spec_period_activity_finish"
-                  :disabled="mnSeries.period_type !== 'spec_period'"
-                ></datetime>
-              </div>
-              <b-form-radio
-                v-model="mnSeries.period_type"
-                name="some-radios"
-                value="user_reg"
-                size="lg"
-              >
-                {{ $t('series.start_users_accounts') }}
-              </b-form-radio>
-              <div
-                class="row-series-activity-period"
-                :class="mnSeries.period_type !== 'user_reg' ? 'disabled' : ''"
-              >
-                <p>{{ $t('series.view_start') }}:</p>
+            <div class="pt-2">
+              <strong>{{ `s_${mnSeries.sid}` }}</strong>
+            </div>
+          </b-form-group>
+          <b-form-group
+            :label="`${$t('series.name')}:`"
+            label-cols="auto"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="input-series-name"
+            align-h="between"
+            :invalid-feedback="validateErrorMessage('name')"
+            :state="validateState('name')"
+            ><b-row>
+              <b-col>
                 <b-form-input
-                  :id="`type-number`"
-                  :type="'number'"
-                  :disabled="mnSeries.period_type !== 'user_reg'"
-                  v-model="user_period_activity_start"
+                  id="input-series-name"
+                  :value="mnSeries.name"
+                  :placeholder="`${$t('series.series_name')}`"
+                  :disabled="series_is_deleted"
+                  :maxLength="limit.name.max_length"
+                  @input.native="
+                    (e) => {
+                      e.target.value = e.target.value.substring(
+                        0,
+                        limit.name.max_length
+                      )
+                      mnSeries.name = e.target.value
+                    }
+                  "
                 ></b-form-input>
-                <p>{{ $t('series.for_registration_date') }}</p>
-              </div>
-              <div
-                class="row-series-activity-period"
-                :class="mnSeries.period_type !== 'user_reg' ? 'disabled' : ''"
-              >
-                <p>{{ $t('series.view_end') }}:</p>
-                <b-form-input
-                  :id="`type-number`"
-                  :type="'number'"
-                  :disabled="mnSeries.period_type !== 'user_reg'"
-                  v-model="user_period_activity_finish"
-                ></b-form-input>
-                <p>{{ $t('series.for_registration_date') }}</p>
-              </div>
-            </b-form-group>
-          </b-row>
-        </div>
-      </b-container>
-      <template v-if="oper === 'edit'">
-        <div class="series-oper-id-data">
-          <div class="group-mng-row">
-            <span
-              >{{
-                `${$t(
-                  'message.number_of_registered_groups'
-                )}: ${registered_groups}`
-              }}
-            </span>
-            <button
+              </b-col>
+              <b-col class="pt-2" cols="auto">
+                <b-form-checkbox
+                  class="chechbox-private"
+                  id="checkbox-private"
+                  v-model="mnSeries.is_private"
+                  name="checkbox-private"
+                  value="true"
+                  unchecked-value="false"
+                >
+                  {{ $t('series.private') }}
+                </b-form-checkbox>
+              </b-col>
+            </b-row>
+          </b-form-group>
+
+          <b-form-group
+            :label="`${$t('series.description')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="text-series-description"
+          >
+            <b-form-textarea
+              id="text-series-description"
+              v-model="mnSeries.description"
+              :placeholder="$t('label.enter_series_description')"
+            ></b-form-textarea
+          ></b-form-group>
+          <b-form-group
+            :label="`${$t('series.tag')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="input-series-tag"
+            ><b-form-input
+              id="input-series-tag"
+              v-model="mnSeries.tags"
+              :placeholder="`${$t('series.tag')}`"
               :disabled="series_is_deleted"
-              class="button btn-blue"
-              @click="onOpenModalGroups"
-              close-only
+            ></b-form-input
+          ></b-form-group>
+          <b-form-group
+            :label="`${$t('series.view_period')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+          >
+            <b-form-radio
+              v-model="mnSeries.period_type"
+              name="some-radios"
+              value="null"
             >
-              {{ $t('label.add_new_groups') }}
+              {{ $t('series.no_limit') }}
+            </b-form-radio>
+            <b-form-radio
+              v-model="mnSeries.period_type"
+              name="some-radios"
+              value="spec_period"
+            >
+              {{ $t('series.specify_period') }}
+            </b-form-radio>
+            <b-form-group>
+              <b-row>
+                <b-col>
+                  <datetime
+                    class="datepicker"
+                    format="YYYY-MM-DD"
+                    :readonly="true"
+                    v-model="spec_period_activity_start"
+                    :disabled="mnSeries.period_type !== 'spec_period'"
+                  ></datetime>
+                </b-col>
+                <b-col cols="0" class="pt-2 px-0">
+                  <span>~</span>
+                </b-col>
+                <b-col>
+                  <datetime
+                    class="datepicker"
+                    format="YYYY-MM-DD"
+                    :readonly="true"
+                    v-model="spec_period_activity_finish"
+                    :disabled="mnSeries.period_type !== 'spec_period'"
+                  ></datetime
+                ></b-col>
+              </b-row>
+            </b-form-group>
+
+            <b-form-radio
+              v-model="mnSeries.period_type"
+              name="some-radios"
+              value="user_reg"
+            >
+              {{ $t('series.start_users_accounts') }}
+            </b-form-radio>
+            <b-form-group :label="`${$t('series.view_start')}:`" label-cols="4"
+              ><b-row>
+                <b-col class="pr-0" cols="3">
+                  <b-form-input
+                    :id="`type-number-start`"
+                    :type="'number'"
+                    :disabled="mnSeries.period_type !== 'user_reg'"
+                    v-model="user_period_activity_start"
+                  >
+                  </b-form-input>
+                </b-col>
+                <b-col cols="auto" class="pt-2">
+                  <span>{{ $t('series.for_registration_date') }}</span>
+                </b-col></b-row
+              >
+            </b-form-group>
+            <b-form-group :label="`${$t('series.view_end')}:`" label-cols="4">
+              <b-row
+                ><b-col class="pr-0" cols="3">
+                  <b-form-input
+                    :id="`type-number-end`"
+                    :type="'number'"
+                    :disabled="mnSeries.period_type !== 'user_reg'"
+                    v-model="user_period_activity_finish"
+                  ></b-form-input></b-col
+                ><b-col cols="auto" class="pt-2">
+                  <span>{{ $t('series.for_registration_date') }}</span>
+                </b-col></b-row
+              >
+            </b-form-group>
+          </b-form-group>
+
+          <template v-if="oper === 'edit'">
+            <b-row align-v="center" class="pb-5" align-h="around">
+              <b-col>
+                <span
+                  >{{ `${$t('message.number_of_registered_groups')}: `
+                  }}<strong>{{ registered_groups }}</strong>
+                </span>
+              </b-col>
+              <b-col cols="auto">
+                <button
+                  :disabled="series_is_deleted"
+                  class="button btn-blue"
+                  @click.stop.prevent="onOpenModalGroups"
+                  close-only
+                >
+                  {{ $t('label.add_new_groups') }}
+                </button>
+              </b-col>
+            </b-row>
+
+            <b-modal
+              v-model="modalGroupsBindingShow"
+              scrollable
+              :title="$t('series.modal_title_groups_list')"
+              size="xl"
+              centered
+              ok-only
+            >
+              <BindingTable
+                :binding_data="binding_group_data"
+                v-model="groupMembersState"
+              ></BindingTable>
+            </b-modal>
+
+            <template v-if="!series_is_deleted">
+              <b-row
+                ><b-col cols="auto">
+                  <span
+                    >{{ `${$t('message.number_of_registered_videos')}: `
+                    }}<strong>{{ registered_videos }}</strong>
+                  </span>
+                </b-col>
+              </b-row>
+              <b-row
+                ><b-col>
+                  <BindingTable
+                    :binding_data="binding_video_data"
+                    v-model="videoMembersState"
+                  ></BindingTable>
+                </b-col>
+              </b-row>
+            </template>
+          </template>
+          <div class="series-operation-button-zone">
+            <button
+              :disabled="notChanged || series_is_deleted"
+              type="submit"
+              class="button btn-blue"
+            >
+              {{ $t('label.register') }}
+            </button>
+            <button @click="cancel_click" class="button btn-braun">
+              {{ `${$t('label.cancel')}` }}
             </button>
           </div>
-          <b-modal
-            v-model="modalGroupsBindingShow"
-            scrollable
-            :title="$t('series.modal_title_groups_list')"
-            size="xl"
-            centered
-            ok-only
-          >
-            <BindingTable
-              :binding_data="binding_group_data"
-              v-model="groupMembersState"
-            ></BindingTable>
-          </b-modal>
-        </div>
-        <template v-if="!series_is_deleted">
-          <span
-            >{{
-              `${$t(
-                'message.number_of_registered_videos'
-              )}: ${registered_videos}`
-            }}
-          </span>
-          <BindingTable
-            :binding_data="binding_video_data"
-            v-model="videoMembersState"
-          ></BindingTable>
-        </template>
-      </template>
-      <div class="series-operation-button-zone">
-        <button
-          :disabled="notChanged || series_is_deleted"
-          @click="save_click"
-          class="button btn-blue"
-        >
-          {{ $t('label.register') }}
-        </button>
-        <button @click="cancel_click" class="button btn-braun">
-          {{ `${$t('label.cancel')}` }}
-        </button>
-      </div>
+        </b-container>
+      </b-form>
     </template>
   </div>
 </template>
@@ -219,6 +250,8 @@
 import {mapGetters, mapState} from 'vuex'
 import datetime from '@/components/elements/datetimepicker'
 import BindingTable from '@/components/elements/table-binding'
+import {required, minLength, maxLength} from 'vuelidate/lib/validators'
+import {withParams} from 'vuelidate/lib/validators/common'
 
 export default {
   name: 'series-mng-form',
@@ -231,6 +264,7 @@ export default {
   },
   data() {
     return {
+      nameUniqError: '',
       src: {
         name: '',
         period_type: null,
@@ -259,10 +293,77 @@ export default {
       binding_video_data: [],
       videoMembersState: [],
       groupMembersState: [],
-      modalGroupsBindingShow: false
+      modalGroupsBindingShow: false,
+
+      limit: {
+        name: {max_length: 20, min_length: 3}
+      },
+      req_templ: () => {
+        return withParams({msg: this.$t('validation.required_field')}, required)
+      },
+      min_len_templ: function(length) {
+        return withParams(
+          {
+            msg: this.$t('validation.min_length', {
+              cnt: length
+            })
+          },
+          minLength(length)
+        )
+      },
+
+      max_len_templ: function(length) {
+        return withParams(
+          {
+            msg: this.$t('validation.max_length', {
+              cnt: length
+            })
+          },
+          maxLength(length)
+        )
+      },
+      isUniqTempl: (param) =>
+        withParams({msg: this.$t('validation.is_not_unique')}, (val) => {
+          if (val === '') return true
+          return param === ''
+        })
+    }
+  },
+  validations() {
+    return {
+      mnSeries: {
+        name: {
+          required: this.req_templ(),
+          minLength: this.min_len_templ(this.limit.name.min_length),
+          maxLength: this.max_len_templ(this.limit.name.max_length),
+          isUnique: this.isUniqTempl(this.nameUniqError)
+        }
+      }
+    }
+  },
+  watch: {
+    ['mnSeries.name'](newVal) {
+      if (this.nameUniqError !== '') {
+        this.nameUniqError = ''
+      }
     }
   },
   methods: {
+    validateState(name) {
+      const {$dirty, $error} = this.$v.mnSeries[name]
+      return $dirty ? ($error ? !$error : null) : null
+    },
+    validateErrorMessage(name) {
+      let message = ''
+      const {$params} = this.$v.mnSeries[name]
+
+      Object.keys($params).forEach((param) => {
+        if (!this.$v.mnSeries[name][param]) {
+          message += this.$v.mnSeries[name].$params[param].msg
+        }
+      })
+      return message
+    },
     onOpenModalGroups() {
       const {sid} = this.mnSeries
       this.modalGroupsBindingShow = true
@@ -270,24 +371,15 @@ export default {
     contentElementClick(menu_item) {
       this.$emit('contentElementClick', menu_item)
     },
-    // deleteVideoSeries(uuid) {
-    //   const {sid} = this.mnSeries
-    //   this.$store.dispatch('VIDEO_SERIES_DEL', {uuid, sid}).then(() => {
-    //     //this.updateVideosLiteTable()
-    //   })
-    // },
-    // deleteGroupSeries(gid) {
-    //   const {sid} = this.mnSeries
-    //   this.$store
-    //     .dispatch('GROUP_SERIES_OPER', {gid, sid, oper: 'del'})
-    //     .then(() => {
-    //       //this.updateGroupsLiteTable()
-    //     })
-    // },
+
     cancel_click() {
       this.contentElementClick('/hub/series')
     },
-    save_click() {
+    onSubmit() {
+      this.$v.mnSeries.$touch()
+      if (this.$v.mnSeries.$anyError) {
+        return
+      }
       const oper_type = this.oper === 'edit' ? 'SERIES_UPD' : 'SERIES_ADD'
 
       this.mnSeries.period_type =
@@ -313,7 +405,15 @@ export default {
           this.contentElementClick('/hub/series')
         },
         (err) => {
-          console.log('err=', err)
+          const errMess = err.message.replace('Error: ', '')
+          switch (errMess) {
+            case 'THIS_SERIES_NAME_IS_NOT_ALLOWED':
+              this.nameUniqError = errMess
+              break
+            default:
+              console.log('error=', errMess)
+              break
+          }
         }
       )
       if (this.oper === 'edit') {
@@ -381,28 +481,6 @@ export default {
     makeNull(val) {
       return val === '' ? null : val
     }
-    // updateVideosLiteTable() {
-    //   const cid = this.cid
-    //   const {sid} = this.mnSeries
-    //   const vparams = {
-    //     cid,
-    //     filter: `video_series[ol]: ARRAY[${sid}]`
-    //   }
-    //   this.$store
-    //     .dispatch('LOAD_VIDEOS_BY_SERIES', vparams)
-    //     .then(() => this.$store.commit('SET_STATUS_VIDEOS_LOADING', false))
-    // },
-    // updateGroupsLiteTable() {
-    //   const cid = this.cid
-    //   const {sid} = this.mnSeries
-    //   const params = {
-    //     cid,
-    //     filter: `group_series[ol]: ARRAY[${sid}]`
-    //   }
-    //   this.$store
-    //     .dispatch('LOAD_GROUPS', params)
-    //     .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
-    // }
   },
 
   created() {
@@ -541,110 +619,112 @@ export default {
   margin-left: -2rem !important;
 }
 
-.group-mng-row {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 10px 0;
-  span {
-    padding-right: 10px;
-  }
-}
+// .group-mng-row {
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   margin: 10px 0;
+//   span {
+//     padding-right: 10px;
+//   }
+// }
 
-.row-series-activity-period {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 10px 0;
-  margin-left: 10px;
+// .row-series-activity-period {
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   margin: 10px 0;
+//   margin-left: 10px;
 
-  > input {
-    width: 80px;
-    margin: 0 10px;
-  }
-  p {
-    min-width: 82px;
-    font-size: 1.1rem;
-    margin-bottom: 0px;
-  }
-  &.disabled {
-    p {
-      color: $text-disabled;
-    }
-  }
-}
-.datepicker {
-  height: 40px;
-  width: 100%;
-  margin-bottom: 10px;
-}
-p.row-space {
-  padding: 0 10px;
-  min-width: 0;
-}
+//   > input {
+//     width: 80px;
+//     margin: 0 10px;
+//   }
+//   p {
+//     min-width: 82px;
+//     font-size: 1.1rem;
+//     margin-bottom: 0px;
+//   }
+//   &.disabled {
+//     p {
+//       color: $text-disabled;
+//     }
+//   }
+// }
+// .datepicker {
+//   height: 40px;
+//   width: 100%;
+//   margin-bottom: 10px;
+// }
+// p.row-space {
+//   padding: 0 10px;
+//   min-width: 0;
+// }
 .series-operation {
+  max-width: 550px;
   display: flex;
   flex-direction: column;
-  > p {
-    font-size: 1.7em;
+  > span {
+    font-size: 1.8em;
     font-weight: 600;
   }
-  > * {
-    //margin-bottom: 20px;
-  }
-  .series-oper-id {
-    //display: flex;
-    //flex-direction: column;
-    //align-items: flex-start;
-    //justify-content: center;
-    //font-size: 1.1em;
-    //max-width: 970px;
-    .series-oper-id-data {
-      display: flex;
-      justify-content: flex-start;
-      padding-bottom: 10px;
-      flex-wrap: nowrap;
-      align-items: center;
-      min-width: 10rem;
-      > p {
-        min-width: 110px;
-        font-size: 1.1em;
-      }
-      .chechbox-private {
-        margin-left: 15px;
-        display: flex;
-        align-items: center;
-      }
-    }
-  }
-  input {
-    //margin-right: 10px;
-    max-width: 400px;
-  }
-  textarea {
-    max-width: 400px;
-  }
-  .check-admin {
-    display: flex;
-    justify-content: space-between;
-    max-width: 400px;
+}
+//   > * {
+//     //margin-bottom: 20px;
+//   }
+//   .series-oper-id {
+//     //display: flex;
+//     //flex-direction: column;
+//     //align-items: flex-start;
+//     //justify-content: center;
+//     //font-size: 1.1em;
+//     //max-width: 970px;
+//     .series-oper-id-data {
+//       display: flex;
+//       justify-content: flex-start;
+//       padding-bottom: 10px;
+//       flex-wrap: nowrap;
+//       align-items: center;
+//       min-width: 10rem;
+//       > p {
+//         min-width: 110px;
+//         font-size: 1.1em;
+//       }
+//       .chechbox-private {
+//         margin-left: 15px;
+//         display: flex;
+//         align-items: center;
+//       }
+//     }
+//   }
+//   input {
+//     //margin-right: 10px;
+//     max-width: 400px;
+//   }
+//   textarea {
+//     max-width: 400px;
+//   }
+//   .check-admin {
+//     display: flex;
+//     justify-content: space-between;
+//     max-width: 400px;
 
-    > * {
-      margin-right: 10px;
-    }
-  }
-  .series-operation-button-zone {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-    margin-top: 30px;
+//     > * {
+//       margin-right: 10px;
+//     }
+//   }
+.series-operation-button-zone {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 30px;
 
-    .button {
-      margin-right: 10px;
-    }
+  .button {
+    margin-right: 10px;
   }
 }
+// }
 .series-not-found {
   display: flex;
   flex-direction: column;

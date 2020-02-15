@@ -751,6 +751,7 @@ export default {
       width: 100%;
       height: 100%;
       padding: 3px;
+      margin-right: -24px;
       outline: none;
       border: none;
     }
