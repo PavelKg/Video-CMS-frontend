@@ -1,8 +1,8 @@
 <template>
   <div>
-    <b-container fluid class="pl-0 ">
-      <b-row align-v="center">
-        <b-col cols="5" sm class="mb-2 ">
+    <b-container class="px-0 ">
+      <b-row align-v="center" align-h="between">
+        <b-col cols="5" class="mb-2 pr-0">
           <b-table
             class="scroll-table"
             responsive
@@ -36,7 +36,7 @@
             </template>
           </b-table>
         </b-col>
-        <b-col cols="2" class="p-1 justify-content-md-center buttom-column">
+        <b-col cols="0" class="p-0 justify-content-md-center buttom-column">
           <b-button
             class="m-1"
             variant="outline-secondary"
@@ -50,7 +50,7 @@
             @click="moveToNoMember"
           ></b-button
         ></b-col>
-        <b-col cols="5" sm class="mb-2 ">
+        <b-col cols="5" class="mb-2 pl-0">
           <b-table
             responsive
             striped

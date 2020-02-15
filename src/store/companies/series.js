@@ -59,7 +59,7 @@ export default {
           throw Error(`Error add series, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error add new series: ${err.response.data.message}`)
+        throw err.response.data
       }
     },
     async SERIES_UPD({commit, getters}, payload) {
@@ -94,7 +94,7 @@ export default {
           throw Error(`Error update series, status - ${result.status}`)
         }
       } catch (err) {
-        throw Error(`Error update series: ${err.response.data.message}`)
+        throw err.response.data
       }
     },
     async SERIES_DEL({commit, getters}, sid) {

@@ -16,6 +16,7 @@
             v-if="oper === 'edit'"
             id="input-series-id"
             :label="`${$t('series.id')}:`"
+            label-cols="2"
             label-cols-sm="3"
             label-cols-lg="3"
           >
@@ -25,27 +26,47 @@
           </b-form-group>
           <b-form-group
             :label="`${$t('series.name')}:`"
+            label-cols="auto"
             label-cols-sm="3"
             label-cols-lg="3"
             label-for="input-series-name"
-          >
-            <b-form-input
-              id="input-series-name"
-              v-model="mnSeries.name"
-              :placeholder="`${$t('series.series_name')}`"
-              :disabled="series_is_deleted"
-            ></b-form-input>
-            <b-form-checkbox
-              class="chechbox-private"
-              id="checkbox-private"
-              v-model="mnSeries.is_private"
-              name="checkbox-private"
-              value="true"
-              unchecked-value="false"
-            >
-              {{ $t('series.private') }}
-            </b-form-checkbox></b-form-group
-          >
+            align-h="between"
+            :invalid-feedback="validateErrorMessage('name')"
+            :state="validateState('name')"
+            ><b-row>
+              <b-col>
+                <b-form-input
+                  id="input-series-name"
+                  :value="mnSeries.name"
+                  :placeholder="`${$t('series.series_name')}`"
+                  :disabled="series_is_deleted"
+                  :maxLength="limit.name.max_length"
+                  @input.native="
+                    (e) => {
+                      e.target.value = e.target.value.substring(
+                        0,
+                        limit.name.max_length
+                      )
+                      mnSeries.name = e.target.value
+                    }
+                  "
+                ></b-form-input>
+              </b-col>
+              <b-col class="pt-2" cols="auto">
+                <b-form-checkbox
+                  class="chechbox-private"
+                  id="checkbox-private"
+                  v-model="mnSeries.is_private"
+                  name="checkbox-private"
+                  value="true"
+                  unchecked-value="false"
+                >
+                  {{ $t('series.private') }}
+                </b-form-checkbox>
+              </b-col>
+            </b-row>
+          </b-form-group>
+
           <b-form-group
             :label="`${$t('series.description')}:`"
             label-cols-sm="3"
@@ -79,7 +100,6 @@
               v-model="mnSeries.period_type"
               name="some-radios"
               value="null"
-              size="lg"
             >
               {{ $t('series.no_limit') }}
             </b-form-radio>
@@ -87,16 +107,12 @@
               v-model="mnSeries.period_type"
               name="some-radios"
               value="spec_period"
-              size="lg"
             >
               {{ $t('series.specify_period') }}
             </b-form-radio>
             <b-form-group>
               <b-row>
-                <!--div
-              class="row-series-activity-period"
-              :class="mnSeries.period_type !== 'spec_period' ? 'disabled' : ''"
-            --><b-col>
+                <b-col>
                   <datetime
                     class="datepicker"
                     format="YYYY-MM-DD"
@@ -106,10 +122,8 @@
                   ></datetime>
                 </b-col>
                 <b-col cols="0" class="pt-2 px-0">
-                  <span class="row-space">
-                    ~
-                  </span></b-col
-                >
+                  <span>~</span>
+                </b-col>
                 <b-col>
                   <datetime
                     class="datepicker"
@@ -119,90 +133,99 @@
                     :disabled="mnSeries.period_type !== 'spec_period'"
                   ></datetime
                 ></b-col>
-                <!--/div-->
               </b-row>
             </b-form-group>
+
             <b-form-radio
               v-model="mnSeries.period_type"
               name="some-radios"
               value="user_reg"
-              size="lg"
             >
               {{ $t('series.start_users_accounts') }}
             </b-form-radio>
-            <div
-              class="row-series-activity-period"
-              :class="mnSeries.period_type !== 'user_reg' ? 'disabled' : ''"
-            >
-              <p>{{ $t('series.view_start') }}:</p>
-              <b-form-input
-                :id="`type-number-start`"
-                :type="'number'"
-                :disabled="mnSeries.period_type !== 'user_reg'"
-                v-model="user_period_activity_start"
-              ></b-form-input>
-              <p>{{ $t('series.for_registration_date') }}</p>
-            </div>
-            <div
-              class="row-series-activity-period"
-              :class="mnSeries.period_type !== 'user_reg' ? 'disabled' : ''"
-            >
-              <p>{{ $t('series.view_end') }}:</p>
-              <b-form-input
-                :id="`type-number-end`"
-                :type="'number'"
-                :disabled="mnSeries.period_type !== 'user_reg'"
-                v-model="user_period_activity_finish"
-              ></b-form-input>
-              <p>{{ $t('series.for_registration_date') }}</p>
-            </div>
+            <b-form-group :label="`${$t('series.view_start')}:`" label-cols="4"
+              ><b-row>
+                <b-col class="pr-0" cols="3">
+                  <b-form-input
+                    :id="`type-number-start`"
+                    :type="'number'"
+                    :disabled="mnSeries.period_type !== 'user_reg'"
+                    v-model="user_period_activity_start"
+                  >
+                  </b-form-input>
+                </b-col>
+                <b-col cols="auto" class="pt-2">
+                  <span>{{ $t('series.for_registration_date') }}</span>
+                </b-col></b-row
+              >
+            </b-form-group>
+            <b-form-group :label="`${$t('series.view_end')}:`" label-cols="4">
+              <b-row
+                ><b-col class="pr-0" cols="3">
+                  <b-form-input
+                    :id="`type-number-end`"
+                    :type="'number'"
+                    :disabled="mnSeries.period_type !== 'user_reg'"
+                    v-model="user_period_activity_finish"
+                  ></b-form-input></b-col
+                ><b-col cols="auto" class="pt-2">
+                  <span>{{ $t('series.for_registration_date') }}</span>
+                </b-col></b-row
+              >
+            </b-form-group>
           </b-form-group>
 
           <template v-if="oper === 'edit'">
-            <div class="series-oper-id-data">
-              <div class="group-mng-row">
+            <b-row align-v="center" class="pb-5" align-h="around">
+              <b-col>
                 <span
-                  >{{
-                    `${$t(
-                      'message.number_of_registered_groups'
-                    )}: ${registered_groups}`
-                  }}
+                  >{{ `${$t('message.number_of_registered_groups')}: `
+                  }}<strong>{{ registered_groups }}</strong>
                 </span>
+              </b-col>
+              <b-col cols="auto">
                 <button
                   :disabled="series_is_deleted"
                   class="button btn-blue"
-                  @click="onOpenModalGroups"
+                  @click.stop.prevent="onOpenModalGroups"
                   close-only
                 >
                   {{ $t('label.add_new_groups') }}
                 </button>
-              </div>
-              <b-modal
-                v-model="modalGroupsBindingShow"
-                scrollable
-                :title="$t('series.modal_title_groups_list')"
-                size="xl"
-                centered
-                ok-only
-              >
-                <BindingTable
-                  :binding_data="binding_group_data"
-                  v-model="groupMembersState"
-                ></BindingTable>
-              </b-modal>
-            </div>
-            <template v-if="!series_is_deleted">
-              <span
-                >{{
-                  `${$t(
-                    'message.number_of_registered_videos'
-                  )}: ${registered_videos}`
-                }}
-              </span>
+              </b-col>
+            </b-row>
+
+            <b-modal
+              v-model="modalGroupsBindingShow"
+              scrollable
+              :title="$t('series.modal_title_groups_list')"
+              size="xl"
+              centered
+              ok-only
+            >
               <BindingTable
-                :binding_data="binding_video_data"
-                v-model="videoMembersState"
+                :binding_data="binding_group_data"
+                v-model="groupMembersState"
               ></BindingTable>
+            </b-modal>
+
+            <template v-if="!series_is_deleted">
+              <b-row
+                ><b-col cols="auto">
+                  <span
+                    >{{ `${$t('message.number_of_registered_videos')}: `
+                    }}<strong>{{ registered_videos }}</strong>
+                  </span>
+                </b-col>
+              </b-row>
+              <b-row
+                ><b-col>
+                  <BindingTable
+                    :binding_data="binding_video_data"
+                    v-model="videoMembersState"
+                  ></BindingTable>
+                </b-col>
+              </b-row>
             </template>
           </template>
           <div class="series-operation-button-zone">
@@ -227,6 +250,8 @@
 import {mapGetters, mapState} from 'vuex'
 import datetime from '@/components/elements/datetimepicker'
 import BindingTable from '@/components/elements/table-binding'
+import {required, minLength, maxLength} from 'vuelidate/lib/validators'
+import {withParams} from 'vuelidate/lib/validators/common'
 
 export default {
   name: 'series-mng-form',
@@ -239,6 +264,7 @@ export default {
   },
   data() {
     return {
+      nameUniqError: '',
       src: {
         name: '',
         period_type: null,
@@ -267,10 +293,77 @@ export default {
       binding_video_data: [],
       videoMembersState: [],
       groupMembersState: [],
-      modalGroupsBindingShow: false
+      modalGroupsBindingShow: false,
+
+      limit: {
+        name: {max_length: 20, min_length: 3}
+      },
+      req_templ: () => {
+        return withParams({msg: this.$t('validation.required_field')}, required)
+      },
+      min_len_templ: function(length) {
+        return withParams(
+          {
+            msg: this.$t('validation.min_length', {
+              cnt: length
+            })
+          },
+          minLength(length)
+        )
+      },
+
+      max_len_templ: function(length) {
+        return withParams(
+          {
+            msg: this.$t('validation.max_length', {
+              cnt: length
+            })
+          },
+          maxLength(length)
+        )
+      },
+      isUniqTempl: (param) =>
+        withParams({msg: this.$t('validation.is_not_unique')}, (val) => {
+          if (val === '') return true
+          return param === ''
+        })
+    }
+  },
+  validations() {
+    return {
+      mnSeries: {
+        name: {
+          required: this.req_templ(),
+          minLength: this.min_len_templ(this.limit.name.min_length),
+          maxLength: this.max_len_templ(this.limit.name.max_length),
+          isUnique: this.isUniqTempl(this.nameUniqError)
+        }
+      }
+    }
+  },
+  watch: {
+    ['mnSeries.name'](newVal) {
+      if (this.nameUniqError !== '') {
+        this.nameUniqError = ''
+      }
     }
   },
   methods: {
+    validateState(name) {
+      const {$dirty, $error} = this.$v.mnSeries[name]
+      return $dirty ? ($error ? !$error : null) : null
+    },
+    validateErrorMessage(name) {
+      let message = ''
+      const {$params} = this.$v.mnSeries[name]
+
+      Object.keys($params).forEach((param) => {
+        if (!this.$v.mnSeries[name][param]) {
+          message += this.$v.mnSeries[name].$params[param].msg
+        }
+      })
+      return message
+    },
     onOpenModalGroups() {
       const {sid} = this.mnSeries
       this.modalGroupsBindingShow = true
@@ -278,24 +371,15 @@ export default {
     contentElementClick(menu_item) {
       this.$emit('contentElementClick', menu_item)
     },
-    // deleteVideoSeries(uuid) {
-    //   const {sid} = this.mnSeries
-    //   this.$store.dispatch('VIDEO_SERIES_DEL', {uuid, sid}).then(() => {
-    //     //this.updateVideosLiteTable()
-    //   })
-    // },
-    // deleteGroupSeries(gid) {
-    //   const {sid} = this.mnSeries
-    //   this.$store
-    //     .dispatch('GROUP_SERIES_OPER', {gid, sid, oper: 'del'})
-    //     .then(() => {
-    //       //this.updateGroupsLiteTable()
-    //     })
-    // },
+
     cancel_click() {
       this.contentElementClick('/hub/series')
     },
     onSubmit() {
+      this.$v.mnSeries.$touch()
+      if (this.$v.mnSeries.$anyError) {
+        return
+      }
       const oper_type = this.oper === 'edit' ? 'SERIES_UPD' : 'SERIES_ADD'
 
       this.mnSeries.period_type =
@@ -321,7 +405,15 @@ export default {
           this.contentElementClick('/hub/series')
         },
         (err) => {
-          console.log('err=', err)
+          const errMess = err.message.replace('Error: ', '')
+          switch (errMess) {
+            case 'THIS_SERIES_NAME_IS_NOT_ALLOWED':
+              this.nameUniqError = errMess
+              break
+            default:
+              console.log('error=', errMess)
+              break
+          }
         }
       )
       if (this.oper === 'edit') {
@@ -389,28 +481,6 @@ export default {
     makeNull(val) {
       return val === '' ? null : val
     }
-    // updateVideosLiteTable() {
-    //   const cid = this.cid
-    //   const {sid} = this.mnSeries
-    //   const vparams = {
-    //     cid,
-    //     filter: `video_series[ol]: ARRAY[${sid}]`
-    //   }
-    //   this.$store
-    //     .dispatch('LOAD_VIDEOS_BY_SERIES', vparams)
-    //     .then(() => this.$store.commit('SET_STATUS_VIDEOS_LOADING', false))
-    // },
-    // updateGroupsLiteTable() {
-    //   const cid = this.cid
-    //   const {sid} = this.mnSeries
-    //   const params = {
-    //     cid,
-    //     filter: `group_series[ol]: ARRAY[${sid}]`
-    //   }
-    //   this.$store
-    //     .dispatch('LOAD_GROUPS', params)
-    //     .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
-    // }
   },
 
   created() {
@@ -643,17 +713,17 @@ export default {
 //       margin-right: 10px;
 //     }
 //   }
-//   .series-operation-button-zone {
-//     display: flex;
-//     flex-direction: row;
-//     justify-content: flex-start;
-//     align-items: flex-start;
-//     margin-top: 30px;
+.series-operation-button-zone {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 30px;
 
-//     .button {
-//       margin-right: 10px;
-//     }
-//   }
+  .button {
+    margin-right: 10px;
+  }
+}
 // }
 .series-not-found {
   display: flex;
