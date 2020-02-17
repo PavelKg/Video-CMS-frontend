@@ -57,7 +57,7 @@ export default {
   display: flex;
   align-content: space-between;
   flex-direction: column;
-  padding: 15px 10px 15px 2px;
+  padding: 0.3rem 10px 0.3rem 2px;
   color: white;
   cursor: pointer;
   .menu-item-name {

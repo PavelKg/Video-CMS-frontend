@@ -1,7 +1,7 @@
 <template>
   <div class="binding-zone">
     <p>{{ $t('binding.binding_settings') }}</p>
-    <b-container fluid class="pl-0 bv-example-row-flex-cols">
+    <b-container fluid class="px-0 bv-example-row-flex-cols">
       <b-row class="justify-content-md-left">
         <b-col sm class="mb-2">
           <b-form-select
@@ -29,11 +29,15 @@
           </button>
         </b-col>
       </b-row>
-      <BindingTable
-        :binding_data="binding_data"
-        v-model="bindingMembersState"
-        :isLoadingData="isLoadingTableData"
-      ></BindingTable>
+      <b-row>
+        <b-col cols="12">
+          <BindingTable
+            :binding_data="binding_data"
+            v-model="bindingMembersState"
+            :isLoadingData="isLoadingTableData"
+          ></BindingTable>
+        </b-col>
+      </b-row>
       <b-row class="justify-content-md-left">
         <b-col cols="auto">
           <button
@@ -365,7 +369,7 @@ export default {
   overflow: hidden;
 }
 .binding-zone {
-  //max-width: 900px;
+  max-width: 1170px;
   > p {
     font-size: 1.4em;
     font-weight: 600;

@@ -51,7 +51,7 @@
       </div>
       <template v-if="form.commentbox_visible">
         <div class="comment-input">
-          <input v-model="comment_text" />
+          <b-form-textarea v-model="comment_text" rows="1" max-rows="8" />
           <button
             :disabled="comment_sending"
             @click="addComment"
@@ -168,7 +168,10 @@ export default {
           uuid: this.form.video_uuid,
           text: this.comment_text
         })
-        .then((res) => {}, (err) => {})
+        .then(
+          (res) => {},
+          (err) => {}
+        )
         .finally(() => {
           this.comment_text = ''
           this.comment_sending = false

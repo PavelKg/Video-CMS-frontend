@@ -45,7 +45,7 @@ export default {
 <style lang="scss">
 .menu-table {
   display: flex;
-  padding: 10px 8px;
+  padding: 10px 8px 15px 8px;
   flex-direction: column;
   flex: 1 1 0;
   font-size: 24px;

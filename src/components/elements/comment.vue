@@ -120,6 +120,7 @@ export default {
       word-break: break-all;
       &.comment-text {
         font-style: italic;
+        white-space: pre-line;
       }
     }
   }
