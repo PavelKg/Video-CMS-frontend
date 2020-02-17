@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container class="px-0 ">
+    <b-container class="px-0 mx-0">
       <b-row align-v="center" align-h="between">
         <b-col cols="5" class="mb-2 pr-0">
           <b-table
