@@ -2,8 +2,8 @@
   <div>
     <template v-if="myUrl">
       this is url = {{ myUrl }}
-      <video id="video" width="500px" height="450px" controls>
-      </video>
+      <!--video id="video" width="500px" height="450px" controls>
+      </video-->
     </template>
   </div>
 </template>

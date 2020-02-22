@@ -24,10 +24,10 @@
                 </b-col>
               </template>
               <template v-if="oper === 'add'">
-                <b-col cols="8" >
+                <b-col cols="8">
                   <b-form-input
                     type="text"
-                    :maxLength="limit.uid.max_length"
+                    :maxLength="fieldsRestr.uid.max_length"
                     :value="mnUser.uid"
                     :placeholder="`${$t('users.user_id')}`"
                     :state="validateState('uid')"
@@ -35,7 +35,7 @@
                       (e) => {
                         e.target.value = e.target.value.substring(
                           0,
-                          limit.uid.max_length
+                          fieldsRestr.uid.max_length
                         )
                         mnUser.uid = e.target.value
                       }
@@ -64,10 +64,15 @@
               <b-col>
                 <b-form-input
                   :value="mnUser.fullname"
+                  :maxLength="fieldsRestr.fullname.max_length"
                   :placeholder="`${$t('users.user_fullname')}`"
                   :state="validateState('fullname')"
                   @input.native="
                     (e) => {
+                      e.target.value = e.target.value.substring(
+                        0,
+                        fieldsRestr.fullname.max_length
+                      )
                       mnUser.fullname = e.target.value
                     }
                   "
@@ -211,22 +216,14 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
 import datetime from '@/components/elements/datetimepicker'
-import {
-  required,
-  minLength,
-  maxLength,
-  between,
-  sameAs,
-  email,
-  requiredIf
-} from 'vuelidate/lib/validators'
-import {withParams} from 'vuelidate/lib/validators/common'
+import valid_mix from '@/mixins/validation'
 
 export default {
   name: 'user-mng-form',
+  mixins: [valid_mix],
   props: {
     oper: String
   },
@@ -246,39 +243,6 @@ export default {
         activity_start: '',
         activity_finish: '',
         confPassword: ''
-      },
-      limit: {uid: {min_length: 5, max_length: 10}, fullname: {min_length: 3}},
-
-      req_templ: () => {
-        return withParams({msg: this.$t('validation.required_field')}, required)
-      },
-
-      isUniqTempl: (param) =>
-        withParams({msg: this.$t('validation.is_not_unique')}, (val) => {
-          if (val === '') return true
-          return param === ''
-        }),
-
-      min_len_templ: function(length) {
-        return withParams(
-          {
-            msg: this.$t('validation.min_length', {
-              cnt: length
-            })
-          },
-          minLength(length)
-        )
-      },
-
-      max_len_templ: function(length) {
-        return withParams(
-          {
-            msg: this.$t('validation.max_length', {
-              cnt: length
-            })
-          },
-          maxLength(length)
-        )
       },
 
       group_options: [],
@@ -310,39 +274,36 @@ export default {
     return {
       mnUser: {
         uid: {
-          required: this.req_templ(),
+          required: this.vRequired(),
           minLength:
             this.oper === 'add'
-              ? this.min_len_templ(this.limit.uid.min_length)
+              ? this.vMinLength(this.fieldsRestr.uid.min_length)
               : '',
           maxLength:
             this.oper === 'add'
-              ? this.max_len_templ(this.limit.uid.max_length)
+              ? this.vMaxLength(this.fieldsRestr.uid.max_length)
               : '',
-          isUnique: this.isUniqTempl(this.uidUniqError)
+          isUnique: this.vIsUnique(this.uidUniqError)
         },
         fullname: {
-          required: this.req_templ(),
-          minLength: this.min_len_templ(this.limit.fullname.min_length)
+          required: this.vRequired(),
+          minLength: this.vMinLength(this.fieldsRestr.fullname.min_length)
         },
         gids: {},
         rid: {
-          required: this.req_templ()
+          required: this.vRequired()
         },
         email: {
-          required: this.req_templ(),
-          email: withParams({msg: this.$t('validation.email')}, email),
-          isUnique: this.isUniqTempl(this.emailUniqError)
+          required: this.vRequired(),
+          email: this.vIsEmail(),
+          isUnique: this.vIsUnique(this.emailUniqError)
         },
         password: {
-          requered: this.oper === 'add' ? this.req_templ() : '',
-          minLength: this.min_len_templ(8)
+          requered: this.oper === 'add' ? this.vRequired() : '',
+          minLength: this.vMinLength(8)
         },
         confPassword: {
-          sameAsPassword: withParams(
-            {msg: this.$t('validation.same_as_password')},
-            sameAs('password')
-          )
+          sameAsPassword: this.vConfPassword('password')
         }
       }
     }
@@ -368,7 +329,7 @@ export default {
       //this.$router.go(-1)
       this.$emit('contentElementClick', '/hub/users')
     },
-    save_click() {},
+
     genUserId(evt) {
       //evt.preventDefault()
       console.log('gen user ID')
@@ -417,7 +378,7 @@ export default {
 
   created() {
     const {uid = null} = this.$route.params
-    const cid = this.me.profile.company_id
+    const cid = this.cid
     this.isUpdatingUserData = true
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_USER_INFO', {cid, uid}).then(
@@ -484,7 +445,11 @@ export default {
     })
   },
   computed: {
-    ...mapGetters(['groups', 'roles', 'me', 'groups_is_loading']),
+    ...mapGetters(['groups', 'roles', 'groups_is_loading']),
+    ...mapState({
+      cid: (store) => store.Login.me.profile.company_id,
+      fieldsRestr: (store) => store.FieldRestr.categories.users
+    }),
     user_title() {
       return `users.oper_title_${this.oper}`
     },

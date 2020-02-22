@@ -314,7 +314,9 @@ export default {
         }
       }
     },
-    CLEAR_MENU_STATE: () => localStorage.removeItem('vcms-activ-menu'),
+    
+    //CLEAR_MENU_STATE: () => localStorage.removeItem('vcms-activ-menu'),
+
     SAVE_MENU_STATE: ({state}) => {
       localStorage.setItem(
         'vcms-activ-menu',

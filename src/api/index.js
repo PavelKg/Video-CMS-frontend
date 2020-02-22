@@ -1,5 +1,7 @@
 import axios from 'axios'
 import axiosGcs from 'axios'
+import store from '../store'
+import router from '../router'
 
 const API_ROOT = 'https://vcms.pepex.kg/api'
 //const API_ROOT = 'http://127.0.0.1:8769/api'
@@ -13,6 +15,33 @@ const Api = axios.create({
   }
 })
 
+// Add a response interceptor
+Api.interceptors.response.use(
+  function(response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    console.log('response=', response.status)
+    //store.dispatch('LOGOUT').then(() => router.push(`/`))
+
+    return response
+  },
+  async function(error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    const message = error.response.data.message.toLowerCase()
+
+    if (!message.search(/token expired|invalid token]/gi)) {
+      return Promise.reject(error)
+    }
+
+    localStorage.removeItem('vcms-token')
+    delete error.config.headers.Authorization
+    store.commit('AUTH_LOGOUT')
+    router.push(`/`)
+    return Promise.reject(error)
+  }
+)
+
 const type_json = {'Content-Type': 'application/json'}
 
 export default {
@@ -21,6 +50,7 @@ export default {
   },
 
   delHeaderAuth(token) {
+    console.log('delheaderAuth')
     delete Api.defaults.headers.common['Authorization']
   },
   /** Auth management */

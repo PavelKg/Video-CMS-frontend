@@ -69,7 +69,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import Hls from 'hls.js'
+//import Hls from 'hls.js'
 import Comment from '@/components/elements/comment'
 
 export default {

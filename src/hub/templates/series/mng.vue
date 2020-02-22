@@ -40,12 +40,12 @@
                   :value="mnSeries.name"
                   :placeholder="`${$t('series.series_name')}`"
                   :disabled="series_is_deleted"
-                  :maxLength="limit.name.max_length"
+                  :maxLength="fieldsRestr.name.max_length"
                   @input.native="
                     (e) => {
                       e.target.value = e.target.value.substring(
                         0,
-                        limit.name.max_length
+                        fieldsRestr.name.max_length
                       )
                       mnSeries.name = e.target.value
                     }
@@ -248,13 +248,13 @@
 
 <script>
 import {mapGetters, mapState} from 'vuex'
+import valid_mix from '@/mixins/validation'
 import datetime from '@/components/elements/datetimepicker'
 import BindingTable from '@/components/elements/table-binding'
-import {required, minLength, maxLength} from 'vuelidate/lib/validators'
-import {withParams} from 'vuelidate/lib/validators/common'
 
 export default {
   name: 'series-mng-form',
+  mixins: [valid_mix],
   components: {
     datetime,
     BindingTable
@@ -293,50 +293,17 @@ export default {
       binding_video_data: [],
       videoMembersState: [],
       groupMembersState: [],
-      modalGroupsBindingShow: false,
-
-      limit: {
-        name: {max_length: 20, min_length: 3}
-      },
-      req_templ: () => {
-        return withParams({msg: this.$t('validation.required_field')}, required)
-      },
-      min_len_templ: function(length) {
-        return withParams(
-          {
-            msg: this.$t('validation.min_length', {
-              cnt: length
-            })
-          },
-          minLength(length)
-        )
-      },
-
-      max_len_templ: function(length) {
-        return withParams(
-          {
-            msg: this.$t('validation.max_length', {
-              cnt: length
-            })
-          },
-          maxLength(length)
-        )
-      },
-      isUniqTempl: (param) =>
-        withParams({msg: this.$t('validation.is_not_unique')}, (val) => {
-          if (val === '') return true
-          return param === ''
-        })
+      modalGroupsBindingShow: false
     }
   },
   validations() {
     return {
       mnSeries: {
         name: {
-          required: this.req_templ(),
-          minLength: this.min_len_templ(this.limit.name.min_length),
-          maxLength: this.max_len_templ(this.limit.name.max_length),
-          isUnique: this.isUniqTempl(this.nameUniqError)
+          required: this.vRequired(),
+          minLength: this.vMinLength(this.fieldsRestr.name.min_length),
+          maxLength: this.vMaxLength(this.fieldsRestr.name.max_length),
+          isUnique: this.vIsUnique(this.nameUniqError)
         }
       }
     }
@@ -558,7 +525,10 @@ export default {
     }
   },
   computed: {
-    ...mapState({cid: (store) => store.Login.me.profile.company_id}),
+    ...mapState({
+      cid: (store) => store.Login.me.profile.company_id,
+      fieldsRestr: (store) => store.FieldRestr.categories.series
+    }),
     registered_groups() {
       return this.binding_group_data.reduce(function(accum, item) {
         const i = item.binded ? 1 : 0

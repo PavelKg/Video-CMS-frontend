@@ -12,6 +12,7 @@ import Binding from './binding'
 import Companies from './companies'
 import History from './history'
 import Errors from './errors'
+import FieldRestr from './field-restr'
 
 Vue.use(Vuex)
 
@@ -31,6 +32,7 @@ export default new Vuex.Store({
     Binding,
     Companies,
     Errors,
-    History
+    History,
+    FieldRestr
   }
 })

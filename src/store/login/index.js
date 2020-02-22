@@ -36,7 +36,7 @@ export default {
       localStorage.removeItem('vcms-user')
       await Api.logout()
       await Api.delHeaderAuth()
-      dispatch('CLEAR_MENU_STATE')
+      //dispatch('CLEAR_MENU_STATE')
       commit('AUTH_LOGOUT')
     },
     async GET_MY_PROFILE({commit, dispatch}) {
@@ -94,6 +94,7 @@ export default {
       console.log('AUTH_LOGOUT')
       state.authStatus = ''
       state.token = ''
+      state.me.profile = {}
     },
     SET_HEADER_AUTH: (state) => {
       Api.setHeaderAuth(state.token)
