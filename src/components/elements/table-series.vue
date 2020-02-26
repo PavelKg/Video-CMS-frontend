@@ -8,7 +8,14 @@
       fixed
       hover
       head-variant="dark"
+      :busy="series_is_loading"
     >
+      <template #table-busy>
+        <div class="text-center text-danger my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong class="pl-2">Loading...</strong>
+        </div>
+      </template>
       <template #cell(sid)="row">
         <b-form-checkbox
           :id="row.item.sid.toString()"
@@ -148,11 +155,10 @@ export default {
       this.$emit('contentElementClick', `/hub/series_edit/sid/${series.sid}`)
     },
     delOneSeries(series_sid) {
+      const cid = this.cid
       this.$store.dispatch('SERIES_DEL', series_sid).then(
         (res) => {
-          this.$store
-            .dispatch('LOAD_SERIES', {cid: this.cid})
-            .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
+          this.$emit('reloadData')
         },
         (err) => {
           this.$emit(
@@ -182,9 +188,7 @@ export default {
       })
 
       Promise.all(deleted_series).then(() => {
-        this.$store
-          .dispatch('LOAD_SERIES', {cid: this.cid})
-          .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
+        this.$emit('reloadData')
       })
     },
     setPage(num) {

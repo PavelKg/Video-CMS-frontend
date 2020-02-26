@@ -71,7 +71,7 @@ export default {
       this.modalVisible = !this.modalVisible
     },
     outSideClick() {
-      console.log('outside click=', this.modalVisible)
+      //console.log('outside click=', this.modalVisible)
     },
     hideModal() {
       this.modalVisible = false
@@ -88,9 +88,12 @@ export default {
             locale: this.$i18n.locale,
             email: this.exportEmail
           })
-          .then((res) => {
-            this.showSendResult = true
-          }, (err) => {})
+          .then(
+            (res) => {
+              this.showSendResult = true
+            },
+            (err) => {}
+          )
 
         //this.exportEmail = ''
         //this.hideModal()

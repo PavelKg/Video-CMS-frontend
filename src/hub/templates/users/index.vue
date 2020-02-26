@@ -1,8 +1,18 @@
 <template>
   <div class="users-mng">
-    <button class="button btn-blue" @click="addNewUser">
-      {{ $t('users.btn_add') }}
-    </button>
+    <div class="button-zone">
+      <button class="button btn-blue" @click="addNewUser">
+        {{ $t('users.btn_add') }}
+      </button>
+      <b-checkbox
+        class="ml-auto pt-2"
+        v-model="isShowDeleted"
+        @input="loadUsersList"
+        name="check_isAdmin"
+      >
+        {{ $t('label.show_deleted') }}
+      </b-checkbox>
+    </div>
     <div class="search-row">
       <b-form-input
         id="keywword_search"
@@ -20,6 +30,7 @@
     </div>
     <UsersTable
       @contentElementClick="contentElementClick"
+      @reloadData="loadUsersList"
       @onContentError="onError"
       :searchVal="searchVal"
     />
@@ -27,13 +38,14 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import UsersTable from '@/components/elements/table-users'
 
 export default {
   name: 'users-mng',
   data() {
     return {
+      isShowDeleted: false,
       group_options: [],
       selected_groups: null,
       searchVal: '',
@@ -44,38 +56,49 @@ export default {
     UsersTable
   },
   computed: {
-    ...mapGetters(['groups', 'me'])
+    ...mapGetters(['groups', 'me']),
+    ...mapState({
+      cid: (store) => store.Login.me.profile.company_id
+    })
   },
   created() {
-    this.$store
-      .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
-      .then((res) => {
-        this.$store.commit('SET_GROUPS_IS_LOADING', false)
-        const grpo = this.groups.map((item) => {
-          return {value: item.gid, text: item.name}
-        })
-        this.group_options = [...this.group_options, ...grpo]
+    const cid = this.cid
+    this.$store.dispatch('LOAD_GROUPS', {cid}).then((res) => {
+      this.$store.commit('SET_GROUPS_IS_LOADING', false)
+      const grpo = this.groups.map((item) => {
+        return {value: item.gid, text: item.name}
       })
+      this.group_options = [...this.group_options, ...grpo]
+    })
 
-    this.$store.dispatch('LOAD_ROLES', {cid: this.me.profile.company_id})
-
-    const params = {cid: this.me.profile.company_id}
-
-    this.$store
-      .dispatch('LOAD_USERS', params)
-      .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
+    this.$store.dispatch('LOAD_ROLES', {cid})
+    this.loadUsersList()
   },
   methods: {
-    onFilter() {
-      this.searchVal = this.inputSearch
-      let params = {cid: this.me.profile.company_id}
+    loadUsersList() {
+      const cid = this.cid
+      let grpFilter = ''
+      const filter = []
 
       if (this.selected_groups) {
-        params.filter = `user_groups[ol]:ARRAY[${this.selected_groups}]`
+        grpFilter = `user_groups[ol]:ARRAY[${this.selected_groups}]`
       }
-      this.$store.dispatch('LOAD_USERS', params).then(() => {
-        this.$store.commit('SET_USERS_IS_LOADING', false)
-      })
+
+      if (grpFilter !== '') {
+        filter.push(grpFilter)
+      }
+      if (!this.isShowDeleted) {
+        filter.push('users.deleted_at[isNull]:')
+      }
+
+      this.$store
+        .dispatch('LOAD_USERS', {cid, filter: filter.join(',')})
+        .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
+    },
+    onFilter() {
+      this.searchVal = this.inputSearch
+
+      this.loadUsersList()
     },
     addNewUser() {
       this.contentElementClick(`/hub/users_add`)
@@ -93,6 +116,9 @@ export default {
 
 <style lang="scss">
 .users-mng {
+  .button-zone {
+    display: flex;
+  }
   .search-row {
     padding-top: 10px;
     display: flex;

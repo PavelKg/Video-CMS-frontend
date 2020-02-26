@@ -1,35 +1,45 @@
 <template>
-  <div class="table-roles">
+  <div class="roles-table">
     <b-table
       :items="roles_on_page"
       :fields="fields"
-      responsive="sm"
+      responsive
       striped
-      fixed
       hover
       head-variant="dark"
+      :busy="roles_is_loading"
     >
+      <template #table-busy>
+        <div class="text-center text-danger my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong class="pl-2">Loading...</strong>
+        </div>
+      </template>
       <template #cell(is_admin)="item">
         <p style="text-align: center">
           {{ item.item.is_admin ? $t('label.yes') : $t('label.no') }}
         </p>
       </template>
       <template #cell(rid)="item">
-        <b-form-checkbox
-          :id="item.item.rid.toString()"
-          :name="`ch-${item.item.rid}`"
-          :value="item.item.rid"
-          v-model="roles_selected"
-          :disabled="item.item.deleted_at !== ''"
-          class="truncate-text"
+        <b-col style="width: 25rem">
+          <b-form-checkbox
+            :id="item.item.rid.toString()"
+            :name="`ch-${item.item.rid}`"
+            :value="item.item.rid"
+            v-model="roles_selected"
+            :disabled="item.item.deleted_at !== ''"
+            class="truncate-text"
+          >
+            {{ item.item.rid }}
+          </b-form-checkbox></b-col
         >
-          {{ item.item.rid }}
-        </b-form-checkbox>
       </template>
       <template #cell(name)="item">
-        <p class="truncate-text">
-          {{ item.item.name }}
-        </p>
+        <b-col style="width: 25rem">
+          <p class="truncate-text">
+            {{ item.item.name }}
+          </p>
+        </b-col>
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
@@ -115,7 +125,7 @@ export default {
       const cid = this.me.profile.company_id
       this.$store.dispatch('ROLE_DEL', rid).then(
         (res) => {
-          this.$store.dispatch('LOAD_ROLES', {cid})
+          this.$emit('reloadData')
         },
         (err) => {
           console.log('err.message=', err)
@@ -143,9 +153,7 @@ export default {
       })
 
       Promise.all(deleted_roles).then(() => {
-        this.$store
-          .dispatch('LOAD_ROLES', {cid: this.me.profile.company_id})
-          .then(() => this.$store.commit('SET_ROLES_IS_LOADING', false))
+        this.$emit('reloadData')
       })
     },
     setPage(num) {
@@ -211,7 +219,8 @@ export default {
       ]
     },
     showColumn() {
-      return this.is_mobile_width ? 'd-none' : ''
+      //return this.is_mobile_width ? 'd-none' : ''
+      return ''
     }
   },
   components: {}
@@ -220,6 +229,10 @@ export default {
 
 <style lang="scss">
 @import '../../assets/styles';
+
+.roles-table {
+  padding: 10px 0;
+}
 
 .deleted_item {
   color: $link;

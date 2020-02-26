@@ -30,7 +30,7 @@
               <b-form-input
                 id="role-id"
                 v-model="mnRole.rid"
-                :maxLength="limit.name.max_length"
+                :maxLength="fieldsRestr.name.max_length"
                 :state="validateState('rid')"
               ></b-form-input>
             </template>
@@ -50,7 +50,7 @@
                   id="role-name"
                   v-model="mnRole.name"
                   :disabled="isDeleted"
-                  :maxLength="limit.name.max_length"
+                  :maxLength="fieldsRestr.name.max_length"
                   :state="validateState('name')"
                 ></b-form-input></b-form-group
             ></b-col>
@@ -94,13 +94,12 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
-
-import {required, minLength, maxLength} from 'vuelidate/lib/validators'
-import {withParams} from 'vuelidate/lib/validators/common'
+import {mapGetters, mapState} from 'vuex'
+import valid_mix from '@/mixins/validation'
 
 export default {
   name: 'role-mng-form',
+  mixins: [valid_mix],
   props: {
     oper: String
   },
@@ -116,55 +115,22 @@ export default {
         is_admin: false,
         name: ''
       },
-      roleNotFound: false,
-      limit: {
-        name: {max_length: 20, min_length: 3},
-        rid: {max_length: 20, min_length: 3}
-      },
-      req_templ: () => {
-        return withParams({msg: this.$t('validation.required_field')}, required)
-      },
-      min_len_templ: function(length) {
-        return withParams(
-          {
-            msg: this.$t('validation.min_length', {
-              cnt: length
-            })
-          },
-          minLength(length)
-        )
-      },
-
-      max_len_templ: function(length) {
-        return withParams(
-          {
-            msg: this.$t('validation.max_length', {
-              cnt: length
-            })
-          },
-          maxLength(length)
-        )
-      },
-      isUniqTempl: (param) =>
-        withParams({msg: this.$t('validation.is_not_unique')}, (val) => {
-          if (val === '') return true
-          return param === ''
-        })
+      roleNotFound: false
     }
   },
   validations() {
     return {
       mnRole: {
         name: {
-          required: this.req_templ(),
-          minLength: this.min_len_templ(this.limit.name.min_length),
-          maxLength: this.max_len_templ(this.limit.name.max_length)
+          required: this.vRequired(),
+          minLength: this.vMinLength(this.fieldsRestr.name.min_length),
+          maxLength: this.vMaxLength(this.fieldsRestr.name.max_length)
         },
         rid: {
-          required: this.req_templ(),
-          minLength: this.min_len_templ(this.limit.name.min_length),
-          maxLength: this.max_len_templ(this.limit.name.max_length),
-          isUnique: this.isUniqTempl(this.ridUniqError)
+          required: this.vRequired(),
+          minLength: this.vMinLength(this.fieldsRestr.name.min_length),
+          maxLength: this.vMaxLength(this.fieldsRestr.name.max_length),
+          isUnique: this.vIsUnique(this.ridUniqError)
         }
       }
     }
@@ -223,7 +189,7 @@ export default {
 
   created() {
     const {rid = null} = this.$route.params
-    const cid = this.me.profile.company_id
+    const cid = this.cid
 
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_ROLE_INFO', {cid, rid}).then(
@@ -241,7 +207,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userMenuActiveItem', 'me']),
+    ...mapState({
+      cid: (store) => store.Login.me.profile.company_id,
+      fieldsRestr: (store) => store.FieldRestr.categories.roles
+    }),
     role_title() {
       return `roles.oper_title_${this.oper}`
     },
