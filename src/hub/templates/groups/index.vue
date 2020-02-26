@@ -1,27 +1,47 @@
 <template>
   <div class="groups-mng">
-    <button class="button btn-blue" @click="addNewGroup">
-      {{ $t('groups.btn_add') }}
-    </button>
+    <div class="button-zone">
+      <button class="button btn-blue" @click="addNewGroup">
+        {{ $t('groups.btn_add') }}
+      </button>
+      <b-checkbox
+        class="ml-auto pt-2"
+        v-model="isShowDeleted"
+        @input="loadGroupsList"
+      >
+        {{ $t('label.show_deleted') }}
+      </b-checkbox>
+    </div>
     <groupsTable
       @contentElementClick="contentElementClick"
       @onContentError="onError"
+      @reloadData="loadGroupsList"
     />
   </div>
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
 import groupsTable from '@/components/elements/table-groups'
 
 export default {
   name: 'groups-mng',
+  data() {
+    return {
+      isShowDeleted: false
+    }
+  },
   created() {
-    this.$store
-      .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
-      .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
+    this.loadGroupsList()
   },
   methods: {
+    loadGroupsList() {
+      const cid = this.cid
+      const filter = !this.isShowDeleted ? 'groups.deleted_at[isNull]:' : ''
+      this.$store
+        .dispatch('LOAD_GROUPS', {cid, filter})
+        .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
+    },
     addNewGroup() {
       this.contentElementClick('/hub/groups_add')
     },
@@ -36,9 +56,15 @@ export default {
     groupsTable
   },
   computed: {
-    ...mapGetters(['me'])
+    ...mapState({
+      cid: (store) => store.Login.me.profile.company_id
+    })
   }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.button-zone {
+  display: flex;
+}
+</style>

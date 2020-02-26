@@ -8,17 +8,17 @@ export default {
   },
   actions: {
     async LOAD_ROLES({commit}, payload) {
-      const {cid} = payload
+      const {cid, filter = ''} = payload
       try {
         commit('SET_ROLES_IS_LOADING', true)
-        const result = await Api.roles(cid)
+        const result = await Api.roles(cid, filter)
         if (Array.isArray(result.data) && result.status === 200) {
           commit('SET_ROLES', result.data)
         } else {
           throw Error('Error load roles list')
         }
       } catch (err) {
-        throw Error('Error request roles from server')
+        throw err.response.data
       } finally {
         //commit('SET_ROLES_IS_LOADING', false)
       }
@@ -33,7 +33,7 @@ export default {
           throw Error('Error load role data')
         }
       } catch (err) {
-        throw Error(err.response.status)
+        throw err.response.data
       }
     },
     async ROLE_ADD({commit, getters}, payload) {

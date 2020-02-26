@@ -8,7 +8,14 @@
       fixed
       hover
       head-variant="dark"
+      :busy="groups_is_loading"
     >
+      <template #table-busy>
+        <div class="text-center text-danger my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong class="pl-2">Loading...</strong>
+        </div>
+      </template>
       <template #cell(name)="row">
         <b-form-checkbox
           :id="row.item.gid.toString()"
@@ -120,9 +127,7 @@ export default {
     delGroup(group_gid) {
       this.$store.dispatch('GROUP_DEL', group_gid).then(
         (res) => {
-          this.$store
-            .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
-            .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
+          this.$emit('reloadData')
         },
         (err) => {
           this.$emit(
@@ -150,9 +155,7 @@ export default {
       })
 
       Promise.all(deleted_groups).then(() => {
-        this.$store
-          .dispatch('LOAD_GROUPS', {cid: this.me.profile.company_id})
-          .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
+        this.$emit('reloadData')
       })
     },
     setPage(num) {

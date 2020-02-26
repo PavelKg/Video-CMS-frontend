@@ -220,7 +220,8 @@ export default {
     loading: 'Loading...',
     videos: 'videos',
     add_new_groups: 'Add New Groups',
-    enter_series_description: 'Enter series description'
+    enter_series_description: 'Enter series description',
+    show_deleted: 'Show deleted'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

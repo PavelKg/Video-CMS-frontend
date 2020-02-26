@@ -1,40 +1,57 @@
 <template>
   <div class="roles-mng">
-    <div class="roles-mng-buttons">
+    <div class="button-zone">
       <button class="button btn-blue" @click="addNewRole">
         {{ $t('roles.btn_add') }}
       </button>
+      <b-checkbox
+        class="ml-auto pt-2"
+        v-model="isShowDeleted"
+        @input="loadRolesList"
+      >
+        {{ $t('label.show_deleted') }}
+      </b-checkbox>
     </div>
     <div class="roles-mng-table">
       <TableRoles
         @contentElementClick="contentElementClick"
         @onContentError="onError"
+        @reloadData="loadRolesList"
       />
     </div>
   </div>
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
 import TableRoles from '@/components/elements/table-roles'
 
 export default {
   name: 'roles-mng',
   data() {
-    return {}
+    return {
+      isShowDeleted: false
+    }
   },
   components: {
     TableRoles
   },
   created() {
-    this.$store
-      .dispatch('LOAD_ROLES', {cid: this.me.profile.company_id})
-      .then(() => this.$store.commit('SET_ROLES_IS_LOADING', false))
+    this.loadRolesList()
   },
   computed: {
-    ...mapGetters(['me'])
+    ...mapState({
+      cid: (store) => store.Login.me.profile.company_id
+    })
   },
   methods: {
+    loadRolesList() {
+      const cid = this.cid
+      const filter = !this.isShowDeleted ? 'roles.deleted_at[isNull]:' : ''
+      this.$store
+        .dispatch('LOAD_ROLES', {cid, filter})
+        .then(() => this.$store.commit('SET_ROLES_IS_LOADING', false))
+    },
     addNewRole() {
       this.contentElementClick('/hub/roles_add')
     },
@@ -49,21 +66,24 @@ export default {
 </script>
 
 <style lang="scss">
-.roles-mng {
-  .roles-mng-buttons {
-    padding: 10px 0;
-    .create-new {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      width: 150px;
-      height: 40px;
-      color: #ffffff;
-    }
-    .blue {
-      background: #4472c4;
-    }
-  }
+.button-zone {
+  display: flex;
 }
+// .roles-mng {
+//   .roles-mng-buttons {
+//     padding: 10px 0;
+//     .create-new {
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//       cursor: pointer;
+//       width: 150px;
+//       height: 40px;
+//       color: #ffffff;
+//     }
+//     .blue {
+//       background: #4472c4;
+//     }
+//   }
+//}
 </style>

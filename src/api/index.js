@@ -32,10 +32,10 @@ Api.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    localStorage.removeItem('vcms-token')
-    delete error.config.headers.Authorization
-    store.commit('AUTH_LOGOUT')
-    router.push(`/`)
+    // localStorage.removeItem('vcms-token')
+    // delete error.config.headers.Authorization
+    // store.commit('AUTH_LOGOUT')
+    // router.push(`/`)
     return Promise.reject(error)
   }
 )
@@ -180,8 +180,9 @@ export default {
    *
    */
 
-  roles(cid) {
-    return Api.get(`/companies/${cid}/roles`, {
+  roles(cid, filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/roles${setFilter}`, {
       headers: {
         ...type_json
       }
@@ -691,7 +692,7 @@ export default {
         'Content-Type': file.type
       },
       onUploadProgress: function(progressEvent) {
-        console.log('progress=', progress.percent)
+        //console.log('progress=', progress.percent)
         // progress_handler(
         progress.percent = parseInt(
           Math.round((progressEvent.loaded * 100) / progressEvent.total)

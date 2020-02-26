@@ -8,7 +8,14 @@
       fixed
       hover
       head-variant="dark"
+      :busy="users_is_loading"
     >
+      <template #table-busy>
+        <div class="text-center text-danger my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong class="pl-2">Loading...</strong>
+        </div>
+      </template>
       <template #cell(uid)="row">
         <b-form-checkbox
           :id="row.item.uid"
@@ -82,7 +89,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 
 export default {
   name: 'table-users',
@@ -136,9 +143,7 @@ export default {
     delUser(item) {
       this.$store.dispatch('USER_DEL', item.uid).then(
         (res) => {
-          this.$store
-            .dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
-            .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
+          this.$emit('reloadData')
         },
         (err) => {}
       )
@@ -152,9 +157,7 @@ export default {
       ).then(
         (res) => {
           this.users_selected = []
-          this.$store
-            .dispatch('LOAD_USERS', {cid: this.me.profile.company_id})
-            .then(() => this.$store.commit('SET_USERS_IS_LOADING', false))
+          this.$emit('reloadData')
         },
         (err) => {}
       )
@@ -164,7 +167,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['users_list', 'me', 'is_mobile_width', 'users_is_loading']),
+    ...mapGetters(['users_list', 'is_mobile_width', 'users_is_loading']),
+
     users_count() {
       return this.queriedUsers ? this.queriedUsers.length : 0
     },

@@ -226,7 +226,7 @@ export default {
 
           const params = {
             cid,
-            filter: `user_groups[ol]: ARRAY[${gid}]`
+            filter: `user_groups[ol]: ARRAY[${gid}],users.deleted_at[isNull]:`
           }
           this.$store
             .dispatch('LOAD_USERS', params)
