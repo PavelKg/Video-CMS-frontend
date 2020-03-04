@@ -1,14 +1,15 @@
 <template>
   <div class="series-table">
+    <scrollHint v-if="!scrolled && is_tablet_width && !series_is_loading" />
     <b-table
       :items="series_on_page"
       :fields="fields"
-      responsive="sm"
+      responsive
       striped
-      fixed
       hover
       head-variant="dark"
       :busy="series_is_loading"
+      v-scroll-hint="{handler: 'onTableScrolled'}"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -17,55 +18,59 @@
         </div>
       </template>
       <template #cell(sid)="row">
-        <b-form-checkbox
-          :id="row.item.sid.toString()"
-          :name="`ch-${row.item.sid}`"
-          :value="row.item.sid"
-          v-model="series_selected"
-          :disabled="row.item.deleted_at !== ''"
-          class="truncate-text"
-          >{{ `S${row.item.sid}` }}
-        </b-form-checkbox>
+        <b-col style="width: 10rem">
+          <b-form-checkbox
+            :id="row.item.sid.toString()"
+            :name="`ch-${row.item.sid}`"
+            :value="row.item.sid"
+            v-model="series_selected"
+            :disabled="row.item.deleted_at !== ''"
+            class="truncate-text"
+            >{{ `S${row.item.sid}` }}
+          </b-form-checkbox></b-col
+        >
       </template>
       <template #cell(is_private)="row">{{
         $t(`series.${row.item.is_private ? 'private' : 'public'}`)
       }}</template>
       <template #cell(period_type)="row">
-        <div v-if="row.item.period_type" class="period-type">
-          <span>
-            {{
-              $t(
-                `series.${
+        <b-col style="width: 20rem">
+          <div v-if="row.item.period_type" class="period-type">
+            <span>
+              {{
+                $t(
+                  `series.${
+                    row.item.period_type === 'spec_period'
+                      ? 'specify_period'
+                      : 'start_users_accounts'
+                  }`
+                )
+              }}
+            </span>
+            <div>
+              {{
+                `${
                   row.item.period_type === 'spec_period'
-                    ? 'specify_period'
-                    : 'start_users_accounts'
-                }`
-              )
-            }}
-          </span>
-          <div>
-            {{
-              `${
-                row.item.period_type === 'spec_period'
-                  ? ''
-                  : $t('series.view_start') + ': '
-              }
+                    ? ''
+                    : $t('series.view_start') + ': '
+                }
                   ${
                     row.item.activity_start !== null
                       ? row.item.activity_start
                       : ''
                   } ~ ${
-                row.item.period_type === 'spec_period'
-                  ? ''
-                  : $t('series.view_end') + ': '
-              }${
-                row.item.activity_finish !== null
-                  ? row.item.activity_finish
-                  : ''
-              }`
-            }}
+                  row.item.period_type === 'spec_period'
+                    ? ''
+                    : $t('series.view_end') + ': '
+                }${
+                  row.item.activity_finish !== null
+                    ? row.item.activity_finish
+                    : ''
+                }`
+              }}
+            </div>
           </div>
-        </div>
+        </b-col>
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
@@ -119,6 +124,7 @@
 
 <script>
 import {mapState, mapGetters} from 'vuex'
+import scrollHint from './scroll-hint'
 
 export default {
   name: 'table-series',
@@ -128,7 +134,8 @@ export default {
       currentPage: 1,
       series_selected: [],
       modalShow: false,
-      modal_text: ''
+      modal_text: '',
+      scrolled: false
     }
   },
   watch: {
@@ -142,6 +149,9 @@ export default {
     }
   },
   methods: {
+    onTableScrolled() {
+      this.scrolled = true
+    },
     toggleAll(env) {
       const action = env.target['id']
       this.series_selected =
@@ -195,13 +205,16 @@ export default {
       this.$emit('contentElementClick', `/hub/series/?page=${num}`)
     }
   },
+  components: {
+    scrollHint
+  },
   computed: {
     ...mapState({
       series: (state) => state.Companies.Series.list,
       cid: (state) => state.Login.me.profile.company_id,
       series_is_loading: (state) => state.Companies.Series.isListLoading
     }),
-    ...mapGetters(['is_mobile_width']),
+    ...mapGetters(['is_mobile_width', 'is_tablet_width']),
 
     fields() {
       return [
@@ -246,7 +259,7 @@ export default {
       return this.series.slice(begin, end)
     },
     showColumn() {
-      return this.is_mobile_width ? 'd-none' : ''
+      return '' //this.is_mobile_width ? 'd-none' : ''
     }
   }
 }

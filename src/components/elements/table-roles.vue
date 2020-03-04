@@ -1,5 +1,6 @@
 <template>
   <div class="roles-table">
+    <scrollHint v-if="!scrolled && is_tablet_width && !roles_is_loading" />
     <b-table
       :items="roles_on_page"
       :fields="fields"
@@ -8,6 +9,7 @@
       hover
       head-variant="dark"
       :busy="roles_is_loading"
+      v-scroll-hint="{handler: 'onTableScrolled'}"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -92,7 +94,8 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
+import scrollHint from './scroll-hint'
 
 export default {
   name: 'table-roles',
@@ -100,6 +103,7 @@ export default {
     return {
       perPage: 8,
       currentPage: 1,
+      scrolled: false,
       roles_selected: []
     }
   },
@@ -116,13 +120,16 @@ export default {
     }
   },
   methods: {
+    onTableScrolled() {
+      this.scrolled = true
+    },
     editRole(role) {
       const {rid} = role
       this.$emit('contentElementClick', `/hub/roles_edit/rid/${rid}`)
     },
     delRole(role) {
       const {rid} = role
-      const cid = this.me.profile.company_id
+      const cid = this.cid
       this.$store.dispatch('ROLE_DEL', rid).then(
         (res) => {
           this.$emit('reloadData')
@@ -174,7 +181,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['roles', 'roles_is_loading', 'me', 'is_mobile_width']),
+    ...mapGetters(['roles', 'roles_is_loading', 'is_tablet_width']),
+    ...mapState({
+      cid: (state) => state.Login.me.profile.company_id
+    }),
     roles_count() {
       return this.roles ? this.roles.length : 0
     },
@@ -223,7 +233,9 @@ export default {
       return ''
     }
   },
-  components: {}
+  components: {
+    scrollHint
+  }
 }
 </script>
 
@@ -231,6 +243,7 @@ export default {
 @import '../../assets/styles';
 
 .roles-table {
+  //position: relative;
   padding: 10px 0;
 }
 

@@ -1,14 +1,15 @@
 <template>
   <div class="groups-table">
+    <scrollHint v-if="!scrolled && is_tablet_width && !groups_is_loading" />
     <b-table
       :items="groups_on_page"
       :fields="fields"
-      responsive="sm"
+      responsive
       striped
-      fixed
       hover
       head-variant="dark"
       :busy="groups_is_loading"
+      v-scroll-hint="{handler: 'onTableScrolled'}"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -17,15 +18,17 @@
         </div>
       </template>
       <template #cell(name)="row">
-        <b-form-checkbox
-          :id="row.item.gid.toString()"
-          :name="`ch-${row.item.gid}`"
-          :value="row.item.gid"
-          v-model="groups_selected"
-          :disabled="row.item.deleted_at !== ''"
-          class="truncate-text"
-          >{{ row.item.name }}
-        </b-form-checkbox>
+        <b-col style="width: 25rem">
+          <b-form-checkbox
+            :id="row.item.gid.toString()"
+            :name="`ch-${row.item.gid}`"
+            :value="row.item.gid"
+            v-model="groups_selected"
+            :disabled="row.item.deleted_at !== ''"
+            class="truncate-text"
+            >{{ row.item.name }}
+          </b-form-checkbox></b-col
+        >
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
@@ -79,6 +82,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import scrollHint from './scroll-hint'
 
 export default {
   name: 'table-groups',
@@ -98,7 +102,8 @@ export default {
       ],
       perPage: 8,
       currentPage: 1,
-      groups_selected: []
+      groups_selected: [],
+      scrolled: false
     }
   },
   watch: {
@@ -111,7 +116,13 @@ export default {
       }
     }
   },
+  components: {
+    scrollHint
+  },
   methods: {
+    onTableScrolled() {
+      this.scrolled = true
+    },
     toggleAll(env) {
       const action = env.target['id']
       this.groups_selected =
@@ -163,7 +174,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['groups', 'me', 'groups_is_loading']),
+    ...mapGetters(['groups', 'me', 'groups_is_loading', 'is_tablet_width']),
     groups_count() {
       return this.groups ? this.groups.length : 0
     },

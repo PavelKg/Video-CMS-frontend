@@ -115,9 +115,13 @@ export default {
   },
   methods: {
     reloadMessages() {
-      this.$store.dispatch('LOAD_MESSAGES', {
-        direction: this.tabs[this.tabIndex].name
-      })
+      this.$store
+        .dispatch('LOAD_MESSAGES', {
+          direction: this.tabs[this.tabIndex].name
+        })
+        .then(() => {
+          this.$store.commit('SET_MESSAGES_IS_LOADING', false)
+        })
     },
     changeTab(evt) {
       this.reloadMessages()

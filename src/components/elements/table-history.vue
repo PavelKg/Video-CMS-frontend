@@ -4,9 +4,8 @@
       :items="history_on_page"
       :fields="fields"
       :busy="history_list_is_loading"
-      responsive="sm"
+      responsive
       striped
-      fixed
       hover
       head-variant="dark"
       no-local-sorting
