@@ -2,20 +2,19 @@ import Api from '@/api'
 
 export default {
   state: {
-    messages: {
-      list: [],
-      receivers: [],
-      isListLoading: false,
-      isReceiversLoading: false,
-      selected: null
-    },
+    list: [],
+    receivers: [],
+    isListLoading: false,
+    isReceiversLoading: false,
+    selected: null,
+
     columns_name: {
       outbox: ['check', 'subject', 'to', 'sent'],
       inbox: ['check', 'subject', 'from', 'received']
     }
   },
   actions: {
-    async LOAD_MESSAGES({commit}, payload ) {
+    async LOAD_MESSAGES({commit}, payload) {
       const {direction, filter} = payload
       try {
         commit('SET_MESSAGES_IS_LOADING', true)
@@ -75,7 +74,7 @@ export default {
       } catch (err) {
         throw Error(`Error del message: ${err.response.data.message}`)
       }
-    },    
+    },
     async LOAD_MESSAGES_RECEIVERS({commit}, payload = {}) {
       const {filter} = payload
       try {
@@ -95,31 +94,31 @@ export default {
   },
   mutations: {
     SET_MESSAGES(state, list) {
-      state.messages.list = [...list]
+      state.list = [...list]
     },
     SET_MESSAGES_IS_LOADING(state, isload) {
-      state.messages.isListLoading = isload
+      state.isListLoading = isload
     },
     SET_ACTIVE_MESSAGE(state, item) {
-      state.messages.selected = item
+      state.selected = item
     },
     SET_MESSAGE_RECEIVERS(state, list) {
-      state.messages.receivers = [...list]
+      state.receivers = [...list]
     },
     SET_RECEIVERS_IS_LOADING(state, isLoad) {
-      state.messages.isReceiversLoading = isLoad
+      state.isReceiversLoading = isLoad
     },
     SET_MESSAGE_STAR(state, payload) {
       const {mid, starred} = payload
-      state.messages.list.forEach((element, idx) => {
+      state.list.forEach((element, idx) => {
         if (element.mid === mid) {
-          state.messages.list[idx].starred = starred
+          state.list[idx].starred = starred
         }
       })
     },
     ORDER_MESSAGE(state, payload) {
       const {sortBy, sortDesc} = payload
-      state.messages.list.sort(function(a, b) {
+      state.list.sort(function(a, b) {
         if (a[sortBy] > b[sortBy]) {
           return sortDesc ? -1 : 1
         }
@@ -132,10 +131,10 @@ export default {
     }
   },
   getters: {
-    messages: state => state.messages.list,
-    active_message: state => state.messages.selected,
-    messages_box_column: state => tab => state.columns_name[tab],
-    isShowModalMessageInfo: state => state.messages.isShowModalMessageInfo,
-    message_receivers: state => state.messages.receivers
+    messages: (state) => state.list,
+    active_message: (state) => state.selected,
+    messages_box_column: (state) => (tab) => state.columns_name[tab],
+    isShowModalMessageInfo: (state) => state.isShowModalMessageInfo,
+    message_receivers: (state) => state.receivers
   }
 }

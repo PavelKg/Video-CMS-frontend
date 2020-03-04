@@ -221,7 +221,8 @@ export default {
     videos: 'videos',
     add_new_groups: 'Add New Groups',
     enter_series_description: 'Enter series description',
-    show_deleted: 'Show deleted'
+    show_deleted: 'Show deleted',
+    scrollable: 'Scrollable'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:
@@ -233,8 +234,8 @@ export default {
     required_field: 'This is a required field',
     min_length: 'This field must be at least {cnt} characters',
     max_length: 'This field must not exceed {cnt} characters',
-    same_as_password:'Passwords do not match',
-    email:'This is not a valid email format',
+    same_as_password: 'Passwords do not match',
+    email: 'This is not a valid email format',
     is_not_unique: 'Value is not unique'
   }
 }

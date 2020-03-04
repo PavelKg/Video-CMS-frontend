@@ -65,7 +65,7 @@
         </button>
       </div>
     </div>
-    <div class="history-table">
+    <div class="pt-3">
       <tableHistoryInfo @contentElementClick="contentElementClick" />
     </div>
   </div>

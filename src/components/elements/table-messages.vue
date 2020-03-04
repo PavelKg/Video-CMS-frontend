@@ -1,18 +1,26 @@
 <template>
   <div class="table-messages">
+    <scrollHint v-if="!scrolled && is_tablet_width && !messages_is_loading" />
     <b-table
       :items="messages_on_page"
       :fields="fields"
-      responsive="sm"
+      responsive
       striped
-      fixed
       hover
       no-local-sorting
       @sort-changed="sortingChanged"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       head-variant="dark"
+      :busy="messages_is_loading"
+      v-scroll-hint="{handler: 'onTableScrolled'}"
     >
+      <template #table-busy>
+        <div class="text-center text-danger my-2">
+          <b-spinner class="align-middle"></b-spinner>
+          <strong class="pl-2">Loading...</strong>
+        </div>
+      </template>
       <template #cell(mid)="row">
         <div class="check-row">
           <b-form-checkbox
@@ -44,9 +52,11 @@
         </p>
       </template>
       <template #cell(subject)="item">
-        <a href="#" @click.prevent="showMessageModal(item.item)">
-          <p class="truncate-text">{{ item.item.subject }}</p>
-        </a>
+        <b-col style="width: 15rem">
+          <a href="#" @click.prevent="showMessageModal(item.item)">
+            <p class="truncate-text">{{ item.item.subject }}</p>
+          </a></b-col
+        >
       </template>
     </b-table>
     <div class="messages-mng-panel">
@@ -114,7 +124,8 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
+import scrollHint from './scroll-hint'
 
 export default {
   name: 'table-messages',
@@ -126,7 +137,8 @@ export default {
       messages_selected: [],
       sortBy: 'created_at',
       sortDesc: false,
-      searchReg: undefined
+      searchReg: undefined,
+      scrolled: false
     }
   },
   props: {
@@ -143,7 +155,13 @@ export default {
       this.searchReg = newVal !== '' ? new RegExp(`${newVal}`, 'ig') : undefined
     }
   },
+  components: {
+    scrollHint
+  },
   methods: {
+    onTableScrolled() {
+      this.scrolled = true
+    },
     sortingChanged(ctx) {
       const {sortBy, sortDesc} = ctx
       this.$store.commit('ORDER_MESSAGE', {sortBy, sortDesc})
@@ -198,7 +216,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['messages', 'messages_box_column', 'active_message', 'me']),
+    ...mapGetters([
+      'messages',
+      'messages_box_column',
+      'active_message',
+      'is_tablet_width'
+    ]),
+    ...mapState({
+      cid: (state) => state.Login.me.profile.company_id,
+      messages_is_loading: (state) => state.Messages.isListLoading
+    }),
     queriedMessages() {
       return Boolean(this.searchReg)
         ? this.messages.filter(
@@ -296,7 +323,7 @@ export default {
   .selected {
     &:before {
       content: '\2605';
-      position: absolute;
+      //position: absolute;
       transition: all 0.4s;
       color: gold;
     }

@@ -682,7 +682,7 @@ export default {
   },
 
   upload_files(url, file, progress) {
-    console.log('file=', file)
+    //console.log('file=', file)
     //progress_handler(0)
     progress.percent = 0
     return axiosGcs({

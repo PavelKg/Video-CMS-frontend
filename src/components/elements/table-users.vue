@@ -1,14 +1,15 @@
 <template>
   <div class="users-table">
+    <scrollHint v-if="!scrolled && is_tablet_width && !users_is_loading" />
     <b-table
       :items="users_on_page"
       :fields="fields"
-      responsive="sm"
+      responsive
       striped
-      fixed
       hover
       head-variant="dark"
       :busy="users_is_loading"
+      v-scroll-hint="{handler: 'onTableScrolled'}"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -17,15 +18,17 @@
         </div>
       </template>
       <template #cell(uid)="row">
-        <b-form-checkbox
-          :id="row.item.uid"
-          :name="`ch-${row.item.uid}`"
-          :value="row.item.uid"
-          v-model="users_selected"
-          :disabled="row.item.deleted_at !== ''"
-          class="truncate-text"
-          >{{ row.item.uid }}
-        </b-form-checkbox>
+        <b-col style="width: 25rem">
+          <b-form-checkbox
+            :id="row.item.uid"
+            :name="`ch-${row.item.uid}`"
+            :value="row.item.uid"
+            v-model="users_selected"
+            :disabled="row.item.deleted_at !== ''"
+            class="truncate-text"
+            >{{ row.item.uid }}
+          </b-form-checkbox></b-col
+        >
       </template>
       <template #cell(last_login)="item">
         <p class="last-login-column truncate-text">
@@ -33,10 +36,16 @@
         </p>
       </template>
       <template #cell(fullname)="item">
-        <p class="truncate-text">{{ item.item.fullname }}</p>
+        <b-col style="width: 25rem">
+          <p class="truncate-text">{{ item.item.fullname }}</p></b-col
+        >
       </template>
-      <template #cell(group_name)="item"
-        ><p class="truncate-text">{{ item.item.groups_name.join(', ') }}</p>
+      <template #cell(group_name)="item">
+        <b-col style="width: 25rem">
+          <p class="truncate-text">
+            {{ item.item.groups_name.join(', ') }}
+          </p></b-col
+        >
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
@@ -90,6 +99,7 @@
 
 <script>
 import {mapGetters, mapState} from 'vuex'
+import scrollHint from './scroll-hint'
 
 export default {
   name: 'table-users',
@@ -101,7 +111,8 @@ export default {
       perPage: 8,
       currentPage: 1,
       users_selected: [],
-      searchReg: undefined
+      searchReg: undefined,
+      scrolled: false
     }
   },
 
@@ -122,7 +133,13 @@ export default {
       this.searchReg = newVal !== '' ? new RegExp(`${newVal}`, 'ig') : undefined
     }
   },
+  components: {
+    scrollHint
+  },
   methods: {
+    onTableScrolled() {
+      this.scrolled = true
+    },
     toggleAll(env) {
       const action = env.target['id']
 
@@ -167,7 +184,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['users_list', 'is_mobile_width', 'users_is_loading']),
+    ...mapGetters([
+      'users_list',
+      'is_mobile_width',
+      'users_is_loading',
+      'is_tablet_width'
+    ]),
 
     users_count() {
       return this.queriedUsers ? this.queriedUsers.length : 0
@@ -225,7 +247,7 @@ export default {
       ]
     },
     showColumn() {
-      return this.is_mobile_width ? 'd-none' : ''
+      return '' //this.is_mobile_width ? 'd-none' : ''
     }
   }
 }
