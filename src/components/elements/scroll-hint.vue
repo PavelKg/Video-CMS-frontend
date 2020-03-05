@@ -34,9 +34,10 @@ export default {}
   height: 100%;
   max-height: 100%;
   pointer-events: none;
+  z-index: 10;
   span {
     position: absolute;
-    top: calc(50% - 25px);
+    top: calc(15%);
     left: calc(50% - 60px);
     box-sizing: border-box;
     width: 120px;

@@ -3,7 +3,7 @@ export default {
     mainWindowRect: {
       width: 0,
       height: 0,
-      tabletMaxWidth: 1024,
+      tabletMaxWidth: 911,
       mobileMaxWidth: 450
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="table-messages">
-    <scrollHint v-if="!scrolled && is_tablet_width && !messages_is_loading" />
+    <scrollHint v-if="!scrolled && isScrollable && !messages_is_loading" />
     <b-table
       :items="messages_on_page"
       :fields="fields"
@@ -13,7 +13,10 @@
       :sort-desc.sync="sortDesc"
       head-variant="dark"
       :busy="messages_is_loading"
-      v-scroll-hint="{handler: 'onTableScrolled'}"
+      v-scroll-hint="{
+        scrollHandler: 'onTableScrolled',
+        isScrollable: 'isScrollable'
+      }"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -126,9 +129,11 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import scrollHint from './scroll-hint'
+import scrollHintMix from '@/mixins/scroll-hint'
 
 export default {
   name: 'table-messages',
+  mixins: [scrollHintMix],
   data() {
     return {
       isShowModalMessageInfo: false,
@@ -137,8 +142,7 @@ export default {
       messages_selected: [],
       sortBy: 'created_at',
       sortDesc: false,
-      searchReg: undefined,
-      scrolled: false
+      searchReg: undefined
     }
   },
   props: {
@@ -159,9 +163,6 @@ export default {
     scrollHint
   },
   methods: {
-    onTableScrolled() {
-      this.scrolled = true
-    },
     sortingChanged(ctx) {
       const {sortBy, sortDesc} = ctx
       this.$store.commit('ORDER_MESSAGE', {sortBy, sortDesc})
@@ -289,7 +290,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/styles';
-
+.table-messages {
+  position: relative;
+}
 .custom-control {
   padding-left: 3rem;
 }

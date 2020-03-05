@@ -1,6 +1,6 @@
 <template>
   <div class="groups-table">
-    <scrollHint v-if="!scrolled && is_tablet_width && !groups_is_loading" />
+    <scrollHint v-if="!scrolled && isScrollable && !groups_is_loading" />
     <b-table
       :items="groups_on_page"
       :fields="fields"
@@ -9,7 +9,10 @@
       hover
       head-variant="dark"
       :busy="groups_is_loading"
-      v-scroll-hint="{handler: 'onTableScrolled'}"
+      v-scroll-hint="{
+        scrollHandler: 'onTableScrolled',
+        isScrollable: 'isScrollable'
+      }"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -83,9 +86,11 @@
 <script>
 import {mapGetters} from 'vuex'
 import scrollHint from './scroll-hint'
+import scrollHintMix from '@/mixins/scroll-hint'
 
 export default {
   name: 'table-groups',
+  mixins: [scrollHintMix],
   data() {
     return {
       fields: [
@@ -102,8 +107,7 @@ export default {
       ],
       perPage: 8,
       currentPage: 1,
-      groups_selected: [],
-      scrolled: false
+      groups_selected: []
     }
   },
   watch: {
@@ -120,9 +124,6 @@ export default {
     scrollHint
   },
   methods: {
-    onTableScrolled() {
-      this.scrolled = true
-    },
     toggleAll(env) {
       const action = env.target['id']
       this.groups_selected =
@@ -191,6 +192,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/styles';
 .groups-table {
+  position: relative;
   padding: 10px 0;
 }
 
