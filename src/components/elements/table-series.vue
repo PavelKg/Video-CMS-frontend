@@ -1,6 +1,6 @@
 <template>
   <div class="series-table">
-    <scrollHint v-if="!scrolled && is_tablet_width && !series_is_loading" />
+    <scrollHint v-if="!scrolled && isScrollable && !series_is_loading" />
     <b-table
       :items="series_on_page"
       :fields="fields"
@@ -9,7 +9,10 @@
       hover
       head-variant="dark"
       :busy="series_is_loading"
-      v-scroll-hint="{handler: 'onTableScrolled'}"
+      v-scroll-hint="{
+        scrollHandler: 'onTableScrolled',
+        isScrollable: 'isScrollable'
+      }"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -125,17 +128,18 @@
 <script>
 import {mapState, mapGetters} from 'vuex'
 import scrollHint from './scroll-hint'
+import scrollHintMix from '@/mixins/scroll-hint'
 
 export default {
   name: 'table-series',
+  mixins: [scrollHintMix],
   data() {
     return {
       perPage: 8,
       currentPage: 1,
       series_selected: [],
       modalShow: false,
-      modal_text: '',
-      scrolled: false
+      modal_text: ''
     }
   },
   watch: {
@@ -149,9 +153,6 @@ export default {
     }
   },
   methods: {
-    onTableScrolled() {
-      this.scrolled = true
-    },
     toggleAll(env) {
       const action = env.target['id']
       this.series_selected =
@@ -272,6 +273,7 @@ export default {
   flex-direction: column;
 }
 .series-table {
+  position: relative;
   padding: 10px 0;
 }
 

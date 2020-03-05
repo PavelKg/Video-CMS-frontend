@@ -1,7 +1,8 @@
 <template>
   <div class="roles-table">
-    <scrollHint v-if="!scrolled && is_tablet_width && !roles_is_loading" />
+    <scrollHint v-if="!scrolled && isScrollable && !roles_is_loading" />
     <b-table
+      :id="'roles-table'"
       :items="roles_on_page"
       :fields="fields"
       responsive
@@ -9,7 +10,10 @@
       hover
       head-variant="dark"
       :busy="roles_is_loading"
-      v-scroll-hint="{handler: 'onTableScrolled'}"
+      v-scroll-hint="{
+        scrollHandler: 'onTableScrolled',
+        isScrollable: 'isScrollable'
+      }"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -96,14 +100,15 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import scrollHint from './scroll-hint'
+import scrollHintMix from '@/mixins/scroll-hint'
 
 export default {
   name: 'table-roles',
+  mixins: [scrollHintMix],
   data() {
     return {
       perPage: 8,
       currentPage: 1,
-      scrolled: false,
       roles_selected: []
     }
   },
@@ -119,10 +124,10 @@ export default {
       }
     }
   },
+  components: {
+    scrollHint
+  },
   methods: {
-    onTableScrolled() {
-      this.scrolled = true
-    },
     editRole(role) {
       const {rid} = role
       this.$emit('contentElementClick', `/hub/roles_edit/rid/${rid}`)
@@ -232,9 +237,6 @@ export default {
       //return this.is_mobile_width ? 'd-none' : ''
       return ''
     }
-  },
-  components: {
-    scrollHint
   }
 }
 </script>
@@ -243,7 +245,7 @@ export default {
 @import '../../assets/styles';
 
 .roles-table {
-  //position: relative;
+  position: relative;
   padding: 10px 0;
 }
 

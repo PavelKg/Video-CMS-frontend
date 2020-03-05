@@ -1,6 +1,6 @@
 <template>
   <div class="users-table">
-    <scrollHint v-if="!scrolled && is_tablet_width && !users_is_loading" />
+    <scrollHint v-if="!scrolled && isScrollable && !users_is_loading" />
     <b-table
       :items="users_on_page"
       :fields="fields"
@@ -9,7 +9,10 @@
       hover
       head-variant="dark"
       :busy="users_is_loading"
-      v-scroll-hint="{handler: 'onTableScrolled'}"
+      v-scroll-hint="{
+        scrollHandler: 'onTableScrolled',
+        isScrollable: 'isScrollable'
+      }"
     >
       <template #table-busy>
         <div class="text-center text-danger my-2">
@@ -100,9 +103,11 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import scrollHint from './scroll-hint'
+import scrollHintMix from '@/mixins/scroll-hint'
 
 export default {
   name: 'table-users',
+  mixins: [scrollHintMix],
   props: {
     searchVal: String
   },
@@ -111,8 +116,7 @@ export default {
       perPage: 8,
       currentPage: 1,
       users_selected: [],
-      searchReg: undefined,
-      scrolled: false
+      searchReg: undefined
     }
   },
 
@@ -137,9 +141,6 @@ export default {
     scrollHint
   },
   methods: {
-    onTableScrolled() {
-      this.scrolled = true
-    },
     toggleAll(env) {
       const action = env.target['id']
 
@@ -257,6 +258,7 @@ export default {
 @import '../../assets/styles';
 
 .users-table {
+  position: relative;
   padding: 10px 0;
 }
 .deleted_item {

@@ -55,15 +55,7 @@ export default {
 
     this.$store.commit('INIT_LANG')
   },
-  mounted() {
-    // this.loader()
-    //   .then(() => {
-    //     this.component = () => this.loader()
-    //   })
-    //   .catch(() => {
-    //     this.component = () => import('./templates/iface/user/content')
-    //   })
-  },
+
   computed: {
     ...mapGetters([
       'windowsRect',
@@ -72,9 +64,7 @@ export default {
       'errors_isShow',
       'errors_message'
     ]),
-    // loader() {
-    //   return () => import(`./templates/iface/${this.me_irole}/content`)
-    // },
+
     isMenuVisible() {
       return this.$store.getters.userMenuVisible
     },
@@ -126,23 +116,21 @@ export default {
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
 .contents {
-  //display: flex;
-  margin-left: 180px;
   margin-top: 50px;
-  //overflow: hidden;
+  float: right;
+  width: calc(100% - 180px);
 
   .content-zone {
-    //overflow: auto;
     padding: 20px;
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 910px) {
   .menu-zone {
     opacity: 0.95;
   }
   .contents {
-    margin-left: 0px;
+    width: 100%;
   }
 }
 </style>

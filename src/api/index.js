@@ -28,6 +28,11 @@ Api.interceptors.response.use(
     // Do something with response error
     const message = error.response.data.message.toLowerCase()
 
+    // if (error.response.status === 401) {
+    //   router.replace('/login');
+    // }
+    // return Promise.reject(error.response);
+
     if (!message.search(/token expired|invalid token]/gi)) {
       return Promise.reject(error)
     }
