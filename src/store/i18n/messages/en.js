@@ -93,7 +93,9 @@ export default {
   },
   screen: {
     display: 'Display',
-    hidden: 'Hidden'
+    hidden: 'Hidden',
+    next_to_the_player: 'Next To The Player',
+    below_the_player: 'Below The Player'
   },
   videos: {
     video_title: 'Video Title',
@@ -157,7 +159,7 @@ export default {
     public: 'Public',
     modal_title_groups_list: 'Groups list',
     tag: 'Tag',
-    description: 'Description'
+    description: 'Description',
   },
   binding: {
     binding_settings: 'Binding settings',
@@ -222,7 +224,8 @@ export default {
     add_new_groups: 'Add New Groups',
     enter_series_description: 'Enter series description',
     show_deleted: 'Show deleted',
-    scrollable: 'Scrollable'
+    scrollable: 'Scrollable',
+    video_information_location: 'Video information location'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

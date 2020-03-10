@@ -4,51 +4,86 @@
       <div>Loading data from server...</div>
     </template>
     <template v-else>
-      <p class="video-title">{{ form.video_title || $t('videos.no_title') }}</p>
-      <div class="video-content-zone">
+      <div
+        class="video-content-zone "
+        :class="{'flex-column': isInfoLocationBottom}"
+      >
         <VideoPlayer :videourl="videoUrl" @onPlayerEvent="onPlayerEvent" />
-        <div class="video-information">
-          <div class="video-information-rows">
-            <p class="title">{{ $t('videos.video_information') }}</p>
-            <div class="video-information-row">
-              <span class="sub-title ">{{ $t('videos.last_modified') }}:</span>
-              <span class="value wraped">{{ updated_at }}</span>
-            </div>
 
-            <div class="video-information-row">
-              <p class="sub-title">{{ $t('videos.tag') }}:</p>
-              <p class="value">{{ form.video_tag }}</p>
-            </div>
+        <b-container
+          fluid
+          class="pb-2  pl-0 mx-0 bg-default"
+          :class="[!isInfoLocationBottom ? 'next-position ml-2 pt-0' : 'pt-3']"
+        >
+          <b-row class="">
+            <b-col
+              ><!--span>{{ $t('videos.tag') }}:</span-->
+              <template v-for="tag in tags">
+                <a
+                  href=""
+                  :key="tag"
+                  class="font-weight-light text-decoration-none"
+                  @click.prevent.stop=""
+                  >{{ `#${tag}` }}</a
+                >
+                <span class="pl-1 value" :key="`span-${tag}`"> </span>
+              </template>
+            </b-col>
+          </b-row>
+          <span class="video-title">{{
+            form.video_title || $t('videos.no_title')
+          }}</span>
+          <p v-if="1 === 2" class="title">
+            {{ $t('videos.video_information') }}
+          </p>
+          <b-row class="pt-2">
+            <b-col>
+              <span class="value">{{ $t('videos.last_modified') }}:</span>
+              <span class="pl-1 value">{{ updated_at }}</span>
+            </b-col>
+          </b-row>
 
-            <div class="video-information-row">
-              <span class="sub-title"
-                >{{ $t('videos.video_description') }}:</span
-              >
-              <span class="value">{{ multilineText }}</span>
-            </div>
-            <template v-if="!isUser">
-              <button @click="onSubtitles" class="button btn-grey">
-                {{ $t('label.edit') }}
-              </button>
-            </template>
-          </div>
+          <b-row
+            class="my-2 mx-0"
+            :class="[{'border-top': multilineText.length > 0}, 'border-bottom']"
+          >
+            <b-col class="px-0">
+              <!--span>{{ $t('videos.video_description') }}:</span-->
+              <span class="text-break" :style="{'white-space': 'pre-wrap'}">{{
+                multilineText
+              }}</span>
+            </b-col>
+          </b-row>
           <template v-if="!isUser">
-            <div>
-              <span class="sub-title">
-                {{ $t('videos.public_settings') }}:
-              </span>
-              <b-form-radio-group
-                id="radio-public-set"
-                :checked="public_status"
-                @change="onChangePublic"
-                :options="options"
-                name="radio-options"
-              >
-              </b-form-radio-group>
-            </div>
+            <b-row class="pt-2">
+              <b-col>
+                <button @click="onSubtitles" class="button btn-grey">
+                  {{ $t('label.edit') }}
+                </button></b-col
+              ></b-row
+            >
           </template>
-        </div>
+
+          <template v-if="!isUser">
+            <b-row class="my-2 mx-0 border-bottom">
+              <b-col class="py-2 px-0">
+                <span class="sub-title">
+                  {{ $t('videos.public_settings') }}:
+                </span>
+                <b-form-radio-group
+                  id="radio-public-set"
+                  :checked="public_status"
+                  @change="onChangePublic"
+                  :options="options"
+                  name="radio-options"
+                >
+                </b-form-radio-group>
+              </b-col>
+            </b-row>
+          </template>
+        </b-container>
       </div>
+
       <template v-if="form.commentbox_visible">
         <div class="comment-input">
           <b-form-textarea v-model="comment_text" rows="1" max-rows="8" />
@@ -74,7 +109,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import VideoPlayer from '@/components/elements/videojs-player'
 //import VideoPlayer  from '@/components/elements/temp_player'
 import Comment from '@/components/elements/comment'
@@ -105,6 +140,13 @@ export default {
   },
   computed: {
     ...mapGetters(['comment_list', 'me']),
+    ...mapState({
+      isInfoLocationBottom: (state) =>
+        state.Companies.video_info_location === 'bottom'
+    }),
+    tags() {
+      return this.form.video_tag.split(', ')
+    },
 
     updated_at() {
       return this.form.updated_at
@@ -195,6 +237,16 @@ export default {
   flex-grow: 2;
 }
 
+.value {
+  font-size: 0.9rem;
+  color: $link;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.next-position {
+  width: 20rem;
+}
 .comment-table {
   display: flex;
   min-width: 100%;
@@ -207,55 +259,22 @@ export default {
 }
 
 .video-title {
+  font-weight: 400;
+  line-height: 2.4rem;
   font-size: 1.4em;
-  color: $link;
+  color: $link-active;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 .video-content-zone {
   display: flex;
-  flex-direction: row;
   justify-content: flex-start;
-  p.title {
-    font-weight: bold;
-    font-size: 1.3em;
-  }
-  .video-information {
-    width: 20rem;
-    //width: 220px;
-    display: flex;
-    flex-direction: column;
-    //flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-left: auto;
-    flex-wrap: wrap;
-    .video-information-rows {
-      width: 100%;
-      p {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-      }
-      .video-information-row {
-        display: flex;
-        flex-direction: column;
-        margin-top: 10px;
-        .sub-title {
-          font-weight: bold;
-          font-size: 1rem;
-        }
-        .value {
-          font-size: 0.9rem;
-          color: $link;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-        }
-      }
-    }
-    .button {
-      margin-top: auto;
-      margin: 10px 0;
-    }
-  }
+}
+
+.video-tags {
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.5rem;
 }
 
 .comment-input {

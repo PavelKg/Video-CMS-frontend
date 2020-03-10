@@ -8,9 +8,38 @@ export default {
   state: {
     companies: [],
     active_company_id: null,
-    company_logo: ''
+    company_logo: '',
+    video_info_location: 'bottom'
   },
   actions: {
+    async LOAD_VIDEO_INFO_LOCATION({commit}, cid) {
+      try {
+        const result = await Api.getVideoInfoLocation(cid)
+        if (typeof result.data === 'object' && result.status === 200) {
+          commit('SET_VIDEO_INFO_LOCATION', result.data.location)
+        } else {
+          throw Error('Error load company commentbox state')
+        }
+      } catch (err) {
+        throw Error(`Error request commentbox state from server: ${err}`)
+      } finally {
+      }
+    },
+    async UPDATE_VIDEO_INFO_LOCATION({commit}, payload) {
+      const {cid, location} = payload
+      try {
+        const result = await Api.setVideoInfoLocation(cid, location)
+
+        if (result.status === 204) {
+          commit('SET_VIDEO_INFO_LOCATION', location)
+        } else {
+          throw Error('Error load company commentbox state')
+        }
+      } catch (err) {
+        throw Error(`Error request commentbox state from server: ${err}`)
+      } finally {
+      }
+    },
     async LOAD_COMMENTBOX_STATE({commit}, cid) {
       try {
         const result = await Api.getCompanyCommentBoxState(cid)
@@ -68,6 +97,9 @@ export default {
   mutations: {
     SET_COMPANY_LOGO(state, data) {
       state.company_logo = data
+    },
+    SET_VIDEO_INFO_LOCATION(state, location) {
+      state.video_info_location = location
     }
     // CREATE_COMPANY_LIST(state) {
     //   state.companies = []

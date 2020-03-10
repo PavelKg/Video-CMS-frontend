@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import headerArea from './header'
 import menuArea from './menu/'
 
@@ -49,9 +49,12 @@ export default {
     menuArea
   },
   created() {
+    const cid = this.cid
     this.$store.dispatch('LOAD_USER_MENU', this.me_irole).then((res) => {
       this.$store.dispatch('LOAD_MENU_STATE')
     })
+
+    this.$store.dispatch('LOAD_VIDEO_INFO_LOCATION', cid)
 
     this.$store.commit('INIT_LANG')
   },
@@ -64,6 +67,9 @@ export default {
       'errors_isShow',
       'errors_message'
     ]),
+    ...mapState({
+      cid: (state) => state.Login.me.profile.company_id
+    }),
 
     isMenuVisible() {
       return this.$store.getters.userMenuVisible

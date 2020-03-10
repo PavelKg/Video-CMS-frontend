@@ -127,6 +127,33 @@ export default {
 
   /*  ---------  COMPANIES MANAGEMENT  ---------------------*/
   /** */
+  /** get Video Info Location
+   * @param {string} cid - Company ID
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  getVideoInfoLocation(cid) {
+    return Api.get(`/companies/${cid}/mng/videoinfolocation`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** update Company CommentBox State
+   * @param {string} cid - Company ID
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  setVideoInfoLocation(cid, location) {
+    const newLocation = location === 'next' ? 'next' : 'bottom'
+    return Api.put(`/companies/${cid}/mng/videoinfo${newLocation}location`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** get Company CommentBox State
    * @param {string} cid - Company ID
    * @return {Promise<*>} - 200	Default Response

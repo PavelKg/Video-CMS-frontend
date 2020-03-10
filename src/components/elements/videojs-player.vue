@@ -127,6 +127,6 @@ export default {
 .player-item {
   width: 100%;
   align-self: stretch;
-  margin-right: 10px;
+  //margin-right: 10px;
 }
 </style>
