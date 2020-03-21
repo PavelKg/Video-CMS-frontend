@@ -12,8 +12,8 @@
 
         <b-container
           fluid
-          class="pb-2  pl-0 mx-0 bg-default"
-          :class="[!isInfoLocationBottom ? 'next-position ml-2 pt-0' : 'pt-3']"
+          class="pb-2 pl-0 bg-default"
+          :class="[!isInfoLocationBottom ? 'next-position' : 'pt-3']"
         >
           <b-row class="">
             <b-col
@@ -246,6 +246,8 @@ export default {
 
 .next-position {
   width: 20rem;
+  margin-left: 10px;
+  padding-top: 0;
 }
 .comment-table {
   display: flex;
@@ -296,6 +298,10 @@ export default {
 }
 
 @media screen and (max-width: 610px) {
+  .next-position {
+    margin-left: 0;
+    padding-top: 10px;
+  }
   .video-content-zone {
     flex-wrap: wrap;
   }
@@ -306,6 +312,10 @@ export default {
 }
 
 @media screen and (max-width: 875px) and (min-width: 610px) {
+  .next-position {
+    margin-left: 0;
+    padding-top: 10px;
+  }
   .video-content-zone {
     flex-wrap: wrap;
   }

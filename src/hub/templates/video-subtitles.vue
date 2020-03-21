@@ -11,7 +11,7 @@
     <template v-else>
       <span>{{ $t('label.edit_video') }}</span>
       <span>{{ $t('label.thumb_image_upload') }}</span>
-      <form ref="subtitlesForm" @submit.prevent="onSubmit">
+      <form ref="subtitlesForm" @submit.prevent.stop="onSubmit">
         <b-container fluid class="pb-2 px-0 bg-default">
           <b-row align-v="center">
             <b-col>
@@ -83,38 +83,84 @@
             </form>
           </div>
         </div>
-        <div class="video-subtitles-inputs">
-          <div class="video-subtitles-inputs-id">
-            <p>{{ $t('videos.id') }}:</p>
-            <p>{{ form.video_id }}</p>
-          </div>
-          <b-form-input
-            :placeholder="`${$t('videos.video_title')}`"
-            v-model="form.video_title"
-          ></b-form-input>
-          <b-form-input
-            :placeholder="`${$t('videos.tag')}`"
-            v-model="form.video_tag"
-          ></b-form-input>
-          <multiselect
-            class="multiselect"
-            v-if="!isLoadingData"
-            v-model="form.video_groups"
-            :items="group_options"
-            :placeholder="`${$t('label.group_is_not_selected')}`"
-          />
-          <multiselect
-            class="multiselect"
-            v-if="!isLoadingData"
-            v-model="form.video_series"
-            :items="series_options"
-            :placeholder="`${$t('label.series_is_not_selected')}`"
-          />
-          <b-form-textarea
-            :placeholder="`${$t('videos.video_description')}`"
-            v-model="form.video_description"
-            wrap="hard"
-          ></b-form-textarea>
+        <div class="mt-3 border-top border-bottom">
+          <b-form-group
+            :label="`${$t('videos.id')}:`"
+            label-cols="1"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="video-tag"
+            ><div class="pt-2">
+              <strong>{{ form.video_id }}</strong>
+            </div></b-form-group
+          >
+
+          <b-form-group
+            :label="`${$t('videos.video_title')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="video-title"
+            :invalid-feedback="validateErrorMessage('video_title')"
+            :state="validateState('video_title')"
+          >
+            <b-form-input
+              id="video-title"
+              :placeholder="`${$t('videos.video_title')}`"
+              v-model="form.video_title"
+            ></b-form-input
+          ></b-form-group>
+          <b-form-group
+            :label="`${$t('videos.tag')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="video-tag"
+          >
+            <b-form-input
+              id="video-tag"
+              :placeholder="`${$t('videos.tag')}`"
+              v-model="form.video_tag"
+            ></b-form-input
+          ></b-form-group>
+          <b-form-group
+            :label="`${$t('videos.groups')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="video-groups"
+          >
+            <multiselect
+              id="video-groups"
+              class="multiselect"
+              v-if="!isLoadingData"
+              v-model="form.video_groups"
+              :items="group_options"
+              :placeholder="`${$t('label.group_is_not_selected')}`"
+          /></b-form-group>
+          <b-form-group
+            :label="`${$t('videos.series')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="video-series"
+          >
+            <multiselect
+              id="video-series"
+              class="multiselect"
+              v-if="!isLoadingData"
+              v-model="form.video_series"
+              :items="series_options"
+              :placeholder="`${$t('label.series_is_not_selected')}`"
+          /></b-form-group>
+          <b-form-group
+            :label="`${$t('videos.video_description')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="video-description"
+          >
+            <b-form-textarea
+              :placeholder="`${$t('videos.video_description')}`"
+              v-model="form.video_description"
+              wrap="hard"
+            ></b-form-textarea>
+          </b-form-group>
         </div>
         <div class="video-subtitles-buttons">
           <button
@@ -136,9 +182,11 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
+import valid_mix from '@/mixins/validation'
 
 export default {
-  name: 'video-subtitles',
+  name: 'video-information',
+  mixins: [valid_mix],
   data() {
     return {
       mainProps: {width: 75, height: 75, class: 'm1'},
@@ -176,6 +224,17 @@ export default {
         third: undefined
       },
       emptyImg: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D'
+    }
+  },
+  validations() {
+    return {
+      form: {
+        video_title: {
+          required: this.vRequired(),
+          minLength: this.vMinLength(this.fieldsRestr.video_title.min_length),
+          regex: this.vRegex(this.fieldsRestr.video_title.regex_value)
+        }
+      }
     }
   },
   created() {
@@ -290,7 +349,8 @@ export default {
       groups: (state) => state.Companies.Groups.list,
       series: (state) => state.Companies.Series.list,
       cid: (state) => state.Login.me.profile.company_id,
-      isVideosInfoUpdating: (state) => state.Videos.isVideosInfoUpdating
+      isVideosInfoUpdating: (state) => state.Videos.isVideosInfoUpdating,
+      fieldsRestr: (store) => store.FieldRestr.categories.videos
     }),
 
     i_thumbnail() {
@@ -315,6 +375,21 @@ export default {
     }
   },
   methods: {
+    validateState(name) {
+      const {$dirty, $error} = this.$v.form[name]
+      return $dirty ? ($error ? !$error : null) : null
+    },
+    validateErrorMessage(name) {
+      let message = ''
+      const {$params} = this.$v.form[name]
+
+      Object.keys($params).forEach((param) => {
+        if (!this.$v.form[name][param]) {
+          message += this.$v.form[name].$params[param].msg
+        }
+      })
+      return message
+    },
     onClickThumDef(evt) {
       const target = evt.target.id.split('-')[1]
       if (this.thumbnailsDef[target]) {
@@ -379,7 +454,11 @@ export default {
       this.$refs['subtitlesForm'].onSubmit
     },
     onSubmit(evt) {
-      evt.preventDefault()
+      //evt.preventDefault()
+      this.$v.form.$touch()
+      if (this.$v.form.$anyError) {
+        return
+      }
 
       this.$store.dispatch('UPDATE_VIDEO_INFO', this.form).then((res) => {
         this.$store.dispatch('LOAD_VIDEO_LIST')
@@ -413,7 +492,7 @@ export default {
 .video-subtitles {
   display: flex;
   flex-direction: column;
-  max-width: 450px;
+  max-width: 550px;
   > span {
     padding: 10px 0;
     font-size: 20px;
@@ -463,25 +542,25 @@ export default {
       }
     }
   }
-  .video-subtitles-inputs {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0;
-    .video-subtitles-inputs-id {
-      display: flex;
-      p {
-        min-width: 30px;
-        font-weight: 600;
-      }
-    }
-    input {
-      margin-bottom: 10px;
-      padding-left: 5px;
-    }
-    .multiselect {
-      padding-bottom: 10px;
-    }
-  }
+  // .video-subtitles-inputs {
+  //   display: flex;
+  //   flex-direction: column;
+  //   //padding: 10px 0;
+  //   .video-subtitles-inputs-id {
+  //     display: flex;
+  //     p {
+  //       min-width: 30px;
+  //       font-weight: 600;
+  //     }
+  //   }
+  //   input {
+  //     margin-bottom: 10px;
+  //     padding-left: 5px;
+  //   }
+  //   .multiselect {
+  //     padding-bottom: 10px;
+  //   }
+  // }
   .video-subtitles-buttons {
     display: flex;
     padding: 10px 0;

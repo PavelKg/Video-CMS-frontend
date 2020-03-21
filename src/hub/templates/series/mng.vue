@@ -40,12 +40,12 @@
                   :value="mnSeries.name"
                   :placeholder="`${$t('series.series_name')}`"
                   :disabled="series_is_deleted"
-                  :maxLength="fieldsRestr.name.max_length"
+                  :maxLength="fieldsRestr.name.maxLength"
                   @input.native="
                     (e) => {
                       e.target.value = e.target.value.substring(
                         0,
-                        fieldsRestr.name.max_length
+                        fieldsRestr.name.maxLength
                       )
                       mnSeries.name = e.target.value
                     }
@@ -264,6 +264,7 @@ export default {
   },
   data() {
     return {
+      validFormName: 'mnSeries',
       nameUniqError: '',
       src: {
         name: '',
@@ -296,18 +297,7 @@ export default {
       modalGroupsBindingShow: false
     }
   },
-  validations() {
-    return {
-      mnSeries: {
-        name: {
-          required: this.vRequired(),
-          minLength: this.vMinLength(this.fieldsRestr.name.min_length),
-          maxLength: this.vMaxLength(this.fieldsRestr.name.max_length),
-          isUnique: this.vIsUnique(this.nameUniqError)
-        }
-      }
-    }
-  },
+
   watch: {
     ['mnSeries.name'](newVal) {
       if (this.nameUniqError !== '') {
@@ -316,21 +306,6 @@ export default {
     }
   },
   methods: {
-    validateState(name) {
-      const {$dirty, $error} = this.$v.mnSeries[name]
-      return $dirty ? ($error ? !$error : null) : null
-    },
-    validateErrorMessage(name) {
-      let message = ''
-      const {$params} = this.$v.mnSeries[name]
-
-      Object.keys($params).forEach((param) => {
-        if (!this.$v.mnSeries[name][param]) {
-          message += this.$v.mnSeries[name].$params[param].msg
-        }
-      })
-      return message
-    },
     onOpenModalGroups() {
       const {sid} = this.mnSeries
       this.modalGroupsBindingShow = true
@@ -343,8 +318,8 @@ export default {
       this.contentElementClick('/hub/series')
     },
     onSubmit() {
-      this.$v.mnSeries.$touch()
-      if (this.$v.mnSeries.$anyError) {
+      this.$v[this.validFormName].$touch()
+      if (this.$v[this.validFormName].$anyError) {
         return
       }
       const oper_type = this.oper === 'edit' ? 'SERIES_UPD' : 'SERIES_ADD'
@@ -589,47 +564,6 @@ export default {
   margin-left: -2rem !important;
 }
 
-// .group-mng-row {
-//   display: flex;
-//   justify-content: flex-start;
-//   align-items: center;
-//   margin: 10px 0;
-//   span {
-//     padding-right: 10px;
-//   }
-// }
-
-// .row-series-activity-period {
-//   display: flex;
-//   justify-content: flex-start;
-//   align-items: center;
-//   margin: 10px 0;
-//   margin-left: 10px;
-
-//   > input {
-//     width: 80px;
-//     margin: 0 10px;
-//   }
-//   p {
-//     min-width: 82px;
-//     font-size: 1.1rem;
-//     margin-bottom: 0px;
-//   }
-//   &.disabled {
-//     p {
-//       color: $text-disabled;
-//     }
-//   }
-// }
-// .datepicker {
-//   height: 40px;
-//   width: 100%;
-//   margin-bottom: 10px;
-// }
-// p.row-space {
-//   padding: 0 10px;
-//   min-width: 0;
-// }
 .series-operation {
   max-width: 550px;
   display: flex;
@@ -639,50 +573,7 @@ export default {
     font-weight: 600;
   }
 }
-//   > * {
-//     //margin-bottom: 20px;
-//   }
-//   .series-oper-id {
-//     //display: flex;
-//     //flex-direction: column;
-//     //align-items: flex-start;
-//     //justify-content: center;
-//     //font-size: 1.1em;
-//     //max-width: 970px;
-//     .series-oper-id-data {
-//       display: flex;
-//       justify-content: flex-start;
-//       padding-bottom: 10px;
-//       flex-wrap: nowrap;
-//       align-items: center;
-//       min-width: 10rem;
-//       > p {
-//         min-width: 110px;
-//         font-size: 1.1em;
-//       }
-//       .chechbox-private {
-//         margin-left: 15px;
-//         display: flex;
-//         align-items: center;
-//       }
-//     }
-//   }
-//   input {
-//     //margin-right: 10px;
-//     max-width: 400px;
-//   }
-//   textarea {
-//     max-width: 400px;
-//   }
-//   .check-admin {
-//     display: flex;
-//     justify-content: space-between;
-//     max-width: 400px;
 
-//     > * {
-//       margin-right: 10px;
-//     }
-//   }
 .series-operation-button-zone {
   display: flex;
   flex-direction: row;
@@ -694,7 +585,7 @@ export default {
     margin-right: 10px;
   }
 }
-// }
+
 .series-not-found {
   display: flex;
   flex-direction: column;

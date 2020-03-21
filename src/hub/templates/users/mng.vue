@@ -27,7 +27,7 @@
                 <b-col cols="8">
                   <b-form-input
                     type="text"
-                    :maxLength="fieldsRestr.uid.max_length"
+                    :maxLength="fieldsRestr.uid.maxLength"
                     :value="mnUser.uid"
                     :placeholder="`${$t('users.user_id')}`"
                     :state="validateState('uid')"
@@ -35,7 +35,7 @@
                       (e) => {
                         e.target.value = e.target.value.substring(
                           0,
-                          fieldsRestr.uid.max_length
+                          fieldsRestr.uid.maxLength
                         )
                         mnUser.uid = e.target.value
                       }
@@ -64,14 +64,14 @@
               <b-col>
                 <b-form-input
                   :value="mnUser.fullname"
-                  :maxLength="fieldsRestr.fullname.max_length"
+                  :maxLength="fieldsRestr.fullname.maxLength"
                   :placeholder="`${$t('users.user_fullname')}`"
                   :state="validateState('fullname')"
                   @input.native="
                     (e) => {
                       e.target.value = e.target.value.substring(
                         0,
-                        fieldsRestr.fullname.max_length
+                        fieldsRestr.fullname.maxLength
                       )
                       mnUser.fullname = e.target.value
                     }
@@ -88,7 +88,6 @@
                   v-model="mnUser.gids"
                   :items="group_options"
                   :placeholder="`${$t('label.group_is_not_selected')}`"
-                  :state="validateState('gids')"
                 /> </b-col
             ></b-row>
           </b-form-group>
@@ -219,16 +218,17 @@
 import {mapGetters, mapState} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
 import datetime from '@/components/elements/datetimepicker'
-import valid_mix from '@/mixins/validation'
+import validMixin from '@/mixins/validation'
 
 export default {
   name: 'user-mng-form',
-  mixins: [valid_mix],
+  mixins: [validMixin],
   props: {
     oper: String
   },
   data() {
     return {
+      validFormName: 'mnUser',
       uidUniqError: '',
       emailUniqError: '',
       mnUser: {
@@ -270,60 +270,45 @@ export default {
       }
     }
   },
-  validations() {
-    return {
-      mnUser: {
-        uid: {
-          required: this.vRequired(),
-          minLength:
-            this.oper === 'add'
-              ? this.vMinLength(this.fieldsRestr.uid.min_length)
-              : '',
-          maxLength:
-            this.oper === 'add'
-              ? this.vMaxLength(this.fieldsRestr.uid.max_length)
-              : '',
-          isUnique: this.vIsUnique(this.uidUniqError)
-        },
-        fullname: {
-          required: this.vRequired(),
-          minLength: this.vMinLength(this.fieldsRestr.fullname.min_length)
-        },
-        gids: {},
-        rid: {
-          required: this.vRequired()
-        },
-        email: {
-          required: this.vRequired(),
-          email: this.vIsEmail(),
-          isUnique: this.vIsUnique(this.emailUniqError)
-        },
-        password: {
-          requered: this.oper === 'add' ? this.vRequired() : '',
-          minLength: this.vMinLength(8)
-        },
-        confPassword: {
-          sameAsPassword: this.vConfPassword('password')
-        }
-      }
-    }
-  },
+  // validations() {
+  //   return {
+  //     mnUser: {
+  //       uid: {
+  //         required: this.vRequired(),
+  //         minLength:
+  //           this.oper === 'add'
+  //             ? this.vMinLength(this.fieldsRestr.uid.min_length)
+  //             : '',
+  //         maxLength:
+  //           this.oper === 'add'
+  //             ? this.vMaxLength(this.fieldsRestr.uid.max_length)
+  //             : '',
+  //         isUnique: this.vIsUnique(this.uidUniqError)
+  //       },
+  //       fullname: {
+  //         required: this.vRequired(),
+  //         minLength: this.vMinLength(this.fieldsRestr.fullname.min_length)
+  //       },
+  //       gids: {},
+  //       rid: {
+  //         required: this.vRequired()
+  //       },
+  //       email: {
+  //         required: this.vRequired(),
+  //         email: this.vIsEmail(),
+  //         isUnique: this.vIsUnique(this.emailUniqError)
+  //       },
+  //       password: {
+  //         requered: this.oper === 'add' ? this.vRequired() : '',
+  //         minLength: this.vMinLength(8)
+  //       },
+  //       confPassword: {
+  //         sameAsPassword: this.vConfPassword('password')
+  //       }
+  //     }
+  //   }
+  // },
   methods: {
-    validateState(name) {
-      const {$dirty, $error} = this.$v.mnUser[name]
-      return $dirty ? ($error ? !$error : null) : null
-    },
-    validateErrorMessage(name) {
-      let message = ''
-      const {$params} = this.$v.mnUser[name]
-
-      Object.keys($params).forEach((param) => {
-        if (!this.$v.mnUser[name][param]) {
-          message += this.$v.mnUser[name].$params[param].msg
-        }
-      })
-      return message
-    },
     onCancel(evt) {
       evt.preventDefault()
       //this.$router.go(-1)
@@ -336,8 +321,8 @@ export default {
     },
     onSubmit(evt) {
       //evt.preventDefault()
-      this.$v.mnUser.$touch()
-      if (this.$v.mnUser.$anyError) {
+      this.$v[validFormName].$touch()
+      if (this.$v[validFormName].$anyError) {
         return
       }
 

@@ -2,21 +2,64 @@ export default {
   state: {
     categories: {
       groups: {
-        name: {min_length: 3, max_length: 20}
+        name: {
+          required: true,
+          minLength: 3,
+          maxLength: 20,
+          isUnique: 'nameUniqError'
+        }
       },
       roles: {
-        name: {min_length: 3, max_length: 20},
-        rid: {min_length: 3, max_length: 20}
+        name: {required: true, minLength: 3, maxLength: 20},
+        rid: {
+          required: true,
+          minLength: 3,
+          maxLength: 20,
+          isUnique: 'ridUniqError'
+        }
       },
       series: {
-        name: {min_length: 3, max_length: 20}
+        name: {
+          required: true,
+          minLength: 3,
+          maxLength: 20,
+          isUnique: 'nameUniqError'
+        }
       },
       users: {
-        uid: {min_length: 5, max_length: 10},
-        fullname: {min_length: 3, max_length: 50}
+        uid: {
+          required: true,
+          minLength: 5,
+          maxLength: 10,
+          isUnique: 'uidUniqError'
+        },
+        fullname: {required: true, minLength: 3, maxLength: 50},
+        //gids: {},
+        rid: {
+          required: true
+        },
+        email: {
+          required: true,
+          email: true,
+          isUnique: 'emailUniqError'
+        },
+         password: {
+           //requered: {'oper': 'add'},
+           minLength: 8
+         },
+         confPassword: {
+          minLength: 8
+        //   //sameAsPassword: 'password'
+         }
       },
-      videos: {},
-      messages: {},
+      videos: {
+        video_title: {
+          required: true,
+          min_length: 5,
+          regex_value: /^[\wа-яА-Яa-zA-Z0-9_\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]*$/
+        }
+      },
+      messages: {subject: {min_length: 3, max_length: 50}},
       comments: {},
       search: {}
     }

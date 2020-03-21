@@ -9,7 +9,8 @@
       </div>
     </template>
     <template v-else>
-      <span>{{ $t(group_title) }}</span>
+      <span>{{ $t(group_title) }}</span
+      >{{ `aaa=` }}{{ nameUniqError }}
       <b-form @submit.stop.prevent="onSubmit">
         <b-container class="px-0 my-3">
           <template v-if="oper === 'edit'">
@@ -24,7 +25,7 @@
 
           <b-form-group
             id="input-group-name"
-            :maxLength="fieldsRestr.name.max_length"
+            :maxLength="fieldsRestr.name.maxLength"
             :label="`${$t('groups.name')}:`"
             label-cols-sm="2"
             label-cols-lg="2"
@@ -44,7 +45,7 @@
                     (e) => {
                       e.target.value = e.target.value.substring(
                         0,
-                        fieldsRestr.name.max_length
+                        fieldsRestr.name.maxLength
                       )
                       mnGroup.name = e.target.value
                     }
@@ -104,11 +105,11 @@
 import {mapState} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
 import TableUsersLite from '@/components/elements/table-users-lite'
-import valid_mix from '@/mixins/validation'
+import validMixin from '@/mixins/validation'
 
 export default {
   name: 'group-mng-form',
-  mixins: [valid_mix],
+  mixins: [validMixin],
   components: {
     TableUsersLite,
     multiselect
@@ -118,6 +119,7 @@ export default {
   },
   data() {
     return {
+      validFormName: 'mnGroup',
       nameUniqError: '',
       src: {name: '', series: []},
       mnGroup: {
@@ -131,18 +133,6 @@ export default {
       series_options: []
     }
   },
-  validations() {
-    return {
-      mnGroup: {
-        name: {
-          required: this.vRequired(),
-          minLength: this.vMinLength(this.fieldsRestr.name.min_length),
-          maxLength: this.vMaxLength(this.fieldsRestr.name.max_length),
-          isUnique: this.vIsUnique(this.nameUniqError)
-        }
-      }
-    }
-  },
   watch: {
     ['mnGroup.name'](newVal) {
       if (this.nameUniqError !== '') {
@@ -151,21 +141,6 @@ export default {
     }
   },
   methods: {
-    validateState(name) {
-      const {$dirty, $error} = this.$v.mnGroup[name]
-      return $dirty ? ($error ? !$error : null) : null
-    },
-    validateErrorMessage(name) {
-      let message = ''
-      const {$params} = this.$v.mnGroup[name]
-
-      Object.keys($params).forEach((param) => {
-        if (!this.$v.mnGroup[name][param]) {
-          message += this.$v.mnGroup[name].$params[param].msg
-        }
-      })
-      return message
-    },
     contentElementClick(menu_item) {
       this.$emit('contentElementClick', menu_item)
     },
@@ -174,8 +149,8 @@ export default {
     },
 
     onSubmit() {
-      this.$v.mnGroup.$touch()
-      if (this.$v.mnGroup.$anyError) {
+      this.$v[this.validFormName].$touch()
+      if (this.$v[this.validFormName].$anyError) {
         return
       }
 
@@ -243,7 +218,7 @@ export default {
     ...mapState({
       cid: (store) => store.Login.me.profile.company_id,
       series: (store) => store.Companies.Series.list,
-      fieldsRestr: (store) => store.FieldRestr.categories.roles
+      fieldsRestr: (store) => store.FieldRestr.categories.groups
     }),
     group_title() {
       return `groups.oper_title_${this.oper}`

@@ -105,6 +105,8 @@ export default {
     video_information: 'Video Information',
     public_settings: 'Public settings',
     no_title: 'No Title',
+    groups:'Groups',
+    series: 'Series',
     id: 'ID',
     tbl_header_id: 'ID',
     tbl_header_name: 'Name',
@@ -159,7 +161,7 @@ export default {
     public: 'Public',
     modal_title_groups_list: 'Groups list',
     tag: 'Tag',
-    description: 'Description',
+    description: 'Description'
   },
   binding: {
     binding_settings: 'Binding settings',
@@ -239,6 +241,7 @@ export default {
     max_length: 'This field must not exceed {cnt} characters',
     same_as_password: 'Passwords do not match',
     email: 'This is not a valid email format',
-    is_not_unique: 'Value is not unique'
+    is_not_unique: 'Value is not unique',
+    invalid_data_format: 'Invalid data format'
   }
 }
