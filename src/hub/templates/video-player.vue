@@ -3,7 +3,8 @@
     <template v-if="!videoHasUrl">
       <div>Loading data from server...</div>
     </template>
-    <template v-else>
+    <template v-else
+      >{{ $v }}
       <div
         class="video-content-zone "
         :class="{'flex-column': isInfoLocationBottom}"
@@ -86,9 +87,19 @@
 
       <template v-if="form.commentbox_visible">
         <div class="comment-input">
-          <b-form-textarea v-model="comment_text" rows="1" max-rows="8" />
+          <b-form-group
+          class="comment-text-group"
+            :invalid-feedback="validateErrorMessage('comment_text')"
+            :state="validateState('comment_text')"
+          >
+            <b-form-textarea
+              v-model="mnComment.comment_text"
+              rows="1"
+              max-rows="8"
+          /></b-form-group>
+
           <button
-            :disabled="comment_sending"
+            :disabled="comment_sending || !mnComment.comment_text === ''"
             @click="addComment"
             class="button btn-blue"
           >
@@ -113,14 +124,17 @@ import {mapGetters, mapState} from 'vuex'
 import VideoPlayer from '@/components/elements/videojs-player'
 //import VideoPlayer  from '@/components/elements/temp_player'
 import Comment from '@/components/elements/comment'
+import validMixin from '@/mixins/validation'
 
 export default {
   name: 'p-video-player',
+  mixins: [validMixin],
   data() {
     return {
       active_video_uuid: undefined,
       videoUrl: '',
-      comment_text: '',
+      validFormName: 'mnComment',
+      mnComment: {comment_text: ''},
       form: {
         video_title: '',
         updated_at: '',
@@ -142,7 +156,9 @@ export default {
     ...mapGetters(['comment_list', 'me']),
     ...mapState({
       isInfoLocationBottom: (state) =>
-        state.Companies.video_info_location === 'bottom'
+        state.Companies.video_info_location === 'bottom',
+
+      fieldsRestr: (store) => store.FieldRestr.categories.comments
     }),
     tags() {
       return this.form.video_tag.split(', ')
@@ -204,18 +220,23 @@ export default {
       })
     },
     addComment() {
+      console.log(this.$v)
+      this.$v[this.validFormName].$touch()
+      if (this.$v[this.validFormName].$anyError) {
+        return
+      }
       this.comment_sending = true
       this.$store
         .dispatch('ADD_COMMENT', {
           uuid: this.form.video_uuid,
-          text: this.comment_text
+          text: this.mnComment.comment_text
         })
         .then(
           (res) => {},
           (err) => {}
         )
         .finally(() => {
-          this.comment_text = ''
+          this.mnComment.comment_text = ''
           this.comment_sending = false
         })
     },
@@ -285,7 +306,7 @@ export default {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  input {
+  .comment-text-group {
     width: 100%;
     height: 40px;
     border: 1px solid $link;
@@ -293,6 +314,7 @@ export default {
     border-radius: 5px;
   }
   button {
+    
     margin-left: 10px;
   }
 }

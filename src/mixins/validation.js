@@ -10,21 +10,26 @@ import {withParams} from 'vuelidate/lib/validators/common'
 export default {
   data() {
     return {
-      vRequired: (val = false) => {
-        let cond = true
-        // console.log('typeof val === object - ', typeof val === 'object')
-        // if (typeof val === 'object') {
-        //   const field = Object.keys(val)[0]
-        //   const fieldVal = val[field]
-        //   if (this.$data.hasOwnProperty(field)) {
-        //     return this.$data[field] === fieldVal
-        //   } else {
-        //     return false
-        //   }
-        // } else {
-        //   cond = val
-        // }
-        console.log('cond=', cond)
+      vRequired: function(val) {
+        let cond
+        const valType = typeof val
+
+        if (valType === 'object') {
+          const {field, fn} = val
+          const fieldList = field.split('.')
+          let arg = this[fieldList[0]]
+          if (fieldList.length > 1) {
+            for (let i = 1; i < fieldList.length; i += 1) {
+              if (arg.hasOwnProperty(fieldList[i])) {
+                arg = arg[fieldList[i]]
+              }
+            }
+          }
+          cond = fn(arg)
+        } else if (valType === 'boolean') {
+          cond = val
+        }
+
         return cond
           ? withParams({msg: this.$t('validation.required_field')}, required)
           : ''
@@ -99,6 +104,7 @@ export default {
       return fieldsList
     },
     validMatch(func, val) {
+      console.log({func, val})
       let res
       switch (func) {
         case 'required':
@@ -115,12 +121,17 @@ export default {
           break
         case 'email':
           res = this.vIsEmail(val)
+          break
+        case 'sameAsPassword':
+          res = this.vConfPassword(val)
+          break
+        case 'regex':
+          res = this.vRegex(val)
       }
       return res
     },
     validateState(name) {
       const validFormName = this.validFormName
-      console.log('validFormName=', validFormName, name, this.$v[validFormName])
 
       const {$dirty, $error} = this.$v[validFormName][name]
       return $dirty ? ($error ? !$error : null) : null
@@ -134,7 +145,7 @@ export default {
 
       Object.keys($params).forEach((param) => {
         if (!validForm[name][param]) {
-          message += validForm[name].$params[param].msg
+          message += `${validForm[name].$params[param].msg}; `
         }
       })
       return message

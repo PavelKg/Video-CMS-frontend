@@ -48,25 +48,44 @@
     >
       <div class="modal-zone">
         <div class="modal-data-zone">
-          <b-form-select v-model="modalMessData.receiver" :options="receivers">
-            <template slot="first">
-              <option :value="null">To</option>
-            </template>
-          </b-form-select>
-          <p></p>
-          <b-form-input
-            v-model="modalMessData.subject"
-            :placeholder="$t('message.subject')"
-          ></b-form-input>
-          <p></p>
-          <b-form-textarea
-            id="textarea"
-            v-model="modalMessData.text"
-            :placeholder="$t('message.text')"
-            wrap="hard"
-            rows="3"
-            max-rows="6"
-          ></b-form-textarea>
+          <b-form-group
+            id="select-reciever"
+            :invalid-feedback="validateErrorMessage('receiver')"
+            :state="validateState('receiver')"
+          >
+            <b-form-select
+              v-model="modalMessData.receiver"
+              :options="receivers"
+            >
+              <template slot="first">
+                <option :value="null">To</option>
+              </template>
+            </b-form-select></b-form-group
+          >
+          <b-form-group
+            id="input-subject"
+            :invalid-feedback="validateErrorMessage('subject')"
+            :state="validateState('subject')"
+          >
+            <b-form-input
+              v-model="modalMessData.subject"
+              :placeholder="$t('message.subject')"
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group
+            id="input-text"
+            :invalid-feedback="validateErrorMessage('text')"
+            :state="validateState('text')"
+          >
+            <b-form-textarea
+              id="textarea"
+              v-model="modalMessData.text"
+              :placeholder="$t('message.text')"
+              wrap="hard"
+              rows="3"
+              max-rows="6"
+            ></b-form-textarea
+          ></b-form-group>
         </div>
         <div class="modal-buttons-zone">
           <button
@@ -86,11 +105,13 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import tableMessages from '@/components/elements/table-messages'
+import validMixin from '@/mixins/validation'
 
 export default {
   name: 'message-list',
+  mixins: [validMixin],
   data() {
     return {
       tabs: [
@@ -99,6 +120,7 @@ export default {
       ],
       isShowModalMessageAdd: false,
       tabIndex: 0,
+      validFormName: 'modalMessData',
       modalMessData: {
         receiver: null,
         subject: '',
@@ -138,6 +160,14 @@ export default {
     },
 
     onSubmitNewMess() {
+      this.$v[this.validFormName].$touch()
+      if (this.$v[this.validFormName].$anyError) {
+        console.log(
+          'this.$v[this.validFormName].$anyError=',
+          this.$v[this.validFormName]
+        )
+        return
+      }
       const {receiver, subject, text, imporant} = this.modalMessData
       const messData = {
         receiver_uid: receiver.uid,
@@ -186,7 +216,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['me', 'message_receivers', 'active_message']),
+    ...mapGetters(['message_receivers', 'active_message']),
+    ...mapState({
+      cid: (store) => store.Login.me.profile.company_id,
+      fieldsRestr: (store) => store.FieldRestr.categories.messages
+    }),
     selectedTabName() {
       return this.currentTab.toLowerCase()
     },

@@ -321,8 +321,8 @@ export default {
     },
     onSubmit(evt) {
       //evt.preventDefault()
-      this.$v[validFormName].$touch()
-      if (this.$v[validFormName].$anyError) {
+      this.$v[this.validFormName].$touch()
+      if (this.$v[this.validFormName].$anyError) {
         return
       }
 
@@ -440,7 +440,11 @@ export default {
     },
     isUserDelete() {
       return Boolean(this.mnUser.deleted_at)
+    },
+    isAddForm(){
+      return this.oper === 'add'
     }
+
   }
 }
 </script>

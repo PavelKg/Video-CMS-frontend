@@ -34,7 +34,7 @@ export default {
           isUnique: 'uidUniqError'
         },
         fullname: {required: true, minLength: 3, maxLength: 50},
-        //gids: {},
+        gids: {},
         rid: {
           required: true
         },
@@ -43,24 +43,35 @@ export default {
           email: true,
           isUnique: 'emailUniqError'
         },
-         password: {
-           //requered: {'oper': 'add'},
-           minLength: 8
-         },
-         confPassword: {
+        password: {
+          required: (function() {
+            const isEdit = function(props) {
+              return props['oper'] === 'add'
+            }
+            return {field: '$props', fn: isEdit}
+          })(),
           minLength: 8
-        //   //sameAsPassword: 'password'
-         }
+        },
+        confPassword: {
+          minLength: 8,
+          sameAsPassword: 'password'
+        }
       },
       videos: {
         video_title: {
           required: true,
-          min_length: 5,
-          regex_value: /^[\wа-яА-Яa-zA-Z0-9_\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]*$/
+          minLength: 5,
+          regex: /^[\wа-яА-Яa-zA-Z0-9_\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]*$/
         }
       },
-      messages: {subject: {min_length: 3, max_length: 50}},
-      comments: {},
+      messages: {
+        subject: {required: true, minLength: 3, maxLength: 50},
+        receiver: {
+          required: true
+        },
+        text: {required: true, minLength: 1, maxLength: 150}
+      },
+      comments: {comment_text: {required: true, minLength: 1, maxLength: 1500}},
       search: {}
     }
   }

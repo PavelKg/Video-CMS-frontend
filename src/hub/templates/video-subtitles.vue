@@ -100,6 +100,7 @@
             label-cols-sm="3"
             label-cols-lg="3"
             label-for="video-title"
+            :minLength="fieldsRestr.video_title.maxLength"
             :invalid-feedback="validateErrorMessage('video_title')"
             :state="validateState('video_title')"
           >
@@ -182,14 +183,15 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import multiselect from '@/components/elements/multiselect'
-import valid_mix from '@/mixins/validation'
+import validMix from '@/mixins/validation'
 
 export default {
   name: 'video-information',
-  mixins: [valid_mix],
+  mixins: [validMix],
   data() {
     return {
       mainProps: {width: 75, height: 75, class: 'm1'},
+      validFormName: 'form',
       dataUpdated: false,
       file: '',
       form: {
@@ -226,17 +228,17 @@ export default {
       emptyImg: 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D'
     }
   },
-  validations() {
-    return {
-      form: {
-        video_title: {
-          required: this.vRequired(),
-          minLength: this.vMinLength(this.fieldsRestr.video_title.min_length),
-          regex: this.vRegex(this.fieldsRestr.video_title.regex_value)
-        }
-      }
-    }
-  },
+  // validations() {
+  //   return {
+  //     form: {
+  //       video_title: {
+  //         required: this.vRequired(),
+  //         minLength: this.vMinLength(this.fieldsRestr.video_title.min_length),
+  //         regex: this.vRegex(this.fieldsRestr.video_title.regex_value)
+  //       }
+  //     }
+  //   }
+  // },
   created() {
     const cid = this.cid
     this.active_video_uuid = this.$route.params.uuid
@@ -375,21 +377,21 @@ export default {
     }
   },
   methods: {
-    validateState(name) {
-      const {$dirty, $error} = this.$v.form[name]
-      return $dirty ? ($error ? !$error : null) : null
-    },
-    validateErrorMessage(name) {
-      let message = ''
-      const {$params} = this.$v.form[name]
+    // validateState(name) {
+    //   const {$dirty, $error} = this.$v.form[name]
+    //   return $dirty ? ($error ? !$error : null) : null
+    // },
+    // validateErrorMessage(name) {
+    //   let message = ''
+    //   const {$params} = this.$v.form[name]
 
-      Object.keys($params).forEach((param) => {
-        if (!this.$v.form[name][param]) {
-          message += this.$v.form[name].$params[param].msg
-        }
-      })
-      return message
-    },
+    //   Object.keys($params).forEach((param) => {
+    //     if (!this.$v.form[name][param]) {
+    //       message += this.$v.form[name].$params[param].msg
+    //     }
+    //   })
+    //   return message
+    // },
     onClickThumDef(evt) {
       const target = evt.target.id.split('-')[1]
       if (this.thumbnailsDef[target]) {
