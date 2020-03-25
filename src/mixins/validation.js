@@ -91,7 +91,7 @@ export default {
   methods: {
     rules() {
       const fieldsList = {}
-      console.log('this.fieldsRestr=', this.fieldsRestr)
+
       Object.keys(this.fieldsRestr).map((field) => {
         for (const item in this.fieldsRestr[field]) {
           fieldsList[field] = {
@@ -104,7 +104,6 @@ export default {
       return fieldsList
     },
     validMatch(func, val) {
-      console.log({func, val})
       let res
       switch (func) {
         case 'required':

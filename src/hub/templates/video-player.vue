@@ -219,7 +219,6 @@ export default {
       })
     },
     addComment() {
-      console.log(this.$v)
       this.$v[this.validFormName].$touch()
       if (this.$v[this.validFormName].$anyError) {
         return
