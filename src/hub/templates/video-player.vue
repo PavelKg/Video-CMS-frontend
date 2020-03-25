@@ -3,8 +3,7 @@
     <template v-if="!videoHasUrl">
       <div>Loading data from server...</div>
     </template>
-    <template v-else
-      >{{ $v }}
+    <template v-else>
       <div
         class="video-content-zone "
         :class="{'flex-column': isInfoLocationBottom}"
@@ -88,7 +87,7 @@
       <template v-if="form.commentbox_visible">
         <div class="comment-input">
           <b-form-group
-          class="comment-text-group"
+            class="comment-text-group"
             :invalid-feedback="validateErrorMessage('comment_text')"
             :state="validateState('comment_text')"
           >
@@ -301,20 +300,21 @@ export default {
 }
 
 .comment-input {
-  margin: 10px 0;
+  //margin: 10px 0;
+  padding-top: 1rem;
+  padding-bottom: 1.5rem;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
   .comment-text-group {
     width: 100%;
-    height: 40px;
-    border: 1px solid $link;
-    padding: 10px;
-    border-radius: 5px;
+    height: 45px;
+    //border: 1px solid $link;
+    //padding: 10px;
+    //border-radius: 5px;
   }
   button {
-    
     margin-left: 10px;
   }
 }

@@ -270,44 +270,7 @@ export default {
       }
     }
   },
-  // validations() {
-  //   return {
-  //     mnUser: {
-  //       uid: {
-  //         required: this.vRequired(),
-  //         minLength:
-  //           this.oper === 'add'
-  //             ? this.vMinLength(this.fieldsRestr.uid.min_length)
-  //             : '',
-  //         maxLength:
-  //           this.oper === 'add'
-  //             ? this.vMaxLength(this.fieldsRestr.uid.max_length)
-  //             : '',
-  //         isUnique: this.vIsUnique(this.uidUniqError)
-  //       },
-  //       fullname: {
-  //         required: this.vRequired(),
-  //         minLength: this.vMinLength(this.fieldsRestr.fullname.min_length)
-  //       },
-  //       gids: {},
-  //       rid: {
-  //         required: this.vRequired()
-  //       },
-  //       email: {
-  //         required: this.vRequired(),
-  //         email: this.vIsEmail(),
-  //         isUnique: this.vIsUnique(this.emailUniqError)
-  //       },
-  //       password: {
-  //         requered: this.oper === 'add' ? this.vRequired() : '',
-  //         minLength: this.vMinLength(8)
-  //       },
-  //       confPassword: {
-  //         sameAsPassword: this.vConfPassword('password')
-  //       }
-  //     }
-  //   }
-  // },
+
   methods: {
     onCancel(evt) {
       evt.preventDefault()
@@ -441,10 +404,9 @@ export default {
     isUserDelete() {
       return Boolean(this.mnUser.deleted_at)
     },
-    isAddForm(){
+    isAddForm() {
       return this.oper === 'add'
     }
-
   }
 }
 </script>
