@@ -30,7 +30,7 @@
               <b-form-input
                 id="role-id"
                 v-model="mnRole.rid"
-                :maxLength="fieldsRestr.name.max_length"
+                :maxLength="fieldsRestr.name.maxLength"
                 :state="validateState('rid')"
               ></b-form-input>
             </template>
@@ -50,7 +50,7 @@
                   id="role-name"
                   v-model="mnRole.name"
                   :disabled="isDeleted"
-                  :maxLength="fieldsRestr.name.max_length"
+                  :maxLength="fieldsRestr.name.maxLength"
                   :state="validateState('name')"
                 ></b-form-input></b-form-group
             ></b-col>
@@ -95,16 +95,17 @@
 
 <script>
 import {mapGetters, mapState} from 'vuex'
-import valid_mix from '@/mixins/validation'
+import validMixin from '@/mixins/validation'
 
 export default {
   name: 'role-mng-form',
-  mixins: [valid_mix],
+  mixins: [validMixin],
   props: {
     oper: String
   },
   data() {
     return {
+      validFormName: 'mnRole',
       ridUniqError: '',
       mnRole: {
         is_admin: false,
@@ -118,23 +119,7 @@ export default {
       roleNotFound: false
     }
   },
-  validations() {
-    return {
-      mnRole: {
-        name: {
-          required: this.vRequired(),
-          minLength: this.vMinLength(this.fieldsRestr.name.min_length),
-          maxLength: this.vMaxLength(this.fieldsRestr.name.max_length)
-        },
-        rid: {
-          required: this.vRequired(),
-          minLength: this.vMinLength(this.fieldsRestr.name.min_length),
-          maxLength: this.vMaxLength(this.fieldsRestr.name.max_length),
-          isUnique: this.vIsUnique(this.ridUniqError)
-        }
-      }
-    }
-  },
+
   watch: {
     ['mnRole.rid'](newVal) {
       if (this.ridUniqError !== '') {
@@ -143,27 +128,12 @@ export default {
     }
   },
   methods: {
-    validateState(name) {
-      const {$dirty, $error} = this.$v.mnRole[name]
-      return $dirty ? ($error ? !$error : null) : null
-    },
-    validateErrorMessage(name) {
-      let message = ''
-      const {$params} = this.$v.mnRole[name]
-
-      Object.keys($params).forEach((param) => {
-        if (!this.$v.mnRole[name][param]) {
-          message += this.$v.mnRole[name].$params[param].msg
-        }
-      })
-      return message
-    },
     cancel_click() {
       this.$emit('contentElementClick', '/hub/roles')
     },
     onSubmit() {
-      this.$v.mnRole.$touch()
-      if (this.$v.mnRole.$anyError) {
+      this.$v[this.validFormName].$touch()
+      if (this.$v[this.validFormName].$anyError) {
         return
       }
 
