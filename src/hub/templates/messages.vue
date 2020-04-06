@@ -1,9 +1,7 @@
 <template>
   <div class="messages-zone">
     <div class="messages-mgm">
-      <button class="button btn-blue" @click="addNewMessage">
-        {{ $t('message.btn_add') }}
-      </button>
+      <button class="button btn-blue" @click="addNewMessage">{{ $t('message.btn_add') }}</button>
       <div class="search-row">
         <b-form-input
           id="keywword_search"
@@ -28,8 +26,7 @@
           :title="`${tab.text}`"
           title-item-class="w-50"
           :title-link-class="linkClass(ind)"
-        >
-        </b-tab>
+        ></b-tab>
       </b-tabs>
     </div>
     <tableMessages
@@ -53,24 +50,18 @@
             :invalid-feedback="validateErrorMessage('receiver')"
             :state="validateState('receiver')"
           >
-            <b-form-select
-              v-model="modalMessData.receiver"
-              :options="receivers"
-            >
+            <b-form-select v-model="modalMessData.receiver" :options="receivers">
               <template slot="first">
                 <option :value="null">To</option>
               </template>
-            </b-form-select></b-form-group
-          >
+            </b-form-select>
+          </b-form-group>
           <b-form-group
             id="input-subject"
             :invalid-feedback="validateErrorMessage('subject')"
             :state="validateState('subject')"
           >
-            <b-form-input
-              v-model="modalMessData.subject"
-              :placeholder="$t('message.subject')"
-            ></b-form-input>
+            <b-form-input v-model="modalMessData.subject" :placeholder="$t('message.subject')"></b-form-input>
           </b-form-group>
           <b-form-group
             id="input-text"
@@ -84,20 +75,16 @@
               wrap="hard"
               rows="3"
               max-rows="6"
-            ></b-form-textarea
-          ></b-form-group>
+            ></b-form-textarea>
+          </b-form-group>
         </div>
         <div class="modal-buttons-zone">
           <button
             class="button btn-blue"
             @click="onSubmitNewMess"
             :disabled="!isReadyToSend"
-          >
-            {{ $t('label.send') }}
-          </button>
-          <button class="button btn-braun" @click="hideMessageModal">
-            {{ $t('label.cancel') }}
-          </button>
+          >{{ $t('label.send') }}</button>
+          <button class="button btn-braun" @click="hideMessageModal">{{ $t('label.cancel') }}</button>
         </div>
       </div>
     </b-modal>
@@ -162,10 +149,6 @@ export default {
     onSubmitNewMess() {
       this.$v[this.validFormName].$touch()
       if (this.$v[this.validFormName].$anyError) {
-        console.log(
-          'this.$v[this.validFormName].$anyError=',
-          this.$v[this.validFormName]
-        )
         return
       }
       const {receiver, subject, text, imporant} = this.modalMessData

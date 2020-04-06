@@ -1,17 +1,18 @@
 <template>
   <div class="users-mng">
     <div class="button-zone">
-      <button class="button btn-blue" @click="addNewUser">
-        {{ $t('users.btn_add') }}
-      </button>
-      <b-checkbox
-        class="ml-auto pt-2"
-        v-model="isShowDeleted"
-        @input="loadUsersList"
-        name="check_isAdmin"
-      >
-        {{ $t('label.show_deleted') }}
-      </b-checkbox>
+      <button class="button btn-blue mr-2" @click="addNewUser">{{ $t('users.btn_add') }}</button>
+      <button class="button btn-blue" @click="usersImport">{{ $t('users.btn_import') }}</button>
+      <div class="ml-auto">
+        <b-checkbox
+          class="pl-5 pr-1"
+          :style="{'min-width':'155px'}"
+          v-model="isShowDeleted"
+          @input="loadUsersList"
+          name="check_isAdmin"
+          inline
+        >{{ $t('label.show_deleted') }}</b-checkbox>
+      </div>
     </div>
     <div class="search-row">
       <b-form-input
@@ -103,6 +104,9 @@ export default {
     addNewUser() {
       this.contentElementClick(`/hub/users_add`)
     },
+    usersImport() {
+      this.contentElementClick(`/hub/users_import`)
+    },    
     contentElementClick(key) {
       this.$emit('contentElementClick', key)
     },
@@ -118,12 +122,14 @@ export default {
 .users-mng {
   .button-zone {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .search-row {
     padding-top: 10px;
     display: flex;
-    flex-direction: row;
     align-items: center;
+    width: 100%;
     input {
       max-width: 300px;
       padding: 0 5px;

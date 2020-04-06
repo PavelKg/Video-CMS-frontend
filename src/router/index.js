@@ -10,6 +10,7 @@ const messages = () => import('@/hub/templates/messages')
 const users = () => import('@/hub/templates/users')
 const users_add = () => import('@/hub/templates/users/mng')
 const users_edit = () => import('@/hub/templates/users/mng')
+const users_import = () => import('@/hub/templates/users/import')
 const groups = () => import('@/hub/templates/groups')
 const groups_add = () => import('@/hub/templates/groups/mng')
 const groups_edit = () => import('@/hub/templates/groups/mng')
@@ -151,8 +152,7 @@ export default new Router({
           path: 'users',
           component: users,
           beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/hub/users', notForUser: 'true'},
-          beforeEnter: checkAuthAndAccess
+          meta: {menuItem: '/hub/users', notForUser: 'true'}
         },
         {
           path: 'users_add',
@@ -160,6 +160,12 @@ export default new Router({
           beforeEnter: checkAuthAndAccess,
           meta: {menuItem: '/hub/users', notForUser: 'true'},
           props: {oper: 'add'}
+        },
+        {
+          path: 'users_import',
+          component: users_import,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/users', notForUser: 'true'}
         },
         {
           path: 'users_edit/uid/:uid',

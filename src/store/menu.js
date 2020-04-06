@@ -197,6 +197,10 @@ const menuStructure = {
             type: 'users.add',
             caption: 'menu.user_edit'
           },
+          edit: {
+            type: 'users.import',
+            caption: 'menu.user_import'
+          },
           info: {
             type: 'users.info',
             caption: 'menu.user_info'
@@ -314,7 +318,7 @@ export default {
         }
       }
     },
-    
+
     //CLEAR_MENU_STATE: () => localStorage.removeItem('vcms-activ-menu'),
 
     SAVE_MENU_STATE: ({state}) => {

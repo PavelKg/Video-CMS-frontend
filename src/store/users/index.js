@@ -1,12 +1,60 @@
 import Api from '@/api'
 
+function convertToCSV(objArray) {
+  const array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray
+  let str = ''
+
+  for (let i = 0; i < array.length; i++) {
+    let line = ''
+    for (let index in array[i]) {
+      if (line != '') line += ','
+      line += array[i][index]
+    }
+    str += line + '\r\n'
+  }
+  return str
+}
+
+function exportCSVFile(headers, items, fileTitle) {
+  if (headers) {
+    items.unshift(headers)
+  }
+
+  // Convert Object to JSON
+  var jsonObject = JSON.stringify(items)
+
+  var csv = convertToCSV(jsonObject)
+
+  var exportedFilenmae = fileTitle + '.csv' || 'export.csv'
+
+  var blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'})
+  if (navigator.msSaveBlob) {
+    // IE 10+
+    navigator.msSaveBlob(blob, exportedFilenmae)
+  } else {
+    var link = document.createElement('a')
+    if (link.download !== undefined) {
+      // feature detection
+      // Browsers that support HTML5 download attribute
+      var url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', exportedFilenmae)
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+  }
+}
+
 export default {
   state: {
     users: {
       list: [],
       isListLoading: true,
       selected: null
-    }
+    },
+    usersImportStatus: ''
   },
   actions: {
     async LOAD_USERS({commit}, payload) {
@@ -37,6 +85,33 @@ export default {
       } catch (err) {
         throw Error('Error request users from server')
       } finally {
+      }
+    },
+    async USER_IMPORT({commit, getters}, file) {
+      const headers = {
+        row: 'ROW',
+        id: 'USER ID',
+        result: 'RESULT'
+      }
+      const fileTitle = 'UsersImportResult'
+      const cid = getters.me.profile.company_id
+      commit('SET_IMPORT_STATUS', 'Processing...')
+      try {
+        const result = await Api.user_import(cid, file)
+        if (result.status === 200) {
+          commit('SET_IMPORT_STATUS', 'Generate result CSV')
+          exportCSVFile(headers, result.data, fileTitle)
+          commit('SET_IMPORT_STATUS', 'Import finished')
+          return Promise.resolve()
+        } else {
+          commit('SET_IMPORT_STATUS', result.status)
+          throw Error(`Error import user, status - ${result.status}`)
+        }
+      } catch (err) {
+        commit(
+          'SET_IMPORT_STATUS',
+          err.response ? err.response.data.message : 'Import error'
+        )
       }
     },
     async USER_ADD({commit, getters}, payload) {
@@ -133,6 +208,9 @@ export default {
       state.users.isListLoading = true
       state.users.selected = user
       state.users.isListLoading = false
+    },
+    SET_IMPORT_STATUS(state, status) {
+      state.usersImportStatus = status
     }
   },
   getters: {

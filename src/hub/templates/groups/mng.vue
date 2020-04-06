@@ -2,15 +2,13 @@
   <div class="group-operation">
     <template v-if="groupNotFound">
       <div class="group-not-found">
-        <span>Sorry. Group is not found!!!</span><br />
-        <button @click="cancel_click" class="button btn-braun">
-          {{ $t('label.back') }}
-        </button>
+        <span>Sorry. Group is not found!!!</span>
+        <br />
+        <button @click="cancel_click" class="button btn-braun">{{ $t('label.back') }}</button>
       </div>
     </template>
     <template v-else>
-      <span>{{ $t(group_title) }}</span
-      >{{ `aaa=` }}{{ nameUniqError }}
+      <span>{{ $t(group_title) }}</span>
       <b-form @submit.stop.prevent="onSubmit">
         <b-container class="px-0 my-3">
           <template v-if="oper === 'edit'">
@@ -33,8 +31,8 @@
             :invalid-feedback="validateErrorMessage('name')"
             :state="validateState('name')"
           >
-            <b-row
-              ><b-col>
+            <b-row>
+              <b-col>
                 <b-form-input
                   id="group-name"
                   :value="mnGroup.name"
@@ -50,8 +48,9 @@
                       mnGroup.name = e.target.value
                     }
                   "
-                ></b-form-input></b-col
-            ></b-row>
+                ></b-form-input>
+              </b-col>
+            </b-row>
           </b-form-group>
           <template v-if="oper === 'edit'">
             <b-form-group
@@ -60,7 +59,8 @@
               label-cols-sm="2"
               label-cols-lg="2"
               label-for="group-name"
-              ><b-row>
+            >
+              <b-row>
                 <b-col>
                   <multiselect
                     class="multiselect"
@@ -74,12 +74,11 @@
             </b-form-group>
           </template>
           <template v-if="oper === 'edit' && !group_is_deleted">
-            <b-row
-              ><b-col>
-                <TableUsersLite
-                  :gid="mnGroup.gid"
-                  @contentElementClick="contentElementClick"/></b-col
-            ></b-row>
+            <b-row>
+              <b-col>
+                <TableUsersLite :gid="mnGroup.gid" @contentElementClick="contentElementClick" />
+              </b-col>
+            </b-row>
           </template>
 
           <div class="group-operation-button-zone">
@@ -87,13 +86,9 @@
               :disabled="dataNotChanged || group_is_deleted"
               type="submit"
               class="button btn-blue"
-            >
-              {{ `${$t('label.register')}` }}
-            </button>
+            >{{ `${$t('label.register')}` }}</button>
 
-            <button @click="cancel_click" class="button btn-braun">
-              {{ `${$t('label.cancel')}` }}
-            </button>
+            <button @click="cancel_click" class="button btn-braun">{{ `${$t('label.cancel')}` }}</button>
           </div>
         </b-container>
       </b-form>

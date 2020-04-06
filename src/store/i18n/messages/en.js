@@ -62,12 +62,15 @@ export default {
   },
   users: {
     btn_add: 'Add New User',
+    btn_import: 'Import CSV',
     tbl_header_ID: 'ID',
     tbl_header_name: 'Name',
     tbl_header_group: 'Group',
     tbl_header_last_login: 'Last Login',
     tbl_header_mgn: 'Mng',
     tbl_deleted: 'Deleted',
+    title_import: 'User Import',
+    import_status: 'Status',
     oper_title_edit: 'User Information',
     oper_title_add: 'Add New User',
     user_id: 'ID',
@@ -105,7 +108,7 @@ export default {
     video_information: 'Video Information',
     public_settings: 'Public settings',
     no_title: 'No Title',
-    groups:'Groups',
+    groups: 'Groups',
     series: 'Series',
     id: 'ID',
     tbl_header_id: 'ID',
@@ -195,7 +198,8 @@ export default {
     select_file: 'Select File',
     upload: 'Upload',
     cancel: 'Cancel',
-    drop_file_here: 'Drop file here',
+    drop_file_here: 'Drop file here...',
+    choose_file_or_drop_it_here: 'Choose a file or drop it here...',
     or: 'or',
     yes: 'Yes',
     no: 'No',
@@ -227,7 +231,8 @@ export default {
     enter_series_description: 'Enter series description',
     show_deleted: 'Show deleted',
     scrollable: 'Scrollable',
-    video_information_location: 'Video information location'
+    video_information_location: 'Video information location',
+    browse: 'Browse'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:

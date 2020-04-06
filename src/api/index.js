@@ -46,6 +46,7 @@ Api.interceptors.response.use(
 )
 
 const type_json = {'Content-Type': 'application/json'}
+const type_formdata = {'Content-Type': 'multipart/form-data'}
 
 export default {
   setHeaderAuth(token) {
@@ -530,6 +531,22 @@ export default {
     return Api.get(`/companies/${cid}/users/${uid}`, {
       headers: {
         ...type_json
+      }
+    })
+  },
+
+  /** Import new users
+   * @param {string} cid - Company ID
+   * @param {file} file - {"file": "file",  }
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  user_import(cid, file) {
+    const formData = new FormData()
+    formData.append('userlist', file)
+    return Api.post(`/companies/${cid}/users/import`, formData, {
+      headers: {
+        ...type_formdata
       }
     })
   },
