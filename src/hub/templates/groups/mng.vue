@@ -52,6 +52,34 @@
               </b-col>
             </b-row>
           </b-form-group>
+          <b-form-group
+            id="input-group-parent"
+            :label="`${$t('groups.parent')}:`"
+            label-cols-sm="2"
+            label-cols-lg="2"
+            label-for="group-parent"
+            :invalid-feedback="validateErrorMessage('parent')"
+            :state="validateState('parent')"
+          >
+            <b-row>
+              <b-col>
+                <b-form-select
+                  id="group-parent"
+                  v-model="mnGroup.parent"
+                  :options="parent_options"
+                  :state="validateState('parent')"
+                >
+                  <template slot="first">
+                    <option :value="null">
+                      {{
+                      `${$t('label.parent_is_not_selected')}`
+                      }}
+                    </option>
+                  </template>
+                </b-form-select>
+              </b-col>
+            </b-row>
+          </b-form-group>
           <template v-if="oper === 'edit'">
             <b-form-group
               id="input-group-series"
@@ -120,12 +148,14 @@ export default {
       mnGroup: {
         name: '',
         gid: null,
+        parent: null,
         group_series: [],
         deleted_at: ''
       },
       groupNotFound: false,
       isLoadingData: true,
-      series_options: []
+      series_options: [],
+      parent_options: []
     }
   },
   watch: {
@@ -180,6 +210,7 @@ export default {
         (group) => {
           this.src.name = group.name
           this.src.series = [...group.group_series]
+          this.src.parent = group.parent
 
           this.mnGroup = {...this.mnGroup, ...group}
 
@@ -208,6 +239,14 @@ export default {
         }
       )
     }
+    this.$store
+      .dispatch('LOAD_GROUP_PARENTS', {cid, gid: this.mnGroup.gid})
+      .then((res) => {
+        const parents = res.map((item) => {
+          return {value: item.gid, text: item.name}
+        })
+        this.parent_options = parents
+      })
   },
   computed: {
     ...mapState({
@@ -220,9 +259,10 @@ export default {
     },
     dataNotChanged() {
       const {series} = this.src
-      const {group_series} = this.mnGroup
+      const {parent, group_series} = this.mnGroup
       return (
         this.src.name === this.mnGroup.name &&
+        this.src.parent === this.mnGroup.parent &&
         series.length === group_series.length &&
         series.sort().every(function(value, index) {
           return value === group_series.sort()[index]

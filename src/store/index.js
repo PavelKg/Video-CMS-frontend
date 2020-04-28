@@ -13,6 +13,7 @@ import Companies from './companies'
 import History from './history'
 import Errors from './errors'
 import FieldRestr from './field-restr'
+import Settings from './settings'
 
 Vue.use(Vuex)
 
@@ -33,6 +34,7 @@ export default new Vuex.Store({
     Companies,
     Errors,
     History,
-    FieldRestr
+    FieldRestr,
+    Settings
   }
 })

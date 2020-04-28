@@ -271,6 +271,10 @@ const menuStructure = {
         caption: 'menu.history_info',
         type: 'history.list',
         visible: true
+      },
+      settings: {
+        caption: 'user.settings',
+        type: 'user.settings'
       }
     }
   },
@@ -294,6 +298,10 @@ const menuStructure = {
         caption: 'menu.messages',
         type: 'messages.list',
         visible: true
+      },
+      settings: {
+        caption: 'user.settings',
+        type: 'user.settings'
       }
     }
   }
