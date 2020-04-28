@@ -92,7 +92,8 @@ export default {
     oper_title_add: 'Add New Group',
     in_page: 'In page',
     id: 'ID',
-    series: 'Series'
+    series: 'Series',
+    parent: 'Parent'
   },
   screen: {
     display: 'Display',
@@ -223,6 +224,7 @@ export default {
     group_is_not_selected: 'Group Is Not Selected',
     role_is_not_selected: 'Role Is Not Selected',
     series_is_not_selected: 'Series Is Not Selected',
+    parent_is_not_selected: 'Parent Is Not Selected',
     no_records_found: 'No Records Found',
     csv_download: 'CSV download',
     loading: 'Loading...',
@@ -232,11 +234,13 @@ export default {
     show_deleted: 'Show deleted',
     scrollable: 'Scrollable',
     video_information_location: 'Video information location',
-    browse: 'Browse'
+    browse: 'Browse',
+    user_settings: 'Settings'
   },
   errors: {
     cannot_delete_a_group_with_existing_users:
       'Cannot delete a group with existing users',
+      this_group_has_children:'Cannot delete a group with children',
     cannot_delete_a_role_with_existing_users:
       'Cannot delete a role with existing users'
   },

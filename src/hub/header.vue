@@ -1,11 +1,7 @@
 <template>
   <div class="header">
     <div class="app-menu">
-      <img
-        @click="toggle_menu"
-        id="menu-btn"
-        src="../assets/images/menu_white.png"
-      />
+      <img @click="toggle_menu" id="menu-btn" src="../assets/images/menu_white.png" />
     </div>
     <div class="app-title">{{ $t('message.appHeader') }}</div>
     <div class="user-info">
@@ -20,14 +16,14 @@
     <div
       id="user_info_block_logo"
       v-if="user_info_block_open"
-      @click="user_logout"
       class="user_info_block"
       v-closable="{
         exclude: ['user-info-btn'],
         handler: 'handleClickOutside'
       }"
     >
-      <span class="btn-logout">{{ $t('message.logOut') }}</span>
+      <span class="btn-settings" @click="user_settings">{{ $t('label.user_settings') }}</span>
+      <span class="btn-settings" @click="user_logout">{{ $t('message.logOut') }}</span>
     </div>
   </div>
 </template>
@@ -38,9 +34,7 @@ import {mapGetters} from 'vuex'
 export default {
   props: {},
   name: 'headerArea',
-  mounted() {
-    //this.$store.dispatch('GET_ACTIVE_VIDEO_UUID')
-  },
+  mounted() {},
   data() {
     return {
       user_info_block_open: false
@@ -60,6 +54,10 @@ export default {
       this.$store.dispatch('LOGOUT').then(() => {
         this.$router.push(`/`)
       })
+    },
+    user_settings() {
+      this.user_info_block_open = false
+      this.$emit('contentElementClick', '/hub/settings')
     },
     handleClickOutside() {
       this.user_info_block_open = false
@@ -96,7 +94,7 @@ export default {
   display: flex;
   flex-grow: 20;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: white;
   //padding-left: 1px;
   justify-content: center;
@@ -124,29 +122,33 @@ export default {
 .user_info_block {
   position: absolute;
   display: flex;
+  flex-direction: column;
   top: 52px;
   right: 8px;
   border: 1px solid #ccc;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   width: 120px;
-  height: 30px;
+  //height: 30px;
   align-self: center;
   justify-content: center;
   background: #fafafa;
-  &:hover {
-    background: #fff;
-  }
-  .btn-logout {
+  .btn-settings {
+    text-align: center;
+    width: 100%;
     align-self: center;
-    cursor: default;
+    cursor: pointer;
     text-decoration: none;
+    padding: 0.3rem 0;
     color: #464a4f;
+    &:hover {
+      background: #fff;
+    }
   }
 }
 
 @media screen and (max-width: 550px) {
   .app-title {
-    font-size: 15px;
+    font-size: 1rem;
   }
 }
 </style>

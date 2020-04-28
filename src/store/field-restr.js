@@ -7,7 +7,8 @@ export default {
           minLength: 3,
           maxLength: 20,
           isUnique: 'nameUniqError'
-        }
+        },
+        parent: {required: false}
       },
       roles: {
         name: {required: true, minLength: 3, maxLength: 20},

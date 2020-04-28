@@ -311,6 +311,24 @@ export default {
     })
   },
 
+  /** Group parents
+   * @param {number} cid 
+   * @param {string} gid 
+   * @returns {Promise<*>} - 200 group object
+   * {
+      "gid": 0,
+      "name": "string"
+   * }
+ */
+  group_parents(cid, filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/groups/parents${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** Add new group
    * @param {string} cid - Company ID
    * @param {object} data - {"gid": "string", "name": "string" }
