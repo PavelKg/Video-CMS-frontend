@@ -1,6 +1,6 @@
-import ru from './ru'
-import en from './en'
-import jp from './jp'
+import ru from './locales/ru'
+import en from './locales/en.json'
+import jp from './locales/jp'
 
 const messages = {
   en: en,

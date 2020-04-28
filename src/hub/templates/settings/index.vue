@@ -1,6 +1,6 @@
 <template>
   <div class="settings-zone">
-    <b-container v-if="false" fluid class="pb-2 px-0 bg-default">
+    <b-container v-if="+cid===2" fluid class="pb-2 px-0 bg-default">
       <b-row>
         <b-col>
           <span class="row-label">{{ $t('label.user_settings') }}</span>
@@ -74,7 +74,8 @@ export default {
   },
   computed: {
     ...mapState({
-      telegramOptions: (state) => state.Settings.telegram
+      telegramOptions: (state) => state.Settings.telegram,
+      cid: (store) => store.Login.me.profile.company_id
     })
   }
 }

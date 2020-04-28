@@ -46,14 +46,12 @@ export default {
     menuArea
   },
   created() {
+    this.$store.commit('INIT_LANG')
     const cid = this.cid
     this.$store.dispatch('LOAD_USER_MENU', this.me_irole).then((res) => {
       this.$store.dispatch('LOAD_MENU_STATE')
     })
-
     this.$store.dispatch('LOAD_VIDEO_INFO_LOCATION', cid)
-
-    this.$store.commit('INIT_LANG')
   },
 
   computed: {

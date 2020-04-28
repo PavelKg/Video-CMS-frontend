@@ -12,7 +12,7 @@
       <form @submit.prevent="onSubmit">
         <div class="export-modal-main">
           <div class="export-modal-title">{{ $t('label.forgot_pass') }}</div>
-          <div class="export-text">{{ $t('message.forgot_pass_descr') }}</div>
+          <div class="export-text" v-html="$t('message.forgot_pass_descr')"></div>
           <div class="export-field">
             <div>{{ $t('label.mail_address') }}:</div>
             <input
