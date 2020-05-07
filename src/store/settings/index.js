@@ -11,7 +11,7 @@ export default {
   },
   actions: {
     async GET_TELEGRAM_OPTIONS({commit}) {
-      const botname = NODE_ENV === 'local' ? bots['dev'] : bots['prod']
+      const botname = NODE_ENV !== 'local' ? bots['dev'] : bots['prod']
       const options = {botname: botname}
       commit('SET_TELEGRAM_OPTIONS', options)
     },
@@ -30,17 +30,19 @@ export default {
       } finally {
       }
     },
-    async TELEGRAM_AUTH_LOGIN({getters}, user) {
+    async TELEGRAM_AUTH_LOGIN({state, getters}, user) {
       const cid = getters.me.profile.company_id
+      const botname = state.telegram.botname
+      console.log({botname})
       try {
-        const result = await Api.telegram_auth_login(cid, user)
+        const result = await Api.telegram_auth_login(cid, user, botname)
         if (result.status === 201) {
-          console.log('confirmed')
+          return 'confirmed'
         } else {
           throw 'Error auth login telegram'
         }
       } catch (err) {
-        throw 'Error auth login telegram:' + err
+        throw err.response ? err.response.data.message : err
       } finally {
         //commit('SET_USERS_IS_LOADING', false)
       }

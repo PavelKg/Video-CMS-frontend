@@ -17,6 +17,10 @@
             />
           </b-col>
         </b-row>
+        <span>
+          Status:
+          <span :style="{'color':isAuthLoginWidgetSuccess?'green':'red'}">{{authLoginWidget}}</span>
+        </span>
       </template>
       <template v-if="telegramOptions.botname">
         <b-row class="mt-2">
@@ -57,6 +61,8 @@ export default {
   name: 'settings',
   data() {
     return {
+      authLoginWidget: '',
+      isAuthLoginWidgetSuccess: false,
       authLink: null,
       authLinkStatus: null,
       isLoadingAuthLink: false
@@ -67,7 +73,16 @@ export default {
   },
   methods: {
     onTelegramLogin(user) {
-      this.$store.dispatch('TELEGRAM_AUTH_LOGIN', user).then(() => {})
+      this.isAuthLoginWidgetSuccess = true
+      this.$store.dispatch('TELEGRAM_AUTH_LOGIN', user).then(
+        () => {
+          this.authLoginWidget = 'Success'
+        },
+        (err) => {
+          this.isAuthLoginWidgetSuccess = false
+          this.authLoginWidget = err
+        }
+      )
     },
     onGetAuthLink() {
       this.isLoadingAuthLink = true

@@ -1137,8 +1137,8 @@ export default {
    * @returns {Promise<*>} - 201 or 500 User auth result
    *
    */
-  telegram_auth_login(cid, user) {
-    return Api.post(`/companies/${cid}/telegram/login-auth`, user, {
+  telegram_auth_login(cid, user, botname) {
+    return Api.post(`/companies/${cid}/telegram/login-auth/${botname}`, user, {
       headers: {
         ...type_json
       }
