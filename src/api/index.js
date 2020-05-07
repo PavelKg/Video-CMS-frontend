@@ -1124,6 +1124,41 @@ export default {
     })
   },
 
+  /* ------------ SETTINGS ----------------------------*/
+  /** Telegram login widget auth
+   * @param {number} cid
+   * @param {
+   *  id: "integer",
+   *  first_name "string",
+   *  username: "string" ,
+   *  auth_date "number",
+   *  hash: "string"
+   * } user
+   * @returns {Promise<*>} - 201 or 500 User auth result
+   *
+   */
+  telegram_auth_login(cid, user) {
+    return Api.post(`/companies/${cid}/telegram/login-auth`, user, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Telegram deeplink auth
+   * @param {number} cid
+   * @param {string} botname
+   * @returns {Promise<*>} - 200 or 500 User auth result
+   * {url: "string"}
+   */
+  telegram_url_deeplink(cid, botname) {
+    return Api.get(`/companies/${cid}/telegram/deeplink-auth/${botname}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /* ------------ HISTORY ----------------------------*/
   /** List of history categories
    * @param {string} filter

@@ -33,7 +33,14 @@
                 <template v-if="isLoadingAuthLink">
                   <span>Loading...</span>
                 </template>
-                <a v-if="Boolean(authLink)" :href="authLink" target="blank">{{authLink}}</a>
+                <template v-if="authLinkStatus==='err'">
+                  <span>{{authLink}}</span>
+                </template>
+                <a
+                  v-if="Boolean(authLink) && authLinkStatus!=='err'"
+                  :href="authLink"
+                  target="blank"
+                >{{authLink}}</a>
               </span>
             </div>
           </b-col>
@@ -51,6 +58,7 @@ export default {
   data() {
     return {
       authLink: null,
+      authLinkStatus: null,
       isLoadingAuthLink: false
     }
   },
@@ -59,14 +67,23 @@ export default {
   },
   methods: {
     onTelegramLogin(user) {
-      console.log({user})
+      this.$store.dispatch('TELEGRAM_AUTH_LOGIN', user).then(() => {})
     },
     onGetAuthLink() {
       this.isLoadingAuthLink = true
-      this.$store.dispatch('GET_TELEGRAM_AUTH_LINK').then((res) => {
-        this.authLink = res
-        this.isLoadingAuthLink = false
-      })
+      this.authLinkStatus = null
+      this.authLink = ''
+      this.$store.dispatch('GET_TELEGRAM_AUTH_LINK').then(
+        (res) => {
+          this.authLink = res
+          this.isLoadingAuthLink = false
+        },
+        (err) => {
+          this.authLinkStatus = 'err'
+          this.authLink = err
+          this.isLoadingAuthLink = false
+        }
+      )
     }
   },
   components: {
