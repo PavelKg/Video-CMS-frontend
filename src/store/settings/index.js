@@ -11,7 +11,7 @@ export default {
   },
   actions: {
     async GET_TELEGRAM_OPTIONS({commit}) {
-      const botname = NODE_ENV !== 'local' ? bots['dev'] : bots['prod']
+      const botname = NODE_ENV === 'local' ? bots['dev'] : bots['prod']
       const options = {botname: botname}
       commit('SET_TELEGRAM_OPTIONS', options)
     },
