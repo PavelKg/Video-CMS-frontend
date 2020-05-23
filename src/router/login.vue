@@ -15,8 +15,7 @@
           <span
             class="locale-item"
             :class="{active: locale.code === activeLocale}"
-            >{{ locale.code }}</span
-          >
+          >{{ locale.code }}</span>
         </div>
       </div>
       <div class="login-app-title">
@@ -49,9 +48,7 @@
           <span>{{ $t(errMessage) }}</span>
         </div>
         <div class="button-container">
-          <button type="submit" class="button btn-blue">
-            {{ $t('message.btnLogin') }}
-          </button>
+          <button type="submit" class="button btn-blue">{{ $t('message.btnLogin') }}</button>
         </div>
       </form>
       <PassRec />
@@ -77,6 +74,7 @@ export default {
   },
   mounted() {
     this.$store.commit('INIT_LANG')
+    //this.$store.commit('INIT_LANG')
     //this.$store.commit('CHANGE_LANG', br_lang === 'ja' ? 'jp': br_lang)
   },
   methods: {
@@ -104,7 +102,7 @@ export default {
   computed: {
     ...mapGetters(['locales', 'authStatus', 'me', 'me_irole']),
     activeLocale() {
-      return Object.keys(this.$i18n.locale)
+      return this.$i18n.locale
     }
   }
 }

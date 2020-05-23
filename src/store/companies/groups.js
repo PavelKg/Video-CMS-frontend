@@ -36,18 +36,20 @@ export default {
       } finally {
       }
     },
-    // async LOAD_GROUP_DATA({commit}, payload) {
-    //   try {
-    //     const result = await Api.group_data(payload)
-    //     if (result.data && result.status === 200) {
-    //       commit('SET_ACTIVE_GROUP', result.data)
-    //     } else {
-    //       throw Error('Error load group data')
-    //     }
-    //   } catch (err) {
-    //     console.log('load group-data', err.response)
-    //   }
-    // },
+    async LOAD_GROUP_PARENTS({commit}, payload) {
+      const {cid, gid = null} = payload
+      const filter = gid ? `group_gid[noteq]:${gid}` : null
+      try {
+        const result = await Api.group_parents(cid, filter)
+        if (result.data && result.status === 200) {
+          return result.data
+        } else {
+          throw 'Error load group parents'
+        }
+      } catch (err) {
+        throw ('Error load group parents', err.response)
+      }
+    },
     async GROUP_ADD({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
       try {
@@ -61,11 +63,14 @@ export default {
         throw err.response.data
       }
     },
-    async GROUP_UPD({commit, getters}, payload) {
+    async GROUP_UPD({getters}, payload) {
       const cid = getters.me.profile.company_id
-      const {gid, name, group_series} = payload
+      const {gid, name, parent, group_series} = payload
       try {
-        const result = await Api.group_upd({cid, gid}, {name, group_series})
+        const result = await Api.group_upd(
+          {cid, gid},
+          {name, parent, group_series}
+        )
         if (result.status === 200) {
           return Promise.resolve('Group updated success')
         } else {
@@ -75,7 +80,7 @@ export default {
         throw err.response.data
       }
     },
-    async GROUP_DEL({commit, getters}, gid) {
+    async GROUP_DEL({getters}, gid) {
       const cid = getters.me.profile.company_id
       try {
         const result = await Api.group_del({cid, gid})

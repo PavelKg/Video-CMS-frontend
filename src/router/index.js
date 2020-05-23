@@ -47,6 +47,28 @@ const videos_subtitles = () =>
   )
 const history_info = () =>
   import(/* webpackChunkName: "group-history" */ '@/hub/templates/history-info')
+// const videos = () => import('@/hub/templates/video-catalog')
+// const messages = () => import('@/hub/templates/messages')
+// const users = () => import('@/hub/templates/users')
+// const users_add = () => import('@/hub/templates/users/mng')
+// const users_edit = () => import('@/hub/templates/users/mng')
+// const users_import = () => import('@/hub/templates/users/import')
+// const settings = () => import('@/hub/templates/settings')
+// const groups = () => import('@/hub/templates/groups')
+// const groups_add = () => import('@/hub/templates/groups/mng')
+// const groups_edit = () => import('@/hub/templates/groups/mng')
+// const series = () => import('@/hub/templates/series')
+// const series_add = () => import('@/hub/templates/series/mng')
+// const series_edit = () => import('@/hub/templates/series/mng')
+// const binding = () => import('@/hub/templates/binding')
+// const roles = () => import('@/hub/templates/roles/')
+// const roles_add = () => import('@/hub/templates/roles/mng')
+// const roles_edit = () => import('@/hub/templates/roles/mng')
+// const screen = () => import('@/hub/templates/screen')
+// const videos_player = () => import('@/hub/templates/video-player')
+// const videos_upload = () => import('@/hub/templates/video-upload')
+// const videos_subtitles = () => import('@/hub/templates/video-subtitles')
+// const history_info = () => import('@/hub/templates/history-info')
 
 const NotFoundComponent = () => import('@/hub/templates/NotFoundComponent')
 
@@ -189,11 +211,23 @@ const router = new Router({
           props: {oper: 'add'}
         },
         {
+          path: 'users_import',
+          component: users_import,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/users', notForUser: 'true'}
+        },
+        {
           path: 'users_edit/uid/:uid',
           component: users_edit,
           //beforeEnter: checkAuthAndAccess,
           meta: {menuItem: '/users', notForUser: 'true', requiresAuth: true},
           props: {oper: 'edit'}
+        },
+        {
+          path: 'settings',
+          component: settings,
+          beforeEnter: checkAuthAndAccess,
+          meta: {menuItem: '/hub/settings'}
         },
         {
           path: 'groups',

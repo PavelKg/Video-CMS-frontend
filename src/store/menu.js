@@ -197,6 +197,10 @@ const menuStructure = {
             type: 'users.add',
             caption: 'menu.user_edit'
           },
+          edit: {
+            type: 'users.import',
+            caption: 'menu.user_import'
+          },
           info: {
             type: 'users.info',
             caption: 'menu.user_info'
@@ -267,6 +271,10 @@ const menuStructure = {
         caption: 'menu.history_info',
         type: 'history.list',
         visible: true
+      },
+      settings: {
+        caption: 'user.settings',
+        type: 'user.settings'
       }
     }
   },
@@ -290,6 +298,10 @@ const menuStructure = {
         caption: 'menu.messages',
         type: 'messages.list',
         visible: true
+      },
+      settings: {
+        caption: 'user.settings',
+        type: 'user.settings'
       }
     }
   }
@@ -314,7 +326,7 @@ export default {
         }
       }
     },
-    
+
     //CLEAR_MENU_STATE: () => localStorage.removeItem('vcms-activ-menu'),
 
     SAVE_MENU_STATE: ({state}) => {

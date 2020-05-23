@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div class="header-zone"><headerArea /></div>
+    <div class="header-zone">
+      <headerArea v-on:contentElementClick="contentElementClick" />
+    </div>
     <div
       id="menu-zone-box"
       class="menu-zone"
@@ -14,10 +16,7 @@
     </div>
     <div class="contents">
       <div class="content-zone">
-        <router-view
-          v-on:contentElementClick="contentElementClick"
-          class="view"
-        />
+        <router-view v-on:contentElementClick="contentElementClick" class="view" />
       </div>
       <b-modal
         :visible="modalErrorShow"
@@ -25,9 +24,7 @@
         centered
         ok-only
         @change="onModalChange"
-      >
-        {{ $t(`${errors_message}`) }} !!!
-      </b-modal>
+      >{{ $t(`${errors_message}`) }} !!!</b-modal>
     </div>
   </div>
 </template>
@@ -49,14 +46,12 @@ export default {
     menuArea
   },
   created() {
+    this.$store.commit('INIT_LANG')
     const cid = this.cid
     this.$store.dispatch('LOAD_USER_MENU', this.me_irole).then((res) => {
       this.$store.dispatch('LOAD_MENU_STATE')
     })
-
     this.$store.dispatch('LOAD_VIDEO_INFO_LOCATION', cid)
-
-    this.$store.commit('INIT_LANG')
   },
 
   computed: {

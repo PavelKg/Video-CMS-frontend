@@ -46,6 +46,7 @@ Api.interceptors.response.use(
 )
 
 const type_json = {'Content-Type': 'application/json'}
+const type_formdata = {'Content-Type': 'multipart/form-data'}
 
 export default {
   setHeaderAuth(token) {
@@ -310,6 +311,24 @@ export default {
     })
   },
 
+  /** Group parents
+   * @param {number} cid 
+   * @param {string} gid 
+   * @returns {Promise<*>} - 200 group object
+   * {
+      "gid": 0,
+      "name": "string"
+   * }
+ */
+  group_parents(cid, filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/groups/parents${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** Add new group
    * @param {string} cid - Company ID
    * @param {object} data - {"gid": "string", "name": "string" }
@@ -530,6 +549,22 @@ export default {
     return Api.get(`/companies/${cid}/users/${uid}`, {
       headers: {
         ...type_json
+      }
+    })
+  },
+
+  /** Import new users
+   * @param {string} cid - Company ID
+   * @param {file} file - {"file": "file",  }
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  user_import(cid, file) {
+    const formData = new FormData()
+    formData.append('userlist', file)
+    return Api.post(`/companies/${cid}/users/import`, formData, {
+      headers: {
+        ...type_formdata
       }
     })
   },
@@ -1083,6 +1118,41 @@ export default {
   del_comment(payment) {
     const {cid, uuid, comid} = payment
     return Api.delete(`/companies/${cid}/videos/${uuid}/comments/${comid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ------------ SETTINGS ----------------------------*/
+  /** Telegram login widget auth
+   * @param {number} cid
+   * @param {
+   *  id: "integer",
+   *  first_name "string",
+   *  username: "string" ,
+   *  auth_date "number",
+   *  hash: "string"
+   * } user
+   * @returns {Promise<*>} - 201 or 500 User auth result
+   *
+   */
+  telegram_auth_login(cid, user, botname) {
+    return Api.post(`/companies/${cid}/telegram/login-auth/${botname}`, user, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Telegram deeplink auth
+   * @param {number} cid
+   * @param {string} botname
+   * @returns {Promise<*>} - 200 or 500 User auth result
+   * {url: "string"}
+   */
+  telegram_url_deeplink(cid, botname) {
+    return Api.get(`/companies/${cid}/telegram/deeplink-auth/${botname}`, {
       headers: {
         ...type_json
       }
