@@ -308,7 +308,7 @@ export default {
       if (localStorage.getItem('vcms-activ-menu')) {
         try {
           const act_item = JSON.parse(localStorage.getItem('vcms-activ-menu'))
-          const _item = act_item ? act_item : '/hub/videos/?page=1'
+          const _item = act_item ? act_item : '/videos/?page=1'
         } catch (e) {
           localStorage.removeItem('vcms-activ-menu')
         }

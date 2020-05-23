@@ -2,7 +2,7 @@
   <div class="menu-table">
     <menu-tree
       :node="menuItems"
-      :myKey="'/hub'"
+      :myKey="''"
       :handle-click="handleClick"
     ></menu-tree>
   </div>
