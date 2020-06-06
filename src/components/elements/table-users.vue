@@ -156,7 +156,7 @@ export default {
     },
     editUser(userProp) {
       const {cid, uid} = userProp
-      this.$emit('contentElementClick', `/hub/users_edit/uid/${uid}`)
+      this.$emit('contentElementClick', `/users/edit/${uid}`)
     },
     delUser(item) {
       this.$store.dispatch('USER_DEL', item.uid).then(
@@ -181,7 +181,7 @@ export default {
       )
     },
     setPage(num) {
-      this.$emit('contentElementClick', `/hub/users/?page=${num}`)
+      this.$emit('contentElementClick', `/users/?page=${num}`)
     }
   },
   computed: {

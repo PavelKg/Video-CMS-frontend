@@ -188,7 +188,7 @@ export default {
       this.$emit('contentElementClick', key)
     },
     add_new_video() {
-      this.activateContent('/hub/videos_upload')
+      this.activateContent('/videos/upload')
     },
     toggleAll(action) {
       //const action = env.target['id']
@@ -239,7 +239,7 @@ export default {
       } else {
       }
       this.toggleAll('deselectAll')
-      this.$router.push({path: '/hub/videos', query: {...sendQuery}})
+      this.$router.push({path: '/videos', query: {...sendQuery}})
     },
     updateProc(query) {
       let curr = new Date()

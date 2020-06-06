@@ -43,7 +43,7 @@ export default {
         .then(() => this.$store.commit('SET_SERIES_IS_LOADING', false))
     },
     addNewSeries() {
-      this.contentElementClick('/hub/series_add')
+      this.contentElementClick('/series/add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)

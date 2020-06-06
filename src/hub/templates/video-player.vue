@@ -200,7 +200,7 @@ export default {
           this.$store.dispatch('LOAD_COMMENTS', this.active_video_uuid)
         },
         (err) => {
-          this.$store.dispatch('MENU_NAVIGATE', '/hub/pageNotFound')
+          this.$store.dispatch('MENU_NAVIGATE', '/pageNotFound')
         }
       )
   },
@@ -209,7 +209,7 @@ export default {
     onSubtitles() {
       this.$emit(
         'contentElementClick',
-        `/hub/videos_subtitles/uuid/${this.active_video_uuid}`
+        `/videos/edit/${this.active_video_uuid}`
       )
     },
     onChangePublic(val) {

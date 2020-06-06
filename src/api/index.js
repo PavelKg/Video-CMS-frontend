@@ -54,7 +54,6 @@ export default {
   },
 
   delHeaderAuth(token) {
-    console.log('delheaderAuth')
     delete Api.defaults.headers.common['Authorization']
   },
   /** Auth management */
@@ -72,6 +71,14 @@ export default {
 
   my_profile() {
     return Api.get(`/users/me`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  load_user_menu() {
+    return Api.get(`/users/menu`, {
       headers: {
         ...type_json
       }

@@ -5,7 +5,15 @@
         {{ $t('message.number_of_registered_users') }}: {{ users_count }}
         {{ $t('label.people') }}
       </span>
-      <button class="button btn-blue add-user" @click="addNewUser" @keyup="()=>{console.log('into comp')}">
+      <button
+        class="button btn-blue add-user"
+        @click="addNewUser"
+        @keyup="
+          () => {
+            console.log('into comp')
+          }
+        "
+      >
         {{ $t('users.btn_add') }}
       </button>
     </div>
@@ -61,11 +69,11 @@ export default {
   props: {gid: Number},
   methods: {
     addNewUser() {
-      this.$emit('contentElementClick', `/hub/users_add?gid=${this.gid}`)
+      this.$emit('contentElementClick', `/users/add?gid=${this.gid}`)
     },
     updUser(userInfo) {
       const {cid, uid} = userInfo
-      this.$emit('contentElementClick', `/hub/users_edit/uid/${uid}`)
+      this.$emit('contentElementClick', `/users/edit/${uid}`)
     }
   },
   computed: {

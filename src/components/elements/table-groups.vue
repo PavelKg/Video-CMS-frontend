@@ -134,7 +134,7 @@ export default {
           : []
     },
     editGroup(group) {
-      this.$emit('contentElementClick', `/hub/groups_edit/gid/${group.gid}`)
+      this.$emit('contentElementClick', `/groups/edit/${group.gid}`)
     },
     delGroup(group_gid) {
       this.$store.dispatch('GROUP_DEL', group_gid).then(
@@ -171,7 +171,7 @@ export default {
       })
     },
     setPage(num) {
-      this.$emit('contentElementClick', `/hub/groups/?page=${num}`)
+      this.$emit('contentElementClick', `/groups/?page=${num}`)
     }
   },
   computed: {

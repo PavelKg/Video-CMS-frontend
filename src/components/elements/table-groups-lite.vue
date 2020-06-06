@@ -99,14 +99,14 @@ export default {
   },
   methods: {
     onOpenGroupDetails(group) {
-      this.$emit('contentElementClick', `/hub/groups_edit/gid/${group}`)
+      this.$emit('contentElementClick', `/groups/edit/${group}`)
     },
     delGroupSeries(gid) {
       this.$emit('deleteGroupSeries', gid)
     },
 
     setPage(num) {
-      this.$emit('contentElementClick', `/hub/groups/?page=${num}`)
+      this.$emit('contentElementClick', `/groups/?page=${num}`)
     }
   },
   computed: {

@@ -275,7 +275,7 @@ export default {
     onCancel(evt) {
       evt.preventDefault()
       //this.$router.go(-1)
-      this.$emit('contentElementClick', '/hub/users')
+      this.$emit('contentElementClick', '/users')
     },
 
     genUserId(evt) {
@@ -295,7 +295,7 @@ export default {
           if (this.oper === 'edit') {
             this.$router.go(-1)
           } else {
-            this.$emit('contentElementClick', '/hub/users')
+            this.$emit('contentElementClick', '/users')
           }
         },
         (err) => {

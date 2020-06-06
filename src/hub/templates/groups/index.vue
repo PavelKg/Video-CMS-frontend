@@ -43,7 +43,7 @@ export default {
         .then(() => this.$store.commit('SET_GROUPS_IS_LOADING', false))
     },
     addNewGroup() {
-      this.contentElementClick('/hub/groups_add')
+      this.contentElementClick('/groups/add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)

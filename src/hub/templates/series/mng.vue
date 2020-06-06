@@ -315,7 +315,7 @@ export default {
     },
 
     cancel_click() {
-      this.contentElementClick('/hub/series')
+      this.contentElementClick('/series')
     },
     onSubmit() {
       this.$v[this.validFormName].$touch()
@@ -344,7 +344,7 @@ export default {
 
       this.$store.dispatch(oper_type, this.mnSeries).then(
         (res) => {
-          this.contentElementClick('/hub/series')
+          this.contentElementClick('/series')
         },
         (err) => {
           const errMess = err.message.replace('Error: ', '')

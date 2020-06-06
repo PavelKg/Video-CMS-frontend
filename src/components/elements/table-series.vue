@@ -163,7 +163,7 @@ export default {
           : []
     },
     editSeries(series) {
-      this.$emit('contentElementClick', `/hub/series_edit/sid/${series.sid}`)
+      this.$emit('contentElementClick', `/series/edit/${series.sid}`)
     },
     delOneSeries(series_sid) {
       const cid = this.cid
@@ -203,7 +203,7 @@ export default {
       })
     },
     setPage(num) {
-      this.$emit('contentElementClick', `/hub/series/?page=${num}`)
+      this.$emit('contentElementClick', `/series/?page=${num}`)
     }
   },
   components: {

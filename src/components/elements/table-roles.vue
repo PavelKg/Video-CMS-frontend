@@ -130,7 +130,7 @@ export default {
   methods: {
     editRole(role) {
       const {rid} = role
-      this.$emit('contentElementClick', `/hub/roles_edit/rid/${rid}`)
+      this.$emit('contentElementClick', `/roles/edit/${rid}`)
     },
     delRole(role) {
       const {rid} = role
@@ -172,7 +172,7 @@ export default {
       if (num === this.currentPage) {
         return
       } else {
-        this.$emit('contentElementClick', `/hub/roles/?page=${num}`)
+        this.$emit('contentElementClick', `/roles/?page=${num}`)
       }
     },
     toggleAll(env) {

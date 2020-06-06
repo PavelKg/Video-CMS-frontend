@@ -52,12 +52,12 @@ export default {
     },
     user_logout() {
       this.$store.dispatch('LOGOUT').then(() => {
-        this.$router.push(`/`)
+        this.$router.push(`/login`)
       })
     },
     user_settings() {
       this.user_info_block_open = false
-      this.$emit('contentElementClick', '/hub/settings')
+      this.$emit('contentElementClick', '/settings')
     },
     handleClickOutside() {
       this.user_info_block_open = false

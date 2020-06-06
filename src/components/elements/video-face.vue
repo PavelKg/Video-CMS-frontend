@@ -114,14 +114,14 @@ export default {
       if (this.videoitem.video_status === 'ready') {
         this.$emit(
           'activateContent',
-          `/hub/videos_player/uuid/${this.videoitem.video_uuid}`
+          `/videos/player/${this.videoitem.video_uuid}`
         )
       }
     },
     onSubtitles() {
       this.$emit(
         'activateContent',
-        `/hub/videos_subtitles/uuid/${this.videoitem.video_uuid}`
+        `/videos/subtitles/${this.videoitem.video_uuid}`
       )
     },
     onCheckChange(new_state) {

@@ -15,7 +15,8 @@
           <span
             class="locale-item"
             :class="{active: locale.code === activeLocale}"
-          >{{ locale.code }}</span>
+            >{{ locale.code }}</span
+          >
         </div>
       </div>
       <div class="login-app-title">
@@ -48,7 +49,9 @@
           <span>{{ $t(errMessage) }}</span>
         </div>
         <div class="button-container">
-          <button type="submit" class="button btn-blue">{{ $t('message.btnLogin') }}</button>
+          <button type="submit" class="button btn-blue">
+            {{ $t('message.btnLogin') }}
+          </button>
         </div>
       </form>
       <PassRec />
@@ -83,9 +86,7 @@ export default {
       const {personalId, password} = this
       this.$store.dispatch('LOGIN', {personalId, password}).then(() => {
         if (this.authStatus === 'success') {
-          this.$store.dispatch('GET_MY_PROFILE').then(() => {
-            this.$router.push(`/hub/videos/?page=1`)
-          })
+          this.$router.push(`/videos/?page=1`)
         } else if (this.authStatus === 'error') {
           this.errMessage = 'message.authError'
         }

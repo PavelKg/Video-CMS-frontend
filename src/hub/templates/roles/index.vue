@@ -53,7 +53,7 @@ export default {
         .then(() => this.$store.commit('SET_ROLES_IS_LOADING', false))
     },
     addNewRole() {
-      this.contentElementClick('/hub/roles_add')
+      this.contentElementClick('/roles/add')
     },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)

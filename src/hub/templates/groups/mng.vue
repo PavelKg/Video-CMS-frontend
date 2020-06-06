@@ -170,7 +170,7 @@ export default {
       this.$emit('contentElementClick', menu_item)
     },
     cancel_click() {
-      this.contentElementClick('/hub/groups')
+      this.contentElementClick('/groups')
     },
 
     onSubmit() {
@@ -182,7 +182,7 @@ export default {
       const oper_type = this.oper === 'edit' ? 'GROUP_UPD' : 'GROUP_ADD'
       this.$store.dispatch(oper_type, this.mnGroup).then(
         (res) => {
-          this.contentElementClick('/hub/groups')
+          this.contentElementClick('/groups')
         },
         (err) => {
           const errMess = err.message.replace('Error: ', '')

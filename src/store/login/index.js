@@ -4,6 +4,7 @@ export default {
   state: {
     token: localStorage.getItem('vcms-token') || '',
     authStatus: '',
+    isHeaderAuth: false,
     roles: ['super', 'admin', 'user'],
     me: {
       profile: {}
@@ -28,22 +29,21 @@ export default {
       } catch (err) {
         commit('AUTH_ERROR', err)
         localStorage.removeItem('vcms-token') // if the request fails, remove any possible user token if possible
-        localStorage.removeItem('vcms-user')
       }
     },
     async LOGOUT({commit, dispatch}) {
       localStorage.removeItem('vcms-token')
-      localStorage.removeItem('vcms-user')
       await Api.logout()
       await Api.delHeaderAuth()
-      //dispatch('CLEAR_MENU_STATE')
       commit('AUTH_LOGOUT')
     },
-    async GET_MY_PROFILE({commit, dispatch}) {
+
+    async GET_MY_PROFILE({commit, dispatch, state}) {
       try {
         console.log('GET_MY_PROFILE')
         const result = await Api.my_profile()
         commit('SET_USER', result.data)
+        console.log('state.me.profile=', state.me.profile)
       } catch (e) {
         dispatch('LOGOUT')
         throw Error('Getting profile error')
@@ -95,13 +95,16 @@ export default {
       state.authStatus = ''
       state.token = ''
       state.me.profile = {}
+      state.isHeaderAuth = false
     },
     SET_HEADER_AUTH: (state) => {
-      Api.setHeaderAuth(state.token)
+      if (!state.isHeaderAuth) {
+        Api.setHeaderAuth(state.token)
+        state.isHeaderAuth = true
+      }
     },
     SET_USER: (state, _profile) => {
       state.me.profile = {..._profile}
-      //localStorage.setItem('vcms-user', JSON.stringify(state.user))
     }
   },
   getters: {

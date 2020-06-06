@@ -449,7 +449,7 @@ export default {
       Object.keys(this.form).forEach((key) => {
         this.form[key] = ''
       })
-      this.$emit('contentElementClick', '/hub/videos')
+      this.$emit('contentElementClick', '/videos')
     },
     onButtonReg(evt) {
       evt.preventDefault()

@@ -1,76 +1,60 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store/'
-import Hub from '../hub/'
+import Hub from '../hub'
 import Login from './login'
 import RecoveryPassword from './recovery_password'
+import multiguard from './middleware/multiguard'
+import requiresAuth from './middleware/auth'
+import requiresAccess from './middleware/access'
 
 const videos = () =>
-  import(/* webpackChunkName: "group-video" */ '@/hub/templates/video-catalog')
+  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-catalog')
 const messages = () =>
-  import(/* webpackChunkName: "group-messages" */ '@/hub/templates/messages')
+  import(/* webpackChunkName: "messages" */ '@/hub/templates/messages')
 const users = () =>
-  import(/* webpackChunkName: "group-user" */ '@/hub/templates/users')
+  import(/* webpackChunkName: "users" */ '@/hub/templates/users')
 const users_add = () =>
-  import(/* webpackChunkName: "group-user" */ '@/hub/templates/users/mng')
+  import(/* webpackChunkName: "users" */ '@/hub/templates/users/mng')
 const users_edit = () =>
-  import(/* webpackChunkName: "group-user" */ '@/hub/templates/users/mng')
+  import(/* webpackChunkName: "users" */ '@/hub/templates/users/mng')
+const users_import = () =>
+  import(/* webpackChunkName: "users" */ '@/hub/templates/users/import')
 const groups = () =>
-  import(/* webpackChunkName: "group-groups" */ '@/hub/templates/groups')
+  import(/* webpackChunkName: "groups" */ '@/hub/templates/groups')
 const groups_add = () =>
-  import(/* webpackChunkName: "group-groups" */ '@/hub/templates/groups/mng')
+  import(/* webpackChunkName: "groups" */ '@/hub/templates/groups/mng')
 const groups_edit = () =>
-  import(/* webpackChunkName: "group-groups" */ '@/hub/templates/groups/mng')
+  import(/* webpackChunkName: "groups" */ '@/hub/templates/groups/mng')
 const series = () =>
-  import(/* webpackChunkName: "group-series" */ '@/hub/templates/series')
+  import(/* webpackChunkName: "series" */ '@/hub/templates/series')
 const series_add = () =>
-  import(/* webpackChunkName: "group-series" */ '@/hub/templates/series/mng')
+  import(/* webpackChunkName: "series" */ '@/hub/templates/series/mng')
 const series_edit = () =>
-  import(/* webpackChunkName: "group-series" */ '@/hub/templates/series/mng')
+  import(/* webpackChunkName: "series" */ '@/hub/templates/series/mng')
 const binding = () =>
-  import(/* webpackChunkName: "group-binding" */ '@/hub/templates/binding')
+  import(/* webpackChunkName: "binding" */ '@/hub/templates/binding')
 const roles = () =>
-  import(/* webpackChunkName: "group-roles" */ '@/hub/templates/roles/')
+  import(/* webpackChunkName: "roles" */ '@/hub/templates/roles')
 const roles_add = () =>
-  import(/* webpackChunkName: "group-roles" */ '@/hub/templates/roles/mng')
+  import(/* webpackChunkName: "roles" */ '@/hub/templates/roles/mng')
 const roles_edit = () =>
-  import(/* webpackChunkName: "group-roles" */ '@/hub/templates/roles/mng')
+  import(/* webpackChunkName: "roles" */ '@/hub/templates/roles/mng')
 const screen = () =>
-  import(/* webpackChunkName: "group-screen" */ '@/hub/templates/screen')
+  import(/* webpackChunkName: "screen" */ '@/hub/templates/screen')
 const videos_player = () =>
-  import(/* webpackChunkName: "group-video" */ '@/hub/templates/video-player')
+  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-player')
 const videos_upload = () =>
-  import(/* webpackChunkName: "group-video" */ '@/hub/templates/video-upload')
-const videos_subtitles = () =>
-  import(
-    /* webpackChunkName: "group-video" */ '@/hub/templates/video-subtitles'
-  )
+  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-upload')
+const videos_edit = () =>
+  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-subtitles')
 const history_info = () =>
-  import(/* webpackChunkName: "group-history" */ '@/hub/templates/history-info')
-// const videos = () => import('@/hub/templates/video-catalog')
-// const messages = () => import('@/hub/templates/messages')
-// const users = () => import('@/hub/templates/users')
-// const users_add = () => import('@/hub/templates/users/mng')
-// const users_edit = () => import('@/hub/templates/users/mng')
-// const users_import = () => import('@/hub/templates/users/import')
-// const settings = () => import('@/hub/templates/settings')
-// const groups = () => import('@/hub/templates/groups')
-// const groups_add = () => import('@/hub/templates/groups/mng')
-// const groups_edit = () => import('@/hub/templates/groups/mng')
-// const series = () => import('@/hub/templates/series')
-// const series_add = () => import('@/hub/templates/series/mng')
-// const series_edit = () => import('@/hub/templates/series/mng')
-// const binding = () => import('@/hub/templates/binding')
-// const roles = () => import('@/hub/templates/roles/')
-// const roles_add = () => import('@/hub/templates/roles/mng')
-// const roles_edit = () => import('@/hub/templates/roles/mng')
-// const screen = () => import('@/hub/templates/screen')
-// const videos_player = () => import('@/hub/templates/video-player')
-// const videos_upload = () => import('@/hub/templates/video-upload')
-// const videos_subtitles = () => import('@/hub/templates/video-subtitles')
-// const history_info = () => import('@/hub/templates/history-info')
+  import(/* webpackChunkName: "history" */ '@/hub/templates/history-info')
+const settings = () =>
+  import(/* webpackChunkName: "settings" */ '@/hub/templates/settings')
 
-const NotFoundComponent = () => import('@/hub/templates/NotFoundComponent')
+const notFoundComponent = () =>
+  import(/* webpackChunkName: "settings" */ '@/hub/templates/NotFoundComponent')
 
 Vue.use(Router)
 
@@ -83,78 +67,71 @@ const ifNotTokenRecovery = (to, from, next) => {
   }
 }
 
-const ifNotAuthenticated = (to, from, next) => {
-  if (!store.getters.hasToken) {
-    next()
-    //return
-  }
-  const isAuth = store.getters.authStatus === 'success'
-  if (isAuth) {
-    next(`/`)
-  } else {
-    store.commit('SET_HEADER_AUTH')
-    store
-      .dispatch('GET_MY_PROFILE')
-      .then(() => {
-        next(`/`)
-      })
-      .catch((err) => next('/login'))
-  }
-}
+// const ifNotAuthenticated = (to, from, next) => {
+//   if (!store.getters.hasToken) {
+//     next()
+//     //return
+//   }
+//   const isAuth = store.getters.authStatus === 'success'
+//   if (isAuth) {
+//     next(`/`)
+//   } else {
+//     store.commit('SET_HEADER_AUTH')
+//     store
+//       .dispatch('GET_MY_PROFILE')
+//       .then(() => {
+//         next(`/`)
+//       })
+//       .catch((err) => next('/login'))
+//   }
+// }
 
-const checkAuthAndAccess = async (to, from, next) => {
-  if (store.getters.hasToken) {
-    store.commit('SET_HEADER_AUTH')
-    store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
-    try {
-      if (Object.keys(store.getters.me.profile).length === 0) {
-        await store.dispatch('GET_MY_PROFILE')
-        console.log('ifAuthenticated - ok')
-      }
-      if (to.matched.some((record) => record.meta.notForUser)) {
-        const {irole} = store.getters.me.profile
-        if (irole === 'user') {
-          next('/pageNotFound')
-        } else {
-          //store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
-          next()
-        }
-      } else {
-        //store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
-        next()
-      }
-    } catch {
-      console.log('ifAuthenticated - err')
-      next('/login')
-    }
-  } else {
-    next('/login')
-  }
-}
+// const checkAccess = ({to, from, next}) => {
+//   const {irole} = store.getters.me.profile
+//   if (irole !== 'user') {
+//     throw 'access denided'
+//   }
+//   // else {
+//   //   next()
+//   // }
+// }
+// const checkAuth = async ({to, from, next}) => {
+//   if (store.getters.hasToken) {
+//     store.commit('SET_HEADER_AUTH')
+//     store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
+//     try {
+//       if (Object.keys(store.getters.me.profile).length === 0) {
+//         await store.dispatch('GET_MY_PROFILE')
+//       }
+//     } catch {
+//       throw 'ifAuthenticated - err'
+//     }
+//   } else {
+//     throw 'ifAuthenticated - err'
+//   }
+// }
 
-const ifAuthenticated = (to, from, next) => {
-  if (store.getters.hasToken) {
-    store.commit('SET_HEADER_AUTH')
-    store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
-    store
-      .dispatch('GET_MY_PROFILE')
-      .then(() => {
-        console.log('ifAuthenticated - ok')
-        next()
-      })
-      .catch((err) => {
-        console.log('ifAuthenticated - err')
-        next('/login')
-      })
-  } else {
-    next('/login')
-  }
-}
+//const requiresAuth = checkAuth
+//const requiresAccess = checkAccess
 
-// Router.beforeEach((to, from, next) => {
-//   console.log('Router.beforeEach')
-//   next()
-// })
+// const ifAuthenticated = (to, from, next) => {
+//   if (store.getters.hasToken) {
+//     store.commit('SET_HEADER_AUTH')
+//     store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
+//     store
+//       .dispatch('GET_MY_PROFILE')
+//       .then(() => {
+//         console.log('ifAuthenticated - ok')
+//         next()
+//       })
+//       .catch((err) => {
+//         console.log('ifAuthenticated - err')
+//         next('/login')
+//       })
+//   } else {
+//     next('/login')
+//   }
+// }
 
 const router = new Router({
   mode: 'history',
@@ -170,150 +147,222 @@ const router = new Router({
       name: 'hub',
       component: Hub,
       redirect: '/videos',
-      meta: {requiresAuth: true},
+      meta: {middleware: [requiresAuth]},
       children: [
         {
           path: 'videos',
           component: videos,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/videos', requiresAuth: true}
+          meta: {
+            menuItem: '/videos',
+            target: 'videos',
+            middleware: [requiresAuth]
+          }
         },
         {
-          path: 'videos_player/uuid/:uuid',
+          path: 'videos/player/:uuid',
           component: videos_player,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/videos', requiresAuth: true}
+          meta: {
+            menuItem: '/videos',
+            target: 'videos/player',
+            middleware: [requiresAuth]
+          }
         },
         {
-          path: 'videos_upload',
+          path: 'videos/upload',
           component: videos_upload,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/videos', notForUser: 'true', requiresAuth: true}
+          meta: {
+            menuItem: '/videos',
+            target: 'videos/upload',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
-          path: 'videos_subtitles/uuid/:uuid',
-          component: videos_subtitles,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/videos', notForUser: 'true', requiresAuth: true}
+          path: 'videos/edit/:uuid',
+          component: videos_edit,
+          meta: {
+            menuItem: '/videos',
+            target: 'videos/edit',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
           path: 'users',
           component: users,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/users', notForUser: 'true', requiresAuth: true},
-          beforeEnter: checkAuthAndAccess
+          meta: {
+            menuItem: '/users',
+            target: 'users',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
-          path: 'users_add',
+          path: 'users/add',
           component: users_add,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/users', notForUser: 'true', requiresAuth: true},
+          meta: {
+            menuItem: '/users',
+            target: 'users/add',
+            middleware: [requiresAuth, requiresAccess]
+          },
           props: {oper: 'add'}
         },
         {
-          path: 'users_import',
+          path: 'users/import',
           component: users_import,
-          beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/hub/users', notForUser: 'true'}
+          meta: {
+            menuItem: '/users',
+            target: 'users/import',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
-          path: 'users_edit/uid/:uid',
+          path: 'users/edit/:uid',
           component: users_edit,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/users', notForUser: 'true', requiresAuth: true},
+          meta: {
+            menuItem: '/users',
+            target: 'users/edit',
+            middleware: [requiresAuth, requiresAccess]
+          },
           props: {oper: 'edit'}
         },
         {
           path: 'settings',
           component: settings,
-          beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/hub/settings'}
+          meta: {
+            menuItem: '/settings',
+            target: 'settings',
+            middleware: [requiresAuth]
+          }
         },
         {
           path: 'groups',
           component: groups,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/groups', notForUser: 'true', requiresAuth: true}
+          meta: {
+            menuItem: '/groups',
+            target: 'groups',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
-          path: 'groups_add',
+          path: 'groups/add',
           component: groups_add,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/groups', notForUser: 'true', requiresAuth: true},
+          meta: {
+            menuItem: '/groups',
+            target: 'groups/add',
+            middleware: [requiresAuth, requiresAccess]
+          },
           props: {oper: 'add'}
         },
         {
-          path: 'groups_edit/gid/:gid',
+          path: 'groups/edit/:gid',
           component: groups_edit,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/groups', notForUser: 'true', requiresAuth: true},
+          meta: {
+            menuItem: '/groups',
+            target: 'groups/edit',
+            middleware: [requiresAuth, requiresAccess]
+          },
           props: {oper: 'edit'}
         },
         {
           path: 'series',
           component: series,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/series', notForUser: 'true', requiresAuth: true}
+          meta: {
+            menuItem: '/series',
+            target: 'series',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
           path: 'binding',
           component: binding,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/binding', notForUser: 'true', requiresAuth: true}
+          meta: {
+            menuItem: '/binding',
+            target: 'binding',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
-          path: 'series_add',
+          path: 'series/add',
           component: series_add,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/series', notForUser: 'true', requiresAuth: true},
+          meta: {
+            menuItem: '/series',
+            target: 'series/add',
+            middleware: [requiresAuth, requiresAccess]
+          },
           props: {oper: 'add'}
         },
         {
-          path: 'series_edit/sid/:sid',
+          path: 'series/edit/:sid',
           component: series_edit,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/series', notForUser: 'true', requiresAuth: true},
+          meta: {
+            menuItem: '/series',
+            target: 'series/edit',
+            middleware: [requiresAuth, requiresAccess]
+          },
           props: {oper: 'edit'}
         },
         {
           path: 'messages',
           component: messages,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/messages', requiresAuth: true}
+          meta: {
+            menuItem: '/messages',
+            target: 'messages',
+            middleware: [requiresAuth]
+          }
         },
         {
           path: 'roles',
           component: roles,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/roles', notForUser: 'true', requiresAuth: true}
+          meta: {
+            menuItem: '/roles',
+            target: 'roles',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
-          path: 'roles_add',
+          path: 'roles/add',
           component: roles_add,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/roles', notForUser: 'true', requiresAuth: true},
+          meta: {
+            menuItem: '/roles',
+            target: 'roles/add',
+            middleware: [requiresAuth, requiresAccess]
+          },
           props: {oper: 'add'}
         },
         {
-          path: 'roles_edit/rid/:rid',
+          path: 'roles/edit/:rid',
           component: roles_edit,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/roles', notForUser: 'true', requiresAuth: true},
+          meta: {
+            menuItem: '/roles',
+            target: 'roles/edit',
+            middleware: [requiresAuth, requiresAccess]
+          },
           props: {oper: 'edit'}
         },
         {
-          path: 'screen',
+          path: 'company',
           component: screen,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/screen', notForUser: 'true', requiresAuth: true}
+          meta: {
+            menuItem: '/company',
+            target: 'company',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
         {
           path: 'history',
           component: history_info,
-          //beforeEnter: checkAuthAndAccess,
-          meta: {menuItem: '/history', notForUser: 'true', requiresAuth: true}
+          meta: {
+            menuItem: '/history',
+            target: 'history',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
-        {path: 'pageNotFound', component: NotFoundComponent}
+        {
+          path: 'pageNotFound',
+          component: notFoundComponent,
+          meta: {
+            target: 'pageNotFound',
+            middleware: [requiresAuth]
+          }
+        }
       ]
     },
     {
@@ -339,17 +388,18 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log('to.matched: ', to.matched)
-  if (!to.meta.requiresAuth) {
+  if (!to.meta.middleware) {
     return next()
   }
+  const middleware = to.meta.middleware
   const context = {
     to,
     from,
-    next
+    next,
+    store
   }
-  checkAuthAndAccess(to, from, next)
-  //next()
+
+  return multiguard(middleware, context)
 })
 
 export default router

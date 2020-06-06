@@ -43,7 +43,7 @@ export default {
   methods: {
     onBack(evt) {
       evt.preventDefault()
-      this.$emit('contentElementClick', '/hub/users')
+      this.$emit('contentElementClick', '/users')
     },
     onSubmit() {
       this.$store.dispatch('USER_IMPORT', this.file)

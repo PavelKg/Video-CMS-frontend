@@ -105,14 +105,14 @@ export default {
   },
   methods: {
     onOpenVideoDetails(uuid) {
-      this.$emit('contentElementClick', `/hub/videos_subtitles/uuid/${uuid}`)
+      this.$emit('contentElementClick', `/videos/subtitles/${uuid}`)
     },
     delVideoSeries(uuid) {
       this.$emit('deleteVideoSeries', uuid)
     },
 
     setPage(num) {
-      this.$emit('contentElementClick', `/hub/videos/?page=${num}`)
+      this.$emit('contentElementClick', `/videos/?page=${num}`)
     }
   },
 

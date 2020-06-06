@@ -133,7 +133,7 @@ export default {
       const {path, query} = this.$route
       this.$router.push({path: this.$route.path, query: {...query, page: num}})
       //this.$router.push({path, query: {...query}})
-      //this.$emit('contentElementClick', `/hub/history/?page=${num}`)
+      //this.$emit('contentElementClick', `/history/?page=${num}`)
     },
     onDownloadCsv() {
       const csvHeaders = 'User ID,Category,Object,Verbs,Details,Timestamp\n'

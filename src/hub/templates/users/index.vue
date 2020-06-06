@@ -1,17 +1,22 @@
 <template>
   <div class="users-mng">
     <div class="button-zone">
-      <button class="button btn-blue mr-2" @click="addNewUser">{{ $t('users.btn_add') }}</button>
-      <button class="button btn-blue" @click="usersImport">{{ $t('users.btn_import') }}</button>
+      <button class="button btn-blue mr-2" @click="addNewUser">
+        {{ $t('users.btn_add') }}
+      </button>
+      <button class="button btn-blue" @click="usersImport">
+        {{ $t('users.btn_import') }}
+      </button>
       <div class="ml-auto">
         <b-checkbox
           class="pl-5 pr-1"
-          :style="{'min-width':'155px'}"
+          :style="{'min-width': '155px'}"
           v-model="isShowDeleted"
           @input="loadUsersList"
           name="check_isAdmin"
           inline
-        >{{ $t('label.show_deleted') }}</b-checkbox>
+          >{{ $t('label.show_deleted') }}</b-checkbox
+        >
       </div>
     </div>
     <div class="search-row">
@@ -102,11 +107,11 @@ export default {
       this.loadUsersList()
     },
     addNewUser() {
-      this.contentElementClick(`/hub/users_add`)
+      this.contentElementClick(`/users/add`)
     },
     usersImport() {
-      this.contentElementClick(`/hub/users_import`)
-    },    
+      this.contentElementClick(`/users/import`)
+    },
     contentElementClick(key) {
       this.$emit('contentElementClick', key)
     },

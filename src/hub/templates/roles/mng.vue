@@ -129,7 +129,7 @@ export default {
   },
   methods: {
     cancel_click() {
-      this.$emit('contentElementClick', '/hub/roles')
+      this.$emit('contentElementClick', '/roles')
     },
     onSubmit() {
       this.$v[this.validFormName].$touch()
@@ -140,7 +140,7 @@ export default {
       const oper_type = this.oper === 'edit' ? 'ROLE_UPD' : 'ROLE_ADD'
       this.$store.dispatch(oper_type, this.mnRole).then(
         (res) => {
-          this.$emit('contentElementClick', '/hub/roles')
+          this.$emit('contentElementClick', '/roles')
         },
         (err) => {
           const errMess = err.message.replace('Error: ', '')
