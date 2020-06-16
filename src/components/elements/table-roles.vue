@@ -50,13 +50,13 @@
       <template #cell(mng)="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">
-            <div class="icon-button">
+            <div v-if="isActAllow('edit')" class="icon-button">
               <img
                 src="@/assets/images/edit_black.png"
                 @click="editRole(item.item)"
               />
             </div>
-            <div class="icon-button">
+            <div v-if="isActAllow('delete')" class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
                 @click="delRole(item.item)"
@@ -69,6 +69,7 @@
       </template>
     </b-table>
     <div class="roles-mng-panel">
+      <template v-if="isActAllow('delete')">
       <span>{{ $t('roles.in_page') }}:</span>
       <a href="#" id="selectAll" @click.prevent="toggleAll">{{
         $t('label.select_all')
@@ -83,7 +84,7 @@
         :disabled="roles_selected.length === 0"
       >
         {{ $t('label.delete') }}
-      </button>
+      </button></template>
       <div class="roles-mng-pag">
         <b-pagination
           :value="currentPage"
@@ -101,12 +102,14 @@
 import {mapGetters, mapState} from 'vuex'
 import scrollHint from './scroll-hint'
 import scrollHintMix from '@/mixins/scroll-hint'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'table-roles',
-  mixins: [scrollHintMix],
+  mixins: [scrollHintMix, permitsMixin],
   data() {
     return {
+      permitsCategory: 'roles',
       perPage: 8,
       currentPage: 1,
       roles_selected: []

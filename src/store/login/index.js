@@ -33,9 +33,9 @@ export default {
     },
     async LOGOUT({commit, dispatch}) {
       localStorage.removeItem('vcms-token')
-      await Api.logout()
       await Api.delHeaderAuth()
       commit('AUTH_LOGOUT')
+      Api.logout()
     },
 
     async GET_MY_PROFILE({commit, dispatch, state}) {
@@ -43,7 +43,6 @@ export default {
         console.log('GET_MY_PROFILE')
         const result = await Api.my_profile()
         commit('SET_USER', result.data)
-        console.log('state.me.profile=', state.me.profile)
       } catch (e) {
         dispatch('LOGOUT')
         throw Error('Getting profile error')

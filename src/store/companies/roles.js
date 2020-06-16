@@ -7,6 +7,21 @@ export default {
     selected: null
   },
   actions: {
+    async LOAD_FEATURES({commit}, payload) {
+      const {cid} = payload
+      try {
+        const result = await Api.load_features(cid)
+        if (Array.isArray(result.data) && result.status === 200) {
+          return result.data
+        } else {
+          throw Error('Error load features')
+        }
+      } catch (err) {
+        throw err.response.data
+      } finally {
+        //
+      }
+    },
     async LOAD_ROLES({commit}, payload) {
       const {cid, filter = ''} = payload
       try {
@@ -51,9 +66,9 @@ export default {
     },
     async ROLE_UPD({commit, getters}, payload) {
       const cid = getters.me.profile.company_id
-      const {rid, name, is_admin} = payload
+      const {rid, name, is_admin, permits} = payload
       try {
-        const result = await Api.role_upd({cid, rid}, {name, is_admin})
+        const result = await Api.role_upd({cid, rid}, {name, is_admin, permits})
         if (result.status === 200) {
           return Promise.resolve('Role updated success')
         } else {

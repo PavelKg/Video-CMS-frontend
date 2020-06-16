@@ -1,7 +1,7 @@
 <template>
   <div class="roles-mng">
     <div class="button-zone">
-      <button class="button btn-blue" @click="addNewRole">
+      <button v-if="isActAllow('add')" class="button btn-blue" @click="addNewRole">
         {{ $t('roles.btn_add') }}
       </button>
       <b-checkbox
@@ -25,11 +25,14 @@
 <script>
 import {mapState} from 'vuex'
 import TableRoles from '@/components/elements/table-roles'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'roles-mng',
+  mixins: [permitsMixin],
   data() {
     return {
+      permitsCategory: 'roles',
       isShowDeleted: false
     }
   },

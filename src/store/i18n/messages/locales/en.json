@@ -12,6 +12,55 @@
     "history_info": "History Info",
     "binding": "Binding"
   },
+  "permits": {
+    "videos": {
+      "name": "Video",
+      "edit": {"name": "Edit"},
+      "play": {"name": "Player"},
+      "upload": {"name": "Upload"},
+      "delete": {"name": "delete"}
+    },
+    "groups": {
+      "name": "Groups",
+      "add": {"name": "Add"},
+      "edit": {"name": "Edit"},
+      "delete": {"name": "Delete"}
+    },
+    "messages": {"name": "Messages"},
+    "roles": {
+      "name": "Roles settings",
+      "add": {"name": "Add"},
+      "edit": {"name": "Edit"},
+      "delete": {"name": "Delete"}
+    },
+    "history": {
+      "name": "History Info",
+      "browse": {"name": "Browse"}
+    },
+    "users": {
+      "name": "Users",
+      "add": {"name": "Add"},
+      "edit": {"name": "Edit"},
+      "delete": {"name": "Delete"},
+      "import": {"name": "Import"}
+    },
+    "settings": {
+      "name": "User settings"
+    },
+    "series": {
+      "name": "Series",
+      "add": {"name": "Add"},
+      "edit": {"name": "Edit"},
+      "delete": {"name": "Delete"}
+    },
+    "binding": {
+      "name": "Binding"
+    },
+    "company": {
+      "name": "Company props (Screen)",
+      "mng": {"name": "Manage options"}
+    }
+  },
   "message": {
     "appHeader": "Video Contents Management",
     "app_name": "Video Content Management System",
@@ -56,7 +105,8 @@
     "role_id": "ID",
     "role_name": "Role Name",
     "administrator": "Administrator",
-    "in_page": "In-Page"
+    "in_page": "In-Page",
+    "permissions": "Permissions"
   },
   "users": {
     "btn_add": "Add New User",

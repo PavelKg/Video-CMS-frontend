@@ -1,10 +1,10 @@
 <template>
   <div class="users-mng">
     <div class="button-zone">
-      <button class="button btn-blue mr-2" @click="addNewUser">
+      <button v-if="isActAllow('add')" class="button btn-blue mr-2" @click="addNewUser">
         {{ $t('users.btn_add') }}
       </button>
-      <button class="button btn-blue" @click="usersImport">
+      <button v-if="isActAllow('import')" class="button btn-blue" @click="usersImport">
         {{ $t('users.btn_import') }}
       </button>
       <div class="ml-auto">
@@ -46,11 +46,14 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import UsersTable from '@/components/elements/table-users'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'users-mng',
+  mixins: [permitsMixin],
   data() {
     return {
+      permitsCategory: 'users',
       isShowDeleted: false,
       group_options: [],
       selected_groups: null,

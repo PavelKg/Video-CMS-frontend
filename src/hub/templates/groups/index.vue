@@ -1,7 +1,11 @@
 <template>
   <div class="groups-mng">
     <div class="button-zone">
-      <button class="button btn-blue" @click="addNewGroup">
+      <button
+        v-if="isActAllow('add')"
+        class="button btn-blue"
+        @click="addNewGroup"
+      >
         {{ $t('groups.btn_add') }}
       </button>
       <b-checkbox
@@ -23,11 +27,14 @@
 <script>
 import {mapState} from 'vuex'
 import groupsTable from '@/components/elements/table-groups'
+import permitsMixin from '@/mixins/permits'
 
 export default {
-  name: 'groups-mng',
+  name: 'groups',
+  mixins: [permitsMixin],
   data() {
     return {
+      permitsCategory: 'groups',
       isShowDeleted: false
     }
   },

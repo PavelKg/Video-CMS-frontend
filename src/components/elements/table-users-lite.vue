@@ -6,6 +6,7 @@
         {{ $t('label.people') }}
       </span>
       <button
+        v-if="isActAllow('add')"
         class="button btn-blue add-user"
         @click="addNewUser"
         @keyup="
@@ -48,11 +49,14 @@
 
 <script>
 import {mapGetters} from 'vuex'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'table-users-lite',
+  mixins: [ permitsMixin],
   data() {
     return {
+      permitsCategory: 'users',
       fields: [
         {key: 'uid', label: 'ID', thStyle: {'text-align': 'center'}},
         {
@@ -72,8 +76,10 @@ export default {
       this.$emit('contentElementClick', `/users/add?gid=${this.gid}`)
     },
     updUser(userInfo) {
-      const {cid, uid} = userInfo
-      this.$emit('contentElementClick', `/users/edit/${uid}`)
+      if (this.isActAllow('edit')) {
+        const {cid, uid} = userInfo
+        this.$emit('contentElementClick', `/users/edit/${uid}`)
+      }
     }
   },
   computed: {

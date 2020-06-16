@@ -1,4 +1,5 @@
 export default async function auth(to, from, next, store) {
+  //console.log('store.getters.hasToken=', store.getters.hasToken)
   if (store.getters.hasToken) {
     try {
       store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')

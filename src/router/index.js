@@ -67,6 +67,10 @@ const ifNotTokenRecovery = (to, from, next) => {
   }
 }
 
+const clearAll = async (to, from, next) => {
+  await store.dispatch('LOGOUT')
+  next()
+}
 // const ifNotAuthenticated = (to, from, next) => {
 //   if (!store.getters.hasToken) {
 //     next()
@@ -305,7 +309,7 @@ const router = new Router({
           meta: {
             menuItem: '/messages',
             target: 'messages',
-            middleware: [requiresAuth]
+            middleware: [requiresAuth, requiresAccess]
           }
         },
         {
@@ -374,7 +378,8 @@ const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: Login,
+      beforeEnter: clearAll
     },
     {
       path: '*',

@@ -1,7 +1,11 @@
 <template>
   <div class="series-mng">
     <div class="button-zone">
-      <button class="button btn-blue" @click="addNewSeries">
+      <button
+        v-if="isActAllow('add')"
+        class="button btn-blue"
+        @click="addNewSeries"
+      >
         {{ $t('series.btn_add') }}
       </button>
       <b-checkbox
@@ -23,11 +27,14 @@
 <script>
 import {mapState} from 'vuex'
 import seriesTable from '@/components/elements/table-series'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'series-mng',
+  mixins: [permitsMixin],
   data() {
     return {
+      permitsCategory: 'series',
       isShowDeleted: false
     }
   },

@@ -237,9 +237,22 @@ export default {
     })
   },
 
+  /** Load sysytem features
+   * @param {integer} cid - Company ID
+   * @return {Promise<*>}[] - 200	Default Response
+   * @throws Error
+   */  
+  load_features(cid) {
+    return Api.get(`/companies/${cid}/roles/features`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /** Add new role
    * @param {string} cid - Company ID
-   * @param {object} data - {"rid": "string", "name": "string", "is_admin": true }
+   * @param {object} data - {"rid": "string", "name": "string", "is_admin": true, "permits": {} }
    * @return {Promise<*>} - 200	Default Response
    * @throws Error
    */

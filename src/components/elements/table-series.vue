@@ -78,13 +78,13 @@
       <template #cell(mng)="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">
-            <div class="icon-button">
+            <div v-if="isActAllow('edit')" class="icon-button">
               <img
                 src="@/assets/images/edit_black.png"
                 @click="editSeries(item.item)"
               />
             </div>
-            <div class="icon-button">
+            <div v-if="isActAllow('delete')" class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
                 @click="delOneSeries(item.item.sid)"
@@ -97,21 +97,23 @@
       </template>
     </b-table>
     <div class="series-mng-panel">
-      <span>{{ $t('series.in_page') }}:</span>
-      <a href="#" id="selectAll" @click.prevent="toggleAll">{{
-        $t('label.select_all')
-      }}</a>
-      <span>|</span>
-      <a href="#" id="deselectAll" @click.prevent="toggleAll">{{
-        $t('label.deselect_all')
-      }}</a>
-      <button
-        class="button btn-orange"
-        @click="delGroupSeries"
-        :disabled="series_selected.length === 0"
-      >
-        {{ $t('label.delete') }}
-      </button>
+      <template v-if="isActAllow('delete')">
+        <span>{{ $t('series.in_page') }}:</span>
+        <a href="#" id="selectAll" @click.prevent="toggleAll">{{
+          $t('label.select_all')
+        }}</a>
+        <span>|</span>
+        <a href="#" id="deselectAll" @click.prevent="toggleAll">{{
+          $t('label.deselect_all')
+        }}</a>
+        <button
+          class="button btn-orange"
+          @click="delGroupSeries"
+          :disabled="series_selected.length === 0"
+        >
+          {{ $t('label.delete') }}
+        </button>
+      </template>
       <div class="series-mng-pag">
         <b-pagination
           :value="currentPage"
@@ -129,12 +131,14 @@
 import {mapState, mapGetters} from 'vuex'
 import scrollHint from './scroll-hint'
 import scrollHintMix from '@/mixins/scroll-hint'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'table-series',
-  mixins: [scrollHintMix],
+  mixins: [scrollHintMix, permitsMixin],
   data() {
     return {
+      permitsCategory: 'series',
       perPage: 8,
       currentPage: 1,
       series_selected: [],

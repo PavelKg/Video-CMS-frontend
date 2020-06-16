@@ -2,7 +2,11 @@
   <div class="video-catalog">
     <div class="video-catalog-title">
       <span>{{ company_name }}</span>
-      <button v-if="isAdmin" @click="add_new_video" class="button btn-blue">
+      <button
+        v-if="isActAllow('upload')"
+        @click="add_new_video"
+        class="button btn-blue"
+      >
         {{ $t('label.add_new') }}
       </button>
     </div>
@@ -45,7 +49,7 @@
           @change="onPeriodState"
         ></b-form-select>
       </div>
-      <div v-if="!isUser" class="video-data-filter-acc">
+      <div class="video-data-filter-acc">
         <b-form-radio-group
           id="btn-filer-public"
           v-model="public_selected"
@@ -69,7 +73,7 @@
       ></videoPrev>
     </div>
     <div class="videos-mng-panel">
-      <div class="admin-mng-panel" v-if="isAdmin">
+      <div v-if="isActAllow('edit')" class="admin-mng-panel">
         <span>{{ $t('label.in_page') }}:</span>
         <a href="#" id="selectAll" @click.prevent="toggleAll('selectAll')">{{
           $t('label.select_all')
@@ -122,12 +126,14 @@
 <script>
 import {mapGetters} from 'vuex'
 import videoPrev from '@/components/elements/video-face'
-//import {Promise} from 'q'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'video-catalog',
+  mixins: [permitsMixin],
   data() {
     return {
+      permitsCategory: 'videos',
       years: [2020, 2019, 2018, 2017, 2016],
       months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       public_options: [
@@ -301,9 +307,7 @@ export default {
       'isVideosDeleting',
       'videos_selected'
     ]),
-    isUser() {
-      return this.me.profile.irole === 'user'
-    },
+
     currentPage() {
       return this.active_video_page
     },
@@ -330,11 +334,6 @@ export default {
     },
     company_name() {
       return this.me.profile.company_name
-    },
-    isAdmin() {
-      return (
-        this.me.profile.irole === 'admin' || this.me.profile.irole === 'super'
-      )
     },
     years_to() {
       const _from = this.period_filter.year_from

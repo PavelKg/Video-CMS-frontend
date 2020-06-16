@@ -291,10 +291,19 @@ export default {
   state: {
     visible: false,
     menu: {
-      list: {
-        isOpen: true,
-        visible: true
+      defList: {
+        subItems: {
+          videos: {
+            caption: 'menu.home',
+            visible: true
+          },
+          messages: {
+            caption: 'menu.messages',
+            visible: true
+          }
+        }
       },
+      list: {},
       activeItem: false
     }
   },
@@ -320,7 +329,6 @@ export default {
     // },
     LOAD_USER_MENU: async ({commit}) => {
       try {
-        console.log('load menu')
         const result = await Api.load_user_menu()
         if (result.status === 200 && result.data) {
           const {menu} = result.data
@@ -338,7 +346,13 @@ export default {
   },
   mutations: {
     SET_USER_MENU: (state, userMenu) => {
-      state.menu.list = {isOpen: true, visible: true, ...userMenu}
+      const mixMenu = Object.assign(
+        {},
+        state.menu.defList.subItems,
+        userMenu.subItems
+      )
+
+      state.menu.list = {isOpen: true, visible: true, subItems: {...mixMenu}}
     },
     SECTION_STATE: (state, section) => {
       let sec = findPropByName(state.menu.list, section)
@@ -361,6 +375,7 @@ export default {
   },
   getters: {
     userMenu: (state) => state.menu.list,
+    subMenuItem: (state) => (subname) => state.menu.list.subItems[subname],
     userMenuVisible: (state) => Boolean(state.visible),
     userMenuActiveItem: (state) => state.menu.activeItem
   }

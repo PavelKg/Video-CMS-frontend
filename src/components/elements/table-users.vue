@@ -53,13 +53,13 @@
       <template #cell(mng)="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">
-            <div class="icon-button">
+            <div v-if="isActAllow('edit')" class="icon-button">
               <img
                 src="@/assets/images/edit_black.png"
                 @click="editUser(item.item)"
               />
             </div>
-            <div class="icon-button">
+            <div v-if="isActAllow('delete')" class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
                 @click="delUser(item.item)"
@@ -71,7 +71,7 @@
         </div>
       </template>
     </b-table>
-    <div class="users-mng-panel">
+    <div v-if="isActAllow('delete')" class="users-mng-panel">
       <span>{{ $t('label.in_page') }}:</span>
       <a href="#" id="selectAll" @click.prevent="toggleAll">{{
         $t('label.select_all')
@@ -104,15 +104,17 @@
 import {mapGetters, mapState} from 'vuex'
 import scrollHint from './scroll-hint'
 import scrollHintMix from '@/mixins/scroll-hint'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'table-users',
-  mixins: [scrollHintMix],
+  mixins: [scrollHintMix, permitsMixin],
   props: {
     searchVal: String
   },
   data() {
     return {
+      permitsCategory: 'users',
       perPage: 8,
       currentPage: 1,
       users_selected: [],

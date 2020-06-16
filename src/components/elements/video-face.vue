@@ -4,7 +4,7 @@
       class="video-box-item-content"
       :class="[
         videoitem.video_thumbnail == undefined ? 'gray' : '',
-        !videoIsReady ? 'not-active' : 'active'
+        !videoIsReady || !isActAllow('player') ? 'not-active' : 'active'
       ]"
       @click="playVideo"
     >
@@ -44,9 +44,9 @@
           :name="tag"
         ></b-form-checkbox>
         <span :title="`${title}: ${description}`">{{ title }}</span>
-        <template v-if="showSubtitles">
+        <template v-if="isActAllow('edit')">
           <img
-            @click="onSubtitles()"
+            @click="onEdit()"
             class="subtitles-svg"
             src="@/assets/images/subtitles.svg"
           />
@@ -69,11 +69,14 @@ import {mapGetters} from 'vuex'
 import IconBase from '../IconBase.vue'
 import IconLockClose from '../icons/IconLock'
 import IconLockOpen from '../icons/IconLockOpen'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'video-face-box',
+  mixins: [permitsMixin],
   data() {
     return {
+      permitsCategory: 'videos',
       videoitem: {
         video_uuid: '',
         video_thumbnail: undefined,
@@ -111,18 +114,15 @@ export default {
   updated() {},
   methods: {
     playVideo() {
-      if (this.videoitem.video_status === 'ready') {
+      if (this.videoitem.video_status === 'ready' && this.isActAllow('player')) {
         this.$emit(
           'activateContent',
           `/videos/player/${this.videoitem.video_uuid}`
         )
       }
     },
-    onSubtitles() {
-      this.$emit(
-        'activateContent',
-        `/videos/subtitles/${this.videoitem.video_uuid}`
-      )
+    onEdit() {
+      this.$emit('activateContent', `/videos/edit/${this.videoitem.video_uuid}`)
     },
     onCheckChange(new_state) {
       const act = new_state ? 'SET' : 'UNSET'
@@ -160,9 +160,6 @@ export default {
       return this.videoitem.video_thumbnail !== ''
         ? this.videoitem.video_thumbnail
         : require('@/assets/images/p-streamCMS-s.png')
-    },
-    showSubtitles() {
-      return this.me.profile.irole !== 'user'
     }
   },
   components: {
@@ -242,7 +239,7 @@ export default {
     padding: 0 5px;
     .mng-panel-top {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
       height: 30px;
       span {

@@ -21,6 +21,7 @@ export default {
           throw Error('Error load company commentbox state')
         }
       } catch (err) {
+        commit('SET_VIDEO_INFO_LOCATION', result.data.location)
         throw Error(`Error request commentbox state from server: ${err}`)
       } finally {
       }

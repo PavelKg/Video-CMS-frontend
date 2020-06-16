@@ -74,6 +74,29 @@
               ><strong>{{ $t(`label.${is_admin_state}`) }}</strong>
             </b-form-checkbox>
           </b-form-group>
+          <b-form-group
+            id="input-role-permits"
+            :label="`${$t('roles.permissions')}:`"
+            label-cols-sm="3"
+            label-cols-lg="3"
+            label-for="permits"
+            label-align-sm="left"
+            class="pt-2"
+          >
+            <ul class="root-ul-features pt-2" id="permits">
+              <tree-item
+                v-for="feature in features"
+                :key="feature.name"
+                class="item"
+                :item="feature"
+                :permits="permits.find((perm) => perm.name === feature.name)"
+                :selected="permits.some((perm) => perm.name === feature.name)"
+                :path="feature.name"
+                :isAdminOptEnable="mnRole.is_admin"
+                @onChangeState="onPermitsChange"
+              ></tree-item>
+            </ul>
+          </b-form-group>
 
           <div class="role-operation-button-zone">
             <button
@@ -96,6 +119,7 @@
 <script>
 import {mapGetters, mapState} from 'vuex'
 import validMixin from '@/mixins/validation'
+import treeItem from '@/components/elements/features-tree'
 
 export default {
   name: 'role-mng-form',
@@ -103,6 +127,8 @@ export default {
   props: {
     oper: String
   },
+  components: {treeItem},
+
   data() {
     return {
       validFormName: 'mnRole',
@@ -110,13 +136,19 @@ export default {
       mnRole: {
         is_admin: false,
         name: '',
-        rid: ''
+        rid: '',
+        permits: {}
       },
       defRole: {
         is_admin: false,
-        name: ''
+        name: '',
+        permits: {}
       },
-      roleNotFound: false
+      roleNotFound: false,
+      features: {},
+      permits: [{name: 'videos'}, {name: 'messages'}, {name: 'settings'}],
+      isPermitsChanged: false,
+      startPermits: [{name: 'videos'}, {name: 'messages'}, {name: 'settings'}]
     }
   },
 
@@ -125,9 +157,88 @@ export default {
       if (this.ridUniqError !== '') {
         this.ridUniqError = ''
       }
+    },
+    ['mnRole.is_admin'](newVal) {
+      if (!newVal) {
+        this.permits = [...this.startPermits]
+      } else {
+        const cid = this.cid
+      }
     }
   },
   methods: {
+    deepEqual(a, b) {
+      if (a === b) {
+        return true
+      }
+
+      if (
+        a == null ||
+        typeof a != 'object' ||
+        b == null ||
+        typeof b != 'object'
+      ) {
+        return false
+      }
+
+      let propertiesInA = 0,
+        propertiesInB = 0
+      for (const property in a) {
+        propertiesInA += 1
+      }
+      for (const property in b) {
+        propertiesInB += 1
+        if (!(property in a) || !this.deepEqual(a[property], b[property])) {
+          return false
+        }
+      }
+      return propertiesInA == propertiesInB
+    },
+    permitsUpdate(target, permits, act) {
+      const nextTarget = target
+      const currKey = nextTarget.shift()
+
+      let ind = permits.findIndex((perm) => {
+        return perm.name === currKey
+      })
+
+      if (nextTarget.length === 0) {
+        let actInd = 0
+        let pos = 0
+        let newItem = {}
+
+        if (act === 'del') {
+          pos = ~ind ? 1 : 0
+          permits.splice(ind, pos)
+          return true
+        } else {
+          if (!~ind) {
+            permits.push({name: currKey})
+          }
+          return true
+        }
+      }
+
+      if (!~ind && act === 'add') {
+        permits.push({name: currKey})
+        ind = permits.length - 1
+      }
+
+      if (!permits[ind].hasOwnProperty('children') && act === 'add') {
+        this.$set(permits[ind], 'children', [])
+      }
+
+      return this.permitsUpdate(nextTarget, permits[ind]['children'], act)
+    },
+
+    onPermitsChange(payload) {
+      const {target, selected} = payload
+      const targList = target.split('.')
+      const permits = this.permits
+      this.permitsUpdate(targList, permits, selected ? 'add' : 'del')
+      this.isPermitsChanged = true
+    },
+
     cancel_click() {
       this.$emit('contentElementClick', '/roles')
     },
@@ -138,6 +249,7 @@ export default {
       }
 
       const oper_type = this.oper === 'edit' ? 'ROLE_UPD' : 'ROLE_ADD'
+      this.mnRole.permits = {items: this.permits}
       this.$store.dispatch(oper_type, this.mnRole).then(
         (res) => {
           this.$emit('contentElementClick', '/roles')
@@ -160,12 +272,17 @@ export default {
   created() {
     const {rid = null} = this.$route.params
     const cid = this.cid
+    this.$store.dispatch('LOAD_FEATURES', {cid}).then((res) => {
+      this.features = res
+    })
 
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_ROLE_INFO', {cid, rid}).then(
         (role) => {
           this.defRole.name = role.name
           this.defRole.is_admin = role.is_admin
+          this.permits = role.permits ? [...role.permits.items] : []
+          this.defRole.permits = role.permits ? [...role.permits.items] : []
           this.mnRole = {...role}
         },
         (error) => {
@@ -181,6 +298,7 @@ export default {
       cid: (store) => store.Login.me.profile.company_id,
       fieldsRestr: (store) => store.FieldRestr.categories.roles
     }),
+
     role_title() {
       return `roles.oper_title_${this.oper}`
     },
@@ -191,12 +309,15 @@ export default {
       if (this.oper === 'edit') {
         return (
           this.mnRole.name === this.defRole.name &&
-          this.mnRole.is_admin === this.defRole.is_admin
+          this.mnRole.is_admin === this.defRole.is_admin &&
+          !this.isPermitsChanged
+          //this.deepEqual(this.permits, this.defRole.permits)
         )
       } else {
         return false // check field
       }
     },
+
     isDeleted() {
       return Boolean(this.mnRole.deleted_at)
     }
@@ -205,6 +326,11 @@ export default {
 </script>
 
 <style lang="scss">
+.root-ul-features {
+  list-style-type: none;
+  padding-inline-start: 0px;
+}
+
 .role-operation {
   max-width: 550px;
   display: flex;

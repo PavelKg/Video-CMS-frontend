@@ -36,13 +36,13 @@
       <template #cell(mng)="item">
         <div class="mng-column">
           <template v-if="item.item.deleted_at === ''">
-            <div class="icon-button">
+            <div v-if="isActAllow('edit')" class="icon-button">
               <img
                 src="@/assets/images/edit_black.png"
                 @click="editGroup(item.item)"
               />
             </div>
-            <div class="icon-button">
+            <div v-if="isActAllow('delete')" class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
                 @click="delGroup(item.item.gid)"
@@ -55,21 +55,23 @@
       </template>
     </b-table>
     <div class="groups-mng-panel">
-      <span>{{ $t('groups.in_page') }}:</span>
-      <a href="#" id="selectAll" @click.prevent="toggleAll">{{
-        $t('label.select_all')
-      }}</a>
-      <span>|</span>
-      <a href="#" id="deselectAll" @click.prevent="toggleAll">{{
-        $t('label.deselect_all')
-      }}</a>
-      <button
-        class="button btn-orange"
-        @click="delGroups"
-        :disabled="groups_selected.length === 0"
+      <template v-if="isActAllow('delete')">
+        <span>{{ $t('groups.in_page') }}:</span>
+        <a href="#" id="selectAll" @click.prevent="toggleAll">{{
+          $t('label.select_all')
+        }}</a>
+        <span>|</span>
+        <a href="#" id="deselectAll" @click.prevent="toggleAll">{{
+          $t('label.deselect_all')
+        }}</a>
+        <button
+          class="button btn-orange"
+          @click="delGroups"
+          :disabled="groups_selected.length === 0"
+        >
+          {{ $t('label.delete') }}
+        </button></template
       >
-        {{ $t('label.delete') }}
-      </button>
       <div class="groups-mng-pag">
         <b-pagination
           :value="currentPage"
@@ -87,12 +89,14 @@
 import {mapGetters} from 'vuex'
 import scrollHint from './scroll-hint'
 import scrollHintMix from '@/mixins/scroll-hint'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'table-groups',
-  mixins: [scrollHintMix],
+  mixins: [scrollHintMix, permitsMixin],
   data() {
     return {
+      permitsCategory: 'groups',
       fields: [
         {
           key: 'name',

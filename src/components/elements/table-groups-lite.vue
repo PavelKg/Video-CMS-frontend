@@ -57,12 +57,15 @@
 
 <script>
 import {mapState} from 'vuex'
+import permitsMixin from '@/mixins/permits'
 
 export default {
   name: 'table-groups-lite',
   props: {sid: Number},
+  mixins: [permitsMixin],
   data() {
     return {
+      permitsCategory: 'groups',
       fields: [
         {
           key: 'gid',
