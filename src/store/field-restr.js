@@ -44,6 +44,9 @@ export default {
           email: true,
           isUnique: 'emailUniqError'
         },
+        phone: {
+          required: false
+        },
         password: {
           required: (function() {
             const isEdit = function(props) {

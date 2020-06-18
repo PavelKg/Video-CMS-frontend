@@ -32,8 +32,10 @@ Api.interceptors.response.use(
     //   router.replace('/login');
     // }
     // return Promise.reject(error.response);
+    console.log('error in the interceptors=', message)
 
     if (!message.search(/token expired|invalid token]/gi)) {
+      console.log('token expired=', message)
       return Promise.reject(error)
     }
 
@@ -241,7 +243,8 @@ export default {
    * @param {integer} cid - Company ID
    * @return {Promise<*>}[] - 200	Default Response
    * @throws Error
-   */  
+   */
+
   load_features(cid) {
     return Api.get(`/companies/${cid}/roles/features`, {
       headers: {

@@ -129,7 +129,22 @@
                 ></b-form-input> </b-col
             ></b-row>
           </b-form-group>
-
+          <b-form-group
+            :disabled="isUserDelete"
+            id="input-group-phone"
+            :invalid-feedback="validateErrorMessage('phone')"
+            :state="validateState('phone')"
+          >
+            <b-row>
+              <b-col>
+                <b-form-input
+                  :value="mnUser.phone"
+                  :placeholder="`${$t('users.user_phone')}`"
+                  :state="validateState('phone')"
+                  @input.native="(e) => (mnUser.phone = e.target.value)"
+                ></b-form-input> </b-col
+            ></b-row>
+          </b-form-group>
           <b-form-group
             :disabled="isUserDelete"
             id="input-group-password"
@@ -200,6 +215,19 @@
                 ></datetime> </b-col
             ></b-row>
           </b-form-group>
+          <b-form-group :label="`${$t('users.send_tele_link')}:`">
+            <b-row>
+              <b-col>
+                <b-form-checkbox-group
+                  id="checkbox-group-telegram"
+                  v-model="serv_send_tegram_auth_selected"
+                  :options="telegram_send_list"
+                  name="flavour-1"
+                >
+                </b-form-checkbox-group>
+              </b-col>
+            </b-row>
+          </b-form-group>
           <div class="user-operation-button-zone">
             <button v-if="!isUserDelete" type="submit" class="button btn-blue">
               {{ `${$t('label.save')}` }}
@@ -211,6 +239,9 @@
         </b-container>
       </b-form>
     </template>
+    <b-modal ref="error-modal" id="e-modal" title="Error" ok-only centered  >
+      <p class="my-3">{{ error_text }}</p>
+    </b-modal>
   </div>
 </template>
 
@@ -231,6 +262,7 @@ export default {
       validFormName: 'mnUser',
       uidUniqError: '',
       emailUniqError: '',
+      error_text: '',
       mnUser: {
         uid: '',
         fullname: '',
@@ -238,20 +270,25 @@ export default {
         gids: [],
         rid: null,
         email: '',
+        phone: '',
         password: '',
         deleted_at: '',
         activity_start: '',
         activity_finish: '',
         confPassword: ''
       },
-
+      telegram_send_list: [
+        {text: this.$t('label.sms'), value: 'sms'},
+        {text: this.$t('label.email'), value: 'email'}
+      ],
       group_options: [],
       role_options: [],
       enabledActivityPeriod: false,
       userNotFound: false,
       isUpdatingUserData: true,
       defaultUserActivityStart: new Date().toLocalDateString().slice(0, 10),
-      defaultUserActivityFinish: ''
+      defaultUserActivityFinish: '',
+      serv_send_tegram_auth_selected: []
     }
   },
   components: {
@@ -288,7 +325,19 @@ export default {
       if (this.$v[this.validFormName].$anyError) {
         return
       }
+      const sendServices = this.serv_send_tegram_auth_selected
+      if (sendServices.includes('sms') && this.mnUser.phone === '') {
+        this.error_text=this.$t('errors.the_sms_could_not_be_sent_because_the_phone_number_was_not_entered')
+        this.$refs['error-modal'].show()
+        return
+      }
 
+      if (sendServices.includes('email') && this.mnUser.email === '') {
+        this.error_text=this.$t('errors.email_could_not_be_sent_because_your_email_address_has_not_been_entered')
+        this.$refs['error-modal'].show()
+        return
+      }
+      this.mnUser.sendTelegramAuthBy = [...this.serv_send_tegram_auth_selected]
       const oper_type = this.oper === 'edit' ? 'USER_UPD' : 'USER_ADD'
       this.$store.dispatch(oper_type, this.mnUser).then(
         (res) => {

@@ -436,7 +436,7 @@ export default {
   }
   .videos-mng-page {
     display: flex;
-    //margin-left: auto;
+    margin-left: auto;
     > * {
       margin-bottom: 0;
     }
