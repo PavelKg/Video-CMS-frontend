@@ -122,10 +122,12 @@ export default {
         fullname,
         rid,
         email,
+        phone,
         password,
         gids,
         activity_start,
-        activity_finish
+        activity_finish,
+        sendTelegramAuthBy
       } = payload
 
       try {
@@ -134,10 +136,12 @@ export default {
           fullname,
           rid,
           email,
+          phone,
           password,
           gids,
           activity_start,
-          activity_finish
+          activity_finish,
+          sendTelegramAuthBy
         })
         if (result.status === 201) {
           return Promise.resolve('User added success')
@@ -156,9 +160,11 @@ export default {
         gids,
         rid,
         email,
+        phone,
         password,
         activity_start,
-        activity_finish
+        activity_finish,
+        sendTelegramAuthBy
       } = payload
       try {
         const result = await Api.user_upd(
@@ -169,8 +175,10 @@ export default {
             rid,
             email,
             password,
+            phone,
             activity_start,
-            activity_finish
+            activity_finish,
+            sendTelegramAuthBy
           }
         )
         if (result.status === 200) {
