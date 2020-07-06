@@ -85,7 +85,7 @@ export default {
       this.onChangeState({target: this.path, selected: state})
     },
     isAlwaysEnabled(name) {
-      const alwaysCheckedList = ['videos', 'messages', 'settings']
+      const alwaysCheckedList = ['videos', 'messages', 'settings', 'player']
       return alwaysCheckedList.includes(name)
     }
   }

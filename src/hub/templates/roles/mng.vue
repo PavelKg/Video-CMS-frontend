@@ -2,10 +2,9 @@
   <div class="role-operation">
     <template v-if="roleNotFound">
       <div class="role-not-found">
-        <span>Sorry. Role is not found!!!</span><br />
-        <button @click="cancel_click" class="button btn-braun">
-          {{ $t('label.back') }}
-        </button>
+        <span>Sorry. Role is not found!!!</span>
+        <br />
+        <button @click="cancel_click" class="button btn-braun">{{ $t('label.back') }}</button>
       </div>
     </template>
     <template v-else>
@@ -52,8 +51,9 @@
                   :disabled="isDeleted"
                   :maxLength="fieldsRestr.name.maxLength"
                   :state="validateState('name')"
-                ></b-form-input></b-form-group
-            ></b-col>
+                ></b-form-input>
+              </b-form-group>
+            </b-col>
           </b-row>
 
           <b-form-group
@@ -71,7 +71,8 @@
               v-model="mnRole.is_admin"
               name="check_isAdmin"
               :disabled="isDeleted"
-              ><strong>{{ $t(`label.${is_admin_state}`) }}</strong>
+            >
+              <strong>{{ $t(`label.${is_admin_state}`) }}</strong>
             </b-form-checkbox>
           </b-form-group>
           <b-form-group
@@ -103,12 +104,8 @@
               type="submit"
               class="button btn-blue"
               :disabled="onDisabledSave || $v.mnRole.$anyError"
-            >
-              {{ $t('label.save') }}
-            </button>
-            <button @click="cancel_click" class="button btn-braun">
-              {{ $t('label.cancel') }}
-            </button>
+            >{{ $t('label.save') }}</button>
+            <button @click="cancel_click" class="button btn-braun">{{ $t('label.cancel') }}</button>
           </div>
         </b-container>
       </b-form>
@@ -148,7 +145,11 @@ export default {
       features: {},
       permits: [{name: 'videos'}, {name: 'messages'}, {name: 'settings'}],
       isPermitsChanged: false,
-      startPermits: [{name: 'videos'}, {name: 'messages'}, {name: 'settings'}]
+      startPermits: [
+        {name: 'videos', children: [{name: 'player'}]},
+        {name: 'messages'},
+        {name: 'settings'}
+      ]
     }
   },
 
@@ -160,7 +161,7 @@ export default {
     },
     ['mnRole.is_admin'](newVal) {
       if (!newVal) {
-        this.permits = [...this.startPermits]
+        this.permits.splice(0)
       } else {
         const cid = this.cid
       }
