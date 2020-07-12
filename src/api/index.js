@@ -576,6 +576,21 @@ export default {
     })
   },
 
+  /** user telegram status
+   * @param {string} cid
+   * @param {string} uid
+   * @returns {Promise<*>} - 200 
+   * {
+      "result": "boolean",
+    }
+ */
+  user_telegram_status(cid, uid) {
+    return Api.get(`/companies/${cid}/users/${uid}/telegram-status`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
   /** Import new users
    * @param {string} cid - Company ID
    * @param {file} file - {"file": "file",  }

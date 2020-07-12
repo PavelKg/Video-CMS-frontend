@@ -45,7 +45,8 @@ export default {
           isUnique: 'emailUniqError'
         },
         phone: {
-          required: false
+          required: false,
+          isUnique: 'phoneUniqError'
         },
         password: {
           required: (function() {

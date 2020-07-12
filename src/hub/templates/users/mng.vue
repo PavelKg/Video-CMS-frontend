@@ -2,10 +2,9 @@
   <div class="user-operation">
     <template v-if="userNotFound">
       <div class="user-not-found">
-        <span>Sorry. User is not found!!!</span><br />
-        <button @click="onCancel" class="button btn-braun">
-          {{ `${$t('label.back')}` }}
-        </button>
+        <span>Sorry. User is not found!!!</span>
+        <br />
+        <button @click="onCancel" class="button btn-braun">{{ `${$t('label.back')}` }}</button>
       </div>
     </template>
     <template v-else>
@@ -20,7 +19,7 @@
             <b-row ml="0" align-v="start" align-h="around">
               <template v-if="oper === 'edit'">
                 <b-col>
-                  <span>{{ `${$t('users.user_id')}` }}: {{ mnUser.uid }} </span>
+                  <span>{{ `${$t('users.user_id')}` }}: {{ mnUser.uid }}</span>
                 </b-col>
               </template>
               <template v-if="oper === 'add'">
@@ -46,10 +45,8 @@
                   <button
                     class="button btn-grey"
                     @click.stop.prevent="genUserId"
-                  >
-                    {{ `${$t('label.auto')}` }}
-                  </button></b-col
-                >
+                  >{{ `${$t('label.auto')}` }}</button>
+                </b-col>
               </template>
             </b-row>
           </b-form-group>
@@ -88,8 +85,9 @@
                   v-model="mnUser.gids"
                   :items="group_options"
                   :placeholder="`${$t('label.group_is_not_selected')}`"
-                /> </b-col
-            ></b-row>
+                />
+              </b-col>
+            </b-row>
           </b-form-group>
           <b-form-group
             :disabled="isUserDelete"
@@ -105,13 +103,15 @@
                   :state="validateState('rid')"
                 >
                   <template slot="first">
-                    <option :value="null" disabled>{{
+                    <option :value="null" disabled>
+                      {{
                       `${$t('label.role_is_not_selected')}`
-                    }}</option>
+                      }}
+                    </option>
                   </template>
                 </b-form-select>
-              </b-col></b-row
-            >
+              </b-col>
+            </b-row>
           </b-form-group>
           <b-form-group
             :disabled="isUserDelete"
@@ -126,8 +126,9 @@
                   :placeholder="`${$t('users.user_email')}`"
                   :state="validateState('email')"
                   @input.native="(e) => (mnUser.email = e.target.value)"
-                ></b-form-input> </b-col
-            ></b-row>
+                ></b-form-input>
+              </b-col>
+            </b-row>
           </b-form-group>
           <b-form-group
             :disabled="isUserDelete"
@@ -142,8 +143,9 @@
                   :placeholder="`${$t('users.user_phone')}`"
                   :state="validateState('phone')"
                   @input.native="(e) => (mnUser.phone = e.target.value)"
-                ></b-form-input> </b-col
-            ></b-row>
+                ></b-form-input>
+              </b-col>
+            </b-row>
           </b-form-group>
           <b-form-group
             :disabled="isUserDelete"
@@ -159,8 +161,9 @@
                   :placeholder="`${$t('users.password')}`"
                   :state="validateState('password')"
                   @input.native="(e) => (mnUser.password = e.target.value)"
-                ></b-form-input> </b-col
-            ></b-row>
+                ></b-form-input>
+              </b-col>
+            </b-row>
           </b-form-group>
           <b-form-group
             :disabled="isUserDelete"
@@ -176,13 +179,11 @@
                   :placeholder="`${$t('users.conf_password')}`"
                   :state="validateState('confPassword')"
                   @input.native="(e) => (mnUser.confPassword = e.target.value)"
-                ></b-form-input> </b-col
-            ></b-row>
+                ></b-form-input>
+              </b-col>
+            </b-row>
           </b-form-group>
-          <b-form-group
-            :disabled="isUserDelete"
-            id="input-group-activity-period"
-          >
+          <b-form-group :disabled="isUserDelete" id="input-group-activity-period">
             <b-row>
               <b-col>
                 <b-form-checkbox
@@ -190,11 +191,9 @@
                   name="check-button"
                   switch
                   @change="onEnableActivity"
-                >
-                  {{ $t('users.usage_period') }}
-                </b-form-checkbox>
-              </b-col></b-row
-            >
+                >{{ $t('users.usage_period') }}</b-form-checkbox>
+              </b-col>
+            </b-row>
             <b-row>
               <b-col>
                 <datetime
@@ -203,8 +202,8 @@
                   :readonly="true"
                   v-model="mnUser.activity_start"
                   :disabled="!enabledActivityPeriod"
-                ></datetime
-              ></b-col>
+                ></datetime>
+              </b-col>
               <b-col>
                 <datetime
                   class="datepicker"
@@ -212,10 +211,11 @@
                   :readonly="true"
                   v-model="mnUser.activity_finish"
                   :disabled="!enabledActivityPeriod"
-                ></datetime> </b-col
-            ></b-row>
+                ></datetime>
+              </b-col>
+            </b-row>
           </b-form-group>
-          <b-form-group :label="`${$t('users.send_tele_link')}:`">
+          <b-form-group v-if="!telegramStatus" :label="`${$t('users.send_tele_link')}:`">
             <b-row>
               <b-col>
                 <b-form-checkbox-group
@@ -223,23 +223,22 @@
                   v-model="serv_send_tegram_auth_selected"
                   :options="telegram_send_list"
                   name="flavour-1"
-                >
-                </b-form-checkbox-group>
+                ></b-form-checkbox-group>
               </b-col>
             </b-row>
           </b-form-group>
           <div class="user-operation-button-zone">
-            <button v-if="!isUserDelete" type="submit" class="button btn-blue">
-              {{ `${$t('label.save')}` }}
-            </button>
-            <button @click="onCancel" class="button btn-braun">
-              {{ `${$t('label.back')}` }}
-            </button>
+            <button
+              v-if="!isUserDelete"
+              type="submit"
+              class="button btn-blue"
+            >{{ `${$t('label.save')}` }}</button>
+            <button @click="onCancel" class="button btn-braun">{{ `${$t('label.back')}` }}</button>
           </div>
         </b-container>
       </b-form>
     </template>
-    <b-modal ref="error-modal" id="e-modal" title="Error" ok-only centered  >
+    <b-modal ref="error-modal" id="e-modal" title="Error" ok-only centered>
       <p class="my-3">{{ error_text }}</p>
     </b-modal>
   </div>
@@ -262,7 +261,9 @@ export default {
       validFormName: 'mnUser',
       uidUniqError: '',
       emailUniqError: '',
+      phoneUniqError: '',
       error_text: '',
+      telegramStatus: true,
       mnUser: {
         uid: '',
         fullname: '',
@@ -305,6 +306,11 @@ export default {
       if (this.emailUniqError !== '') {
         this.emailUniqError = ''
       }
+    },
+    ['mnUser.phone'](newVal) {
+      if (this.phoneUniqError !== '') {
+        this.phoneUniqError = ''
+      }
     }
   },
 
@@ -327,13 +333,17 @@ export default {
       }
       const sendServices = this.serv_send_tegram_auth_selected
       if (sendServices.includes('sms') && this.mnUser.phone === '') {
-        this.error_text=this.$t('errors.the_sms_could_not_be_sent_because_the_phone_number_was_not_entered')
+        this.error_text = this.$t(
+          'errors.the_sms_could_not_be_sent_because_the_phone_number_was_not_entered'
+        )
         this.$refs['error-modal'].show()
         return
       }
 
       if (sendServices.includes('email') && this.mnUser.email === '') {
-        this.error_text=this.$t('errors.email_could_not_be_sent_because_your_email_address_has_not_been_entered')
+        this.error_text = this.$t(
+          'errors.email_could_not_be_sent_because_your_email_address_has_not_been_entered'
+        )
         this.$refs['error-modal'].show()
         return
       }
@@ -355,6 +365,9 @@ export default {
               break
             case 'THIS_EMAIL_IS_NOT_ALLOWED':
               this.emailUniqError = errMess
+              break
+            case 'THIS_PHONE_IS_NOT_ALLOWED':
+              this.phoneUniqError = errMess
               break
             default:
               console.log('error=', errMess)
@@ -380,6 +393,12 @@ export default {
     if (this.oper === 'edit') {
       this.$store.dispatch('LOAD_USER_INFO', {cid, uid}).then(
         (res) => {
+          this.$store
+            .dispatch('LOAD_USER_TELEGRAM_STATUS', {cid, uid})
+            .then((status) => {
+              this.telegramStatus = status
+            })
+
           this.isUpdatingUserData = false
           this.mnUser = {...this.mnUser, ...res}
           if (this.mnUser.gid === '') {
