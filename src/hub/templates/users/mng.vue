@@ -420,6 +420,7 @@ export default {
       )
     } else {
       const query = this.$route.query
+      this.telegramStatus = false
       if (query) {
         const {gid = null, rid = null} = query
         this.mnUser.rid = rid
