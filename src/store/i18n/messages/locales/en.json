@@ -10,11 +10,12 @@
     "series": "Series",
     "screen": "Screen custom.",
     "history_info": "History Info",
-    "binding": "Binding"
+    "binding": "Binding",
+    "files": "Files"
   },
   "permits": {
     "videos": {
-      "name": "Video",
+      "name": "Videos",
       "edit": {
         "name": "Edit"
       },
@@ -25,7 +26,22 @@
         "name": "Upload"
       },
       "delete": {
-        "name": "delete"
+        "name": "Delete"
+      }
+    },
+    "files": {
+      "name": "Files",
+      "edit": {
+        "name": "Edit"
+      },
+      "player": {
+        "name": "Player"
+      },
+      "upload": {
+        "name": "Upload"
+      },
+      "delete": {
+        "name": "Delete"
       }
     },
     "groups": {

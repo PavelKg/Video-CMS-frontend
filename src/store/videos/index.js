@@ -1,12 +1,12 @@
 import Api from '@/api'
-
-const uuid = () =>
-  ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-    (
-      c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-    ).toString(16)
-  )
+import {get_uuid} from '../helpers'
+// const uuid = () =>
+//   ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+//     (
+//       c ^
+//       (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+//     ).toString(16)
+//   )
 
 export default {
   state: {
@@ -24,47 +24,47 @@ export default {
     }
   },
   actions: {
-    GET_ACTIVE_VIDEO_UUID: ({commit}) => {
-      if (localStorage.getItem('vcms-activ-video-uuid')) {
-        try {
-          const act_item = JSON.parse(
-            localStorage.getItem('vcms-activ-video-uuid')
-          )
-          const _item = act_item ? act_item : ''
+    // GET_ACTIVE_VIDEO_UUID: ({commit}) => {
+    //   if (localStorage.getItem('vcms-activ-video-uuid')) {
+    //     try {
+    //       const act_item = JSON.parse(
+    //         localStorage.getItem('vcms-activ-video-uuid')
+    //       )
+    //       const _item = act_item ? act_item : ''
 
-          commit('SET_ACTIVE_VIDEO', _item)
-        } catch (e) {
-          localStorage.removeItem('vcms-activ-video-uuid')
-        }
-      }
-    },
-    CLEAR_ACTIVE_VIDEO_UUID: () =>
-      localStorage.removeItem('vcms-activ-video-uuid'),
-    SAVE_ACTIVE_VIDEO_UUID: ({state}) => {
-      localStorage.setItem(
-        'vcms-activ-video-uuid',
-        JSON.stringify(state.active_video_uuid)
-      )
-    },
-    GET_ACTIVE_VIDEO_PAGE: ({commit}) => {
-      if (localStorage.getItem('vcms-activ-video-page')) {
-        try {
-          const act_item = JSON.parse(
-            localStorage.getItem('vcms-activ-video-page')
-          )
-          const _item = act_item ? act_item : 1
-          return _item
-          //commit('SET_ACTIVE_VIDEO_PAGE', _item)
-        } catch (e) {
-          localStorage.removeItem('vcms-activ-video-page')
-        }
-      }
-    },
-    CLEAR_ACTIVE_VIDEO_PAGE: () =>
-      localStorage.removeItem('vcms-activ-video-page'),
-    SAVE_ACTIVE_VIDEO_PAGE: ({state}, num) => {
-      localStorage.setItem('vcms-activ-video-page', JSON.stringify(num))
-    },
+    //       commit('SET_ACTIVE_VIDEO', _item)
+    //     } catch (e) {
+    //       localStorage.removeItem('vcms-activ-video-uuid')
+    //     }
+    //   }
+    // },
+    // CLEAR_ACTIVE_VIDEO_UUID: () =>
+    //   localStorage.removeItem('vcms-activ-video-uuid'),
+    // SAVE_ACTIVE_VIDEO_UUID: ({state}) => {
+    //   localStorage.setItem(
+    //     'vcms-activ-video-uuid',
+    //     JSON.stringify(state.active_video_uuid)
+    //   )
+    // },
+    // GET_ACTIVE_VIDEO_PAGE: ({commit}) => {
+    //   if (localStorage.getItem('vcms-activ-video-page')) {
+    //     try {
+    //       const act_item = JSON.parse(
+    //         localStorage.getItem('vcms-activ-video-page')
+    //       )
+    //       const _item = act_item ? act_item : 1
+    //       return _item
+    //       //commit('SET_ACTIVE_VIDEO_PAGE', _item)
+    //     } catch (e) {
+    //       localStorage.removeItem('vcms-activ-video-page')
+    //     }
+    //   }
+    // },
+    // CLEAR_ACTIVE_VIDEO_PAGE: () =>
+    //   localStorage.removeItem('vcms-activ-video-page'),
+    // SAVE_ACTIVE_VIDEO_PAGE: ({state}, num) => {
+    //   localStorage.setItem('vcms-activ-video-page', JSON.stringify(num))
+    // },
 
     async UPLOAD_VIDEO_FILES({state, commit, getters}) {
       const cid = getters.me.profile.company_id
@@ -425,7 +425,7 @@ export default {
       files.forEach(function(file) {
         state.filesForUpload.list.push({
           file: file,
-          uuid: uuid(),
+          uuid: get_uuid(),
           uploaded: false,
           isUploading: false,
           progress: {percent: 0}
@@ -530,6 +530,6 @@ export default {
     videos_selected: (state) => state.selected,
     active_video_uuid: (state) => state.active_video_uuid,
     active_video_page: (state) => state.active_video_page,
-    files_for_upload: (state) => state.filesForUpload.list
+    video_files_for_upload: (state) => state.filesForUpload.list
   }
 }

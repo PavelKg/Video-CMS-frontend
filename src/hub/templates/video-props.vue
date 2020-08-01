@@ -266,6 +266,7 @@ export default {
       .dispatch('LOAD_VIDEO_INFO_BY_UUID', this.active_video_uuid)
       .then(
         (res) => {
+          console.log({res})
           this.form = {...this.form, ...res}
           this.isLoadingData = false
 

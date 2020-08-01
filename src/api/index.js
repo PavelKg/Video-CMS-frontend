@@ -758,6 +758,105 @@ export default {
     })
   },
 
+  /* ---------------- FILES ---------------------------*/
+  /** List of files
+   * @param {string} filter
+   * @param {string} limit
+   * @param {string} offset
+   * @returns {Promise<*>} - 200 List of messages
+   *  [{
+        "Fid": "number",
+        "file_filename": "string",
+        "file_uuid": "string",
+        "file_status": "string",
+        "file_thumbnail": "string" - BASE64,,
+        "file_title": "string",
+        "file_tag": "string",
+        "file_description": "string",
+        "file_public": "boolean",
+        "file_type": "string"
+        "created_at": "data",
+        "updated_at": "data",
+        "deleted_at": "data or null"
+  }]
+ */
+  file_catalog({cid}, {filter, offset = 0, limit}) {
+    const setFilter = !filter ? '' : `&filter=${filter}`
+    const setLimit = !limit ? '' : `&limit=${limit}`
+    const setOffset = `&offset=${offset}`
+
+    return Api.get(
+      `/companies/${cid}/files/catalog?${setFilter}${setLimit}${setOffset}`,
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
+  /** Get file info by uuid
+   * @param {cid} cid
+   * @param {uuid} uuid
+   * @returns {Promise<*>} - 200 file info
+   *  {
+      "file_uuid": "string",
+      "file_filename": "string",
+      "file_status": "string",
+      "file_thumbnail": "string",
+      "file_title": "string",
+      "file_tag": "string",
+      "file_description": "string",
+      "file_public": true,
+      "file_type":"string",
+      "created_at": "string",
+      "updated_at": "string",
+      "deleted_at": "string"
+    }
+  */
+  file_info_by_uuid({cid, uuid}) {
+    return Api.get(`/companies/${cid}/files/${uuid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** update file public status
+   * @param {number} - cid
+   * @param {UUID} - uuid
+   * @param {string} - value ['public', 'private']
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+
+  file_update_public_status({cid, uuid, value}) {
+    return Api.put(
+      `/companies/${cid}/files/${uuid}/public`,
+      {value},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
+  /** delete file
+   * @param {number} - cid
+   * @param {string} - uuid
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+
+  file_delete({cid, uuid}) {
+    return Api.delete(`/companies/${cid}/files/${uuid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /* ------------ VIDEOS ----------------------------*/
   /**  */
 

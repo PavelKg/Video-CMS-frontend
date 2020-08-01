@@ -22,7 +22,7 @@
       </form>
     </div>
     <FileUploadItem
-      v-for="(up_file, key) in files_for_upload"
+      v-for="(up_file, key) in video_files_for_upload"
       :key="key"
       :uuid="up_file.uuid"
       :file="up_file.file"
@@ -60,12 +60,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['files_for_upload']),
+    ...mapGetters(['video_files_for_upload']),
     hasUpload() {
-      return this.files_for_upload.filter((file) => !Boolean(file.uploaded))
+      return this.video_files_for_upload.filter((file) => !Boolean(file.uploaded))
     },
     isProcessingUpload() {
-      return this.files_for_upload.filter((file) => Boolean(file.isUploading))
+      return this.video_files_for_upload.filter((file) => Boolean(file.isUploading))
     }
   },
   created() {

@@ -10,6 +10,22 @@ import requiresAccess from './middleware/access'
 
 const videos = () =>
   import(/* webpackChunkName: "videos" */ '@/hub/templates/video-catalog')
+const videos_player = () =>
+  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-player')
+const videos_upload = () =>
+  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-upload')
+const videos_edit = () =>
+  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-props')
+
+  const files = () =>
+  import(/* webpackChunkName: "files" */ '@/hub/templates/file-catalog')
+// const files_player = () =>
+//   import(/* webpackChunkName: "files" */ '@/hub/templates/file-player')
+// const files_upload = () =>
+//   import(/* webpackChunkName: "files" */ '@/hub/templates/file-upload')
+// const files_edit = () =>
+//   import(/* webpackChunkName: "files" */ '@/hub/templates/file-subtitles')  
+
 const messages = () =>
   import(/* webpackChunkName: "messages" */ '@/hub/templates/messages')
 const users = () =>
@@ -42,12 +58,7 @@ const roles_edit = () =>
   import(/* webpackChunkName: "roles" */ '@/hub/templates/roles/mng')
 const screen = () =>
   import(/* webpackChunkName: "screen" */ '@/hub/templates/screen')
-const videos_player = () =>
-  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-player')
-const videos_upload = () =>
-  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-upload')
-const videos_edit = () =>
-  import(/* webpackChunkName: "videos" */ '@/hub/templates/video-subtitles')
+
 const history_info = () =>
   import(/* webpackChunkName: "history" */ '@/hub/templates/history-info')
 const settings = () =>
@@ -71,71 +82,6 @@ const clearAll = async (to, from, next) => {
   await store.dispatch('LOGOUT')
   next()
 }
-// const ifNotAuthenticated = (to, from, next) => {
-//   if (!store.getters.hasToken) {
-//     next()
-//     //return
-//   }
-//   const isAuth = store.getters.authStatus === 'success'
-//   if (isAuth) {
-//     next(`/`)
-//   } else {
-//     store.commit('SET_HEADER_AUTH')
-//     store
-//       .dispatch('GET_MY_PROFILE')
-//       .then(() => {
-//         next(`/`)
-//       })
-//       .catch((err) => next('/login'))
-//   }
-// }
-
-// const checkAccess = ({to, from, next}) => {
-//   const {irole} = store.getters.me.profile
-//   if (irole !== 'user') {
-//     throw 'access denided'
-//   }
-//   // else {
-//   //   next()
-//   // }
-// }
-// const checkAuth = async ({to, from, next}) => {
-//   if (store.getters.hasToken) {
-//     store.commit('SET_HEADER_AUTH')
-//     store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
-//     try {
-//       if (Object.keys(store.getters.me.profile).length === 0) {
-//         await store.dispatch('GET_MY_PROFILE')
-//       }
-//     } catch {
-//       throw 'ifAuthenticated - err'
-//     }
-//   } else {
-//     throw 'ifAuthenticated - err'
-//   }
-// }
-
-//const requiresAuth = checkAuth
-//const requiresAccess = checkAccess
-
-// const ifAuthenticated = (to, from, next) => {
-//   if (store.getters.hasToken) {
-//     store.commit('SET_HEADER_AUTH')
-//     store.commit('ITEM_STATE', to.meta.menuItem ? to.meta.menuItem : '')
-//     store
-//       .dispatch('GET_MY_PROFILE')
-//       .then(() => {
-//         console.log('ifAuthenticated - ok')
-//         next()
-//       })
-//       .catch((err) => {
-//         console.log('ifAuthenticated - err')
-//         next('/login')
-//       })
-//   } else {
-//     next('/login')
-//   }
-// }
 
 const router = new Router({
   mode: 'history',
@@ -189,6 +135,15 @@ const router = new Router({
             middleware: [requiresAuth, requiresAccess]
           }
         },
+        {
+          path: 'files',
+          component: files,
+          meta: {
+            menuItem: '/files',
+            target: 'files',
+            middleware: [requiresAuth]
+          }
+        },        
         {
           path: 'users',
           component: users,

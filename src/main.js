@@ -12,15 +12,19 @@ import closable from './directive/closable.js'
 import scrollHint from './directive/scroll-hint.js'
 
 import BootstrapVue from 'bootstrap-vue'
+import {BootstrapVueIcons} from 'bootstrap-vue'
+
 import Vuelidate from 'vuelidate'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+//import 'bootstrap-vue/dist/icons.scss'
 import 'video.js/dist/video-js.css'
 
 Vue.directive('closable', closable)
 Vue.directive('scrollHint', scrollHint)
 Vue.use(BootstrapVue)
+Vue.use(BootstrapVueIcons)
 Vue.use(Vuelidate)
 
 require('es6-promise').polyfill()
