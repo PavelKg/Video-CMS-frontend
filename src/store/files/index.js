@@ -6,74 +6,77 @@ export default {
     list: [],
     public: 'all',
     period: ['1900-01-01', '2100-12-31'],
-    // isInfoUpdating: false,
     isLoading: false,
     isDeleting: false,
-    selected: []
+    selected: [],
     // active_video_uuid: '',
     // active_video_page: 1,
-    // filesForUpload: {
-    //   list: []
-    // }
+    filesForUpload: {
+      list: []
+    }
   },
   actions: {
-    // async UPLOAD_VIDEO_FILES({state, commit, getters}) {
-    //   const cid = getters.me.profile.company_id
-    //   const files = state.filesForUpload.list
-    //     .filter((file) => !Boolean(file.uploaded) && !Boolean(file.isUploading))
-    //     .map((item) => {
-    //       const {name, size, type} = item.file
-    //       const {uuid} = item
-    //       return {name, size, type, uuid}
-    //     })
-    //   try {
-    //     files.forEach((file) => {
-    //       commit('SET_IS_UPLOADING_FILE', file.uuid)
-    //       Api.getGcsSignedUrl(cid, file).then((res) => {
-    //         const {url, uuid} = res.data
-    //         const {file: sFile, progress} = state.filesForUpload.list.find(
-    //           (item) => item.uuid === uuid
-    //         )
-    //         Api.upload_files(url, sFile, progress).then((ures) => {
-    //           Api.video_update_status({cid, uuid, value: 'uploaded'})
-    //           const f_ind = state.filesForUpload.list.findIndex((file) => {
-    //             return file.uuid === uuid
-    //           })
-    //           if (f_ind > -1) {
-    //             state.filesForUpload.list.splice(f_ind, 1)
-    //           }
-    //           // this add api to set state = uploaded
-    //         })
-    //       })
-    //     })
-    //   } catch (err) {
-    //     console.log('upload_file_error: ', err)
-    //   }
-    // },
-    // async LOAD_VIDEOS({state, commit}, payload) {
-    //   // video list for binding func
-    //   const {cid, filter = ''} = payload
-    //   commit('SET_STATUS_VIDEOS_LOADING', true)
-    //   let lfilter = `${filter} videos.deleted_at[isNull]:,videos.updated_at[gt]:'${state.period[0]}'::date,videos.updated_at[lt]:'${state.period[1]}'::date`
-    //   lfilter +=
-    //     state.public === 'all'
-    //       ? ''
-    //       : `,video_public[eq]:${Boolean(state.public === 'public')}`
-    //   let offset = 0
-    //   let limit = 0
-    //   try {
-    //     const result = await Api.videos_catalog({cid}, {lfilter, offset, limit})
-    //     if (result.status === 200) {
-    //       commit('SET_VIDEO_LIST', result.data)
-    //     } else {
-    //       throw Error(`Error update role, status - ${result.status}`)
-    //     }
-    //   } catch (err) {
-    //     throw Error(err.response.data.message)
-    //   } finally {
-    //     commit('SET_STATUS_VIDEOS_LOADING', false)
-    //   }
-    // },
+    async UPLOAD_FILES({state, commit, getters}) {
+      const cid = getters.me.profile.company_id
+      const files = state.filesForUpload.list
+        .filter((file) => !Boolean(file.uploaded) && !Boolean(file.isUploading))
+        .map((item) => {
+          const {name, size, type} = item.file
+          const {uuid} = item
+          return {name, size, type, uuid}
+        })
+      try {
+        files.forEach((file) => {
+          commit('SET_IS_UPLOADING_FILE', file.uuid)
+          Api.getGcsSignedUrl(cid, file, 'files').then((res) => {
+            const {url, uuid} = res.data
+            const {file: sFile, progress} = state.filesForUpload.list.find(
+              (item) => item.uuid === uuid
+            )
+            Api.upload_files(url, sFile, progress).then((ures) => {
+              Api.uploaded_update_status(
+                {cid, uuid, value: 'uploaded'},
+                'files'
+              )
+              const f_ind = state.filesForUpload.list.findIndex((file) => {
+                return file.uuid === uuid
+              })
+              if (f_ind > -1) {
+                state.filesForUpload.list.splice(f_ind, 1)
+              }
+              // this add api to set state = uploaded
+            })
+          })
+        })
+      } catch (err) {
+        console.log('upload_file_error: ', err)
+      }
+    },
+    async LOAD_FILES({state, commit}, payload) {
+      // file list for binding func
+      const {cid, filter = ''} = payload
+      commit('SET_STATUS_LOADING', true)
+      let lfilter = `${filter} files.deleted_at[isNull]:,files.updated_at[gt]:'${state.period[0]}'::date,files.updated_at[lt]:'${state.period[1]}'::date`
+      lfilter +=
+        state.public === 'all'
+          ? ''
+          : `,file_public[eq]:${Boolean(state.public === 'public')}`
+      let offset = 0
+      let limit = 0
+      try {
+        const result = await Api.file_catalog({cid}, {lfilter, offset, limit})
+
+        if (result.status === 200) {
+          commit('SET_FILE_LIST', result.data)
+        } else {
+          throw Error(`Error update role, status - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      } finally {
+        commit('SET_STATUS_LOADING', false)
+      }
+    },
     async LOAD_FILE_LIST({state, commit, getters}) {
       const cid = getters.me.profile.company_id
       commit('SET_STATUS_LOADING', true)
@@ -131,40 +134,38 @@ export default {
         throw Error(err.response.data.message)
       }
     },
-    // async UPDATE_VIDEO_INFO({state, commit, getters}, video_info) {
-    //   const cid = getters.me.profile.company_id
-    //   commit('SET_STATUS_INFO_UPDATTING', true)
-    //   const {
-    //     video_uuid: uuid,
-    //     video_thumbnail,
-    //     video_title,
-    //     video_tag,
-    //     video_description,
-    //     video_groups,
-    //     video_series
-    //   } = video_info
-    //   const info_data = Object.assign(
-    //     {},
-    //     video_title && {video_title},
-    //     video_tag && {video_tag},
-    //     video_description && {video_description},
-    //     video_groups && {video_groups},
-    //     video_series && {video_series}
-    //   )
-    //   info_data.video_thumbnail = video_thumbnail
-    //   try {
-    //     const result = await Api.video_update_info({cid, uuid, info_data})
-    //     if (result.status === 200) {
-    //       return result.data
-    //     } else {
-    //       throw Error(`Error update role, status - ${result.status}`)
-    //     }
-    //   } catch (err) {
-    //     throw Error(err.response.data.message)
-    //   } finally {
-    //     commit('SET_STATUS_INFO_UPDATTING', false)
-    //   }
-    // },
+    async UPDATE_FILE_INFO({state, commit, getters}, file_info) {
+      const cid = getters.me.profile.company_id
+      const {
+        file_uuid: uuid,
+        file_thumbnail,
+        file_title,
+        file_tag,
+        file_description,
+        file_groups,
+        file_series
+      } = file_info
+      const info_data = Object.assign(
+        {},
+        file_title && {file_title},
+        file_tag && {file_tag},
+        file_description && {file_description},
+        file_groups && {file_groups},
+        file_series && {file_series}
+      )
+      info_data.file_thumbnail = file_thumbnail
+      try {
+        const result = await Api.file_update_info({cid, uuid, info_data})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw `Error update file info, status - ${result.status}`
+        }
+      } catch (err) {
+        throw err.response.data.message
+      } finally {
+      }
+    },
     async UPDATE_FILE_PUBLIC_STATUS({getters, commit}, {uuid, value}) {
       const cid = getters.me.profile.company_id
       try {
@@ -192,117 +193,113 @@ export default {
         state.isDeleting = false
       }
     },
-    // async VIDEO_SERIES_MULTI_OPER({dispatch}, payload) {
-    //   const {uuid_list = [], sid, oper = ''} = payload
-    //   const lOper = oper.toLowerCase()
-    //   if (lOper !== 'del' && lOper !== 'add') {
-    //     throw Error(`Incorect operation type`)
-    //   }
-    //   await Promise.all(
-    //     uuid_list.map(async (uuid) => {
-    //       await dispatch(`VIDEO_SERIES_OPER`, {uuid, sid, oper: lOper})
-    //     })
-    //   )
-    //   return Promise.resolve('Video series operate finished')
-    // },
-    // async VIDEO_SERIES_OPER({commit, getters}, payload) {
-    //   const cid = getters.me.profile.company_id
-    //   const {uuid, sid, oper = ''} = payload
-    //   const lOper = oper.toLowerCase()
-    //   if (lOper !== 'del' && lOper !== 'add') {
-    //     throw Error(`Incorect operation type`)
-    //   }
-    //   try {
-    //     const result = await Api[`video_series_${lOper}`]({cid, uuid, sid})
-    //     if (result.status === 204) {
-    //       return Promise.resolve('Video series updated success')
-    //     } else {
-    //       throw Error(`Error update video series, status - ${result.status}`)
-    //     }
-    //   } catch (err) {
-    //     throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
-    //   }
-    // },
-    // async VIDEO_GROUPS_MULTI_OPER({dispatch}, payload) {
-    //   const {uuid_list = [], gid, oper = ''} = payload
-    //   const lOper = oper.toLowerCase()
-    //   if (lOper !== 'del' && lOper !== 'add') {
-    //     throw Error(`Incorect operation type`)
-    //   }
-    //   const resOper = Promise.all(
-    //     uuid_list.map((uuid) => {
-    //       dispatch(`VIDEO_GROUPS_OPER`, {uuid, gid, oper: lOper})
-    //     })
-    //   )
-    //   resOper.then(() => {
-    //     return Promise.resolve('Video groups operation finished')
-    //   })
-    // },
-    // async VIDEO_GROUPS_OPER({commit, getters}, payload) {
-    //   const cid = getters.me.profile.company_id
-    //   const {uuid, gid, oper = ''} = payload
-    //   const lOper = oper.toLowerCase()
-    //   if (lOper !== 'del' && lOper !== 'add') {
-    //     throw Error(`Incorect operation type`)
-    //   }
-    //   try {
-    //     const result = await Api[`video_group_${lOper}`]({cid, uuid, gid})
-    //     if (result.status === 204) {
-    //       return Promise.resolve('Video groups updated success')
-    //     } else {
-    //       throw Error(`Error update video groups, status - ${result.status}`)
-    //     }
-    //   } catch (err) {
-    //     throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
-    //   }
-    // },
-    // async ADD_PLAYER_EVENT({getters}, {uuid, event_data}) {
-    //   const cid = getters.me.profile.company_id
-    //   try {
-    //     const result = await Api.video_add_player_event({
-    //       cid,
-    //       uuid,
-    //       event_data
-    //     })
-    //     if (result.status !== 204) {
-    //       throw Error(`Error add video player event - ${result.status}`)
-    //     }
-    //   } catch (err) {
-    //     throw Error(err.response.data.message)
-    //   }
-    // },
-    // async VIDEO_BIND_SERIES({commit, getters}, payload) {
-    //   const cid = getters.me.profile.company_id
-    //   const {sid} = payload
-    //   try {
-    //     const result = await Api.video_bind_series({cid, sid})
-    //     if (result.status === 200) {
-    //       return result.data
-    //     } else {
-    //       throw Error(
-    //         `Error get video list binding series, status - ${result.status}`
-    //       )
-    //     }
-    //   } catch (err) {
-    //     throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
-    //   }
-    // },
-    // async VIDEO_BIND_GROUP({commit, getters}, payload) {
-    //   const cid = getters.me.profile.company_id
-    //   const {gid} = payload
-    //   try {
-    //     const result = await Api.video_bind_group({cid, gid})
-    //     if (result.status === 200) {
-    //       return result.data
-    //     } else {
-    //       throw Error(
-    //         `Error get video list binding group, status - ${result.status}`
-    //       )
-    //     }
-    //   } catch (err) {
-    //     throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
-    //   }
-    // }
+    async FILE_SERIES_MULTI_OPER({dispatch}, payload) {
+      const {uuid_list = [], sid, oper = ''} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+      await Promise.all(
+        uuid_list.map(async (uuid) => {
+          await dispatch(`FILE_SERIES_OPER`, {uuid, sid, oper: lOper})
+        })
+      )
+      return Promise.resolve('File series operate finished')
+    },
+    async FILE_SERIES_OPER({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {uuid, sid, oper = ''} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+      try {
+        const result = await Api[`file_series_${lOper}`]({cid, uuid, sid})
+        if (result.status === 204) {
+          return Promise.resolve('File series updated success')
+        } else {
+          throw `Error update file series, status - ${result.status}`
+        }
+      } catch (err) {
+        throw err.response.data.message.replace(/^Error:\s/gi, '')
+      }
+    },
+    async FILE_GROUPS_MULTI_OPER({dispatch}, payload) {
+      const {uuid_list = [], gid, oper = ''} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+      const resOper = Promise.all(
+        uuid_list.map((uuid) => {
+          dispatch(`FILE_GROUPS_OPER`, {uuid, gid, oper: lOper})
+        })
+      )
+      resOper.then(() => {
+        return Promise.resolve('File groups operation finished')
+      })
+    },
+    async FILE_GROUPS_OPER({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {uuid, gid, oper = ''} = payload
+      const lOper = oper.toLowerCase()
+      if (lOper !== 'del' && lOper !== 'add') {
+        throw Error(`Incorect operation type`)
+      }
+      try {
+        const result = await Api[`file_group_${lOper}`]({cid, uuid, gid})
+        if (result.status === 204) {
+          return Promise.resolve('FILE groups updated success')
+        } else {
+          throw `Error update file groups, status - ${result.status}`
+        }
+      } catch (err) {
+        throw err.response.data.message.replace(/^Error:\s/gi, '')
+      }
+    },
+    async ADD_FILE_PLAYER_EVENT({getters}, {uuid, event_data}) {
+      const cid = getters.me.profile.company_id
+      try {
+        const result = await Api.file_add_player_event({
+          cid,
+          uuid,
+          event_data
+        })
+        if (result.status !== 204) {
+          throw Error(`Error add file player event - ${result.status}`)
+        }
+      } catch (err) {
+        throw Error(err.response.data.message)
+      }
+    },
+    async FILE_BIND_SERIES({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {sid} = payload
+      try {
+        const result = await Api.file_bind_series({cid, sid})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw `Error get file binding series list: ${result.status}`
+        }
+      } catch (err) {
+        throw err.response.data.message.replace(/^Error:\s/gi, '')
+      }
+    },
+    async FILE_BIND_GROUP({commit, getters}, payload) {
+      const cid = getters.me.profile.company_id
+      const {gid} = payload
+      try {
+        const result = await Api.file_bind_group({cid, gid})
+        if (result.status === 200) {
+          return result.data
+        } else {
+          throw `Error get file binding group list: ${result.status}`
+        }
+      } catch (err) {
+        throw Error(err.response.data.message.replace(/^Error:\s/gi, ''))
+      }
+    }
   },
   mutations: {
     SET_FILE_LIST(state, list) {
@@ -325,56 +322,56 @@ export default {
     SET_FILE_PUBLIC(state, _public) {
       state.public = _public
     },
-    // ADD_UPLOAD_FILE(state, _files) {
-    //   // need add check for existing file name
-    //   const files = [..._files]
-    //   files.forEach(function(file) {
-    //     state.filesForUpload.list.push({
-    //       file: file,
-    //       uuid: get_uuid(),
-    //       uploaded: false,
-    //       isUploading: false,
-    //       progress: {percent: 0}
-    //     })
-    //   })
-    //   //state.filesForUpload.list = [...state.filesForUpload.list, ...files]
-    // },
-    // SET_UPLOADED_FILE(state, uuid) {
-    //   const uploaded_index = state.filesForUpload.list.findIndex(function(
-    //     item
-    //   ) {
-    //     if (item.uuid === uuid) {
-    //       return true
-    //     }
-    //   })
-    //   if (~uploaded_index) {
-    //     state.filesForUpload.list[uploaded_index].uploaded = true
-    //     state.filesForUpload.list[uploaded_index].isUploading = false
-    //   }
-    // },
-    // SET_IS_UPLOADING_FILE(state, uuid) {
-    //   const uploading_index = state.filesForUpload.list.findIndex(function(
-    //     item
-    //   ) {
-    //     if (item.uuid === uuid) {
-    //       return true
-    //     }
-    //   })
-    //   if (~uploading_index) {
-    //     state.filesForUpload.list[uploading_index].isUploading = true
-    //     state.filesForUpload.list[uploading_index].progress.percent = 0
-    //   }
-    // },
-    // DEL_UPLOAD_FILE(state, file_name) {
-    //   const del_index = state.filesForUpload.list.findIndex(function(item) {
-    //     if (item.file.name === file_name) {
-    //       return true
-    //     }
-    //   })
-    //   if (~del_index) {
-    //     state.filesForUpload.list.splice(del_index, 1)
-    //   }
-    // },
+    ADD_UPLOAD_FILE(state, files) {
+      // need add check for existing file name
+      //const files = [..._files]
+      files.forEach(function(file) {
+        state.filesForUpload.list.push({
+          file: file,
+          uuid: get_uuid(),
+          uploaded: false,
+          isUploading: false,
+          progress: {percent: 0}
+        })
+      })
+      //state.filesForUpload.list = [...state.filesForUpload.list, ...files]
+    },
+    SET_UPLOADED_FILE(state, uuid) {
+      const uploaded_index = state.filesForUpload.list.findIndex(function(
+        item
+      ) {
+        if (item.uuid === uuid) {
+          return true
+        }
+      })
+      if (~uploaded_index) {
+        state.filesForUpload.list[uploaded_index].uploaded = true
+        state.filesForUpload.list[uploaded_index].isUploading = false
+      }
+    },
+    SET_IS_UPLOADING_FILE(state, uuid) {
+      const uploading_index = state.filesForUpload.list.findIndex(function(
+        item
+      ) {
+        if (item.uuid === uuid) {
+          return true
+        }
+      })
+      if (~uploading_index) {
+        state.filesForUpload.list[uploading_index].isUploading = true
+        state.filesForUpload.list[uploading_index].progress.percent = 0
+      }
+    },
+    DEL_UPLOAD_FILE(state, file_name) {
+      const del_index = state.filesForUpload.list.findIndex(function(item) {
+        if (item.file.name === file_name) {
+          return true
+        }
+      })
+      if (~del_index) {
+        state.filesForUpload.list.splice(del_index, 1)
+      }
+    },
     // CLEAR_UPLOAD_FILES(state) {
     //   // need add check for existing file name
     //   for (let i = 0; i < state.filesForUpload.list.length; i++) {
@@ -386,9 +383,6 @@ export default {
     //       i--
     //     }
     //   }
-    // },
-    // SET_STATUS_INFO_UPDATTING(state, status) {
-    //   state.isInfoUpdating = status
     // },
     SET_STATUS_LOADING(state, status) {
       state.isLoading = status
@@ -418,7 +412,6 @@ export default {
   },
   getters: {
     file_list: (state) => state.list.filter((file) => !Boolean(file.deleted_at))
-    // isFilesInfoUpdating: (state) => state.isInfoUpdating,
     // isFilesListLoading: (state) => state.isListLoading,
     // isFilesDeleting: (state) => state.isDeleting,
     // files_selected: (state) => state.selected,

@@ -79,15 +79,15 @@ export default {
 
       try {
         files.forEach((file) => {
-          commit('SET_IS_UPLOADING_FILE', file.uuid)
-          Api.getGcsSignedUrl(cid, file).then((res) => {
+          commit('SET_IS_UPLOADING_VIDEO_FILE', file.uuid)
+          Api.getGcsSignedUrl(cid, file, 'videos').then((res) => {
             const {url, uuid} = res.data
             const {file: sFile, progress} = state.filesForUpload.list.find(
               (item) => item.uuid === uuid
             )
 
             Api.upload_files(url, sFile, progress).then((ures) => {
-              Api.video_update_status({cid, uuid, value: 'uploaded'})
+              Api.uploaded_update_status({cid, uuid, value: 'uploaded'}, 'videos')
               const f_ind = state.filesForUpload.list.findIndex((file) => {
                 return file.uuid === uuid
               })
@@ -419,7 +419,7 @@ export default {
     SET_VIDEO_PUBLIC(state, _public) {
       state.public = _public
     },
-    ADD_UPLOAD_FILE(state, _files) {
+    ADD_UPLOAD_VIDEO_FILE(state, _files) {
       // need add check for existing file name
       const files = [..._files]
       files.forEach(function(file) {
@@ -433,7 +433,7 @@ export default {
       })
       //state.filesForUpload.list = [...state.filesForUpload.list, ...files]
     },
-    SET_UPLOADED_FILE(state, uuid) {
+    SET_UPLOADED_VIDEO_FILE(state, uuid) {
       const uploaded_index = state.filesForUpload.list.findIndex(function(
         item
       ) {
@@ -446,7 +446,7 @@ export default {
         state.filesForUpload.list[uploaded_index].isUploading = false
       }
     },
-    SET_IS_UPLOADING_FILE(state, uuid) {
+    SET_IS_UPLOADING_VIDEO_FILE(state, uuid) {
       const uploading_index = state.filesForUpload.list.findIndex(function(
         item
       ) {
@@ -459,7 +459,7 @@ export default {
         state.filesForUpload.list[uploading_index].progress.percent = 0
       }
     },
-    DEL_UPLOAD_FILE(state, file_name) {
+    DEL_UPLOAD_VIDEO_FILE(state, file_name) {
       const del_index = state.filesForUpload.list.findIndex(function(item) {
         if (item.file.name === file_name) {
           return true

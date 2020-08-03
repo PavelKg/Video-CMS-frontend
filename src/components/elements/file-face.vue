@@ -3,24 +3,15 @@
     <div
       class="box-item-content"
       :class="[
-        fileitem.video_thumbnail == undefined ? '' : '',
-        !videoIsReady || !isActAllow('player') ? 'not-active' : 'active'
+        fileitem.file_thumbnail == undefined ? '' : '',
+        !fileIsReady || !isActAllow('player') ? 'not-active' : 'active'
       ]"
       @click="playVideo"
     >
-      <template v-if="!videoIsReady && fileitem.video_status">
-        <b-container class="video-progress">
-          <b-row class="justify-content-md-center" align-h="center">
-            <b-col cols="1" class="progress-text" align-self="center">
-              <b-spinner variant="success"></b-spinner>
-              <span>{{ $t(`videos.act_in_${fileitem.video_status}`) }} ...</span>
-            </b-col>
-          </b-row>
-        </b-container>
-      </template>
-      <template v-else>
-        <b-container class="video-progress">
-          <b-icon icon="arrow-up"></b-icon>
+      <template>
+        <b-container class="file-progress">
+          <b-icon :icon="fileIcon" scale="3"></b-icon>
+          <span>{{fileIsReady?nameFileType:$t(`files.act_in_${fileitem.file_status}`)+'...'}}</span>
         </b-container>
       </template>
       <!--img :src="img_path" /-->
@@ -40,7 +31,6 @@
     </div>
     <div class="file-box-mng-panel">
       <div class="mng-panel-top">
-        <b-icon icon="arrow-up"></b-icon>
         <b-form-checkbox @change="onCheckChange" :checked="isSelected" :id="tag" :name="tag"></b-form-checkbox>
         <span :title="`${title}: ${description}`">{{ title }}</span>
         <template v-if="isActAllow('edit')">
@@ -80,7 +70,22 @@ export default {
         file_status: undefined,
         file_type: '',
         updated_at: ''
-      }
+      },
+
+      tempFileTypes: [
+        {template: 'application/vnd.ms-excel', name: 'application/xls'},
+        {
+          template:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          name: 'application/xlsx'
+        },
+        {template: 'application/vnd.ms-powerpoint', name: 'application/ppt'},
+        {
+          template:
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+          name: 'application/pptx'
+        }
+      ]
     }
   },
   props: {
@@ -110,12 +115,12 @@ export default {
       if (this.fileitem.file_status === 'ready' && this.isActAllow('player')) {
         this.$emit(
           'activateContent',
-          `/videos/player/${this.fileitem.file_uuid}`
+          `/files/player/${this.fileitem.file_uuid}`
         )
       }
     },
     onEdit() {
-      this.$emit('activateContent', `/file/edit/${this.fileitem.file_uuid}`)
+      this.$emit('activateContent', `/files/edit/${this.fileitem.file_uuid}`)
     },
     onCheckChange(new_state) {
       const act = new_state ? 'SET' : 'UNSET'
@@ -124,8 +129,36 @@ export default {
   },
   computed: {
     ...mapState({files_selected: (state) => state.Files.selected}),
-    videoIsReady() {
-      return this.fileitem.files_status === 'ready'
+    nameFileType() {
+      const type = this.fileitem.file_type
+      const ind = this.tempFileTypes.findIndex((item) => item.template === type)
+      return ~ind ? this.tempFileTypes[ind].name : type
+    },
+    fileIcon() {
+      const file_type = this.fileitem.file_type.split('/')
+      let icon = 'app'
+      switch (file_type[0]) {
+        case 'application':
+          if (file_type[1] === 'pdf') {
+            icon = 'file-text'
+          }
+          break
+        case 'video':
+          icon = 'camera-video'
+          break
+        case 'audio':
+          icon = 'music-note-beamed'
+          break
+        case 'image':
+          icon = 'card-image'
+          break
+        default:
+          break
+      }
+      return icon
+    },
+    fileIsReady() {
+      return this.fileitem.file_status === 'ready'
     },
     description() {
       return this.fileitem.file_description
@@ -165,6 +198,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/styles';
+.custom-control {
+  line-height: normal;
+}
 
 .gray {
   background: $gray;
@@ -178,6 +214,7 @@ export default {
 }
 
 .active {
+  cursor: pointer;
   img {
     cursor: pointer;
   }
@@ -203,22 +240,23 @@ export default {
       max-width: 200px;
       max-height: 140px;
     }
-    &.svg {
+    & > svg {
       width: 24px;
       height: 18px;
       position: absolute;
       top: 20px;
-
       right: 20px;
     }
 
-    .video-progress {
+    .file-progress {
       align-items: center;
-      border: 1px solid red;
       display: flex;
+      flex-direction: column;
       height: 100%;
       justify-content: center;
-
+      span {
+        padding-top: 20px;
+      }
       .progress-text {
         text-align: center;
         span {
@@ -262,10 +300,10 @@ export default {
 }
 
 @media screen and (max-width: 610px) {
-  .video-box-item {
+  .box-item {
     width: 100%;
     height: 350px;
-    .video-box-item-content {
+    .box-item-content {
       width: 100%;
       height: 100%;
       margin: 0 auto;
@@ -275,7 +313,7 @@ export default {
         height: auto;
       }
     }
-    .video-box-mng-panel {
+    .file-box-mng-panel {
       width: 100%;
       font-size: 1.3em;
     }
@@ -283,10 +321,10 @@ export default {
 }
 
 @media screen and (max-width: 875px) and (min-width: 610px) {
-  .video-box-item .video-box-item-content {
+  .box-item .box-item-content {
     width: 100%;
   }
-  .video-box-mng-panel {
+  .box-mng-panel {
     width: 100%;
     font-size: 1.2em;
   }

@@ -857,12 +857,138 @@ export default {
     })
   },
 
+  /** Upd video info
+   * @param {number} - cid
+   * @param {string} - uuid
+   * @param {object} info_data - {"video_title": "string" ...}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+
+  file_update_info({cid, uuid, info_data}) {
+    return Api.put(`/companies/${cid}/files/${uuid}`, info_data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /** Add file series
+   * @param {integer, integer, integer} target - {cid, uuid, sid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  file_series_add(target) {
+    const {cid, uuid, sid} = target
+    return Api.put(`/companies/${cid}/files/${uuid}/add-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del file series
+   * @param {integer, integer, integer} target - {cid, uuid, sid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  file_series_del(target) {
+    const {cid, uuid, sid} = target
+    return Api.put(`/companies/${cid}/files/${uuid}/delete-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Add file group
+   * @param {integer, integer, integer} target - {cid, uuid, gid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  file_group_add(target) {
+    const {cid, uuid, gid} = target
+    return Api.put(`/companies/${cid}/files/${uuid}/add-group/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del file group
+   * @param {integer, integer, integer} target - {cid, uuid, gid}
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+  file_group_del(target) {
+    const {cid, uuid, gid} = target
+    return Api.put(`/companies/${cid}/files/${uuid}/delete-group/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** File list with binding series
+   * @param {integer, integer} target - {cid, sid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  file_bind_series(target) {
+    const {cid, sid} = target
+    return Api.get(`/companies/${cid}/files/bind-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Files list with binding group
+   * @param {integer, integer} target - {cid, gid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  file_bind_group(target) {
+    const {cid, gid} = target
+    return Api.get(`/companies/${cid}/files/bind-group/${gid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** add file player event to log
+   * @param {number} - cid
+   * @param {UUID} - uuid
+   * @param {string} - value 
+   * {
+        "event_action":"suspended",
+        "event_data":{"type":"pause", "time":"33sec"},
+        "event_result":"s",
+        "event_details":"Pause (00:00:33)"
+      }
+   * @return {Promise<*>} - 204	Default Response
+   * @throws Error
+   */
+
+  file_add_player_event({cid, uuid, event_data}) {
+    return Api.post(
+      `/companies/${cid}/files/${uuid}/player-event`,
+      {...event_data},
+      {
+        headers: {
+          ...type_json
+        }
+      }
+    )
+  },
+
   /* ------------ VIDEOS ----------------------------*/
   /**  */
 
   /** Get GCS Signed Url
    * @param {cid} cid
    * @param {params} {name, type, size, uuid} 
+   * @type {params} type of file [videos, files] 
    * @returns {Promise<*>} - 200 List of Signed url
    *  [{
       "name": "string",
@@ -870,10 +996,9 @@ export default {
       "uuid": "string",
   }]
  */
-  getGcsSignedUrl(cid, params) {
-    //console.log('params=', params)
+  getGcsSignedUrl(cid, params, type) {
     return Api.get(
-      `/companies/${cid}/videos/gcs-upload-surl`,
+      `/companies/${cid}/${type}/gcs-upload-surl`,
       {
         params: params
       },
@@ -896,12 +1021,9 @@ export default {
         'Content-Type': file.type
       },
       onUploadProgress: function(progressEvent) {
-        //console.log('progress=', progress.percent)
-        // progress_handler(
         progress.percent = parseInt(
           Math.round((progressEvent.loaded * 100) / progressEvent.total)
         )
-        // )
       },
       data: file
     })
@@ -1076,13 +1198,14 @@ export default {
    * @param {number} - cid
    * @param {UUID} - uuid
    * @param {string} - value
+   * @param type  - type of file [videos, files]
    * @return {Promise<*>} - 204	Default Response
    * @throws Error
    */
 
-  video_update_status({cid, uuid, value}) {
+  uploaded_update_status({cid, uuid, value}, type) {
     return Api.put(
-      `/companies/${cid}/videos/${uuid}/status`,
+      `/companies/${cid}/${type}/${uuid}/status`,
       {value},
       {
         headers: {

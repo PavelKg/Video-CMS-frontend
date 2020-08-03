@@ -17,14 +17,14 @@ const videos_upload = () =>
 const videos_edit = () =>
   import(/* webpackChunkName: "videos" */ '@/hub/templates/video-props')
 
-  const files = () =>
+const files = () =>
   import(/* webpackChunkName: "files" */ '@/hub/templates/file-catalog')
-// const files_player = () =>
-//   import(/* webpackChunkName: "files" */ '@/hub/templates/file-player')
-// const files_upload = () =>
-//   import(/* webpackChunkName: "files" */ '@/hub/templates/file-upload')
-// const files_edit = () =>
-//   import(/* webpackChunkName: "files" */ '@/hub/templates/file-subtitles')  
+const files_player = () =>
+  import(/* webpackChunkName: "files" */ '@/hub/templates/file-player')
+const files_upload = () =>
+  import(/* webpackChunkName: "files" */ '@/hub/templates/file-upload')
+const files_edit = () =>
+  import(/* webpackChunkName: "files" */ '@/hub/templates/file-props')
 
 const messages = () =>
   import(/* webpackChunkName: "messages" */ '@/hub/templates/messages')
@@ -143,7 +143,34 @@ const router = new Router({
             target: 'files',
             middleware: [requiresAuth]
           }
-        },        
+        },
+        {
+          path: 'files/upload',
+          component: files_upload,
+          meta: {
+            menuItem: '/files',
+            target: 'files/upload',
+            middleware: [requiresAuth, requiresAccess]
+          }
+        },
+        {
+          path: 'files/edit/:uuid',
+          component: files_edit,
+          meta: {
+            menuItem: '/files',
+            target: 'files/edit',
+            middleware: [requiresAuth, requiresAccess]
+          }
+        },
+        {
+          path: 'files/player/:uuid',
+          component: files_player,
+          meta: {
+            menuItem: '/files',
+            target: 'files/player',
+            middleware: [requiresAuth]
+          }
+        },
         {
           path: 'users',
           component: users,

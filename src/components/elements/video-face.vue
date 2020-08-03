@@ -14,9 +14,7 @@
             <b-col cols="10" class="progress-text" align-self="center">
               <b-spinner variant="success"></b-spinner>
 
-              <span>
-                {{ $t(`videos.act_in_${videoitem.video_status}`) }} ...</span
-              >
+              <span>{{ $t(`videos.act_in_${videoitem.video_status}`) }} ...</span>
             </b-col>
           </b-row>
         </b-container>
@@ -37,28 +35,18 @@
     </div>
     <div class="video-box-mng-panel">
       <div class="mng-panel-top">
-        <b-form-checkbox
-          @change="onCheckChange"
-          :checked="isSelected"
-          :id="tag"
-          :name="tag"
-        ></b-form-checkbox>
+        <b-form-checkbox @change="onCheckChange" :checked="isSelected" :id="tag" :name="tag"></b-form-checkbox>
         <span :title="`${title}: ${description}`">{{ title }}</span>
         <template v-if="isActAllow('edit')">
-          <img
-            @click="onEdit()"
-            class="subtitles-svg"
-            src="@/assets/images/subtitles.svg"
-          />
+          <img @click="onEdit()" class="subtitles-svg" src="@/assets/images/subtitles.svg" />
         </template>
       </div>
-      <div
-        class="mng-panel-bottom"
-        :class="{gray: videoitem.updated_at === ''}"
-      >
-        <span v-if="videoitem.updated_at !== ''">{{
+      <div class="mng-panel-bottom" :class="{gray: videoitem.updated_at === ''}">
+        <span v-if="videoitem.updated_at !== ''">
+          {{
           `${$t('videos.last_modified')}: ${updated_at}`
-        }}</span>
+          }}
+        </span>
       </div>
     </div>
   </div>
@@ -114,7 +102,10 @@ export default {
   updated() {},
   methods: {
     playVideo() {
-      if (this.videoitem.video_status === 'ready' && this.isActAllow('player')) {
+      if (
+        this.videoitem.video_status === 'ready' &&
+        this.isActAllow('player')
+      ) {
         this.$emit(
           'activateContent',
           `/videos/player/${this.videoitem.video_uuid}`
@@ -172,6 +163,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/styles';
+.custom-control {
+  line-height: normal;
+}
 
 .gray {
   background: $gray;
