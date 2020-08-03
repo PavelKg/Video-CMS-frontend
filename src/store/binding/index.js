@@ -49,7 +49,30 @@ export default {
                 }
               })
 
-            binded_list = [...groupSeriesList, ...groupVideosList]
+            const srcGroupFilesList = await dispatch('FILE_BIND_GROUP', {
+              cid,
+              gid: id
+            })
+            const groupFilesList = srcGroupFilesList
+              .filter((item) => {
+                return !item.deleted_at || (item.deleted_at && item.binded)
+              })
+              .map((item) => {
+                return {
+                  id: item.file_id,
+                  uid: item.file_id,
+                  uuid: item.uuid,
+                  name: item.name,
+                  category: 'files',
+                  binded: item.binded
+                }
+              })
+
+            binded_list = [
+              ...groupSeriesList,
+              ...groupVideosList,
+              ...groupFilesList
+            ]
 
             break
           case 'series':
@@ -90,7 +113,30 @@ export default {
                 }
               })
 
-            binded_list = [...seriesGroupsList, ...seriesVideosList]
+            const srcSeriesFilesList = await dispatch('FILE_BIND_SERIES', {
+              cid,
+              sid: id
+            })
+            const seriesFilesList = srcSeriesFilesList
+              .filter((item) => {
+                return !item.deleted_at || (item.deleted_at && item.binded)
+              })
+              .map((item) => {
+                return {
+                  id: item.file_id,
+                  uid: item.file_id,
+                  uuid: item.uuid,
+                  name: item.name,
+                  category: 'files',
+                  binded: item.binded
+                }
+              })
+
+            binded_list = [
+              ...seriesGroupsList,
+              ...seriesVideosList,
+              ...seriesFilesList
+            ]
             break
           case 'videos':
             const videoInfo = await dispatch('LOAD_VIDEO_INFO_BY_UUID', id)
@@ -135,6 +181,51 @@ export default {
                 }
               })
             binded_list = [...videoSeriesList, ...videoGroupsList]
+            break
+
+          case 'files':
+            const fileInfo = await dispatch('LOAD_FILE_INFO_BY_UUID', id)
+            const {file_series, file_groups} = fileInfo
+            const fileSeries = file_series.length === 0 ? [] : file_series
+
+            await dispatch('LOAD_SERIES', {
+              cid
+              //filter: `series_id[in]:(${videoSeries})`
+            })
+            const fileSeriesList = rootState.Companies.Series.list
+              .filter((item) => {
+                return !item.deleted_at || (item.deleted_at && item.binded)
+              })
+              .map((item) => {
+                return {
+                  id: `S${item.sid}`,
+                  uid: item.sid,
+                  name: item.name,
+                  category: 'series',
+                  binded: fileSeries.includes(item.sid)
+                }
+              })
+
+            const fileGroups = file_groups.length === 0 ? [] : file_groups
+
+            await dispatch('LOAD_GROUPS', {
+              cid
+              //filter: `group_gid[in]:(${videoGroups})`
+            })
+            const fileGroupsList = rootState.Companies.Groups.list
+              .filter((item) => {
+                return !item.deleted_at || (item.deleted_at && item.binded)
+              })
+              .map((item) => {
+                return {
+                  id: `G${item.gid}`,
+                  uid: item.gid,
+                  name: item.name,
+                  category: 'groups',
+                  binded: fileGroups.includes(item.gid)
+                }
+              })
+            binded_list = [...fileSeriesList, ...fileGroupsList]
             break
 
           default:

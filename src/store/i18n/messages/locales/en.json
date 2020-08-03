@@ -10,11 +10,12 @@
     "series": "Series",
     "screen": "Screen custom.",
     "history_info": "History Info",
-    "binding": "Binding"
+    "binding": "Binding",
+    "files": "Files"
   },
   "permits": {
     "videos": {
-      "name": "Video",
+      "name": "Videos",
       "edit": {
         "name": "Edit"
       },
@@ -25,7 +26,22 @@
         "name": "Upload"
       },
       "delete": {
-        "name": "delete"
+        "name": "Delete"
+      }
+    },
+    "files": {
+      "name": "Files",
+      "edit": {
+        "name": "Edit"
+      },
+      "player": {
+        "name": "Player"
+      },
+      "upload": {
+        "name": "Upload"
+      },
+      "delete": {
+        "name": "Delete"
       }
     },
     "groups": {
@@ -266,7 +282,8 @@
     "series": "Series",
     "videos": "Videos",
     "please_select_a_target": "Please select a target",
-    "please_select_id_name": "Please select ID/Name"
+    "please_select_id_name": "Please select ID/Name",
+    "files": "Files"
   },
   "label": {
     "delete": "Delete",
@@ -286,6 +303,7 @@
     "forgot_pass": "Forgot ID/password",
     "mail_address": "Mail Address",
     "video_upload": "Video upload",
+    "files_upload": "Files upload",
     "select_file": "Select File",
     "upload": "Upload",
     "cancel": "Cancel",
@@ -327,7 +345,8 @@
     "browse": "Browse",
     "user_settings": "Settings",
     "sms": "SMS",
-    "email": "Email"
+    "email": "Email",
+    "edit_file": "Edit File Information"
   },
   "errors": {
     "cannot_delete_a_group_with_existing_users": "Cannot delete a group with existing users",
@@ -344,5 +363,15 @@
     "email": "This is not a valid email format",
     "is_not_unique": "Value is not unique",
     "invalid_data_format": "Invalid data format"
+  },
+  "files": {
+    "id": "ID",
+    "file_title": "File Title",
+    "tag": "Tag",
+    "groups": "Groups",
+    "series": "Series",
+    "file_description": "Description",
+    "act_in_create": "Uploading",
+    "act_in_uploaded": "Encoding"
   }
 }

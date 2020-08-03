@@ -1,7 +1,7 @@
 <template>
-  <div class="video-upload-zone">
-    <span>{{ $t('label.video_upload') }}</span>
-    <div class="video-upload-files">
+  <div class="file-upload-zone">
+    <span>{{ $t('label.files_upload') }}</span>
+    <div class="upload-files">
       <form ref="fileform">
         <div class="upload-files-border">
           <span>{{ $t('label.drop_file_here') }}</span>
@@ -13,7 +13,7 @@
             ref="customInput"
             class="custom-file-input"
             multiple
-            accept="video/*"
+            :accept="allowFileTypes.join(',')"
             @change="addCustomFiles($event)"
           />
         </div>
@@ -21,7 +21,7 @@
     </div>
     <FileUploadItem
       class="upload-file-desc"
-      v-for="(up_file, key) in video_files_for_upload"
+      v-for="(up_file, key) in files_for_upload"
       :key="key"
       :uuid="up_file.uuid"
       :file="up_file.file"
@@ -31,7 +31,7 @@
       @removed="removedItemFromList"
       @uploaded="uploadedItem"
     ></FileUploadItem>
-    <div class="video-upload-buttons">
+    <div class="file-upload-buttons">
       <button
         class="button btn-blue"
         @click="submitFiles()"
@@ -46,27 +46,35 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapState} from 'vuex'
 import FileUploadItem from '@/components/elements/file-upload-item'
 
 export default {
   name: 'upload-file',
   data() {
     return {
-      dragAndDropCapable: false
+      dragAndDropCapable: false,
+      allowFileTypes: [
+        'video/*',
+        'application/pdf',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'audio/*',
+        'image/*'
+      ]
     }
   },
   computed: {
-    ...mapGetters(['video_files_for_upload']),
+    ...mapState({
+      files_for_upload: (state) => state.Files.filesForUpload.list
+    }),
     hasUpload() {
-      return this.video_files_for_upload.filter(
-        (file) => !Boolean(file.uploaded)
-      )
+      return this.files_for_upload.filter((file) => !Boolean(file.uploaded))
     },
     isProcessingUpload() {
-      return this.video_files_for_upload.filter((file) =>
-        Boolean(file.isUploading)
-      )
+      return this.files_for_upload.filter((file) => Boolean(file.isUploading))
     }
   },
   created() {
@@ -101,11 +109,12 @@ export default {
       this.$refs.fileform.addEventListener(
         'drop',
         function(e) {
-          const dropFiles = [...e.dataTransfer.files].filter((item) =>
-            /^video\/*/.test(item.type)
-          )
+          const file_types = this.allowFileTypes.join('|').replace(/\//g, '\\/')
+          const re = new RegExp(`^${file_types}`, 'i')
+          const fileList = [...e.dataTransfer.files]
+          const dropFiles = fileList.filter((item) => re.test(item.type))
           if (dropFiles.length) {
-            this.$store.commit('ADD_UPLOAD_VIDEO_FILE', dropFiles)
+            this.$store.commit('ADD_UPLOAD_FILE', dropFiles)
           }
         }.bind(this)
       )
@@ -113,10 +122,11 @@ export default {
   },
   methods: {
     uploadedItem(uuid) {
-      this.$store.commit('SET_UPLOADED_VIDEO_FILE', uuid)
+      this.$store.commit('SET_UPLOADED_FILE', uuid)
     },
+
     removedItemFromList(filename) {
-      this.$store.commit('DEL_UPLOAD_VIDEO_FILE', filename)
+      this.$store.commit('DEL_UPLOAD_FILE', filename)
     },
     determineDragAndDropCapable() {
       const div = document.createElement('div')
@@ -130,11 +140,13 @@ export default {
     //   this.files.splice(key, 1)
     // },
     addCustomFiles(evt) {
+      const file_types = this.allowFileTypes.join('|').replace(/\//g, '\\/')
+      const re = new RegExp(`^${file_types}`, 'gi')
       const dropFiles = [...evt.target.files].filter((item) =>
-        /^video\/*/.test(item.type)
+        re.test(item.type)
       )
       if (dropFiles.length) {
-        this.$store.commit('ADD_UPLOAD_VIDEO_FILE', dropFiles)
+        this.$store.commit('ADD_UPLOAD_FILE', dropFiles)
       }
     },
     selectCustomFiles(evt) {
@@ -148,7 +160,7 @@ export default {
     },
     submitFiles() {
       this.$store
-        .dispatch('UPLOAD_VIDEO_FILES' /*, formData*/)
+        .dispatch('UPLOAD_FILES' /*, formData*/)
         .then((res) => {})
         .catch((err) => {})
     }
@@ -162,7 +174,7 @@ export default {
 <style lang="scss">
 @import '../../assets/styles';
 
-.video-upload-zone {
+.file-upload-zone {
   display: flex;
   flex-direction: column;
   margin: 0 10px;
@@ -170,7 +182,7 @@ export default {
     font-size: 24px;
     font-weight: 700;
   }
-  .video-upload-files {
+  .upload-files {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -185,7 +197,7 @@ export default {
         border: 1px dashed #000;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
+        justify-content: center;
         align-items: center;
         padding: 30px;
         height: 100%;
@@ -200,7 +212,7 @@ export default {
     }
   }
 
-  .video-upload-buttons {
+  .file-upload-buttons {
     display: flex;
     padding: 10px 0;
     > .button {
@@ -213,8 +225,8 @@ export default {
   .upload-file-desc {
     width: 100%;
   }
-  .video-upload-zone {
-    .video-upload-files {
+  .file-upload-zone {
+    .upload-files {
       width: 100%;
     }
   }

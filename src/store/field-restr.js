@@ -69,6 +69,13 @@ export default {
           regex: /^[\wа-яА-Яa-zA-Z0-9_\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]*$/
         }
       },
+      files: {
+        file_title: {
+          required: true,
+          minLength: 5,
+          regex: /^[\wа-яА-Яa-zA-Z0-9_\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]*$/
+        }
+      },      
       messages: {
         subject: {required: true, minLength: 3, maxLength: 50},
         receiver: {

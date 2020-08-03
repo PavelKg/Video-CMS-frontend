@@ -2,10 +2,12 @@
   <div class="video-subtitles">
     <template v-if="videoNotFound">
       <div class="video-not-found">
-        <span>Sorry. Video is not found!!!</span><br />
-        <button @click="backToCatalog" class="button btn-braun">
-          {{ dataUpdated ? $t('label.back') : $t('label.cancel') }}
-        </button>
+        <span>Sorry. Video is not found!!!</span>
+        <br />
+        <button
+          @click="backToCatalog"
+          class="button btn-braun"
+        >{{ dataUpdated ? $t('label.back') : $t('label.cancel') }}</button>
       </div>
     </template>
     <template v-else>
@@ -59,18 +61,17 @@
               ref="thumb-img"
               alt="thumb_image"
             ></b-img>
-            <div @click="deleteThumb" class="button btn-orange">
-              {{ $t('label.delete') }}
-            </div>
+            <div @click="deleteThumb" class="button btn-orange">{{ $t('label.delete') }}</div>
           </div>
           <div class="video-subtitles-thumbnail-right">
             <form ref="fileform">
               <div class="upload-files-border">
                 <span>{{ $t('label.drop_file_here') }}</span>
                 <span>{{ $t('label.or') }}</span>
-                <button @click="onSelectFile($event)" class="button btn-grey">
-                  {{ $t('label.select_file') }}
-                </button>
+                <button
+                  @click="onSelectFile($event)"
+                  class="button btn-grey"
+                >{{ $t('label.select_file') }}</button>
                 <input
                   type="file"
                   id="file"
@@ -90,10 +91,11 @@
             label-cols-sm="3"
             label-cols-lg="3"
             label-for="video-tag"
-            ><div class="pt-2">
-              <strong>{{ form.video_id }}</strong>
-            </div></b-form-group
           >
+            <div class="pt-2">
+              <strong>{{ form.video_id }}</strong>
+            </div>
+          </b-form-group>
 
           <b-form-group
             :label="`${$t('videos.video_title')}:`"
@@ -108,8 +110,8 @@
               id="video-title"
               :placeholder="`${$t('videos.video_title')}`"
               v-model="form.video_title"
-            ></b-form-input
-          ></b-form-group>
+            ></b-form-input>
+          </b-form-group>
           <b-form-group
             :label="`${$t('videos.tag')}:`"
             label-cols-sm="3"
@@ -120,8 +122,8 @@
               id="video-tag"
               :placeholder="`${$t('videos.tag')}`"
               v-model="form.video_tag"
-            ></b-form-input
-          ></b-form-group>
+            ></b-form-input>
+          </b-form-group>
           <b-form-group
             :label="`${$t('videos.groups')}:`"
             label-cols-sm="3"
@@ -135,7 +137,8 @@
               v-model="form.video_groups"
               :items="group_options"
               :placeholder="`${$t('label.group_is_not_selected')}`"
-          /></b-form-group>
+            />
+          </b-form-group>
           <b-form-group
             :label="`${$t('videos.series')}:`"
             label-cols-sm="3"
@@ -149,7 +152,8 @@
               v-model="form.video_series"
               :items="series_options"
               :placeholder="`${$t('label.series_is_not_selected')}`"
-          /></b-form-group>
+            />
+          </b-form-group>
           <b-form-group
             :label="`${$t('videos.video_description')}:`"
             label-cols-sm="3"
@@ -168,12 +172,11 @@
             :disabled="isVideosInfoUpdating || dataUpdated"
             type="submit"
             class="button btn-blue"
-          >
-            {{ $t('label.registration') }}
-          </button>
-          <button @click="backToCatalog" class="button btn-braun">
-            {{ dataUpdated ? $t('label.back') : $t('label.cancel') }}
-          </button>
+          >{{ $t('label.registration') }}</button>
+          <button
+            @click="backToCatalog"
+            class="button btn-braun"
+          >{{ dataUpdated ? $t('label.back') : $t('label.cancel') }}</button>
         </div>
       </form>
     </template>
