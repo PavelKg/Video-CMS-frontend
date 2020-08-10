@@ -6,9 +6,7 @@
         v-if="isActAllow('upload')"
         @click="add_new_video"
         class="button btn-blue"
-      >
-        {{ $t('label.add_new') }}
-      </button>
+      ><b-icon icon="plus-circle-fill" scale="1.2"/>{{ $t('label.add') }}</button>
     </div>
     <div class="search-row">
       <input
@@ -75,38 +73,33 @@
     <div class="videos-mng-panel">
       <div v-if="isActAllow('edit')" class="admin-mng-panel">
         <span>{{ $t('label.in_page') }}:</span>
-        <a href="#" id="selectAll" @click.prevent="toggleAll('selectAll')">{{
+        <a href="#" id="selectAll" @click.prevent="toggleAll('selectAll')">
+          {{
           $t('label.select_all')
-        }}</a>
+          }}
+        </a>
         <span>|</span>
         <a
           href="#"
           id="deselectAll"
           @click.prevent="toggleAll('deselectAll')"
           :class="{isDisabled: videos_selected.length === 0}"
-          >{{ $t('label.deselect_all') }}</a
-        >
+        >{{ $t('label.deselect_all') }}</a>
         <button
           class="button btn-gray"
           @click="onPublicSelected"
           :disabled="!hasSelected"
-        >
-          {{ $t('label.public') }}
-        </button>
+        >{{ $t('label.public') }}</button>
         <button
           class="button btn-gray"
           @click="onPrivateSelected"
           :disabled="!hasSelected"
-        >
-          {{ $t('label.private') }}
-        </button>
+        >{{ $t('label.private') }}</button>
         <button
           class="button btn-orange"
           @click="onDelete"
           :disabled="!hasSelected || isVideosDeleting"
-        >
-          {{ $t('label.delete') }}
-        </button>
+        >{{ $t('label.delete') }}</button>
       </div>
       <div class="videos-mng-page">
         <b-pagination
@@ -115,9 +108,8 @@
           :total-rows="videos_count"
           :per-page="perPage"
           align="left"
-          size=""
-        >
-        </b-pagination>
+          size
+        ></b-pagination>
       </div>
     </div>
   </div>
@@ -455,5 +447,19 @@ export default {
   display: inline-block; /* For IE11/ MS Edge bug */
   pointer-events: none;
   text-decoration: none;
+}
+
+.custom-button {
+  border-radius: 20px;
+}
+
+@media screen and (max-width: 920px){
+  .custom-button{
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 10;
+    transform:translateX(0%)
+  }
 }
 </style>

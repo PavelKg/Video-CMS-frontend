@@ -6,7 +6,7 @@
         v-if="isActAllow('upload')"
         @click="add_file"
         class="button btn-blue"
-      >{{ $t('label.add_new') }}</button>
+      >{{ $t('label.add') }}</button>
     </div>
     <div class="search-row">
       <input
