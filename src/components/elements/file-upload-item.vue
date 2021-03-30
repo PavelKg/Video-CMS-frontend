@@ -1,13 +1,12 @@
 <template>
   <div class="file-listing">
     {{ `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} Mb)` }}
-    <div
-      v-if="upPercent === 0 && !uploaded && !uploading"
-      class="remove-container"
-    >
-      <a href="#" class="remove" @click.prevent="removeMe">{{
+    <div v-if="upPercent === 0 && !uploaded && !uploading" class="remove-container">
+      <a href="#" class="remove" @click.prevent="removeMe">
+        {{
         $t('label.remove')
-      }}</a>
+        }}
+      </a>
     </div>
     <b-progress
       class="upload-progress"
@@ -39,7 +38,7 @@ export default {
   watch: {
     upPercent(newVal) {
       if (newVal === 100) {
-        this.$store.commit('SET_UPLOADED_FILE', this.uuid)
+        this.$emit('uploaded', this.uuid)
         this.animate = false
       }
     }
@@ -47,7 +46,7 @@ export default {
   created() {},
   methods: {
     removeMe() {
-      this.$store.commit('DEL_UPLOAD_FILE', this.file.name)
+      this.$emit('removed', this.file.name)
     }
   },
   computed: {

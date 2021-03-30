@@ -87,6 +87,20 @@ export default {
       } finally {
       }
     },
+    async LOAD_USER_TELEGRAM_STATUS({commit}, payload) {
+      const {cid, uid} = payload
+      try {
+        const res = await Api.user_telegram_status(cid, uid)
+        if (res.data && res.status === 200) {
+          return res.data.result
+        } else {
+          throw 'Error load users telegram status'
+        }
+      } catch (err) {
+        throw `Error load user telegram status: ${err}`
+      } finally {
+      }
+    },
     async USER_IMPORT({commit, getters}, file) {
       const headers = {
         row: 'ROW',
@@ -122,10 +136,12 @@ export default {
         fullname,
         rid,
         email,
+        phone,
         password,
         gids,
         activity_start,
-        activity_finish
+        activity_finish,
+        sendTelegramAuthBy
       } = payload
 
       try {
@@ -134,10 +150,12 @@ export default {
           fullname,
           rid,
           email,
+          phone,
           password,
           gids,
           activity_start,
-          activity_finish
+          activity_finish,
+          sendTelegramAuthBy
         })
         if (result.status === 201) {
           return Promise.resolve('User added success')
@@ -156,9 +174,11 @@ export default {
         gids,
         rid,
         email,
+        phone,
         password,
         activity_start,
-        activity_finish
+        activity_finish,
+        sendTelegramAuthBy
       } = payload
       try {
         const result = await Api.user_upd(
@@ -169,8 +189,10 @@ export default {
             rid,
             email,
             password,
+            phone,
             activity_start,
-            activity_finish
+            activity_finish,
+            sendTelegramAuthBy
           }
         )
         if (result.status === 200) {

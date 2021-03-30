@@ -6,6 +6,7 @@ import Users from './users'
 import MainWindow from './mainWindow'
 import Menu from './menu'
 import Videos from './videos'
+import Files from './files'
 import Comments from './comments'
 import Messages from './messages'
 import Binding from './binding'
@@ -28,6 +29,7 @@ export default new Vuex.Store({
     MainWindow,
     Menu,
     Videos,
+    Files,
     Comments,
     Messages,
     Binding,

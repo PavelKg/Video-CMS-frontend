@@ -4,11 +4,7 @@
     <b-container fluid class="px-0 bv-example-row-flex-cols">
       <b-row class="justify-content-md-left">
         <b-col sm class="mb-2">
-          <b-form-select
-            v-model="selected_category"
-            :options="targets"
-            @change="onCategoryChange"
-          ></b-form-select>
+          <b-form-select v-model="selected_category" :options="targets" @change="onCategoryChange"></b-form-select>
         </b-col>
         <b-col sm class="mb-2">
           <b-form-select
@@ -16,17 +12,16 @@
             :options="id_options"
             :disabled="!selected_category"
             @change="onIdChange"
-            ><b-spinner small></b-spinner
-          ></b-form-select>
+          >
+            <b-spinner small></b-spinner>
+          </b-form-select>
         </b-col>
-        <b-col class="mb-2 ">
+        <b-col class="mb-2">
           <button
             class="button btn-blue"
             :disabled="!selected_id"
             @click="onLoadBindingData"
-          >
-            {{ $t('binding.btn_bind') }}
-          </button>
+          >{{ $t('binding.btn_bind') }}</button>
         </b-col>
       </b-row>
       <b-row>
@@ -44,13 +39,10 @@
             class="button btn-blue"
             :disabled="!bindingMembersState.length"
             @click="onRegister"
-          >
-            {{ $t('label.registration') }}
-          </button> </b-col
-        ><b-col cols="auto">
-          <button class="button btn-braun" @click="$router.go(-1)">
-            {{ $t('label.back') }}
-          </button>
+          >{{ $t('label.registration') }}</button>
+        </b-col>
+        <b-col cols="auto">
+          <button class="button btn-braun" @click="$router.go(-1)">{{ $t('label.back') }}</button>
         </b-col>
       </b-row>
     </b-container>
@@ -88,9 +80,30 @@ export default {
           text: this.$t('binding.please_select_a_target'),
           disabled: true
         },
-        {value: 'groups', text: this.$t('binding.groups')},
-        {value: 'series', text: this.$t('binding.series')},
-        {value: 'videos', text: this.$t('binding.videos')}
+        {
+          value: 'groups',
+          text: this.$t('binding.groups'),
+          valRef: 'gid',
+          textRef: 'name'
+        },
+        {
+          value: 'series',
+          text: this.$t('binding.series'),
+          valRef: 'sid',
+          textRef: 'name'
+        },
+        {
+          value: 'videos',
+          text: this.$t('binding.videos'),
+          valRef: 'video_id',
+          textRef: 'video_title'
+        },
+        {
+          value: 'files',
+          text: this.$t('binding.files'),
+          valRef: 'file_id',
+          textRef: 'file_title'
+        }
       ],
       binding_data: [],
       bindingMembersState: [],
@@ -110,24 +123,12 @@ export default {
 
       let res_list = []
       this.$store.dispatch(`LOAD_${val.toUpperCase()}`, {cid}).then((res) => {
-        let valRef = ''
-        let textRef = ''
+        //let valRef = ''
+        //let textRef = ''
         let textAdd = ''
-        switch (val) {
-          case 'series':
-            valRef = 'sid'
-            textRef = 'name'
-            break
-          case 'groups':
-            valRef = 'gid'
-            textRef = 'name'
-            break
-          case 'videos':
-            valRef = 'video_id'
-            textRef = 'video_title'
+        const targetItem = this.targets.find((item) => item.value === val)
+        const {valRef = '', textRef = ''} = targetItem
 
-            break
-        }
         res_list = this[val]
           .filter((item) => !item.deleted_at)
           .map((item) => {
@@ -135,13 +136,18 @@ export default {
               value: item[valRef],
               text:
                 item[textRef] && item[textRef].length > 20
-                  ? val !== 'videos'
+                  ? val !== 'videos' && val !== 'files'
                     ? `${item[textRef].substring(1, 20)}... `
                     : `${item[valRef]} / ${item[textRef].substring(1, 20)}... `
-                  : val !== 'videos'
+                  : val !== 'videos' && val !== 'files'
                   ? item[textRef]
                   : `${item[valRef]} /  ${item[textRef]}`,
-              uid: val !== 'videos' ? item[valRef] : item.video_uuid
+              uid:
+                val !== 'videos' && val !== 'files'
+                  ? item[valRef]
+                  : val === 'videos'
+                  ? item.video_uuid
+                  : item.file_uuid
             }
           })
         this.id_options = [...this.zero_id_option, ...res_list]
@@ -209,6 +215,33 @@ export default {
             }
           )
           break
+        case 'files':
+          const file_groups = this.bindingMembersList
+            .filter((item) => item.category === 'groups')
+            .map((item) => {
+              return item.uid
+            })
+          const file_series = this.bindingMembersList
+            .filter((item) => item.category === 'series')
+            .map((item) => {
+              return item.uid
+            })
+
+          send_data = Object.assign(
+            {cid, file_uuid: id},
+            {file_groups},
+            {file_series}
+          )
+
+          this.$store.dispatch('UPDATE_FILE_INFO', send_data).then(
+            (res) => {
+              this.onLoadBindingData()
+            },
+            (error) => {
+              console.log('files update=', error)
+            }
+          )
+          break
         case 'groups':
           const group_series = this.bindingMembersList
             .filter((item) => item.category === 'series')
@@ -226,7 +259,8 @@ export default {
           const grpPromise = this.$store.dispatch('GROUP_UPD', send_data)
 
           const vidPromise = this.videosModify(category, id)
-          Promise.all([grpPromise, vidPromise]).then(
+          const filPromise = this.filesModify(category, id)
+          Promise.all([grpPromise, vidPromise, filPromise]).then(
             () => {
               this.onLoadBindingData()
             },
@@ -237,8 +271,9 @@ export default {
           break
         case 'series':
           const videoPromise = this.videosModify(category, id)
+          const filePromise = this.filesModify(category, id)
           const groupPromise = this.groupsModify(category, id)
-          Promise.all([groupPromise, videoPromise]).then(
+          Promise.all([groupPromise, videoPromise, filePromise]).then(
             () => {
               this.onLoadBindingData()
             },
@@ -286,6 +321,43 @@ export default {
 
       await this.$store.dispatch(
         `VIDEO_${category.toUpperCase()}_MULTI_OPER`,
+        send_data
+      )
+      return Promise.resolve('finished')
+    },
+    async filesModify(category, id) {
+      const idTitles = {groups: 'gid', series: 'sid'}
+      const send_data = {
+        uuid_list: [],
+        [idTitles[category]]: id,
+        oper: 'del'
+      }
+
+      const forRemove = this.bindingMembersState
+        .filter((file) => {
+          return file.list === 'removed' && file.category === 'files'
+        })
+        .map((file) => {
+          return file.uuid
+        })
+      send_data.uuid_list = [...forRemove]
+
+      await this.$store.dispatch(
+        `FILE_${category.toUpperCase()}_MULTI_OPER`,
+        send_data
+      )
+
+      const forAdd = this.bindingMembersState
+        .filter((file) => file.list === 'added' && file.category === 'files')
+        .map((file) => {
+          return file.uuid
+        })
+
+      send_data.uuid_list = [...forAdd]
+      send_data.oper = 'add'
+
+      await this.$store.dispatch(
+        `FILE_${category.toUpperCase()}_MULTI_OPER`,
         send_data
       )
       return Promise.resolve('finished')
@@ -341,7 +413,9 @@ export default {
       groups: (state) => state.Companies.Groups.list,
       series: (state) => state.Companies.Series.list,
       videos: (state) =>
-        state.Videos.list.filter((item) => item.deleted_at === '')
+        state.Videos.list.filter((item) => item.deleted_at === ''),
+      files: (state) =>
+        state.Files.list.filter((item) => item.deleted_at === '')
     }),
     bindingMembersList() {
       const movedToMember = this.bindingMembersState

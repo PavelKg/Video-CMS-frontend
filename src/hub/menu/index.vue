@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     handleClick(node, key) {
-      console.log(node, key)
+      //console.log(node, key)
       if (node.isSection) {
         this.$store.commit('SECTION_STATE', key)
       } else if (!node.isSection) {

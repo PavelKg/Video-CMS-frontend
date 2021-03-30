@@ -10,55 +10,111 @@
     "series": "Series",
     "screen": "Screen custom.",
     "history_info": "History Info",
-    "binding": "Binding"
+    "binding": "Binding",
+    "files": "Files"
   },
   "permits": {
     "videos": {
-      "name": "Video",
-      "edit": {"name": "Edit"},
-      "play": {"name": "Player"},
-      "upload": {"name": "Upload"},
-      "delete": {"name": "delete"}
+      "name": "Videos",
+      "edit": {
+        "name": "Edit"
+      },
+      "player": {
+        "name": "Player"
+      },
+      "upload": {
+        "name": "Upload"
+      },
+      "delete": {
+        "name": "Delete"
+      }
+    },
+    "files": {
+      "name": "Files",
+      "edit": {
+        "name": "Edit"
+      },
+      "player": {
+        "name": "Player"
+      },
+      "upload": {
+        "name": "Upload"
+      },
+      "delete": {
+        "name": "Delete"
+      }
     },
     "groups": {
       "name": "Groups",
-      "add": {"name": "Add"},
-      "edit": {"name": "Edit"},
-      "delete": {"name": "Delete"}
+      "add": {
+        "name": "Add"
+      },
+      "edit": {
+        "name": "Edit"
+      },
+      "delete": {
+        "name": "Delete"
+      }
     },
-    "messages": {"name": "Messages"},
+    "messages": {
+      "name": "Messages"
+    },
     "roles": {
       "name": "Roles settings",
-      "add": {"name": "Add"},
-      "edit": {"name": "Edit"},
-      "delete": {"name": "Delete"}
+      "add": {
+        "name": "Add"
+      },
+      "edit": {
+        "name": "Edit"
+      },
+      "delete": {
+        "name": "Delete"
+      }
     },
     "history": {
       "name": "History Info",
-      "browse": {"name": "Browse"}
+      "browse": {
+        "name": "Browse"
+      }
     },
     "users": {
       "name": "Users",
-      "add": {"name": "Add"},
-      "edit": {"name": "Edit"},
-      "delete": {"name": "Delete"},
-      "import": {"name": "Import"}
+      "add": {
+        "name": "Add"
+      },
+      "edit": {
+        "name": "Edit"
+      },
+      "delete": {
+        "name": "Delete"
+      },
+      "import": {
+        "name": "Import"
+      }
     },
     "settings": {
       "name": "User settings"
     },
     "series": {
       "name": "Series",
-      "add": {"name": "Add"},
-      "edit": {"name": "Edit"},
-      "delete": {"name": "Delete"}
+      "add": {
+        "name": "Add"
+      },
+      "edit": {
+        "name": "Edit"
+      },
+      "delete": {
+        "name": "Delete"
+      }
     },
     "binding": {
       "name": "Binding"
     },
     "company": {
       "name": "Company props (Screen)",
-      "mng": {"name": "Manage options"}
+      "mng": {
+        "name": "Manage options"
+      }
     }
   },
   "message": {
@@ -124,9 +180,11 @@
     "user_id": "ID",
     "user_fullname": "Full Name",
     "user_email": "E-Mail",
+    "user_phone": "Phone number",
     "password": "Password",
     "conf_password": "Confirm Password",
-    "usage_period": "Usage period"
+    "usage_period": "Usage period",
+    "send_tele_link": "Send Telegram Auth Link"
   },
   "groups": {
     "btn_add": "Add New Group",
@@ -224,7 +282,8 @@
     "series": "Series",
     "videos": "Videos",
     "please_select_a_target": "Please select a target",
-    "please_select_id_name": "Please select ID/Name"
+    "please_select_id_name": "Please select ID/Name",
+    "files": "Files"
   },
   "label": {
     "delete": "Delete",
@@ -240,10 +299,12 @@
     "send": "Send",
     "save": "Save",
     "add_new": "Add new",
+    "add": "Add",
     "storageVideoCapacity": "Storage video capacity",
     "forgot_pass": "Forgot ID/password",
     "mail_address": "Mail Address",
     "video_upload": "Video upload",
+    "files_upload": "Files upload",
     "select_file": "Select File",
     "upload": "Upload",
     "cancel": "Cancel",
@@ -283,12 +344,17 @@
     "scrollable": "Scrollable",
     "video_information_location": "Video information location",
     "browse": "Browse",
-    "user_settings": "Settings"
+    "user_settings": "Settings",
+    "sms": "SMS",
+    "email": "Email",
+    "edit_file": "Edit File Information"
   },
   "errors": {
     "cannot_delete_a_group_with_existing_users": "Cannot delete a group with existing users",
     "this_group_has_children": "Cannot delete a group with children",
-    "cannot_delete_a_role_with_existing_users": "Cannot delete a role with existing users"
+    "cannot_delete_a_role_with_existing_users": "Cannot delete a role with existing users",
+    "the_sms_could_not_be_sent_because_the_phone_number_was_not_entered": "The SMS could not be sent because the phone number was not entered.",
+    "email_could_not_be_sent_because_your_email_address_has_not_been_entered": "E-mail could not be sent because your e-mail address has not been entered."
   },
   "validation": {
     "required_field": "This is a required field",
@@ -298,5 +364,15 @@
     "email": "This is not a valid email format",
     "is_not_unique": "Value is not unique",
     "invalid_data_format": "Invalid data format"
+  },
+  "files": {
+    "id": "ID",
+    "file_title": "File Title",
+    "tag": "Tag",
+    "groups": "Groups",
+    "series": "Series",
+    "file_description": "Description",
+    "act_in_create": "Uploading",
+    "act_in_uploaded": "Encoding"
   }
 }

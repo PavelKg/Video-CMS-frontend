@@ -1,12 +1,12 @@
 <template>
-  <div class="video-catalog">
-    <div class="video-catalog-title">
-      <span>{{ company_name }}</span>
+  <div class="catalog">
+    <div class="catalog-title">
+      <span>{{ $t('menu.files') }}</span>
       <button
         v-if="isActAllow('upload')"
-        @click="add_new_video"
+        @click="add_file"
         class="button btn-blue"
-      ><b-icon icon="plus-circle-fill" scale="1.2"/>{{ $t('label.add') }}</button>
+      >{{ $t('label.add') }}</button>
     </div>
     <div class="search-row">
       <input
@@ -16,7 +16,7 @@
       />
       <img src="@/assets/images/search_black.png" @click="onKeywordSearch" />
     </div>
-    <div class="video-data-filter">
+    <div class="data-filter">
       <div>
         <b-form-select
           size="sm"
@@ -47,7 +47,7 @@
           @change="onPeriodState"
         ></b-form-select>
       </div>
-      <div class="video-data-filter-acc">
+      <div class="data-filter-acc">
         <b-form-radio-group
           id="btn-filer-public"
           v-model="public_selected"
@@ -60,17 +60,17 @@
         ></b-form-radio-group>
       </div>
     </div>
-    <div class="video-box">
-      <videoPrev
-        :style="{opacity: isVideosListLoading ? 0.1 : 1}"
-        v-for="vItem in videos_on_page"
-        :key="vItem.video_uuid"
-        :face_uuid="vItem.video_uuid"
-        :face_public="vItem.video_public"
+    <div class="file-box">
+      <filePrev
+        :style="{opacity: isListLoading ? 0.1 : 1}"
+        v-for="vItem in files_on_page"
+        :key="vItem.file_uuid"
+        :face_uuid="vItem.file_uuid"
+        :face_public="vItem.file_public"
         v-on:activateContent="activateContent"
-      ></videoPrev>
+      ></filePrev>
     </div>
-    <div class="videos-mng-panel">
+    <div class="files-mng-panel">
       <div v-if="isActAllow('edit')" class="admin-mng-panel">
         <span>{{ $t('label.in_page') }}:</span>
         <a href="#" id="selectAll" @click.prevent="toggleAll('selectAll')">
@@ -83,7 +83,7 @@
           href="#"
           id="deselectAll"
           @click.prevent="toggleAll('deselectAll')"
-          :class="{isDisabled: videos_selected.length === 0}"
+          :class="{isDisabled: files_selected.length === 0}"
         >{{ $t('label.deselect_all') }}</a>
         <button
           class="button btn-gray"
@@ -98,14 +98,14 @@
         <button
           class="button btn-orange"
           @click="onDelete"
-          :disabled="!hasSelected || isVideosDeleting"
+          :disabled="!hasSelected || isDeleting"
         >{{ $t('label.delete') }}</button>
       </div>
-      <div class="videos-mng-page">
+      <div class="files-mng-page">
         <b-pagination
           :value="currentPage"
           @change="setPage"
-          :total-rows="videos_count"
+          :total-rows="files_count"
           :per-page="perPage"
           align="left"
           size
@@ -116,19 +116,24 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
-import videoPrev from '@/components/elements/video-face'
+import {mapGetters, mapState} from 'vuex'
+import filePrev from '@/components/elements/file-face'
 import permitsMixin from '@/mixins/permits'
 
 export default {
-  name: 'video-catalog',
+  name: 'file-catalog',
   mixins: [permitsMixin],
   data() {
     return {
-      permitsCategory: 'videos',
-      // years: () => {
-      //   return [2020, 2019, 2018, 2017, 2016]
-      // }, //[2020, 2019, 2018, 2017, 2016],
+      permitsCategory: 'files',
+      years: (function() {
+        const curYear = new Date().getFullYear()
+        const arr_years = []
+        for (let i = 2018; i <= curYear; i += 1) {
+          arr_years.push(i)
+        }
+        return arr_years
+      })(),
       months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       public_options: [
         {text: this.$t('label.all'), value: 'all'},
@@ -138,29 +143,20 @@ export default {
       public_selected: 'all',
       perPage: 8,
       period_filter: {
-        year_from: 2016,
+        year_from: 2018,
         year_to: new Date().getFullYear(),
         month_from: 1,
         month_to: 12
       },
-      active_video_page: 1,
+      active_file_page: 1,
       searchReg: undefined,
       inputSearch: ''
     }
   },
   created() {
-    this.$store.commit('CLEAR_VIDEO_SELECTED')
+    this.$store.commit('CLEAR_FILE_SELECTED')
     const query = this.$route.query
     this.updateProc(query)
-
-    // this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
-    // this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
-
-    // this.$store.dispatch('LOAD_VIDEO_LIST').then(() => {
-    //   this.active_video_page = this.$route.query.page
-    //     ? this.$route.query.page
-    //     : 1
-    // })
   },
   mounted() {},
   methods: {
@@ -169,10 +165,10 @@ export default {
     },
     changePublicStatus(val) {
       const value = val
-      const chanded = this.videos_selected.map(async (video_uuid) => {
+      const chanded = this.files_selected.map(async (file_uuid) => {
         try {
-          await this.$store.dispatch('UPDATE_VIDEO_PUBLIC_STATUS', {
-            uuid: video_uuid,
+          await this.$store.dispatch('UPDATE_FILE_PUBLIC_STATUS', {
+            uuid: file_uuid,
             value
           })
         } catch (error) {}
@@ -187,17 +183,17 @@ export default {
     activateContent(key) {
       this.$emit('contentElementClick', key)
     },
-    add_new_video() {
-      this.activateContent('/videos/upload')
+    add_file() {
+      this.activateContent('/files/upload')
     },
     toggleAll(action) {
       //const action = env.target['id']
       if (action === 'selectAll') {
-        this.videos_on_page.forEach((element) => {
-          this.$store.commit('SET_VIDEO_SELECTED', element.video_uuid)
+        this.files_on_page.forEach((element) => {
+          this.$store.commit('SET_FILE_SELECTED', element.file_uuid)
         })
       } else {
-        this.$store.commit('CLEAR_VIDEO_SELECTED')
+        this.$store.commit('CLEAR_FILE_SELECTED')
       }
     },
     onPublicState(new_state) {
@@ -212,8 +208,8 @@ export default {
       this.updatePageByFilters({from, to})
     },
     onDelete() {
-      this.$store.dispatch('DELETE_VIDEO').then((res) => {
-        this.$store.dispatch('LOAD_VIDEO_LIST')
+      this.$store.dispatch('DELETE_FILE').then((res) => {
+        this.$store.dispatch('LOAD_FILE_LIST')
       })
     },
     onPrivateSelected() {
@@ -239,7 +235,7 @@ export default {
       } else {
       }
       this.toggleAll('deselectAll')
-      this.$router.push({path: '/videos', query: {...sendQuery}})
+      this.$router.push({path: '/files', query: {...sendQuery}})
     },
     updateProc(query) {
       let curr = new Date()
@@ -275,67 +271,55 @@ export default {
         this.period_filter.month_from = curr.getMonth() + 1
       }
 
-      this.$store.commit('SET_VIDEO_PUBLIC', this.public_selected)
-      this.$store.commit('SET_VIDEO_PERIOD', this.period_filter)
+      this.$store.commit('SET_FILE_PUBLIC', this.public_selected)
+      this.$store.commit('SET_FILE_PERIOD', this.period_filter)
       this.$store
-        .dispatch('LOAD_VIDEO_LIST')
-        .then(() => (this.active_video_page = query.page ? query.page : 1))
+        .dispatch('LOAD_FILE_LIST')
+        .then(() => (this.active_file_page = query.page ? query.page : 1))
     }
   },
   components: {
-    videoPrev
+    filePrev
   },
   watch: {
     $route(to, from) {
       this.updateProc(to.query)
       if (to.query.page) {
-        this.active_video_page = to.query.page
+        this.active_file_page = to.query.page
       }
     }
   },
   computed: {
-    ...mapGetters([
-      `video_list`,
-      'me',
-      'isVideosListLoading',
-      'isVideosDeleting',
-      'videos_selected'
-    ]),
-    years() {
-      const from = 2016
-      const to = new Date().getFullYear()
-      const arr = []
-      for (let i = from; i <= to; i += 1) {
-        arr.push(i)
-      }
-      return arr
-    },
+    ...mapState({
+      isListLoading: (state) => state.Files.isListLoading,
+      isDeleting: (state) => state.Files.isDeleting,
+      files_selected: (state) => state.Files.selected
+    }),
+    ...mapGetters([`file_list`]),
+
     currentPage() {
-      return this.active_video_page
+      return this.active_file_page
     },
-    videos_count() {
-      return this.queriedVideos ? this.queriedVideos.length : 0
+    files_count() {
+      return this.queriedFiles ? this.queriedFiles.length : 0
     },
-    videos_on_page() {
+    files_on_page() {
       const begin = (this.currentPage - 1) * this.perPage
       const end = begin + this.perPage
 
-      return this.queriedVideos.slice(begin, end)
+      return this.queriedFiles.slice(begin, end)
     },
-    queriedVideos() {
+    queriedFiles() {
       return Boolean(this.searchReg)
-        ? this.video_list.filter(
+        ? this.file_list.filter(
             (item) =>
-              item.video_title.search(this.searchReg) !== -1 ||
+              item.file_title.search(this.searchReg) !== -1 ||
               item.updated_at.search(this.searchReg) !== -1
           )
-        : this.video_list
+        : this.file_list
     },
     hasSelected() {
-      return Boolean(this.videos_selected.length)
-    },
-    company_name() {
-      return this.me.profile.company_name
+      return Boolean(this.files_selected.length)
     },
     years_to() {
       const _from = this.period_filter.year_from
@@ -354,7 +338,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../assets/styles';
-.video-catalog-title {
+.catalog-title {
   display: flex;
   justify-content: space-between;
   margin: 0 5px;
@@ -383,7 +367,7 @@ export default {
     }
   }
 }
-.video-data-filter {
+.data-filter {
   margin-top: 15px;
   //height: 20px;
   display: flex;
@@ -396,7 +380,7 @@ export default {
     width: 100px;
     margin: 5px;
   }
-  .video-data-filter-acc {
+  .data-filter-acc {
     margin: 5px;
   }
 }
@@ -406,7 +390,7 @@ export default {
 .data-select {
   margin: 0 5px;
 }
-.video-box {
+.file-box {
   margin-top: 20px;
   padding: 20px 5px;
   display: flex;
@@ -421,7 +405,7 @@ export default {
     font-weight: 600;
   }
 }
-.videos-mng-panel {
+.files-mng-panel {
   display: flex;
   align-items: center;
   margin-top: 15px;
@@ -436,7 +420,7 @@ export default {
       margin-right: 10px;
     }
   }
-  .videos-mng-page {
+  .files-mng-page {
     display: flex;
     margin-left: auto;
     > * {
@@ -457,19 +441,5 @@ export default {
   display: inline-block; /* For IE11/ MS Edge bug */
   pointer-events: none;
   text-decoration: none;
-}
-
-.custom-button {
-  border-radius: 20px;
-}
-
-@media screen and (max-width: 920px){
-  .custom-button{
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    z-index: 10;
-    transform:translateX(0%)
-  }
 }
 </style>

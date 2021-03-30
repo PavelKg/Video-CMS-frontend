@@ -1,5 +1,5 @@
 import Api from '@/api'
-console.log('process=', process.env)
+//console.log('process=', process.env)
 const {NODE_ENV} = process.env
 const bots = {dev: 'vcmsTestBot', prod: 'vcmsbot'}
 
