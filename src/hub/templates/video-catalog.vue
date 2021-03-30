@@ -134,7 +134,9 @@ export default {
   data() {
     return {
       permitsCategory: 'videos',
-      years: [2020, 2019, 2018, 2017, 2016],
+      // years: () => {
+      //   return [2020, 2019, 2018, 2017, 2016]
+      // }, //[2020, 2019, 2018, 2017, 2016],
       months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
       public_options: [
         {text: this.$t('label.all'), value: 'all'},
@@ -307,7 +309,15 @@ export default {
       'isVideosDeleting',
       'videos_selected'
     ]),
-
+    years() {
+      const from = 2016
+      const to = new Date().getFullYear()
+      const arr = []
+      for (let i = from; i <= to; i += 1) {
+        arr.push(i)
+      }
+      return arr
+    },
     currentPage() {
       return this.active_video_page
     },

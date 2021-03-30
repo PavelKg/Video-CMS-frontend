@@ -122,5 +122,8 @@
     "private": "Private",
     "group": "Group",
     "role": "Role"
+  },
+  "errors": {
+    "cannot_delete_a_group_with_existing_users": "Невозможно удалить группу с существующими пользователями"
   }
 }
