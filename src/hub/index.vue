@@ -129,7 +129,7 @@ export default {
   .contents {
     width: 100%;
     .content-zone {
-      padding: 20px 0;
+      padding: 20px 10px;
     }
   }
 }

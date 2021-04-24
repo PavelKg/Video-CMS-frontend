@@ -3,7 +3,10 @@ import axiosGcs from 'axios'
 import store from '../store'
 import router from '../router'
 
-const API_ROOT = 'https://vcms.pepex.kg/api'
+const {VUE_APP_BACK_SERVER} = process.env
+const API_ROOT = VUE_APP_BACK_SERVER
+//const API_ROOT = 'https://botkg.ga/api'
+//const API_ROOT = 'https://vcms.pepex.kg/api'
 //const API_ROOT = 'http://127.0.0.1:8769/api'
 
 const Api = axios.create({
@@ -11,7 +14,7 @@ const Api = axios.create({
   withCredentials: false,
   headers: {
     Accept: 'application/json',
-    Authorization: `Bearer`
+    Authorization: ``
   }
 })
 
@@ -33,16 +36,14 @@ Api.interceptors.response.use(
     // }
     // return Promise.reject(error.response);
     console.log('error in the interceptors=', message)
-
-    if (!message.search(/token expired|invalid token]/gi)) {
+    // authorization token expired
+    if (/token expired|invalid token]/gi.test(message)) {
       console.log('token expired=', message)
-      return Promise.reject(error)
+      localStorage.removeItem('vcms-token')
+      delete error.config.headers.Authorization
+      store.commit('AUTH_LOGOUT')
+      router.push(`/login`)
     }
-
-    // localStorage.removeItem('vcms-token')
-    // delete error.config.headers.Authorization
-    // store.commit('AUTH_LOGOUT')
-    // router.push(`/`)
     return Promise.reject(error)
   }
 )
@@ -68,7 +69,10 @@ export default {
   },
 
   logout() {
-    return Api.post(`/users/logout`)
+    if (Api.defaults.headers['Authorization']) {
+      return Api.post(`/users/logout`)
+    }
+    return false
   },
 
   my_profile() {
@@ -431,6 +435,296 @@ export default {
   group_bind_series(target) {
     const {cid, sid} = target
     return Api.get(`/companies/${cid}/groups/bind-series/${sid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /* ---------  COURSES MANAGEMENT  ---------------------*/
+  /** List of courses
+   * @param {*} cid 
+   * @returns {Promise<*>} - 200 List of groups
+   * [{
+    "crid": "string",
+    "name": "string",
+    "deleted_at": "string"
+  }]
+ */
+  courses(cid, filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/${cid}/courses${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Course Info
+   * @param {number} cid 
+   * @param {string} crid 
+   * @returns {Promise<*>} - 200 group object
+   * {
+        "crid": "string",
+        "cid": "string",
+        "name": "string",
+        "deleted_at": "string"
+      }
+ */
+  course_info(cid, crid) {
+    return Api.get(`/companies/${cid}/courses/${crid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /**
+   * @param  {integer} cid
+   * @param  {integer} crid
+   * @returns {Promise<[{}]>} - 200 section object
+   */
+  course_sections(cid, crid) {
+    return Api.get(`/companies/${cid}/courses/${crid}/sections`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /**
+   * @param  {integer} cid
+   * @param  {integer} secid
+   * @returns {Promise<[{}]>} - 200 module object
+   */
+  course_section_modules(cid, secid) {
+    return Api.get(`/companies/${cid}/course-sections/${secid}/modules`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /**
+   * @param  {integer} cid
+   * @param  {integer} modid
+   * @returns {Promise<[{}]>} - 200 module object
+   */
+  course_module_lessons(cid, modid) {
+    return Api.get(`/companies/${cid}/course-modules/${modid}/lessons`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /**
+   * @param  {} cid
+   * @param  {} secid
+   * @returns {Promise<{}>} - 200 section object
+   */
+  course_section_info(cid, secid) {
+    return Api.get(`/companies/${cid}/course-sections/${secid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /**
+   * @param  {} cid
+   * @param  {} modid
+   * @returns {Promise<{}>} - 200 section object
+   */
+  course_module_info(cid, modid) {
+    return Api.get(`/companies/${cid}/course-modules/${modid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /**
+   * @param  {number} cid
+   * @param  {object} data
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+
+  course_section_add(cid, data) {
+    return Api.post(`/companies/${cid}/course-sections/`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /**
+   * @param  {object} target
+   * @param  {object} data
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  course_section_upd(target, data) {
+    const {cid, secid} = target
+    return Api.put(`/companies/${cid}/course-sections/${secid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /**
+   * @param  {number} cid
+   * @param  {object} data
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+
+  course_module_add(cid, data) {
+    return Api.post(`/companies/${cid}/course-modules/`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /**
+   * @param  {object} target
+   * @param  {object} data
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  course_module_upd(target, data) {
+    const {cid, modid} = target
+    return Api.put(`/companies/${cid}/course-modules/${modid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /**
+   * @param  {object} target
+   * @param  {object} data
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  course_module_upd(target, data) {
+    const {cid, modid} = target
+    return Api.put(`/companies/${cid}/course-modules/${modid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  }
+  /**
+   * @param  {object} target
+   * @param  {object} data
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */,
+  course_module_upd(target, data) {
+    const {cid, modid} = target
+    return Api.put(`/companies/${cid}/course-modules/${modid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  }
+  /**
+   * @param  {object} target
+   * @param  {object} data
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */,
+  course_module_upd(target, data) {
+    const {cid, modid} = target
+    return Api.put(`/companies/${cid}/course-modules/${modid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  }
+  /**
+   * @param  {object} target
+   * @param  {object} data
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */,
+  course_module_lessons_upd(target, data) {
+    const {cid, modid} = target
+    return Api.put(`/companies/${cid}/course-modules/${modid}/lessons`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Add new course
+   * @param {string} cid - Company ID
+   * @param {object} data - {"crid": "string", "name": "string" }
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  course_add(cid, data) {
+    return Api.post(`/companies/${cid}/courses/`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Upd course
+   * @param {string} target - {cid, crid}
+   * @param {object} data - {"name": "string", "details":"string", "is_published":"string", "tags":"string" }
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  course_upd(target, data) {
+    const {cid, crid} = target
+    return Api.put(`/companies/${cid}/courses/${crid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del course
+   * @param {string} target - {cid, crid}
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  course_del(target) {
+    const {cid, crid} = target
+    return Api.delete(`/companies/${cid}/courses/${crid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /**
+   * @param  {} target
+   * @param  {} data
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   *
+   */
+  course_section_list_upd(target, data) {
+    const {cid, crid} = target
+    return Api.put(`/companies/${cid}/courses/${crid}/sections`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /**
+   * @param  {} target
+   * @param  {} data
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   *
+   */
+  section_module_list_upd(target, data) {
+    const {cid, secid} = target
+    return Api.put(`/companies/${cid}/course-sections/${secid}/modules`, data, {
       headers: {
         ...type_json
       }

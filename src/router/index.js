@@ -26,6 +26,29 @@ const files_upload = () =>
 const files_edit = () =>
   import(/* webpackChunkName: "files" */ '@/hub/templates/file-props')
 
+const courses = () =>
+  import(/* webpackChunkName: "courses" */ '@/hub/templates/courses')
+const courses_add = () =>
+  import(/* webpackChunkName: "courses" */ '@/hub/templates/courses/mng')
+const courses_edit = () =>
+  import(/* webpackChunkName: "courses" */ '@/hub/templates/courses/mng')
+const course_section_add = () =>
+  import(
+    /* webpackChunkName: "courses" */ '@/hub/templates/courses/sections/mng'
+  )
+const course_section_edit = () =>
+  import(
+    /* webpackChunkName: "courses" */ '@/hub/templates/courses/sections/mng'
+  )
+const course_section_module_add = () =>
+  import(
+    /* webpackChunkName: "courses" */ '@/hub/templates/courses/sections/modules/mng'
+  )
+const course_section_module_edit = () =>
+  import(
+    /* webpackChunkName: "courses" */ '@/hub/templates/courses/sections/modules/mng'
+  )
+
 const messages = () =>
   import(/* webpackChunkName: "messages" */ '@/hub/templates/messages')
 const users = () =>
@@ -247,6 +270,79 @@ const router = new Router({
           },
           props: {oper: 'edit'}
         },
+        /** Courses */
+        {
+          path: 'courses',
+          component: courses,
+          meta: {
+            menuItem: '/courses',
+            target: 'courses',
+            middleware: [requiresAuth, requiresAccess]
+          }
+        },
+        {
+          path: 'courses/add',
+          component: courses_add,
+          meta: {
+            menuItem: '/courses',
+            target: 'courses/add',
+            middleware: [requiresAuth, requiresAccess]
+          },
+          props: {oper: 'add'}
+        },
+        {
+          path: 'courses/edit/:crid',
+          component: courses_edit,
+          meta: {
+            menuItem: '/courses',
+            target: 'courses/edit',
+            middleware: [requiresAuth, requiresAccess]
+          },
+          props: {oper: 'edit'}
+        },
+        {
+          path: 'course-section/add',
+          component: course_section_add,
+          meta: {
+            menuItem: '/courses',
+            target: 'courses/add',
+            middleware: [requiresAuth, requiresAccess]
+          },
+          props: {oper: 'add'}
+        },
+        {
+          path: 'course-section/edit/:secid',
+          component: course_section_edit,
+          meta: {
+            menuItem: '/courses',
+            target: 'courses/edit',
+            middleware: [requiresAuth, requiresAccess]
+          },
+          props: {oper: 'edit'}
+        },
+        {
+          path: 'course-module/add',
+          component: course_section_module_add,
+          meta: {
+            menuItem: '/courses',
+            target: 'courses/add',
+            middleware: [requiresAuth, requiresAccess]
+          },
+          props: {oper: 'add'}
+        },
+        {
+          path: 'course-module/edit/:modid',
+          component: course_section_module_edit,
+          meta: {
+            menuItem: '/courses',
+            target: 'courses/edit',
+            middleware: [requiresAuth, requiresAccess]
+          },
+          props: {oper: 'edit'}
+        },        
+
+        /**Series */
+
         {
           path: 'series',
           component: series,

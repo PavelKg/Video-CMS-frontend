@@ -32,10 +32,11 @@ export default {
       }
     },
     async LOGOUT({commit, dispatch}) {
+      Api.logout()
       localStorage.removeItem('vcms-token')
       await Api.delHeaderAuth()
       commit('AUTH_LOGOUT')
-      Api.logout()
+      
     },
 
     async GET_MY_PROFILE({commit, dispatch, state}) {

@@ -2,9 +2,12 @@ import Api from '@/api'
 import Groups from './groups'
 import Series from './series'
 import Roles from './roles'
+import Courses from './courses/'
+import Course_sections from './courses/sections'
+import Course_modeles from './courses/modules'
 
 export default {
-  modules: {Groups, Roles, Series},
+  modules: {Groups, Roles, Series, Courses, Course_sections, Course_modeles},
   state: {
     companies: [],
     active_company_id: null,
