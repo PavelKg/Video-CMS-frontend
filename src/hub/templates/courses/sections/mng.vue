@@ -241,11 +241,11 @@ export default {
         const oper_type =
           this.oper === 'edit' ? 'COURSE_SECTION_UPD' : 'COURSE_SECTION_ADD'
         const uuid = await this.$store.dispatch(oper_type, this.mnSection)
-        const course_id = this.$route.query.course
-        if (this.oper === 'add' && course_id && uuid) {
-          console.log('MODIFY_COURSE_SECTIONS', course_id)
+        const course_name = this.$route.query.course
+        if (this.oper === 'add' && course_name && uuid) {
+          console.log('MODIFY_COURSE_SECTIONS', course_name)
           await this.$store.dispatch('MODIFY_COURSE_SECTIONS', {
-            crid: course_id,
+            course_name,
             secid: uuid,
             act: 'add'
           })

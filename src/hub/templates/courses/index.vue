@@ -43,10 +43,9 @@ export default {
   },
   methods: {
     loadCoursesList() {
-      const cid = this.cid
       const filter = !this.isShowDeleted ? 'courses.deleted_at[isNull]:' : ''
       this.$store
-        .dispatch('LOAD_COURSES', {cid, filter})
+        .dispatch('LOAD_COURSES', {filter})
         .then(() => this.$store.commit('SET_COURSES_IS_LOADING', false))
     },
     addNewCourse() {
@@ -63,9 +62,7 @@ export default {
     coursesTable
   },
   computed: {
-    ...mapState({
-      cid: (store) => store.Login.me.profile.company_id
-    })
+    ...mapState({})
   }
 }
 </script>

@@ -15,7 +15,8 @@ export default {
           required: true,
           minLength: 3,
           maxLength: 20,
-          isUnique: 'nameUniqError'
+          isUnique: 'nameUniqError',
+          regex: /^[a-z\\d-]+$/
         }
       },
       courses_section: {

@@ -23,15 +23,25 @@
       <template #cell(name)="row">
         <b-col style="width: 25rem">
           <b-form-checkbox
-            :id="row.item.crid.toString()"
-            :name="`ch-${row.item.crid}`"
-            :value="row.item.crid"
+            :id="row.item.name"
+            :name="`ch-${row.item.name}`"
+            :value="row.item.name"
             v-model="courses_selected"
             :disabled="row.item.deleted_at !== ''"
             class="truncate-text"
             >{{ row.item.name }}
           </b-form-checkbox></b-col
         >
+      </template>
+      <template #cell(is_published)="row">
+        <b-col style="text-align: center">
+          <b-icon
+            v-if="row.item.is_published"
+            icon="check-circle-fill"
+            variant="success"
+            font-scale="2"
+          ></b-icon>
+        </b-col>
       </template>
       <template #cell(mng)="item">
         <div class="mng-column">
@@ -45,7 +55,7 @@
             <div v-if="isActAllow('delete')" class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
-                @click="delCourse(item.item.crid)"
+                @click="delCourse(item.item.name)"
               /></div
           ></template>
           <template v-else>
@@ -104,6 +114,11 @@ export default {
           thStyle: {'text-align': 'center'}
         },
         {
+          key: 'is_published',
+          label: this.$t('courses.tbl_header_is_published'),
+          thStyle: {'text-align': 'center'}
+        },
+        {
           key: 'mng',
           label: this.$t('courses.tbl_header_mgn'),
           thStyle: {width: '120px !important', 'text-align': 'center'}
@@ -134,14 +149,14 @@ export default {
         action === 'selectAll'
           ? this.courses_on_page
               .filter((course) => course.deleted_at === '')
-              .map((course) => course.crid)
+              .map((course) => course.name)
           : []
     },
     editCourse(course) {
-      this.$emit('contentElementClick', `/courses/edit/${course.crid}`)
+      this.$emit('contentElementClick', `/courses/edit/${course.name}`)
     },
-    delCourse(course_crid) {
-      this.$store.dispatch('COURSE_DEL', course_crid).then(
+    delCourse(name) {
+      this.$store.dispatch('COURSE_DEL', name).then(
         (res) => {
           this.$emit('reloadData')
         },
@@ -154,11 +169,11 @@ export default {
       )
     },
     delCourses() {
-      const deleted_courses = this.courses_selected.map(async (course_crid) => {
+      const deleted_courses = this.courses_selected.map(async (course_name) => {
         try {
-          await this.$store.dispatch('COURSE_DEL', course_crid)
+          await this.$store.dispatch('COURSE_DEL', course_name)
           const ind = this.courses_selected.findIndex(
-            (crid) => crid === course_crid
+            (name) => name === course_name
           )
           if (ind > -1) {
             this.courses_selected.splice(ind, 1)

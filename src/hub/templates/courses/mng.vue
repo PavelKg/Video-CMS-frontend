@@ -13,18 +13,6 @@
       <span>{{ $t(course_title) }}</span>
       <b-form @submit.stop.prevent="onSubmit">
         <b-container class="px-0 my-3">
-          <template v-if="oper === 'edit'">
-            <b-form-group id="input-course-id">
-              <b-row ml="0" align-v="start" align-h="around">
-                <b-col>
-                  <span
-                    >{{ $t('courses.id') }}: {{ `CR-${mnCourse.crid}` }}</span
-                  >
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </template>
-
           <b-form-group
             id="input-course-name"
             :maxLength="fieldsRestr.name.maxLength"
@@ -41,7 +29,7 @@
                   id="course-name"
                   :value="mnCourse.name"
                   :placeholder="`${$t('courses.course_name')}`"
-                  :disabled="course_is_deleted"
+                  :disabled="course_is_deleted || oper === 'edit'"
                   :state="validateState('name')"
                   @input.native="
                     (e) => {
@@ -175,7 +163,7 @@
             </button>
 
             <button @click="cancel_click" class="button btn-braun">
-              {{ `${$t('label.cancel')}` }}
+              {{ `${$t('label.back')}` }}
             </button>
           </div>
         </b-container>
@@ -205,7 +193,7 @@ export default {
       src: {name: '', details: '', is_published: false, tags: ''},
       mnCourse: {
         name: '',
-        crid: null,
+        title: '',
         details: '',
         is_published: false,
         deleted_at: '',
@@ -224,14 +212,14 @@ export default {
   },
   methods: {
     async operSection(uuid, act) {
+      const {name} = this.mnCourse
       await this.$store.dispatch('MODIFY_COURSE_SECTIONS', {
-        crid: this.mnCourse.crid,
+        course_name: name,
         secid: uuid,
         act
       })
       const sections = await this.$store.dispatch('LOAD_COURSE_SECTIONS', {
-        cid: this.cid,
-        crid: this.mnCourse.crid
+        name
       })
 
       this.$set(this, 'course_sections', [...sections])
@@ -248,7 +236,7 @@ export default {
     },
     onAddSection() {
       this.contentElementClick(
-        `/course-section/add/?course=${this.mnCourse.crid}`
+        `/course-section/add/?course=${this.mnCourse.name}`
       )
     },
     onSubmit() {
@@ -278,13 +266,12 @@ export default {
   },
 
   created() {
-    const {crid = null} = this.$route.params
+    const {name = ''} = this.$route.params
 
-    this.mnCourse.crid = crid
-    const cid = this.cid
+    this.mnCourse.name = name
 
     if (this.oper === 'edit') {
-      this.$store.dispatch('LOAD_COURSE_INFO', {cid, crid}).then(
+      this.$store.dispatch('LOAD_COURSE_INFO', {name}).then(
         (course) => {
           this.src = {...course}
           this.mnCourse = {...this.mnCourse, ...course}
@@ -294,7 +281,7 @@ export default {
           return
         }
       )
-      this.$store.dispatch('LOAD_COURSE_SECTIONS', {cid, crid}).then(
+      this.$store.dispatch('LOAD_COURSE_SECTIONS', {name}).then(
         (sections) => {
           this.course_sections = [...sections]
         },
@@ -306,7 +293,6 @@ export default {
   },
   computed: {
     ...mapState({
-      cid: (store) => store.Login.me.profile.company_id,
       fieldsRestr: (store) => store.FieldRestr.categories.courses
     }),
     course_title() {
@@ -318,6 +304,7 @@ export default {
     dataNotChanged() {
       return (
         this.src.name === this.mnCourse.name &&
+        this.src.title === this.mnCourse.title &&
         this.src.details === this.mnCourse.details &&
         this.src.is_published === this.mnCourse.is_published &&
         this.src.tags === this.mnCourse.tags

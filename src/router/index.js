@@ -28,6 +28,8 @@ const files_edit = () =>
 
 const courses = () =>
   import(/* webpackChunkName: "courses" */ '@/hub/templates/courses')
+const courses_catalog = () =>
+  import(/* webpackChunkName: "courses" */ '@/hub/templates/courses/catalog')
 const courses_add = () =>
   import(/* webpackChunkName: "courses" */ '@/hub/templates/courses/mng')
 const courses_edit = () =>
@@ -281,6 +283,15 @@ const router = new Router({
           }
         },
         {
+          path: '/courses-(catalog|in-progress|completed)/',
+          component: courses_catalog,
+          meta: {
+            menuItem: '/courses-catalog',
+            target: 'courses-catalog',
+            middleware: [requiresAuth, requiresAccess]
+          }
+        },
+        {
           path: 'courses/add',
           component: courses_add,
           meta: {
@@ -291,7 +302,7 @@ const router = new Router({
           props: {oper: 'add'}
         },
         {
-          path: 'courses/edit/:crid',
+          path: 'courses/edit/:name',
           component: courses_edit,
           meta: {
             menuItem: '/courses',
@@ -339,7 +350,7 @@ const router = new Router({
             middleware: [requiresAuth, requiresAccess]
           },
           props: {oper: 'edit'}
-        },        
+        },
 
         /**Series */
 

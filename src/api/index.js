@@ -443,17 +443,30 @@ export default {
 
   /* ---------  COURSES MANAGEMENT  ---------------------*/
   /** List of courses
-   * @param {*} cid 
+   * @param {*} filter 
    * @returns {Promise<*>} - 200 List of groups
    * [{
-    "crid": "string",
     "name": "string",
+    "title": "string",
     "deleted_at": "string"
   }]
  */
-  courses(cid, filter) {
+  courses(filter) {
     const setFilter = !filter ? '' : `?filter=${filter}`
-    return Api.get(`/companies/${cid}/courses${setFilter}`, {
+    return Api.get(`/companies/courses${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Catalog of courses
+   * @param {*} category
+   * @returns {Promise<*>} - 200
+   * category:['catalog', 'in-progress', 'completed']
+   */
+  courses_catalog(category) {
+    return Api.get(`/companies/courses/${category}`, {
       headers: {
         ...type_json
       }
@@ -461,30 +474,27 @@ export default {
   },
 
   /** Course Info
-   * @param {number} cid 
-   * @param {string} crid 
+   * @param {string} name 
    * @returns {Promise<*>} - 200 group object
    * {
-        "crid": "string",
-        "cid": "string",
         "name": "string",
+        "title": "string",
         "deleted_at": "string"
       }
  */
-  course_info(cid, crid) {
-    return Api.get(`/companies/${cid}/courses/${crid}`, {
+  course_info(name) {
+    return Api.get(`/companies/courses/${name}`, {
       headers: {
         ...type_json
       }
     })
   },
   /**
-   * @param  {integer} cid
-   * @param  {integer} crid
+   * @param  {string} name
    * @returns {Promise<[{}]>} - 200 section object
    */
-  course_sections(cid, crid) {
-    return Api.get(`/companies/${cid}/courses/${crid}/sections`, {
+  course_sections(name) {
+    return Api.get(`/companies/courses/${name}/sections`, {
       headers: {
         ...type_json
       }
@@ -613,42 +623,39 @@ export default {
         ...type_json
       }
     })
-  }
+  },
   /**
    * @param  {object} target
    * @param  {object} data
    * @return {Promise<*>} - 201	Default Response
    * @throws Error
-   */,
-  course_module_upd(target, data) {
+   */ course_module_upd(target, data) {
     const {cid, modid} = target
     return Api.put(`/companies/${cid}/course-modules/${modid}`, data, {
       headers: {
         ...type_json
       }
     })
-  }
+  },
   /**
    * @param  {object} target
    * @param  {object} data
    * @return {Promise<*>} - 201	Default Response
    * @throws Error
-   */,
-  course_module_upd(target, data) {
+   */ course_module_upd(target, data) {
     const {cid, modid} = target
     return Api.put(`/companies/${cid}/course-modules/${modid}`, data, {
       headers: {
         ...type_json
       }
     })
-  }
+  },
   /**
    * @param  {object} target
    * @param  {object} data
    * @return {Promise<*>} - 201	Default Response
    * @throws Error
-   */,
-  course_module_lessons_upd(target, data) {
+   */ course_module_lessons_upd(target, data) {
     const {cid, modid} = target
     return Api.put(`/companies/${cid}/course-modules/${modid}/lessons`, data, {
       headers: {
@@ -658,13 +665,12 @@ export default {
   },
 
   /** Add new course
-   * @param {string} cid - Company ID
-   * @param {object} data - {"crid": "string", "name": "string" }
+   * @param {object} data - {"name": "string" }
    * @return {Promise<*>} - 200	Default Response
    * @throws Error
    */
-  course_add(cid, data) {
-    return Api.post(`/companies/${cid}/courses/`, data, {
+  course_add(data) {
+    return Api.post(`/companies/courses/`, data, {
       headers: {
         ...type_json
       }
@@ -672,14 +678,13 @@ export default {
   },
 
   /** Upd course
-   * @param {string} target - {cid, crid}
    * @param {object} data - {"name": "string", "details":"string", "is_published":"string", "tags":"string" }
    * @return {Promise<*>} - 201	Default Response
    * @throws Error
    */
   course_upd(target, data) {
-    const {cid, crid} = target
-    return Api.put(`/companies/${cid}/courses/${crid}`, data, {
+    const {name} = target
+    return Api.put(`/companies/courses/${name}`, data, {
       headers: {
         ...type_json
       }
@@ -687,28 +692,26 @@ export default {
   },
 
   /** Del course
-   * @param {string} target - {cid, crid}
+   * @param {string} name
    * @return {Promise<*>} - 200	Default Response
    * @throws Error
    */
-  course_del(target) {
-    const {cid, crid} = target
-    return Api.delete(`/companies/${cid}/courses/${crid}`, {
+  course_del(name) {
+    return Api.delete(`/companies/courses/${name}`, {
       headers: {
         ...type_json
       }
     })
   },
   /**
-   * @param  {} target
+   * @param  {} name
    * @param  {} data
    * @return {Promise<*>} - 200	Default Response
    * @throws Error
    *
    */
-  course_section_list_upd(target, data) {
-    const {cid, crid} = target
-    return Api.put(`/companies/${cid}/courses/${crid}/sections`, data, {
+  course_section_list_upd(name, data) {
+    return Api.put(`/companies/courses/${name}/sections`, data, {
       headers: {
         ...type_json
       }

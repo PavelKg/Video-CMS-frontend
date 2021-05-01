@@ -16,7 +16,10 @@
     </div>
     <div class="contents">
       <div class="content-zone">
-        <router-view v-on:contentElementClick="contentElementClick" class="view" />
+        <router-view
+          v-on:contentElementClick="contentElementClick"
+          class="view"
+        />
       </div>
       <b-modal
         :visible="modalErrorShow"
@@ -24,7 +27,8 @@
         centered
         ok-only
         @change="onModalChange"
-      >{{ $t(`${errors_message}`) }} !!!</b-modal>
+        >{{ $t(`${errors_message}`) }} !!!</b-modal
+      >
     </div>
   </div>
 </template>
@@ -129,7 +133,7 @@ export default {
   .contents {
     width: 100%;
     .content-zone {
-      padding: 20px 10px;
+      padding: 20px 5px;
     }
   }
 }
