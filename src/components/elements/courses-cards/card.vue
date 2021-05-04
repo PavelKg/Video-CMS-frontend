@@ -10,9 +10,13 @@
         <b-card-text>
           {{ course.details }}
         </b-card-text>
-        <b-button v-if="course.apply" href="#" variant="primary">{{
-          $t('courses.btn_apply')
-        }}</b-button>
+        <b-button
+          v-if="course.apply"
+          href="#"
+          variant="primary"
+          @click="onCourseApply"
+          >{{ $t('courses.btn_apply') }}</b-button
+        >
         <template #footer>
           <small class="text-muted"
             >Duration: {{ Math.floor(Math.random() * 9) + 1 }} weeks</small
@@ -25,7 +29,12 @@
 
 <script>
 export default {
-  props: ['course']
+  props: ['course'],
+  methods: {
+    onCourseApply() {
+      this.$emit('onCourseApply', this.course.name)
+    }
+  }
 }
 </script>
 <style lang="scss">

@@ -703,6 +703,20 @@ export default {
       }
     })
   },
+
+  /** course apply
+   * @param {string} name
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  course_apply(name) {
+    return Api.post(`/companies/courses/${name}/apply`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /**
    * @param  {} name
    * @param  {} data

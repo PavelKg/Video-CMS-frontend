@@ -34,7 +34,10 @@
       </b-container>
     </div>
     <div class="course-cards-wrapper">
-      <CoursesCards :courses_list="courses_list"></CoursesCards>
+      <CoursesCards
+        :courses_list="courses_list"
+        @onCourseApply="onCourseApply"
+      ></CoursesCards>
     </div>
   </div>
 </template>
@@ -64,6 +67,14 @@ export default {
     }
   },
   methods: {
+    async onCourseApply(name) {
+      try {
+        const res = await this.$store.dispatch('COURSE_APPLY', name)
+        this.onChangeCategory('in-progress')
+      } catch (err) {
+        console.log(err)
+      }
+    },
     onChangeCategory(category) {
       if (this.active_category === category) {
         return

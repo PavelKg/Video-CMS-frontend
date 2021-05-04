@@ -106,13 +106,25 @@ export default {
         throw err.response
       }
     },
-    async COURSE_DEL({getters}, name) {
+    async COURSE_DEL({}, name) {
       try {
         const result = await Api.course_del(name)
         if (result.status === 204) {
           return Promise.resolve('Coure updated success')
         } else {
           throw `Error update course, status - ${result.status}`
+        }
+      } catch (err) {
+        throw err.response.data.message.replace(/^Error:\s/gi, '')
+      }
+    },
+    async COURSE_APPLY({}, name) {
+      try {
+        const result = await Api.course_apply(name)
+        if (result.status === 201) {
+          return Promise.resolve(true)
+        } else {
+          throw {message: 'Error apply course', code: result.status}
         }
       } catch (err) {
         throw err.response.data.message.replace(/^Error:\s/gi, '')
