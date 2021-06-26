@@ -1,14 +1,16 @@
 <template>
-  <div class="courses-table">
-    <scrollHint v-if="!scrolled && isScrollable && !courses_is_loading" />
+  <div class="tests-table">
+    <scrollHint v-if="!scrolled && isScrollable && !tests_is_loading" />
+
     <b-table
-      :items="courses_on_page"
+      :id="'tests-table'"
+      :items="tests_on_page"
       :fields="fields"
       responsive
       striped
       hover
       head-variant="dark"
-      :busy="courses_is_loading"
+      :busy="tests_is_loading"
       v-scroll-hint="{
         scrollHandler: 'onTableScrolled',
         isScrollable: 'isScrollable'
@@ -20,23 +22,31 @@
           <strong class="pl-2">Loading...</strong>
         </div>
       </template>
-      <template #cell(name)="row">
+      <template #cell(uuid)="item">
         <b-col style="width: 25rem">
           <b-form-checkbox
-            :id="row.item.name"
-            :name="`ch-${row.item.name}`"
-            :value="row.item.name"
-            v-model="courses_selected"
-            :disabled="itemIsDeleted(row.item)"
+            :id="item.item.uuid.toString()"
+            :name="`ch-${item.item.uuid}`"
+            :value="item.item.uuid"
+            v-model="tests_selected"
+            :disabled="itemIsDeleted(item.item)"
             class="truncate-text"
-            >{{ row.item.name }}
+          >
+            {{ item.item.title }}
           </b-form-checkbox></b-col
         >
       </template>
-      <template #cell(is_published)="row">
+      <template #cell(description)="item">
+        <b-col style="width: 25rem">
+          <p class="truncate-text">
+            {{ item.item.description }}
+          </p>
+        </b-col>
+      </template>
+      <template #cell(is_public)="item">
         <b-col style="text-align: center">
           <b-icon
-            v-if="row.item.is_published"
+            v-if="item.item.is_public"
             icon="check-circle-fill"
             variant="success"
             font-scale="1.7"
@@ -49,24 +59,24 @@
             <div v-if="isActAllow('edit')" class="icon-button">
               <img
                 src="@/assets/images/edit_black.png"
-                @click="editCourse(item.item)"
+                @click="editTest(item.item.uuid)"
               />
             </div>
             <div v-if="isActAllow('delete')" class="icon-button">
               <img
                 src="@/assets/images/delete_black.png"
-                @click="delCourse(item.item.name)"
+                @click="delTest(item.item.uuid)"
               /></div
           ></template>
           <template v-else>
-            {{ $t('courses.tbl_deleted') }}
+            {{ $t('roles.tbl_deleted') }}
           </template>
         </div>
       </template>
     </b-table>
-    <div class="courses-mng-panel">
+    <div class="tests-mng-panel">
       <template v-if="isActAllow('delete')">
-        <span>{{ $t('courses.in_page') }}:</span>
+        <span>{{ $t('roles.in_page') }}:</span>
         <a href="#" id="selectAll" @click.prevent="toggleAll">{{
           $t('label.select_all')
         }}</a>
@@ -76,17 +86,17 @@
         }}</a>
         <button
           class="button btn-orange"
-          @click="delCourses"
-          :disabled="courses_selected.length === 0"
+          @click="delTests"
+          :disabled="tests_selected.length === 0"
         >
           {{ $t('label.delete') }}
         </button></template
       >
-      <div class="courses-mng-pag">
+      <div class="roles-mng-pag">
         <b-pagination
           :value="currentPage"
           @change="setPage"
-          :total-rows="courses_count"
+          :total-rows="tests_count"
           :per-page="perPage"
           align="left"
         ></b-pagination>
@@ -102,40 +112,26 @@ import scrollHintMix from '@/mixins/scroll-hint'
 import permitsMixin from '@/mixins/permits'
 
 export default {
-  name: 'table-courses',
+  props: {tests: Array, tests_is_loading: Boolean},
+  name: 'table-tests',
   mixins: [scrollHintMix, permitsMixin],
   data() {
     return {
-      permitsCategory: 'courses',
-      fields: [
-        {
-          key: 'name',
-          label: this.$t('courses.tbl_header_name'),
-          thStyle: {'text-align': 'center'}
-        },
-        {
-          key: 'is_published',
-          label: this.$t('courses.tbl_header_is_published'),
-          thStyle: {'text-align': 'center'}
-        },
-        {
-          key: 'mng',
-          label: this.$t('courses.tbl_header_mgn'),
-          thStyle: {width: '120px !important', 'text-align': 'center'}
-        }
-      ],
+      permitsCategory: 'tests',
       perPage: 8,
       currentPage: 1,
-      courses_selected: []
+      tests_selected: []
     }
   },
   watch: {
     $route(newVal) {
-      this.currentPage = newVal.query.page ? newVal.query.page : 1
+      const page = +newVal.query.page
+      this.currentPage = page ? page : 1
     },
-    courses_is_loading(newVal, oldVal) {
+    tests_is_loading(newVal, oldVal) {
+      const {page} = this.$route.query
       if (!newVal) {
-        this.currentPage = this.$route.query.page ? this.$route.query.page : 1
+        this.currentPage = page ? page : 1
       }
     }
   },
@@ -144,27 +140,18 @@ export default {
   },
   methods: {
     itemIsDeleted(item) {
-      console.log(item)
       return !['', null].includes(item.deleted_at)
     },
-    toggleAll(env) {
-      const action = env.target['id']
-      this.courses_selected =
-        action === 'selectAll'
-          ? this.courses_on_page
-              .filter((course) => course.deleted_at === '')
-              .map((course) => course.name)
-          : []
+    editTest(uuid) {
+      this.$emit('contentElementClick', `/tests/edit/${uuid}`)
     },
-    editCourse(course) {
-      this.$emit('contentElementClick', `/courses/edit/${course.name}`)
-    },
-    delCourse(name) {
-      this.$store.dispatch('COURSE_DEL', name).then(
+    delTest(uuid) {
+      this.$store.dispatch('TEST_DEL', uuid).then(
         (res) => {
           this.$emit('reloadData')
         },
         (err) => {
+          console.log('err.message=', err)
           this.$emit(
             'onContentError',
             `errors.${err.message.toLowerCase().replace(/\s/gi, '_')}`
@@ -172,18 +159,17 @@ export default {
         }
       )
     },
-    delCourses() {
-      const deleted_courses = this.courses_selected.map(async (course_name) => {
+    delTests() {
+      const deleted_tests = this.tests_selected.map(async (uuid) => {
         try {
-          await this.$store.dispatch('COURSE_DEL', course_name)
-          const ind = this.courses_selected.findIndex(
-            (name) => name === course_name
+          await this.$store.dispatch('TEST_DEL', uuid)
+          const ind = this.tests_selected.findIndex(
+            (sel_uuid) => sel_uuid === uuid
           )
           if (ind > -1) {
-            this.courses_selected.splice(ind, 1)
+            this.tests_selected.splice(ind, 1)
           }
         } catch (error) {
-          console.log('error')
           this.$emit(
             'onContentError',
             `errors.${error.message.toLowerCase().replace(/\s/gi, '_')}`
@@ -191,32 +177,91 @@ export default {
         }
       })
 
-      Promise.all(deleted_courses).then(() => {
+      Promise.all(deleted_tests).then(() => {
         this.$emit('reloadData')
       })
     },
     setPage(num) {
-      this.$emit('contentElementClick', `/courses/?page=${num}`)
+      if (num === this.currentPage) {
+        return
+      } else {
+        this.$emit('contentElementClick', `/tests/?page=${num}`)
+      }
+    },
+    toggleAll(env) {
+      const action = env.target['id']
+      this.tests_selected =
+        action === 'selectAll'
+          ? this.tests_on_page
+              .filter((test) => test.deleted_at === '')
+              .map((test) => test.uuid)
+          : []
     }
   },
   computed: {
-    ...mapGetters(['courses', 'me', 'courses_is_loading', 'is_tablet_width']),
-    courses_count() {
-      return this.courses ? this.courses.length : 0
+    ...mapGetters(['is_tablet_width']),
+    tests_count() {
+      return this.tests ? this.tests.length : 0
     },
-    courses_on_page() {
+    tests_on_page() {
       const begin = (this.currentPage - 1) * this.perPage
       const end = begin + this.perPage
 
-      return this.courses.slice(begin, end)
+      return this.tests.slice(begin, end)
+    },
+    fields() {
+      return [
+        {
+          key: 'uuid',
+          label: this.$t('tests.tbl_header_title'),
+          thStyle: {'text-align': 'center', 'vertical-align': 'middle'}
+        },
+
+        {
+          key: 'description',
+          label: this.$t('tests.tbl_header_description'),
+          thStyle: {'text-align': 'center', 'vertical-align': 'middle'}
+        },
+
+        {
+          key: 'is_public',
+          label: !this.showColumn
+            ? this.$t('tests.tbl_header_public')
+            : 'Public',
+          thStyle: {
+            'text-align': 'center',
+            'max-width': '10rem',
+            'vertical-align': 'middle'
+          },
+          tdStyle: {
+            'text-align': 'center',
+            'max-width': '10rem',
+            'vertical-align': 'middle'
+          }
+        },
+        {
+          key: 'mng',
+          label: this.$t('roles.tbl_header_mng'),
+          thStyle: {
+            width: '120px !important',
+            'text-align': 'center',
+            'vertical-align': 'middle'
+          }
+        }
+      ]
+    },
+    showColumn() {
+      //return this.is_mobile_width ? 'd-none' : ''
+      return ''
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '../../assets/styles';
-.courses-table {
+
+.tests-table {
   position: relative;
   padding: 10px 0;
 }
@@ -236,12 +281,12 @@ export default {
   overflow: hidden;
 }
 
-.courses-mng-panel {
+.tests-mng-panel {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   flex-wrap: wrap;
-  .courses-mng-pag {
+  .tests-mng-pag {
     display: flex;
     > * {
       margin-bottom: 0;
@@ -250,12 +295,11 @@ export default {
 }
 
 @media screen and (max-width: 875px) {
-  .courses-mng-panel {
+  .tests-mng-panel {
     button {
       margin-top: 15px;
-      margin-left: 10px;
     }
-    .courses-mng-pag {
+    .tests-mng-pag {
       margin-top: 15px;
       justify-content: flex-end;
     }
