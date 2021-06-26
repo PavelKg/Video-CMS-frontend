@@ -51,6 +51,15 @@ const course_section_module_edit = () =>
     /* webpackChunkName: "courses" */ '@/hub/templates/courses/sections/modules/mng'
   )
 
+const tests = () =>
+  import(/* webpackChunkName: "tests" */ '@/hub/templates/tests')
+const tests_add = () =>
+  import(/* webpackChunkName: "tests" */ '@/hub/templates/tests/mng')
+const tests_edit = () =>
+  import(/* webpackChunkName: "tests" */ '@/hub/templates/tests/mng')
+const tests_content = () =>
+  import(/* webpackChunkName: "tests" */ '@/hub/templates/tests/content')
+
 const messages = () =>
   import(/* webpackChunkName: "messages" */ '@/hub/templates/messages')
 const users = () =>
@@ -350,6 +359,48 @@ const router = new Router({
             middleware: [requiresAuth, requiresAccess]
           },
           props: {oper: 'edit'}
+        },
+
+        /** Tests */
+
+        {
+          path: 'tests',
+          component: tests,
+          meta: {
+            menuItem: '/tests',
+            target: 'tests',
+            middleware: [requiresAuth, requiresAccess]
+          }
+        },
+        {
+          path: 'tests/add',
+          component: tests_add,
+          meta: {
+            menuItem: '/tests',
+            target: 'tests/add',
+            middleware: [requiresAuth, requiresAccess]
+          },
+          props: {oper: 'add'}
+        },
+        {
+          path: 'tests/edit/:uuid',
+          component: tests_edit,
+          meta: {
+            menuItem: '/tests',
+            target: 'tests/edit',
+            middleware: [requiresAuth, requiresAccess]
+          },
+          props: {oper: 'edit'}
+        },
+        {
+          path: 'tests/edit/:uuid/content',
+          component: tests_content,
+          name: 'test_content',
+          meta: {
+            menuItem: '/tests',
+            target: 'tests/edit',
+            middleware: [requiresAuth, requiresAccess]
+          }
         },
 
         /**Series */

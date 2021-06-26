@@ -748,6 +748,70 @@ export default {
     })
   },
 
+  /* ---------  TESTS MANAGEMENT  ---------------------*/
+  /** List of tests
+   * @param {string} filter
+   * @returns {Promise<*>} - 200 List of tests
+   */
+  tests(filter) {
+    const setFilter = !filter ? '' : `?filter=${filter}`
+    return Api.get(`/companies/tests${setFilter}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /**
+   * @param  {string} uuid
+   * @returns {Promise<*>} - 200
+   */
+  test_info(uuid) {
+    return Api.get(`/companies/tests/${uuid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+  /** Add new test
+   * @param {object} data
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  test_add(data) {
+    return Api.post(`/companies/tests/`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Upd test
+   * @param {string} uuid
+   * @param {object} data
+   * @return {Promise<*>} - 201	Default Response
+   * @throws Error
+   */
+  test_upd(uuid, data) {
+    return Api.put(`/companies/tests/${uuid}`, data, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
+  /** Del test
+   * @param {string} uuid
+   * @return {Promise<*>} - 200	Default Response
+   * @throws Error
+   */
+  test_del(uuid) {
+    return Api.delete(`/companies/tests/${uuid}`, {
+      headers: {
+        ...type_json
+      }
+    })
+  },
+
   /* ---------  SERIES MANAGEMENT  ---------------------*/
   /** List of series
    * @param {integer} cid

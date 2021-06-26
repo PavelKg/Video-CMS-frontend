@@ -45,6 +45,19 @@ export default {
           isUnique: 'nameUniqError'
         }
       },
+      tests: {
+        title: {
+          required: true,
+          minLength: 3,
+          maxLength: 20
+        },
+        description: {
+          required: false,
+          minLength: 3,
+          maxLength: 20
+        }        
+
+      },
       users: {
         uid: {
           required: true,

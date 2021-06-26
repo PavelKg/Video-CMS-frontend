@@ -5,9 +5,10 @@ import Roles from './roles'
 import Courses from './courses/'
 import Course_sections from './courses/sections'
 import Course_modeles from './courses/modules'
+import Tests from './tests'
 
 export default {
-  modules: {Groups, Roles, Series, Courses, Course_sections, Course_modeles},
+  modules: {Groups, Roles, Series, Courses, Course_sections, Course_modeles, Tests},
   state: {
     companies: [],
     active_company_id: null,
